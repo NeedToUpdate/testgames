@@ -1,0 +1,157 @@
+.bluebtn {
+    z-index: 100000;
+    position: absolute;
+    left: 0%;
+    top: 82%;
+    height: 40px;
+    width: 70px;
+    background-color: #00B7FF;
+    border-radius: 20px;
+    border: blue solid 4px;
+    font-size: 1em;
+    color: darkblue;
+    font-family: "Minion Pro";
+}
+.colourpoint{
+    display: inline;
+    top: 50px;
+    position: absolute;
+    font-size: 3em;
+    font-weight: bolder;
+    z-index: 1000;
+}
+.colourblock{
+    position: absolute;
+    height: 50px;
+    width: 50px;
+    border-radius: 10px;
+    top: 100px;
+}
+#block1{
+    background-color: red;
+}
+#block2{
+    background-color: mediumseagreen;
+    left: 150px;
+}
+#block3{
+    background-color: yellow;
+    left: 310px;
+}
+#point1{
+    top: 100px;
+    left: 19px;
+}
+#point2{
+    left: 164px;
+}
+#point3{
+    left: 324px;
+}#point21{
+    top: 200px;
+    left: 19px;
+}
+#point22{
+    top: 200px;
+    left: 164px;
+}
+#point23{
+    top: 200px;
+    left: 324px;
+}
+
+#jmpleft{
+
+}
+#jmpright{
+    left: 150px;
+}
+#jump{
+    left: 75px;
+}
+#hover{
+    left: 75px;
+    top: 76%;
+}
+#powerup {
+    background-color: orange;
+    top: 88%;
+}
+#shootright{
+    background-color: red;
+    top:88%;
+    left: 75px;
+}
+#shield{
+    top:88%;
+    left: 150px;
+    background-color: green;
+}
+#playpause{
+    top: 0%;
+    height: 25px;
+}
+#playerhp{
+    color: red;
+    position: absolute;
+    top: 50px;
+    font-size: 2em;
+    font-weight: bolder;
+}
+#enemyhp{
+    position: absolute;
+    color: red;
+    left: 500px;
+    font-size: 2em;
+    font-weight: bolder;
+    z-index: 10000;
+}
+.at_top{
+    top: 0px;
+}
+.locked{
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+p{
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+@keyframes grow {
+    to{
+        left: -500px;
+        top: -300px;
+        width: 1000px;
+    }
+}
+@keyframes grow2 {
+    to {
+        left: 100px;
+        top: 0px;
+        width: 300px;
+    }
+}
+@keyframes grow3 {
+    to{
+        left: -1000px;
+        top: -500px;
+        width:2000px;
+    }
+}
+@keyframes zoombg {
+   to{
+       background-position: -400px -80px;
+       background-size: 1400px auto;
+   }
+}
+@keyframes fadeOut {
+    to{
+        opacity: 0;
+    }
+}

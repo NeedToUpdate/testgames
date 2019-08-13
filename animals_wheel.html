@@ -1,0 +1,247 @@
+<html>
+
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
+    <script language="javascript" src="./lib/two.js"></script>
+    <script language="javascript" src="./lib/vector.js"></script>
+    <script language="javascript" src="./lib/matrix.js"></script>
+    <script language="javascript" src="./lib/drawbase.js"></script>
+    <script language="javascript" src="./lib/character.js"></script>
+    <script language="javascript" src="./lib/div.js"></script>
+    <script language="javascript" src="./lib/rect.js"></script>
+    <script language="javascript" src="./lib/line.js"></script>
+    <script language="javascript" src="./lib/eventemitter.js"></script>
+    <link rel="stylesheet" href="./wheel.css">
+</head>
+
+<body class="locked">
+    <button id="spin" class="bluebtn">Spin!</button>
+    <svg id="wheel" width="1000" height="1000"></svg>
+    <script>
+        let animals = [
+            'cat', 'dog', 'horse',
+            'clownfish', 'seahorse', 'crocodile',
+            'elephant', 'monkey', 'owl',
+            'penguin', 'frog',  'salamander', 'snake', 'whale',
+            'sheep', 'tiger', 'lion', 'eagle', 'dolphin', 'shark', 'lizard','crab','worm','lobster','fly','spider','jellyfish','snail',
+            'octopus','butterfly','starfish','mosquito','ant','scorpion'
+        ];
+        function getRandomArray(num) {
+            let nums = [];
+            let escape = 0;
+            while (nums.length < num && escape < 1000) {
+                let n = Math.floor(Math.random() * animals.length)
+                if (nums.indexOf(n) === -1) {
+                    nums.push(n);
+                }
+                escape++;
+            }
+            console.log(nums);
+            let new_array = nums.map(x => animals[x]);
+            return new_array;
+        }
+        let images = getRandomArray(8);
+        let weights = images.map(x => 1);
+        let LOADED_IMAGES = new ImageLoader('./images/', images);
+
+
+        for (let i = 0; i < images.length; i++) {
+            console.log(`%c ${images[i]} weight: ${weights[i]}`, 'color: darkblue');
+        }
+
+
+
+
+        //Debug Vars
+        let LOGGING = true;
+
+
+        let wheel = id('wheel');
+
+        var cWidth = getInnerSize(wheel, 'w');
+        var cHeight = getInnerSize(wheel, 'h');
+
+
+        var two = new Two({
+            fullscreen: false,
+            autostart: true,
+            width: cWidth,
+            height: cHeight
+        }).appendTo(wheel);
+        if (LOGGING) {
+            console.log('[two] Canvas created with height ' + cHeight + ' and width ' + cWidth);
+        }
+
+        let interval = 10;
+
+        //speen of rotation
+        let speed = 1;
+        let clicked = false;
+        let PI = Math.PI;
+
+
+
+        let imageradius = 250
+        let angleOfEach = 360 / images.length;
+        let originX = cWidth / 2;
+        let originY = cHeight / 2;
+        let radius = 350;
+
+        let wheelShape = two.makeCircle(originX-5, originY-5, radius);
+        wheelShape.fill = 'yellow';
+        wheelShape.stroke = 'blue';
+        wheelShape.linewidth = 4;
+
+        getX = function (angle, customRadius) {
+            if (customRadius) {
+                return originX + customRadius * Math.cos(angle);
+            }
+            return originX + radius * Math.cos(angle);
+        };
+        getY = function (angle, customRadius) {
+            if (customRadius) {
+                return originY + customRadius * Math.sin(angle);
+            }
+            return originY + radius * Math.sin(angle);
+        };
+        let sections = [];
+        setup = function () {
+            let total = images.length;
+            let incAng = (2 * PI) / total;
+            //should evenly space out the sections of the pinwheel
+            for (let i = 0; i < images.length; i++) {
+                //create point at origin
+                // console.log('test ' + i);
+
+                let langle = incAng * (i + .5) - PI / 2;
+                let sangle = incAng * (i) - PI / 2;
+
+                //lines
+                let line =  new DivLine(originX,originY, radius,langle*180/Math.PI, 'blue', 4); //draws a line at each angle incrementation and adjusts them
+
+
+                //images
+                //uses the names from the array above to find them in the folder
+                let sprite = new Img(LOADED_IMAGES[images[i]],getX(sangle, imageradius),getY(sangle,  imageradius), 100, true,(sangle + PI / 2)*180/PI);
+
+
+                sections.push({
+                    name: images[i],
+                    sprite: sprite,
+                    line: line,
+                    lineAng: langle,
+                    spriteAng: sangle,
+                    id: i
+                });
+            }
+            let arrow = two.makePolygon(originX, 85, 20, 3);
+            arrow.fill = 'red';
+            arrow.rotation = PI;
+        };
+
+        spin = function () {
+            for (let i = 0; i < images.length; i++) {
+                let s = sections[i];
+                let newlineangle = s.lineAng - 2 * PI / 360;
+                let newspriteeangle = s.spriteAng - 2 * PI / 360;
+                s.line.set('transform', 'rotate(' + newlineangle*180/PI + 'deg)');
+               // s.line.vertices[1].y = (getY(newlineangle) - s.line.translation.y);
+                s.sprite.set('left', getX(newspriteeangle, imageradius))
+                s.sprite.set('top', getY(newspriteeangle, imageradius))
+
+                s.sprite.set('transform', 'rotate(' + (newspriteeangle+PI/2)*180/PI + 'deg)');
+                s.lineAng = newlineangle;
+                s.spriteAng = newspriteeangle;
+            }
+        };
+
+        requestAnimationFrame(()=>{
+            setup();
+        });
+
+
+        let chosen = -1;
+        let angWinner = -1;
+        let spun = -1;
+        draw = function () {
+                //run randomizer
+                if (chosen < 0) {
+                    let pool = [];
+                    for (let i = 0; i < weights.length; i++) {
+                        for (let j = 0; j < weights[i]; j++) {
+                            pool.push(i);
+                        }
+
+                    }
+
+                    chosen = pool[Math.floor(Math.random() * (pool.length - 1))];
+                    //console.log(pool);
+                    if (LOGGING) {
+                        console.log('chosen is ' + chosen + ', named: ' + images[chosen]);
+                    }
+
+                    //calc angle or rotation
+
+
+                    angWinner = PI * 2 / weights.length * chosen;
+                    if (chosen === 0) {
+                        angWinner += 2 * PI;
+                    }
+                    angWinner += 0// 2 * PI; //add extra spin
+                    spun = 0;
+                    pool = [];
+
+                    //rotate array
+                    for (let r = 0; r < chosen; r++) {
+                        arrayRotateOne(weights);
+                        arrayRotateOne(images);
+                    }
+
+                    //rotate to angle
+                    //spin() is 120 for full spin
+                }
+                if (angWinner === -1 || chosen === -1) {
+                    return
+                } else if (spun < angWinner - 0.01) {
+                    for (let i = 0; i < interval; i++) {
+                        spin();
+                    }
+                    spun += (2 * PI / 360);
+                } else {
+                    spun = -1;
+                    angWinner = -1;
+                    chosen = -1;
+                    clicked = false;
+                }
+                if(clicked){
+                    requestAnimationFrame(draw)
+                }
+
+        };
+
+
+        button = document.getElementById('spin');
+        button.addEventListener('click', function () {
+            clicked = true;
+            requestAnimationFrame(draw);
+        });
+
+
+
+
+        function getInnerSize(elem, wORh) {
+            if (wORh === 'w') {
+                return parseFloat(window.getComputedStyle(elem).width);
+            } else {
+                return parseFloat(window.getComputedStyle(elem).height);
+            }
+        }
+
+        function arrayRotateOne(arr) {
+            arr.push(arr.shift());
+            return arr
+        }
+    </script>
+</body>
+
+</html>

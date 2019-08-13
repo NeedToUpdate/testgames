@@ -1,0 +1,254 @@
+<html>
+
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
+    <script language="javascript" src="./lib/two.js"></script>
+    <script language="javascript" src="./lib/vector.js"></script>
+    <script language="javascript" src="./lib/matrix.js"></script>
+    <script language="javascript" src="./lib/drawbase.js"></script>
+    <script language="javascript" src="./lib/character.js"></script>
+    <script language="javascript" src="./lib/div.js"></script>
+    <script language="javascript" src="./lib/rect.js"></script>
+    <script language="javascript" src="./lib/eventemitter.js"></script>
+    <title>Artem's Fighting Game</title>
+    <link rel="stylesheet" href="./wheel.css">
+</head>
+
+<body>
+<p id="playerhp">10</p>
+<p id="enemyhp">10</p>
+<button id="jmpleft" class="bluebtn"><--</button>
+<!--<button id="hover" class="bluebtn">hover</button>-->
+<button id="jump" class="bluebtn">jump</button>
+<button id="jmpright" class="bluebtn">--></button>
+<button id="powerup" class="bluebtn">power</button>
+<button id="shootright" class="bluebtn">shoot</button>
+<button id="shield" class="bluebtn">block</button>
+<button id="playpause" class="bluebtn">paused</button>
+<img src="./images/whitesquare.png" style="position: absolute;top: 0; left: 0; z-index: 9999; width: 50px;">
+<script>
+    class ErrorHandler {
+        constructor(error) {
+            this.err = error;
+            this.error = this.err;
+            this.log();
+            this.stopLoop();
+        }
+        log() {
+            console.error(this.err);
+        }
+        stopLoop() {
+            stop();
+        }
+    }
+
+
+
+    //Debug Vars
+    let LOGGING = true;
+
+    let characters = [
+        'cat',
+        'spiderman', 'ultraman', 'ironman',
+        'peppapig', 'spongebob', 'monkey',
+        'tiger', 'shark', 'cinderella',
+        'elsa', 'ariel', 'deadfish', 'mrkrabs', 'thanos', 'pikachu', 'drstrange',
+        'superman', 'genie', 'simba', 'captainmarvel', 'mewtwo', 'sailormoon', 'venom', 'thor'
+    ];
+    let powers = [
+        'blueenergy',
+        'web', 'fire', 'fire',
+        'pinkenergy', 'water', 'banana',
+        'fire', 'water', 'blueenergy',
+        'ice', 'water', 'nuke', 'water', 'blackenergy', 'electric', 'magic',
+        'fire', 'magic', 'magic', 'electric', 'magic', 'pinkenergy', 'blackenergy', 'electric'
+    ]
+    let extras = [
+        'fire', 'fireballleft', 'fireballright', 'shield',
+    ]
+
+    let background = 'background' + (Math.random()*13|0).toString() + '.jpg';
+    document.body.style.backgroundColor = 'grey'
+    document.body.style.backgroundImage = 'url(./images/' + background.toString() + ')';
+    document.body.style.backgroundSize = width + 'px auto';
+    document.body.style.backgroundRepeat = 'no-repeat'
+
+    let chosennum = Math.random() * characters.length | 0;
+    let char_name = characters[chosennum];
+    let powr_name = powers[chosennum];
+    if(char_name === 'deadfish'){
+        powr_name = 'nuke';
+    }
+    let mons_name = 'monster'+ (Math.random()*30|0);
+    let monster_powr_name = powers[Math.random()*powers.length |0];
+    if(mons_name.endsWith('15')){
+        monster_powr_name = 'spaghetti'
+    }
+    extras.push(powr_name + 'ball')
+    extras.push(monster_powr_name + 'ball')
+
+    let LOADED_IMAGES = new ImageLoader('./images/',extras);
+
+    let player = new Character(25, 100, char_name);
+    let monster = new Character(width-300, 100, mons_name);
+    setup = function () {
+       // let floor = new Div(0, height-250, 'black', width,1, true);
+        player.powertype = powr_name;
+        player.noskybox = true;
+        player.addSprite(new Img("./images/" + char_name + ".png", 25, 100, 150));
+        player.landing_emitter.subscribe('land', ()=>{
+            player.faceright();
+        });
+        monster.powertype = monster_powr_name;
+        monster.noskybox = true;
+        monster.addSprite(new Img("./images/" + monster.name + ".png", 125, 100, 400));
+        monster.jump_multiplier = 0.5;
+        monster.isjumping = true;
+        monster.landing_emitter.subscribe('land',()=>{
+            monster.faceleft();
+        })
+
+
+    };
+
+    let playing = false;
+    id('jmpright').addEventListener('click', function () {
+        player.jumpright();
+    });
+    id('playpause').addEventListener('click', function () {
+        playing = !playing;
+        if(playing){
+            id('playpause').innerText = 'playing';
+        }else{
+            id('playpause').innerText = 'paused';
+        }
+    });
+    id('jmpleft').addEventListener('click', function () {
+        player.jumpleft();
+    });
+    id('jump').addEventListener('click', function () {
+        player.jump();
+        if(Math.random()*4<3){
+            monster.shoot();
+        }
+
+    });
+    id('powerup').addEventListener('click', function () {
+        player.powerup();
+    });
+    id('shootright').addEventListener('click', function () {
+        player.shoot();
+        if(playing){
+            let n = Math.random()*10;
+            if(n > 9){
+                if(monster.health>90){
+                    monster.jump();
+                }
+            }else if(n>8){
+                monster.shield();
+            }
+
+        }
+
+    });
+    id('shield').addEventListener('click', ()=>{
+       if(!player.shielded){
+           player.shield();
+           if(Math.random()*2<1.5){
+               setTimeout(()=>{
+                   monster.shoot();
+               },1500);
+
+           }
+       }
+
+    });
+
+    setup();
+    let hopstop = false;
+    let loog = false;
+    loop = function (now) {
+        let dt = now-LAST_TIME;
+        if(loog){
+            console.log(dt)
+            loog = false;
+        }
+        player.update(dt);
+        monster.update(dt);
+        if(player.extras.attack && player.extras.attack.rect.d){
+
+            if(player.extras.attack.rect.d.x > monster.rect.a.x && player.extras.attack.rect.d.y < monster.rect.b.y && !monster.shielded){
+               console.log('hit');
+                monster.health -=player.extras.attack.power;
+                monster.jumpbkwd(0.05*player.extras.attack.power);
+                player.extras.attack.kill();
+                delete player.extras.attack;
+                let unsub = monster.landing_emitter.subscribe('land', ()=>{
+                    setTimeout(()=> monster.jumpfwd(), 500);
+                    unsub();
+                })
+
+            }
+        }
+        if(monster.rect.a){
+            if(monster.rect.a.x < player.rect.d.x && !monster.dead){
+                if(player.shielded){
+                    monster.jumpbkwd();
+                }else{
+                    player.kill();
+                }
+
+            }
+        }
+
+
+       if(playing){
+           if(Math.random()*1000 < 10){
+               monster.powerup();
+           }
+           if(Math.random()*1000 <1){
+               monster.shoot();
+           }
+           if(Math.random()*2000 < (monster.health>30?20:5)){
+               monster.hop();
+           }
+           if(Math.random()*3000 < 2){
+               monster.jump();
+           }
+           if(monster.health>80 && Math.random()*1000 < 5 && !hopstop){
+               monster.sparhop().then(()=>{
+                   hopstop = false
+               });
+              hopstop = true;
+           }
+       }
+        if(monster.extras.attack && monster.extras.attack.rect.a){
+            if(monster.extras.attack.rect.a.x < player.rect.d.x && monster.extras.attack.rect.a.y < player.rect.c.y && monster.extras.attack.rect.b.y > player.rect.d.y && !player.shielded ){
+                console.log('take damage');
+                player.health -=monster.extras.attack.power * 0.2;
+                monster.extras.attack.kill();
+                delete monster.extras.attack;
+            }
+        }
+
+        id('playerhp').innerText = " player: " + (player.health |0 || 0);
+        id('enemyhp').innerText = "monster: " + (monster.health |0 || 0);
+
+        if(player.dead)  id('playerhp').innerText = " player: dead";
+        if(monster.dead)   id('enemyhp').innerText = "monster: dead";
+        LAST_TIME = now;
+        if(LOOPING){
+                requestAnimationFrame(loop);
+                }
+    };
+    start = function(){
+        LOOPING = true;
+        LAST_TIME = window.performance.now();
+        requestAnimationFrame(loop);
+    }
+    start();
+
+</script>
+</body>
+
+</html>
