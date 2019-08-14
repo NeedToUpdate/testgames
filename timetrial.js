@@ -298,3 +298,5 @@ loop = function (now) {
 
     }
 }
+
+setup();
