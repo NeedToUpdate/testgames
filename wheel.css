@@ -1,3 +1,6 @@
+body{
+    backgroundSize: auto 100%;
+}
 .bluebtn {
     z-index: 100000;
     position: absolute;
