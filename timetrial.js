@@ -42,7 +42,7 @@ function play() {
 
 let grid = new Matrix(2, 6);
 let lines = [];
-setup = function () {
+setupletters = function () {
     grid.values.forEach((row, y) => {
         row.forEach((col, x) => {
             let letter = genLetter();
@@ -299,4 +299,4 @@ loop = function (now) {
     }
 }
 
-setup();
+setupletters();
