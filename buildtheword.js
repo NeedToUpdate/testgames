@@ -154,7 +154,7 @@ let powers = ['iceball', 'electricball', 'magicball', 'fire', 'waterball', 'blac
 function generateObstacles(mode) {
     switch (mode) {
         case modes[0]:
-            let firenum = (Math.random() * (difficulty * 2 + 1) | 0) + 5;
+            let firenum = (Math.random() * (difficulty * 2 + 1) | 0) + 5 + (difficulty>2? 5 : 0);
             if (Math.random() < (0.4 + difficulty / 10)) {
                 monsters.push(new Character(width*Math.random(), 300, 'monster' + (Math.random() * 30 | 0)));
                 monsters[0].bounds.y = height - 150;
@@ -199,7 +199,7 @@ function generateObstacles(mode) {
             });
             break;
         case modes[1]:
-            let num = (Math.random() * (difficulty + 1.1) | 0) + 2;
+            let num = (Math.random()*2  | 0) + difficulty + 1 + (difficulty>2? 1 : 0);
 
             for (let i = 0; i < num; i++) {
 
@@ -227,7 +227,7 @@ function generateObstacles(mode) {
             break;
         case modes[2]:
 
-            let chasenum = (Math.random() * (difficulty * 3) | 0) + 4;
+            let chasenum = (Math.random() * (difficulty * 3) | 0) + 4 + (difficulty>2? 3 : 0);
             for (let i = 0; i < chasenum; i++) {
                 let xx = Math.random() * width*0.05 + (width*.8 / chasenum) * i + (Math.random() * 40 - 20);
                 let yy = Math.random() * 300;
