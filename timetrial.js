@@ -3,19 +3,14 @@ let chosen = words[Math.random() * words.length | 0];
 FPS = 30;
 let letters = chosen.split('');
 let colors = ['darkred', 'darkgreen', 'darkgoldenrod', 'purple', 'darkblue', 'darkorange', 'darkcyan', 'darkslategray' ]
-alphabet = 'abcdefghijklmnopqrstuvwxyz'
-extras = ['fire', 'stars']
+let extras = ['fire', 'stars']
 let LOADED_IMAGES = new ImageLoader('../images/', extras);
 
 let background = 'bg' + (Math.random() * 8 | 0).toString() + '.jpg';
 document.body.style.backgroundColor = 'grey'
 document.body.style.backgroundImage = 'url(../images/' + background.toString() + ')';
-document.body.style.backgroundSize = width + 'px auto';
 document.body.style.backgroundRepeat = 'no-repeat';
 let timep = id('time')
-let date = new Date();
-
-let starttime = 0;
 let timer = 10.00 + letters.length + (20.00-difficulty*10);
 id('time').innerText = timer.toPrecision(4);
 
@@ -37,22 +32,38 @@ id('jump').addEventListener('click', ()=>{
 });
 function play() {
     lasttime = window.performance.now()
-    start();
+    requestAnimationFrame(draw)
+    MAINLOOP = setInterval(loop, 100)
+    LOOPING = true;
 }
 
 let grid = new Matrix(2, 6);
 let lines = [];
-setupletters = function () {
+let gamearea = {}
+let setupletters = function () {
+    let w = 50; //line width
+    let space = 5; //space
+    let button_w = 80
+    let button_space = 10;
+    let y_calc = height * .35;
+    let num = letters.length;
+
+    gamearea = new Div(width/2-((button_w+button_space)*grid.cols/2) -15, pos2xy(0,0)[1] - button_space -15, 'blue', (button_w+button_space)*grid.cols +30, (button_w+button_space)*grid.rows +30, true )
+    gamearea.set('backgroundImage', 'linear-gradient(to top left, #59c173, #a17fe0, #5d26c1)');
+    gamearea.set('borderRadius', '20px');
+    gamearea.set('border', 'solid 3px white');
+    gamearea.set('boxShadow', 'rgba(255,255,255,0.5) 0px 0px 5px 5px')
+
     grid.values.forEach((row, y) => {
         row.forEach((col, x) => {
             let letter = genLetter();
             grid.values[y][x] = genButton(letter, x, y)
             if (letter === chosen[0]) {
-                grid.values[y][x].par.set('text-shadow', 'green 0px 0px 10px')
+                grid.values[y][x].par.set('text-shadow', '#0f0 0px 0px 10px')
                 grid.values[y][x].div.shape.addEventListener('click', () => {
                     if (!LOOPING) {
                         grid.map(x => {
-                            x.par.set('text-shadow', '')
+                            x.par.set('text-shadow', 'white 0px 0px 5px')
                             return x;
                         })
                         play();
@@ -62,10 +73,7 @@ setupletters = function () {
             }
         })
     });
-    let w = 50; //line width
-    let space = 5; //space width
-    let y_calc = height * .35;
-    let num = letters.length;
+
 
     let start_x = (width / 2) - (w + space) * num / 2;
     lines = letters.map((x, i) => {
@@ -135,8 +143,8 @@ function genButton(string, x, y) {
 
 function pos2xy(xpos, ypos) {
     let top = height * 0.4;
-    let left = width * 0.2;
-    return [left + 45 + xpos * 85, top + 30 + ypos * 85]
+    let left = width/2 - 85*grid.cols/2;
+    return [left  + xpos * 85, top + 30 + ypos * 85]
 }
 
 let final_word = ""
@@ -155,8 +163,6 @@ function replaceButton(pos, correct) {
                 let newbtn = genButton(genLetter(), pos[0], pos[1]);
                 if (grid.values[pos[1]][pos[0]].div) {
                     if (document.body.contains(grid.values[pos[1]][pos[0]].div.shape)) {
-                        console.log('hey', pos)
-
                         grid.values[pos[1]][pos[0]].div.remove();
                     }
                 }
@@ -205,7 +211,6 @@ function clickHandler(string, pos) {
             }, 700)
         }, 100)
     }
-    console.log(final_word)
     if (final_word === chosen) {
         win();
     }
@@ -224,7 +229,7 @@ function win() {
 function setAll(attr, val) {
     grid.map((x, i, j) => {
         if (!x) {
-            console.log(i, j, grid)
+         //   console.log(i, j, grid)
         }
         x.set(attr, val)
 
@@ -237,66 +242,46 @@ function setAllLetters(attr, val) {
         x.set(attr, val)
     })
 }
-let fakelag = 100;
 let lasttime = window.performance.now()
-loop = function (now) {
-    let dt = now-lasttime;
+let draw = function (now) {
     if(!winner){
         timer -= (now-lasttime)/1000;
         timer = timer.toPrecision(4)
         if (timer <= 0) {
+            timer = 0;
             id('timep').style.color = "red"
             setAll('border', 'red solid 5px')
             grid.map(x => {
                 x.kill()
                 return x;
-            })
-
+            });
             stop();
         }
         timep.innerText = timer;
-
     }
-    for(let i = 0; i<grid.values.length; i++){
-        for(let j = 0; j<grid.values[i].length; j++){
-            let x = grid.values[i][j]
-            x.update()
-            if (Math.random() < 0.002+difficulty*0.001) {
-                x.jump();
-            }
-            if (Math.random() < 0.002+difficulty*0.001 + (difficulty>1?0.5: 0)) {
-                if(difficulty>0){
-                    x.spinhalf();
-                }else{
-                    x.spin();
-                }
-
-            }
-        }
-    }
-    // grid.map(x => {
-    //     x.update(dt)
-    //     if (Math.random() < 0.002+difficulty*0.005) {
-    //         x.jump();
-    //     }
-    //     if (Math.random() < 0.002+difficulty*0.005) {
-    //         if(difficulty>0){
-    //             x.spinhalf();
-    //         }else{
-    //             x.spin();
-    //         }
-    //
-    //     }
-    //
-    //     return x;
-    // })
-
+    grid.map(x=>{
+        x.update();
+        return x;
+    })
     lasttime = now;
     if(LOOPING){
-            requestAnimationFrame(loop);
-
-
+            requestAnimationFrame(draw);
     }
 }
+loop = function(){
+    grid.map(x => {
+        if (Math.random() < 0.006+difficulty*0.003) {
+            x.jump();
+        }
+        if (Math.random() < 0.006+difficulty*0.003 + (difficulty>1?0.5: 0)) {
+            if(difficulty>0){
+                x.spinhalf();
+            }else{
+                x.spin();
+            }
 
+        }
+        return x;
+    })
+}
 setupletters();

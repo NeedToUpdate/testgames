@@ -1,5 +1,5 @@
 body{
-    backgroundSize: auto 100%;
+    background-size: cover;
 }
 .bluebtn {
     z-index: 100000;
@@ -148,9 +148,13 @@ p{
     }
 }
 @keyframes zoombg {
+    from{
+        background-position: 0 0;
+        background-size: 100vw 100vh;
+    }
    to{
-       background-position: -400px -80px;
-       background-size: 1400px auto;
+       background-position: -50vw -100vh;
+       background-size: 200vw 200vh;
    }
 }
 @keyframes fadeOut {
@@ -158,3 +162,8 @@ p{
         opacity: 0;
     }
 }
+
+@font-face {
+     font-family: 'quikhand';
+     src: url("./quikhand.ttf") format("truetype");
+ }

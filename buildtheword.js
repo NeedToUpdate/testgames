@@ -179,7 +179,7 @@ function generateObstacles(mode) {
 
             for (let i = 0; i < firenum; i++) {
                 let xx = Math.random() * width*0.05 + (width*.8 / firenum) * i + (Math.random() * 40 - 20);
-                let yy = Math.random() * 300;
+                let yy = Math.random() * height;
                 if (xx > width*.3 && xx < width*.7 && yy > height*.7) {
                     yy -= height*.4;
                 }
@@ -370,12 +370,11 @@ loop = function (now) {
                 })
                 lines.forEach(line => {
                     if (line.target === letter.string) {
-                        if (line.a.copy().add(new Vector(line.length/2, line.length/-2)).dist(new Vector(x, y)) < line.length/3) {
-                            jlog(line)
+                        if (line.a.copy().add(new Vector(line.length/2, line.length/-2)).dist(new Vector(x, y)) < line.length/4) {
                             letter.locked = true;
                             letter.set('color', 'green');
                             letter.set('z-index', 0);
-                            letter.set('top',line.a.y -sh.offsetHeight + 5+'px')
+                            letter.set('top',line.a.y -sh.offsetHeight*0.8+'px')
                             letter.set('left',line.a.x + line.length/2 - sh.offsetWidth/2+ 'px')
                             letter.dragging = false;
                             line.target += 'done';

@@ -17,7 +17,6 @@ function getAllLetters(arrayofwords) {
 function getLetterCount(arrayofwords) {
     let obj = {};
     let array = arrayofwords.join().replace(/[,|\s]/gi, '').split('');
-    console.log(array)
     array.forEach(x => {
         if (Object(obj).hasOwnProperty(x)) {
             obj[x] += 1;
@@ -29,18 +28,14 @@ function getLetterCount(arrayofwords) {
 }
 
 function findClosestSquare(num) {
-
     let sqrt = Math.sqrt(num);
     if (difficulty === 0 && sqrt > 3) {
         sqrt = 3;
-
     } else if (difficulty === 1 && sqrt > 4) {
         sqrt = 4;
-
     } else {
         if (sqrt === Math.floor(sqrt)) return [sqrt, sqrt, 0];
     }
-
     let h = Math.floor(sqrt);
     let w = Math.ceil(sqrt);
     if (Math.abs(w * h - num) > Math.abs((h ** 2) - num)) return [h, h, (h ** 2) - num];
@@ -60,9 +55,8 @@ function ind2xy(index) {
     let left = width * (0.30 + dim[0] * 0.055);
     let y = index % stack;
     let x = index / stack | 0;
-    console.log(x, y);
     let longest = 0;
-    for (let i = x; i > 0; i--) {
+    for (let i = x; i > 0; i--) { //get the longest word in the previous coloums and get the offsetLeft
         let last4 = wordarchive.slice((i - 1) * stack);
         let word = last4.reduce((a, b) => {
             if (a.shape.offsetWidth > b.shape.offsetWidth) {
@@ -71,11 +65,9 @@ function ind2xy(index) {
                 return b;
             }
         });
-        // let word = wordarchive[(i-1)*stack+y]
+        // let word = wordarchive[(i-1)*stack+y] //just get the word to the left
         longest += word.shape.offsetWidth + 10;
-        console.log(longest)
     }
-
     return [left + longest, top + y * 50]
 }
 
@@ -85,13 +77,11 @@ let mistakes = 0;
 let wordarchive = [];
 
 function clickHandler(string) {
-    console.log(typedword + ' + ' + string);
     if (currentWords.length < 1) {
         //if its a new word
         words.forEach(word => {
             if (word.startsWith(string)) {
                 currentWords.push(word);
-
             }
         });
         if (currentWords.length > 0) {
@@ -101,6 +91,7 @@ function clickHandler(string) {
             let newword = new P(string, xy[0], xy[1]);
             newword.set('font-size', '3em');
             newword.set('textShadow', 'blue 1px 1px 2px');
+            newword.set('fontFamily', 'quikhand')
             newword.set('color', 'darkblue');
             newword.set('weight', 'bolder');
             wordarchive.push(newword)
@@ -109,7 +100,6 @@ function clickHandler(string) {
             keypad.set('boxShadow', 'red 0px 0px 5px 5px')
             setTimeout(reset, 500);
         }
-        console.log(currentWords)
     } else {
         let spaced = undefined;
         if (currentWords.filter(word => word.replace(typedword, '').startsWith(' ')).length === 1) {
@@ -125,12 +115,9 @@ function clickHandler(string) {
                 }
             }
         );
-        console.log(tempwords);
         if (tempwords.length < 1) {
             mistakes++
-            console.log(mistakes + 'errors');
             if (mistakes > 2) {
-                console.log("BWAP BWAP"); //handle reset here
                 let l = lights[mistakes - 1];
                 l.set('backgroundImage', 'radial-gradient(#f00 0%, #b00 100%)');
                 l.set('boxShadow', 'rgba(255,0,0,0.3) 0px 0px 2px 2px')
@@ -205,12 +192,8 @@ function correctword() {
 }
 
 let chars = [];
-let shotout = false;
 
 function animatewin() {
-    if (!shotout) {
-
-    }
     chars.forEach(x => {
         x.update()
     })
@@ -236,7 +219,6 @@ function win() {
                                     requestAnimationFrame(() => {
 
                                         chars.push(char);
-                                        console.log(charnum)
                                         if (charnum === chars.length) {
 
                                             chars.forEach(char => {
@@ -295,7 +277,6 @@ async function cleanupkeypad() {
 function setAll(attr, val) {
     lettersM.map((x, i, j) => {
         if (!x) {
-            console.log(i, j, grid)
         }
         x.set(attr, val)
         return x;
@@ -325,13 +306,11 @@ function setupkeypad() {
                     }
                 });
                 let unusedwords = words.filter(x => x.match(rareLetter));
-                console.log(rareLetter, unusedwords)
                 unusedwords.forEach(word => {
                     words.splice(words.indexOf(word), 1);
                 });
                 allLetters.splice(allLetters.indexOf(rareLetter), 1);
                 delete letterCount[rareLetter];
-                console.log(rareLetter);
             }
         } else if (dim[2] > 0) {
             for (let i = dim[2]; i > 0; i--) {
@@ -339,7 +318,6 @@ function setupkeypad() {
                 let addletter = shuffle(remainingletters)[0];
                 allLetters.push(addletter);
                 letterCount[addletter] = 1;
-                console.log(addletter)
             }
         }
     }
@@ -370,6 +348,9 @@ function setupkeypad() {
         let p = new StaticGameButton(allLetters[i * dim[1] + j], xx, yy);
         p.set('width', size + 'px');
         p.set('height', size + 'px');
+        p.set('backgroundImage', 'linear-gradient(to bottom right, ' +
+            '#eee 0%, #e1e1e1 10%, #ddd 14%, #fff 30%, #ddd 60%, #eee 85%, #ccc 100%' +
+            ')')
         p.par.set('font-size', '3em');
         p.par.set('backgroundColor', getRandom(colors))
         return p;
@@ -380,7 +361,6 @@ function setupkeypad() {
 let background = 'background12.jpg';
 document.body.style.backgroundColor = 'grey';
 document.body.style.backgroundImage = 'url(../images/' + background.toString() + ')';
-document.body.style.backgroundSize = width + 'px auto';
 document.body.style.backgroundRepeat = 'no-repeat';
 
 //words = ['singing','playing','barking','learning','watching','sleeping','drawing','doing','sitting','swimming','getting','running','stopping','putting','cutting','dancing','writing','coming','closing','riding','drixving'];
@@ -393,11 +373,12 @@ let extras = ['dynamiteball', 'fire', 'stars', 'brokenhole', 'safe'];
 LOADED_IMAGES = new ImageLoader('../images/', extras);
 
 function introMovie() {
-    let bank = new Img('../images/bank.png', 100, 50, 500);
+    let bank = new Img('../images/bank.png',width*.1, height-370, 500 );
     let burglars = [];
     for (let i = 0; i < 5; i++) {
-        let burglar = new Character(800 + (25 + (Math.random() * 10 | 0)) * i, height - 100, 'burglar');
-        burglar.bounds.y = height - 100;
+        let burglar = new Character(width*.8 + (25 + (Math.random() * 10 | 0)) * i,height - 50, 'burglar');
+        burglar.bounds.y = height - 50;
+        burglar.bounds.x = width;
         burglar.max_v = 10;
         burglar.powertype = 'dynamite';
         burglars.push(burglar);
@@ -466,7 +447,7 @@ function introMovie() {
     }
 
     let time = 0;
-    let empty = new Character(600, 300, 'empty');
+    let empty = new Character(width*0.1 + 450, height-60, 'empty');
     let movieending = false;
     let hole = {};
     let safe = {};
@@ -509,7 +490,7 @@ function introMovie() {
             })
             movieending = true;
             setTimeout(() => {
-                hole = new Img(LOADED_IMAGES.brokenhole, 450, 250, 100);
+                hole = new Img(LOADED_IMAGES.brokenhole,width*0.1 + 350, height-150, 100);
 
                 playending = true;
             }, 2000);
@@ -566,7 +547,6 @@ function introMovie() {
                         animateSafe();
                         setTimeout(() => {
                             safe.landing_emitter.subscribe('land', () => {
-                                console.log(safe)
                                 animatingSafe = false;
                                 hole.shape.style.animationName = 'fadeOut';
                                 bank.shape.style.animationName = 'fadeOut';
