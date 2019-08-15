@@ -182,7 +182,7 @@ function clickHandler(string, pos) {
         return
     }
     let currentLine = lines[final_word.length].line;
-    let temp_p = new P(string, currentLine.x, currentLine.y - 124, "white");
+    let temp_p = new P(string, currentLine.x, currentLine.y - 134, "white");
     temp_p.set('fontSize', '4em');
 
 
