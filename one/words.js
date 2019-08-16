@@ -10,6 +10,7 @@
 // 'stopping','putting','cutting','dancing','writing','coming','closing','riding','driving'];
 //let words = ['board game', 'book', 'boardroom'];
 // let words = ['language','feeling','speak','country','gesture','meaning','polite','rude','acceptable','body','smile','index'];
-let words = ['apple tree','hawk','mushroom','carrot','dragonfly','bamboo','cougar','bacteria','daffodil','pigeon','snake','catfish'];
-
+//let words = ['apple tree','hawk','mushroom','carrot','dragonfly','bamboo','cougar','bacteria','daffodil','pigeon','snake','catfish','producer','consumer','decomposer'];
+let words = ['bike','block','ball','kite','marble','basketball','skateboard','boat','plane','toy','doll',
+   'football','soccer ball','guitar','toy box'];
 let difficulty = 1; //0 easy 1 med 2 difficult
