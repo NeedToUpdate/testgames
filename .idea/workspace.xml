@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="817de73b-edce-4a56-b042-e65851df6ada" name="Default Changelist" comment="">
+
       <change afterPath="$PROJECT_DIR$/one/buildtheword[grammar].html" afterDir="false" />
+
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -106,13 +108,13 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="html" value="37" />
+          <entry key="html" value="57" />
           <entry key="js" value="1171" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="HTML" value="37" />
+          <entry key="HTML" value="57" />
           <entry key="JavaScript" value="1171" />
         </counts>
       </usages-collector>
@@ -184,6 +186,14 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/one/shoottheletters.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="272">
+              <caret line="16" column="113" lean-forward="true" selection-start-line="16" selection-start-column="113" selection-end-line="16" selection-end-column="113" />
+ </provider>
+        </entry>
+      </file>
+              <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/one/buildtheword[grammar].html">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="204">
@@ -197,6 +207,7 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="425">
               <caret line="25" column="9" lean-forward="true" selection-end-line="27" selection-end-column="7" />
+
             </state>
           </provider>
         </entry>
@@ -275,6 +286,7 @@
         <option value="$PROJECT_DIR$/three/words.js" />
         <option value="$PROJECT_DIR$/fightinggame.html" />
         <option value="$PROJECT_DIR$/lib/character.js" />
+        <option value="$PROJECT_DIR$/one/shoottheletters.html" />
         <option value="$PROJECT_DIR$/one/buildtheword[grammar].html" />
       </list>
     </option>
@@ -396,12 +408,12 @@
       <workItem from="1565752679327" duration="9359000" />
       <workItem from="1565857143421" duration="3173000" />
       <workItem from="1565943158077" duration="529000" />
-      <workItem from="1566009677668" duration="551000" />
+      <workItem from="1566009677668" duration="785000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="201954000" />
+    <option name="totallyTimeSpent" value="202153000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
@@ -682,6 +694,19 @@
         </state>
       </provider>
     </entry>
+           <entry file="file://$PROJECT_DIR$/one/openthesafe.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret selection-end-line="24" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/one/shoottheletters.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="16" column="113" lean-forward="true" selection-start-line="16" selection-start-column="113" selection-end-line="16" selection-end-column="113" />
+  </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/one/buildtheword.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="425">
@@ -693,6 +718,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="204">
           <caret line="12" column="75" selection-start-line="12" selection-start-column="75" selection-end-line="12" selection-end-column="75" />
+
         </state>
       </provider>
     </entry>
