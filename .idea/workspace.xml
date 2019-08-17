@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="817de73b-edce-4a56-b042-e65851df6ada" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/animals_wheel.html" beforeDir="false" afterPath="$PROJECT_DIR$/animals_wheel.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/one/words.js" beforeDir="false" afterPath="$PROJECT_DIR$/one/words.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/three/words.js" beforeDir="false" afterPath="$PROJECT_DIR$/three/words.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/two/words.js" beforeDir="false" afterPath="$PROJECT_DIR$/two/words.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fightinggame.html" beforeDir="false" afterPath="$PROJECT_DIR$/fightinggame.html" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -104,42 +100,43 @@
         <counts>
           <entry key="project.closed" value="1" />
           <entry key="project.open.time.1" value="2" />
-          <entry key="project.opened" value="2" />
+          <entry key="project.open.time.3" value="1" />
+          <entry key="project.opened" value="3" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="html" value="11" />
-          <entry key="js" value="1154" />
+          <entry key="html" value="37" />
+          <entry key="js" value="1171" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="HTML" value="11" />
-          <entry key="JavaScript" value="1154" />
+          <entry key="HTML" value="37" />
+          <entry key="JavaScript" value="1171" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="html" value="1" />
-          <entry key="js" value="5" />
+          <entry key="html" value="2" />
+          <entry key="js" value="6" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="HTML" value="1" />
-          <entry key="JavaScript" value="5" />
+          <entry key="HTML" value="2" />
+          <entry key="JavaScript" value="6" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
-    <leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/one/words.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
-              <caret line="14" column="48" lean-forward="true" selection-start-line="14" selection-start-column="48" selection-end-line="14" selection-end-column="48" />
+            <state relative-caret-position="34">
+              <caret line="14" column="48" selection-start-line="14" selection-start-column="48" selection-end-line="14" selection-end-column="48" />
               <folding>
                 <element signature="n#!!doc" expanded="true" />
               </folding>
@@ -150,8 +147,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/two/words.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
-              <caret line="6" column="46" lean-forward="true" selection-start-line="6" selection-start-column="46" selection-end-line="6" selection-end-column="46" />
+            <state relative-caret-position="34">
+              <caret line="6" column="46" selection-start-line="6" selection-start-column="46" selection-end-line="6" selection-end-column="46" />
               <folding>
                 <element signature="n#!!doc" expanded="true" />
               </folding>
@@ -159,11 +156,29 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/three/words.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
-              <caret line="1" column="140" selection-start-line="1" selection-start-column="140" selection-end-line="1" selection-end-column="140" />
+            <state relative-caret-position="34">
+              <caret line="2" column="4" lean-forward="true" selection-start-line="2" selection-start-column="4" selection-end-line="2" selection-end-column="4" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/fightinggame.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="123">
+              <caret line="171" column="34" selection-start-line="171" selection-start-column="34" selection-end-line="171" selection-end-column="34" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/lib/character.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="222">
+              <caret line="236" column="30" selection-start-line="236" selection-start-column="30" selection-end-line="236" selection-end-column="30" />
             </state>
           </provider>
         </entry>
@@ -212,7 +227,6 @@
         <option value="$PROJECT_DIR$/three/buildtheword.html" />
         <option value="$PROJECT_DIR$/four/buildtheword.html" />
         <option value="$PROJECT_DIR$/lib/div.js" />
-        <option value="$PROJECT_DIR$/fightinggame.html" />
         <option value="$PROJECT_DIR$/sharkgametool.html" />
         <option value="$PROJECT_DIR$/characters.html" />
         <option value="$PROJECT_DIR$/openthesafe.html" />
@@ -227,12 +241,13 @@
         <option value="$PROJECT_DIR$/wheel.css" />
         <option value="$PROJECT_DIR$/openthesafe.js" />
         <option value="$PROJECT_DIR$/buildtheword.js" />
-        <option value="$PROJECT_DIR$/lib/character.js" />
         <option value="$PROJECT_DIR$/timetrial.js" />
         <option value="$PROJECT_DIR$/animals_wheel.html" />
         <option value="$PROJECT_DIR$/one/words.js" />
         <option value="$PROJECT_DIR$/two/words.js" />
         <option value="$PROJECT_DIR$/three/words.js" />
+        <option value="$PROJECT_DIR$/fightinggame.html" />
+        <option value="$PROJECT_DIR$/lib/character.js" />
       </list>
     </option>
   </component>
@@ -254,6 +269,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -265,6 +281,11 @@
               <item name="testgames" type="b2602c69:ProjectViewProjectNode" />
               <item name="testgames" type="462c0819:PsiDirectoryNode" />
               <item name="four" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="testgames" type="b2602c69:ProjectViewProjectNode" />
+              <item name="testgames" type="462c0819:PsiDirectoryNode" />
+              <item name="lib" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="testgames" type="b2602c69:ProjectViewProjectNode" />
@@ -285,7 +306,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -353,11 +373,12 @@
       <workItem from="1565752679327" duration="9359000" />
       <workItem from="1565857143421" duration="3173000" />
       <workItem from="1565943158077" duration="529000" />
+      <workItem from="1566009677668" duration="551000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="201368000" />
+    <option name="totallyTimeSpent" value="201919000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
@@ -475,13 +496,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/timetrial.html" />
-    <entry file="file://$PROJECT_DIR$/fightinggame.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2482">
-          <caret line="233" column="73" selection-start-line="233" selection-start-column="73" selection-end-line="233" selection-end-column="73" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/one/buildtheword.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="204">
@@ -597,13 +611,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/character.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="222">
-          <caret line="129" column="27" lean-forward="true" selection-start-line="129" selection-start-column="27" selection-end-line="129" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/timetrial.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="158">
@@ -620,8 +627,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/one/words.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="14" column="48" lean-forward="true" selection-start-line="14" selection-start-column="48" selection-end-line="14" selection-end-column="48" />
+        <state relative-caret-position="34">
+          <caret line="14" column="48" selection-start-line="14" selection-start-column="48" selection-end-line="14" selection-end-column="48" />
           <folding>
             <element signature="n#!!doc" expanded="true" />
           </folding>
@@ -630,8 +637,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/two/words.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="6" column="46" lean-forward="true" selection-start-line="6" selection-start-column="46" selection-end-line="6" selection-end-column="46" />
+        <state relative-caret-position="34">
+          <caret line="6" column="46" selection-start-line="6" selection-start-column="46" selection-end-line="6" selection-end-column="46" />
           <folding>
             <element signature="n#!!doc" expanded="true" />
           </folding>
@@ -640,8 +647,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/three/words.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" column="140" selection-start-line="1" selection-start-column="140" selection-end-line="1" selection-end-column="140" />
+        <state relative-caret-position="34">
+          <caret line="2" column="4" lean-forward="true" selection-start-line="2" selection-start-column="4" selection-end-line="2" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fightinggame.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="123">
+          <caret line="171" column="34" selection-start-line="171" selection-start-column="34" selection-end-line="171" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/character.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="222">
+          <caret line="236" column="30" selection-start-line="236" selection-start-column="30" selection-end-line="236" selection-end-column="30" />
         </state>
       </provider>
     </entry>

@@ -168,13 +168,9 @@
     let hopstop = false;
     let loog = false;
     loop = function (now) {
-        let dt = now-LAST_TIME;
-        if(loog){
-            console.log(dt)
-            loog = false;
-        }
-        player.update(dt);
-        monster.update(dt);
+        player.update();
+        console.log(monster.dead);
+        monster.update();
         if(player.extras.attack && player.extras.attack.rect.d){
 
             if(player.extras.attack.rect.d.x > monster.rect.a.x && player.extras.attack.rect.d.y < monster.rect.b.y && !monster.shielded){
