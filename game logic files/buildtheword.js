@@ -405,6 +405,7 @@ id('jmpleft').addEventListener('click',()=>{
      }
    
 })
+
 id('jump').addEventListener('click',()=>{
     if(loaded){
     cleanup(modes[chosen_mode])

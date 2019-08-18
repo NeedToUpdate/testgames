@@ -4,5 +4,6 @@
 // let words = ['sliding','swinging','riding','hiding','skating','jumping','climbing','flying','throwing','singing','kicking'];
 // let words = ['autumn','crops','fruits','vegetables','farmer','festival','parade','dragon','mooncake','celebrate','mid fall','harvest']
 // let words = ['germs','microscope','flashlight','infection','disease','medicine','vaccine','sick','sore throat','stomach ache','defense'];
-let words = ['stress','cope','reward','offline','exercise','manage','relax','challenge','overcome','difficulty','strategy','confident','exam','breathe']
+//let words = ['stress','cope','reward','offline','exercise','manage','relax','challenge','overcome','difficulty','strategy','confident','exam','breathe']
+let words = ['happy','sad','nervous','relaxed','axcited','energetic','tired','confused','scared','curious','bored','hungry','sleepy','angry','surprised','confident'];
 let difficulty = 2; //0 easy 1 med 2 difficult

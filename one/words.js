@@ -6,12 +6,14 @@
 //let words = ['history','study','place','people','question','answer','internet','object','museum','past','present','future']
 //let words = ['kick a ball','catch a ball','sing songs','dance','ride a bike','jump rope','throw a ball','fly a kite','skate']
 //let words = ['dictionary', 'excellent'];
-let words = ['apple','coconut','pomelo','lemon','pineapple','orange','mango','grapes','watermelon','kiwifruit','cherry', 'durian'
-,'eggplant','mushroom','strawberry','cauliflower','carrot','tomato','lettuce','potato','onion','pineapple','corn','pumpkin'];
+// let words = ['apple','coconut','pomelo','lemon','pineapple','orange','mango','grapes','watermelon','kiwifruit','cherry', 'durian'
+// ,'eggplant','mushroom','strawberry','cauliflower','carrot','tomato','lettuce','potato','onion','corn','pumpkin'];
 // 'stopping','putting','cutting','dancing','writing','coming','closing','riding','driving'];
 //let words = ['board game', 'book', 'boardroom'];
 // let words = ['language','feeling','speak','country','gesture','meaning','polite','rude','acceptable','body','smile','index'];
 //let words = ['apple tree','hawk','mushroom','carrot','dragonfly','bamboo','cougar','bacteria','daffodil','pigeon','snake','catfish','producer','consumer','decomposer'];
 // let words = ['bike','block','ball','kite','marble','basketball','skateboard','boat','plane','toy','doll',
 //    'football','soccer ball','guitar','toy box'];
+let words = ['dream','travel','adventure','kilometer','camp','outdoors','cycle','baggage','traveller','journey','road','desert','rain forest','mountain'];
 let difficulty = 1; //0 easy 1 med 2 difficult
+let sentences = words.map(x=>'the word is ' +x);

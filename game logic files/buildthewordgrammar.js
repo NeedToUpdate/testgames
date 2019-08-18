@@ -1,13 +1,13 @@
-
-let sentences = words.map(x=>{
-    if(x.match(/^[a|e|i|o|u]/)){
-        return "I have an " + x;
-    }else if(x.match(/[s]$/)){
-        return "I have " + x;
-    }else{
-        return "I have a " + x;
-    }
-});
+//
+// sentences = words.map(x=>{
+//     if(x.match(/^[a|e|i|o|u]/)){
+//         return "I have an " + x;
+//     }else if(x.match(/[s]$/)){
+//         return "I have " + x;
+//     }else{
+//         return "I have a " + x;
+//     }
+// });
 
 
 extras = ['fire']
@@ -364,28 +364,27 @@ loop = function (now) {
                 let sh = letter.shape
                 let x = parseInt(sh.offsetLeft + sh.offsetWidth / 2)
                 let y = parseInt(sh.offsetTop + sh.offsetHeight / 2)
-                let l_v = new Vector(x, y);
 
                 fires.forEach(fire => {
                     let fire_y = fire.p.y + fire.h / 2;
                     let fire_x = fire.p.x + fire.w / 2;
                     let f_v = new Vector(fire_x, fire_y);
 
-                    if (l_v.dist(f_v) < fire.h / 2) {
+                    if (Math.abs(x-fire_x)<sh.offsetWidth/2 && Math.abs(y-fire_y)<sh.offsetHeight/2) {
                         reset(letter)
                     }
                 });
                 monsters.forEach(monster => {
                     let monster_y = monster.p.y + monster.h / 2;
                     let monster_x = monster.p.x + monster.w / 2;
-                    if (Math.sqrt((monster_x - x) ** 2 + (monster_y - y) ** 2) < 90) {
+                    if (Math.abs(x-monster_x)<sh.offsetWidth/2 && Math.abs(y-monster_y)<(sh.offsetHeight/2 + monster.sprite.shape.offsetHeight/3)) {
                         reset(letter)
                     }
 
                 })
                 lines.forEach(line => {
                     if (line.target === letter.string) {
-                        if (line.a.copy().add(new Vector(line.length/2, sh.offsetHeight/-4)).dist(new Vector(x, y)) < sh.offsetHeight/2) {
+                        if (line.a.copy().add(new Vector(line.length/2, sh.offsetHeight/-4)).dist(new Vector(x, y)) < sh.offsetHeight/4) {
                             letter.locked = true;
                             letter.set('color', 'green');
                             letter.set('z-index', 0);
