@@ -27,20 +27,7 @@
 <button id="playpause" class="bluebtn">paused</button>
 <img src="./images/whitesquare.png" style="position: absolute;top: 0; left: 0; z-index: 9999; width: 50px;">
 <script>
-    class ErrorHandler {
-        constructor(error) {
-            this.err = error;
-            this.error = this.err;
-            this.log();
-            this.stopLoop();
-        }
-        log() {
-            console.error(this.err);
-        }
-        stopLoop() {
-            stop();
-        }
-    }
+
 
 
 
@@ -103,7 +90,7 @@
         monster.noskybox = true;
         monster.addSprite(new Img("./images/" + monster.name + ".png", 125, 100, 400));
         monster.jump_multiplier = 0.5;
-        monster.isjumping = true;
+        monster.jumping = true;
         monster.landing_emitter.subscribe('land',()=>{
             monster.faceleft();
         })

@@ -14,6 +14,7 @@
 //let words = ['apple tree','hawk','mushroom','carrot','dragonfly','bamboo','cougar','bacteria','daffodil','pigeon','snake','catfish','producer','consumer','decomposer'];
 // let words = ['bike','block','ball','kite','marble','basketball','skateboard','boat','plane','toy','doll',
 //    'football','soccer ball','guitar','toy box'];
-let words = ['dream','travel','adventure','kilometer','camp','outdoors','cycle','baggage','traveller','journey','road','desert','rain forest','mountain'];
+// let words = ['dream','travel','adventure','kilometer','camp','outdoors','cycle','baggage','traveller','journey','road','desert','rain forest','mountain'];
+let words = ['apple','banana','grape','broccoli','cabbage','bread','rice','cereal','pasta','milk','cheese','meat','chicken','egg'];
 let difficulty = 1; //0 easy 1 med 2 difficult
 let sentences = words.map(x=>'the word is ' +x);
