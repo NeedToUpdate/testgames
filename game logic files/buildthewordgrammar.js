@@ -9,6 +9,32 @@
 //     }
 // });
 
+let places = ['fridge','kitchen','park','shop','garden','bottle','kettle','bag','bedroom']
+let sentences = words.map(x=>{
+    let sent = 'there ';
+    if(x.endsWith('s')){
+        sent += 'are ';
+    }else{
+        sent += 'is ';
+    }
+    sent += 'some ' + x;
+    sent += ' in the ' + getRandom(places);
+    return sent;
+});
+
+sentences = sentences.concat(words.map(x=>{
+
+    let sent = '';
+    if(x.endsWith('s')){
+        sent += 'are ';
+    }else{
+        sent += 'is ';
+    }
+    sent += 'there ';
+    sent += 'any ' + x;
+    sent += ' in the ' + getRandom(places);
+    return sent;
+}));
 
 extras = ['fire']
 let LOADED_IMAGES = new ImageLoader('../images/', extras);
@@ -39,7 +65,7 @@ let promises = letters.map((letter, i) => {
                 par = new P(letter, Math.random() * (width - 100), Math.random() * 100);
                 par.set('color', 'white');
                 par.set('text-shadow', 'black 2px 2px 2px')
-                par.set('font-size',( width<400? 3: 5 )+'em');
+                par.set('font-size',( width<400? 2: 3 )+'em');
                 par.set('z-index', 5);
                 par.set('padding',0)
                 par.set('margin',0)

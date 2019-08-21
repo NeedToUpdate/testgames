@@ -6,9 +6,10 @@ let city = new Img('../images/city.png', 0, 0, width);
 //creates empty array, maps it to 0-n, shuffles it, maps again to have x be a random int from 0 to n
 let buildings = shuffle(Array(6).fill('').map((x, i) => i)).map((x, i) => {
     let img = new Img('../images/buildings/skyscraper' + x + '.png', 50 + (width / 7) * i + getRandom(-40, 40), 'bottom', 50,);
-    // img.onload = ()=>{
-    //     img.mod('top', getRandom(-50,-70))
-    // };
+    img.onload = ()=>{
+        let v = img.vector;
+        new Div(v.x,v.y,'white',5)
+    };
     return img
 });
 let invadercolors = ['red', 'green', 'purple', 'blue', 'pink', 'white', 'yellow', 'orange'];
@@ -17,11 +18,22 @@ let invaders = invadercolors.map((x, i) => {
     return img
 });
 
-function flyto(vec) {
-
-}
-
-
+let testalien = new Flyer(100,100,'invadergreen');
+testalien.addSprite(invaders[1]);
+invaders[1].shape.addEventListener('click',()=>{
+    testalien.flyto(new Vector(targets[0].x,targets[0].y))
+})
+let eventem = new EventEmitter();
+let sub = testalien.landing_emitter.subscribe('flyto', ()=>{
+   testalien.extras.pickup = new PowerBall(testalien.p.x,testalien.p.y,'word');
+   testalien.extras.pickup.addSprite(targets[0]);
+   if(!testalien.flyingwithword){
+       testalien.flyingwithword = true;
+       let bld = getRandom(buildings);
+       testalien.flyto(bld.vector.copy());
+   }
+   sub();
+});
 let extras = ['bullet'];
 let LOADED_IMAGES = new ImageLoader('../images/projectiles/', extras);
 gun.shape.addEventListener('click', () => {
@@ -117,6 +129,7 @@ function shoot() {
 }
 
 loop = function () {
+    testalien.update();
     for (let i = bullets.length - 1; i >= 0; i--) {
         if (bullets[i].dead) {
             bullets.splice(i, 1);
