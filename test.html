@@ -1,0 +1,50 @@
+<html>
+
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
+    <script language="javascript" src="./lib/two.js"></script>
+    <script language="javascript" src="./lib/vector.js"></script>
+    <script language="javascript" src="./lib/matrix.js"></script>
+    <script language="javascript" src="./lib/drawbase.js"></script>
+    <script language="javascript" src="./lib/character.js"></script>
+    <script language="javascript" src="./lib/div.js"></script>
+    <script language="javascript" src="./lib/rect.js"></script>
+    <script language="javascript" src="./lib/eventemitter.js"></script>
+    <title>Artem's Testing</title>
+    <link rel="stylesheet" href="./wheel.css">
+</head>
+
+<body>
+<script>
+
+let div = new Div(50,50,'black',50,50,true);
+let char = new Flyer(50,50,'div');
+char.addSprite(div)
+
+let div2 = new Div(150,150,'darkgreen',50,50,true);
+div2.rect = new Rect(150,150,50,50,true);
+char.landing_emitter.subscribe('flyto',()=>{
+    console.log(char.p.x,char.p.y)
+})
+document.addEventListener('click', ev=>{
+    char.flyto(new Vector(ev.clientX, ev.clientY))
+})
+
+loop = function(){
+    char.update();
+    requestAnimationFrame(loop)
+    if(Object.keys(char.rect)>0 && char.rect.contains(div2.rect)){
+        div.set('border', 'red solid 1px')
+        console.log(true)
+    }else{
+        div.set('border', 'black solid 1px')
+    }
+};
+loop()
+
+
+
+</script>
+
+</body>
+</html>

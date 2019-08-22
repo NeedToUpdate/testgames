@@ -9,7 +9,7 @@
 //     }
 // });
 
-let places = ['fridge','kitchen','park','shop','garden','bottle','kettle','bag','bedroom']
+let places = ['fridge','kitchen','park','shop','garden','bottle','kettle','bag','bedroom'];
 let sentences = words.map(x=>{
     let sent = 'there ';
     if(x.endsWith('s')){
@@ -408,7 +408,7 @@ loop = function (now) {
                     }
 
                 })
-                lines.forEach(line => {
+                lines.forEach((line,index) => {
                     if (line.target === letter.string) {
                         if (line.a.copy().add(new Vector(line.length/2, sh.offsetHeight/-4)).dist(new Vector(x, y)) < sh.offsetHeight/4) {
                             letter.locked = true;
@@ -416,6 +416,10 @@ loop = function (now) {
                             letter.set('z-index', 0);
                             letter.set('top',line.a.y -sh.offsetHeight*0.8+'px')
                             letter.set('left',line.a.x + line.length/2 - sh.offsetWidth/2+ 'px')
+                            if(index===0){
+                                letter.shape.textContent = letter.shape.textContent[0].toUpperCase() + letter.shape.textContent.slice(1)
+                                letter.mod('left', -5)
+                            }
                             letter.dragging = false;
                             line.target += 'done';
                         }

@@ -1,3 +1,6 @@
+let sentences = words.map(x=>'the word is '+x);
+
+
 let gun = new Img('../images/gun.png', width / 2 - 50, height - 100, 100, true, 270);
 gun.set('zIndex', 100000)
 document.body.style.backgroundImage = 'url(../images/bg0.jpg)';
@@ -17,30 +20,35 @@ let invaders = invadercolors.map((x, i) => {
     let img = new Img('../images/invaders/invader' + x + '.png', 0, 0, 50);
     return img
 });
+let aliens = [];
 
-let testalien = new Flyer(100,100,'invadergreen');
-testalien.addSprite(invaders[1]);
-invaders[1].shape.addEventListener('click',()=>{
-    testalien.flyto(new Vector(targets[0].x,targets[0].y))
-})
-let eventem = new EventEmitter();
-let sub = testalien.landing_emitter.subscribe('flyto', ()=>{
-   testalien.extras.pickup = new PowerBall(testalien.p.x,testalien.p.y,'word');
-   testalien.extras.pickup.addSprite(targets[0]);
-   if(!testalien.flyingwithword){
-       testalien.flyingwithword = true;
-       let bld = getRandom(buildings);
-       testalien.flyto(bld.vector.copy());
-   }
-   sub();
-});
-let extras = ['bullet'];
+let aliendeathimg = new ImageLoader('../images/', ['electricball']);
+for(let i = 0; i<4 ;i++){
+    let alien = new Flyer(10,100,'invader' + getRandom(invadercolors));
+    alien.addSprite(invaders[i]);
+    alien.addDeathImage(aliendeathimg.electricball)
+    alien.sprite.shape.addEventListener('click',()=>{
+        aliens.forEach((alien,i)=>{
+            alien.flyto(new Vector(allwords[i].x,allwords[i].y)).done(x=>{
+                alien.extras.pickup = new PowerBall(alien.p.x,alien.p.y,'word');
+                alien.extras.pickup.addSprite(allwords[i]);
+                let bld = buildings[i];
+                alien.flyto(bld.vector.copy()).done(x=>{
+                    alien.hover()
+                });
+            })
+        })
+    });
+    aliens.push(alien)
+}
+
+let extras = ['bullet', 'fire'];
 let LOADED_IMAGES = new ImageLoader('../images/projectiles/', extras);
 gun.shape.addEventListener('click', () => {
     shoot();
 });
 let dragging = false;
-let startpos = {x: 0, y: 0}
+let startpos = {x: 0, y: 0};
 
 function dragStart(ev) {
     dragging = true;
@@ -57,12 +65,22 @@ function drag(ev) {
     function right() {
         if (gun.angle < 360) {
             gun.mod('rotate', 2)
+            if(gun.angle<=270){
+                gun.shape.style.transform += ' scaleY(-1)'
+            }else {
+                gun.shape.style.transform += ''
+            }
         }
     }
 
     function left() {
         if (gun.angle > 180) {
             gun.mod('rotate', -2)
+            if(gun.angle<=270){
+                gun.shape.style.transform += ' scaleY(-1)'
+            }else {
+                gun.shape.style.transform += ''
+            }
         }
     }
 
@@ -72,19 +90,7 @@ function drag(ev) {
         } else if (startpos.x - ev.clientX > 3) {
             left()
         }
-        // if(ev.clientX > width/2){
-        //     if(startpos.y-ev.clientY < -10){
-        //         right()
-        //     }else if (startpos.y-ev.clientY > 10){
-        //         left()
-        //     }
-        // }else{
-        //     if(startpos.y-ev.clientY < -10){
-        //         left()
-        //     }else if (startpos.y-ev.clientY > 10){
-        //         right()
-        //     }
-        // }
+
     }
     startpos.x = ev.clientX;
 }
@@ -129,23 +135,31 @@ function shoot() {
 }
 
 loop = function () {
-    testalien.update();
-    for (let i = bullets.length - 1; i >= 0; i--) {
-        if (bullets[i].dead) {
-            bullets.splice(i, 1);
+
+    for (let i = aliens.length - 1; i >= 0; i--) {
+        aliens[i].update();
+        if (aliens[i].dead) {
+            aliens.splice(i, 1)
             continue;
         }
 
-        bullets[i].update();
-        for (let j = targets.length - 1; j >= 0; j--) {
-            if (targets[j].rect.contains(bullets[i].p) && !bullets[i].dead) {
-                targets[j].remove();
-                targets[j].rect.destroy()
-                targets.splice(j, 1)
-                bullets[i].kill();
-                setup()
+
+        for (let j = bullets.length - 1; j >= 0; j--) {
+            bullets[j].update();
+            if (bullets[j].dead) {
+                bullets.splice(j, 1);
+                continue;
+            }
+            if (!bullets[j].dead && aliens[i].rect.contains(bullets[j].rect)) {
+                aliens[i].kill();
+                bullets[j].kill();
+                let n = allwords.indexOf(aliens[i].extras.pickup.sprite)
+                console.log(n)
             }
 
+        }
+        if(aliens.length === 0){
+            setup()
         }
     }
     if (LOOPING) {
@@ -154,16 +168,21 @@ loop = function () {
 
 };
 
-let targets = [];
+let allwords = [];
 
 function setup() {
-    let word = getRandom(words);
+    let chosensentence = getRandom(sentences);
+    chosensentence.split(' ').forEach((word,i)=>{
+        let p = new P(word, 0, 50);
+        let leftoffset = allwords.reduce((tot,item)=>tot+= item.shape.offsetWidth + 10,width*0.2);
+        console.log(leftoffset)
+        p.set('left', leftoffset + 'px')
+        p.set('margin', 0)
+        p.set('fontSize', '2em')
+        p.rect = new Rect(p.x, p.y, p.shape.offsetWidth, p.shape.offsetHeight);
+        allwords.push(p);
+    })
 
-    let p = new P(word, getRandom(width), getRandom(height - 200))
-    p.set('margin', 0)
-    p.set('fontSize', '2em')
-    p.rect = new Rect(p.x, p.y, p.shape.offsetWidth, p.shape.offsetHeight);
-    targets.push(p);
 }
 
 
