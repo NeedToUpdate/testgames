@@ -17,28 +17,64 @@
 <body>
 <script>
 
-let div = new Div(50,50,'black',50,50,true);
-let char = new Flyer(50,50,'div');
-char.addSprite(div)
+let bw = 100;
+let iw = 50
+let bp = {x:width/2 - bw/2, y:height/2 -bw/2}
+let xx =bp.x + bw/2 - iw/2
+let yy = bp.y + bw/2 - iw/2
+let pos = {
+    on: {x: xx,y:bp.y - iw},
+    under: {x: xx,y:bp.y + bw },
+    above: {x: xx,y:bp.y - iw*2},
+    inside: {x: xx,y:yy, extra:'zIndex 0'},
+    behind: {x: xx + bw/2,y:yy, extra:'zIndex 0'},
+    beside: {x: bp.x-iw,y:yy},
+    front: {x: xx,y:yy, extra:'zIndex 1000'},
+    between: {x: xx + iw*2,y:yy},
+    below: {x: xx,y:bp.y+bw+iw},
 
-let div2 = new Div(150,150,'darkgreen',50,50,true);
-div2.rect = new Rect(150,150,50,50,true);
-char.landing_emitter.subscribe('flyto',()=>{
-    console.log(char.p.x,char.p.y)
-})
+}
+
+
+
+let div = new Img('./images/thanos.png',50,50,iw)
+let character = new Flyer(50,50,'div');
+character.addSprite(div)
+
+let box = new Div(bp.x,bp.y,'darkgreen',bw,bw,true);
+box.set("backgroundColor", "brown")
+box.rect = new Rect(bp.x,bp.y,bw,bw,true);
 document.addEventListener('click', ev=>{
-    char.flyto(new Vector(ev.clientX, ev.clientY))
+    character.flyto(new Vector(ev.clientX, ev.clientY)).done(x=>{
+        jlog(x)
+    })
 })
+
+Object.keys(pos).forEach((key,i)=>{
+    let div = new Div(10+30*i,10,'black',20,20,true)
+    div.shape.setAttribute('class','bluebtn')
+    let t = document.createTextNode(key.slice(0,2))
+    div.shape.appendChild(t)
+    div.shape.addEventListener('click',()=>{
+        character.flyto(new Vector(pos[key]))
+        if(pos[key].extra){
+        let inst = pos[key].extra.split(' ')
+        character.sprite.set(inst[0],inst[1])
+        console.log(character.sprite.shape.style[inst[0]])
+        }
+    })
+})
+
 
 loop = function(){
-    char.update();
-    requestAnimationFrame(loop)
-    if(Object.keys(char.rect)>0 && char.rect.contains(div2.rect)){
+    character.update();
+    if(Object.keys(character.rect).length>0 && character.rect.contains(box.rect)){
         div.set('border', 'red solid 1px')
-        console.log(true)
     }else{
         div.set('border', 'black solid 1px')
     }
+    requestAnimationFrame(loop)
+    
 };
 loop()
 
