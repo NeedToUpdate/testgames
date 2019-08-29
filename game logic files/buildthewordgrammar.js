@@ -1,57 +1,6 @@
-//
-// sentences = words.map(x=>{
-//     if(x.match(/^[a|e|i|o|u]/)){
-//         return "I have an " + x;
-//     }else if(x.match(/[s]$/)){
-//         return "I have " + x;
-//     }else{
-//         return "I have a " + x;
-//     }
-// });
 
-let places = ['fridge','kitchen','park','shop','garden','bottle','kettle','bag','bedroom'];
-// // let sentences = ['i want a toy car','what do you want','what does she want','she wants a doll','he wants a football','what do they want','they want a ball and a guitar','they want a doll and a football']//words.map(x=>{
-// let sennnt = ['on Saturday','at noon','at Easter','in summer','in June','in the afternoon','in the morning','on my birthday','on Monday','in December']
-// let sentences = sennnt.map(x=>{
-//     let n = Math.random();
-//     if(n<0.3){
-// return 'I eat food ' +x
-// }else if(n<0.6){
-// return 'I dance ' +x;
-// }else if(n<0.8){
-// return 'I like to sleep ' + x;
-// }else if(n<1){
-// return 'I am busy ' + x;
-// }
-// })
-//let sentences = ['we read books before bed','then we hug goodnight','my bed is soft a cozy','my cat sleeps with me','the sky has turned dark','my eyes close'];
-let sentences = ['Mayans built enormous temples','their jewelry was gold','their jewelry was made of jade','they wore cotton clothes','they ate bugs on special occasions','they drank the drink of the gods','they ate corn and drank water']
-//     let sent = 'there ';
-//     if(x.endsWith('s')){
-//         sent += 'are ';
-//     }else{
-//         sent += 'is ';
-//     }
-//     sent += 'some ' + x;
-//     sent += ' in the ' + getRandom(places);
-//     return sent;
-// });
-//
-// sentences = sentences.concat(words.map(x=>{
-//
-//     let sent = '';
-//     if(x.endsWith('s')){
-//         sent += 'are ';
-//     }else{
-//         sent += 'is ';
-//     }
-//     sent += 'there ';
-//     sent += 'any ' + x;
-//     sent += ' in the ' + getRandom(places);
-//     return sent;
-// }));
 
-extras = ['fire']
+let extras = ['fire']
 let LOADED_IMAGES = new ImageLoader('../images/', extras);
 let loaded = false;
 
