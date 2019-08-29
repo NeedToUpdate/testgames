@@ -31,7 +31,7 @@
             let nums = [];
             let escape = 0;
             while (nums.length < num && escape < 1000) {
-                let n = Math.floor(Math.random() * animals.length)
+                let n = Math.floor(Math.random() * animals.length);
                 if (nums.indexOf(n) === -1) {
                     nums.push(n);
                 }
@@ -147,8 +147,8 @@
                 let newspriteeangle = s.spriteAng - 2 * PI / 360;
                 s.line.set('transform', 'rotate(' + newlineangle*180/PI + 'deg)');
                 // s.line.vertices[1].y = (getY(newlineangle) - s.line.translation.y);
-                s.sprite.set('left', getX(newspriteeangle, imageradius))
-                s.sprite.set('top', getY(newspriteeangle, imageradius))
+                s.sprite.set('left', getX(newspriteeangle, imageradius));
+                s.sprite.set('top', getY(newspriteeangle, imageradius));
 
                 s.sprite.set('transform', 'rotate(' + (newspriteeangle+PI/2)*180/PI + 'deg)');
                 s.lineAng = newlineangle;
@@ -166,65 +166,69 @@
         let spun = -1;
         draw = function () {
             //run randomizer
-            if (chosen < 0) {
-                let pool = [];
-                for (let i = 0; i < weights.length; i++) {
-                    for (let j = 0; j < weights[i]; j++) {
-                        pool.push(i);
+
+                if (chosen < 0) {
+                    let pool = [];
+                    for (let i = 0; i < weights.length; i++) {
+                        for (let j = 0; j < weights[i]; j++) {
+                            pool.push(i);
+                        }
+                    }
+                    chosen = pool[Math.floor(Math.random() * (pool.length - 1))];
+                    //console.log(pool);
+                    if (LOGGING) {
+                        console.log('chosen is ' + chosen + ', named: ' + images[chosen]);
                     }
 
+                    //calc angle or rotation
+
+
+                    angWinner = PI * 2 / weights.length * chosen;
+                    if (chosen === 0) {
+                        angWinner += 2 * PI;
+                    }
+                    angWinner += 0// 2 * PI; //add extra spin
+                    spun = 0;
+                    pool = [];
+
+                    //rotate array
+                    for (let r = 0; r < chosen; r++) {
+                        arrayRotateOne(weights);
+                        arrayRotateOne(images);
+                    }
+
+                    //rotate to angle
+                    //spin() is 120 for full spin
                 }
-
-                chosen = pool[Math.floor(Math.random() * (pool.length - 1))];
-                //console.log(pool);
-                if (LOGGING) {
-                    console.log('chosen is ' + chosen + ', named: ' + images[chosen]);
+                if (angWinner === -1 || chosen === -1) {
+                    return
+                } else if (spun < angWinner - 0.01) {
+                    for (let i = 0; i < interval; i++) {
+                        spin();
+                    }
+                    spun += (2 * PI / 360);
+                } else {
+                    spun = -1;
+                    angWinner = -1;
+                    chosen = -1;
+                    clicked = false;
                 }
-
-                //calc angle or rotation
-
-
-                angWinner = PI * 2 / weights.length * chosen;
-                if (chosen === 0) {
-                    angWinner += 2 * PI;
+                if (clicked) {
+                    requestAnimationFrame(draw)
                 }
-                angWinner += 0// 2 * PI; //add extra spin
-                spun = 0;
-                pool = [];
-
-                //rotate array
-                for (let r = 0; r < chosen; r++) {
-                    arrayRotateOne(weights);
-                    arrayRotateOne(images);
-                }
-
-                //rotate to angle
-                //spin() is 120 for full spin
-            }
-            if (angWinner === -1 || chosen === -1) {
-                return
-            } else if (spun < angWinner - 0.01) {
-                for (let i = 0; i < interval; i++) {
-                    spin();
-                }
-                spun += (2 * PI / 360);
-            } else {
-                spun = -1;
-                angWinner = -1;
-                chosen = -1;
-                clicked = false;
-            }
-            if(clicked){
-                requestAnimationFrame(draw)
-            }
 
         };
 
 
         button = document.getElementById('spin');
         button.addEventListener('click', function () {
-            clicked = true;
-            requestAnimationFrame(draw);
+
+            if(!clicked){
+                requestAnimationFrame(draw);
+                clicked = true;
+            }
+
+
         });
 
 

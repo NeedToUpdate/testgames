@@ -117,7 +117,7 @@ body{
     width: 100%;
     overflow: hidden;
 }
-p{
+p, img{
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;

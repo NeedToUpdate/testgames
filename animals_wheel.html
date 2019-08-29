@@ -222,8 +222,12 @@
 
         button = document.getElementById('spin');
         button.addEventListener('click', function () {
-            clicked = true;
-            requestAnimationFrame(draw);
+
+            if(!clicked){
+                requestAnimationFrame(draw);
+                clicked = true;
+            }
+
         });
 
 

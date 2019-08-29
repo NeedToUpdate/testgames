@@ -16,7 +16,7 @@
 //    'football','soccer ball','guitar','toy box'];
 // let words = ['dream','travel','adventure','kilometer','camp','outdoors','cycle','baggage','traveller','journey','road','desert','rain forest','mountain'];
 //let words = ['apple','banana','grape','broccoli','cabbage','bread','rice','cereal','pasta','milk','cheese','meat','chicken','egg'];
-let words = ['flowers','lemonade','tea','apples','milk','eggs','bread','meat','chocolate','children','meat','matches','dogs','books','coca-cola'];
+//let words = ['flowers','lemonade','tea','apples','milk','eggs','bread','meat','chocolate','children','meat','matches','dogs','books','coca-cola'];
 //let words = ['mountain','island','volcano','lake','waterfall','desert','ocean','Pacific','Everest','Sahara','Greenland','Vesuvius','Amazon','Arctic'];
 //let words = ['went','saw','drank','put','had','bought','caught','ate','flew','drove','knew','made','ran','sang','slept','spoke','swam']
 //let words =['raining','thunder','storm','snowing','windy','hailing','sleeting','foggy','drizzling','cloudy'];
@@ -26,7 +26,13 @@ let words = ['flowers','lemonade','tea','apples','milk','eggs','bread','meat','c
 //let words = ['stress','cope','reward','offline','exercise','manage','relax','challenge','overcome','difficulty','strategy','confident','exam','breathe']
 //let words = ['happy','sad','nervous','relaxed','axcited','energetic','tired','confused','scared','curious','bored','hungry','sleepy','angry','surprised','confident'];
 //let words = ['january','february','march','april','may','june','july','august','september','october','november','december']
-
 //let words = ['park','horse','fork','nurse','skirt','singer','farmer','bird','arm','car','turtle']
+//let words = ['first', 'second', 'third', 'fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth','thirteenth',
+//    'fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth'];
+//let words = ['freshwater','people','animal','ocean','salt','melting','insect','river','lake','mountain',]
+//let words = ['mayan','temple','palace','cotton','occasion','jewelry','jade','ordinary','gold','civilization'];
+//let words = ['firefighter','cleaner','doctor','chef','office worker','police officer','teacher','vet'];
+let words = ['star','snake','snail','sun','telephone','tent','tiger','taxi'];
+
 let difficulty = 1; //0 easy 1 med 2 difficult
 //let sentences = words.map(x=>'the word is ' +x);

@@ -10,7 +10,7 @@
     <script language="javascript" src="./lib/div.js"></script>
     <script language="javascript" src="./lib/rect.js"></script>
     <script language="javascript" src="./lib/eventemitter.js"></script>
-    <title>Artem's Testing</title>
+    <title>Artem's Over Under</title>
     <link rel="stylesheet" href="./wheel.css">
 </head>
 
@@ -44,13 +44,13 @@
         pos = {
             on: {x: xx, y: bp.y - hh +10, extra: ['zIndex 5']},
             under: {x: xx, y: bp.y + bw/2 - hh + iw, extra: ['zIndex 0', 'transform rotate(90deg)']},
-            above: {x: xx, y: bp.y - iw * 2},
+           // above: {x: xx, y: bp.y - iw * 2},
             inside: {x: xx, y: bp.y+ iw/2, extra: ['zIndex 5']},
-            behind: {x: xx + bw/ 4, y: yy, extra: ['zIndex 0', 'transform rotate(45deg)']},
+            behind: {x: xx + bw/ 4, y: yy- iw/4, extra: ['zIndex 0', 'transform rotate(45deg)']},
             beside: {x: bp.x - iw, y: yy},
             front: {x: xx, y: yy, extra: ['zIndex 1000']},
             between: {x: xx + iw * 2, y: yy},
-            below: {x: xx, y: bp.y + bw + iw}
+          //  below: {x: xx, y: bp.y + bw + iw}
         }
         check = hh;
     }
@@ -93,7 +93,7 @@
 
                 if (key.match(/inside|on|under/)) {
 
-                    character.flyto(new Vector(pos.above)).done(x => {
+                    character.flyto(new Vector(pos.above || pos.on)).done(x => {
                         if (key.match(/inside|front/)) after();
                         character.flyto(new Vector(pos[key])).done(x => {
                             after();
