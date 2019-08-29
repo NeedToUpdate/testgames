@@ -275,7 +275,7 @@ loop = function(){
         }
         if (Math.random() < 0.006+difficulty*0.003 + (difficulty>1?0.5: 0)) {
             if(difficulty>0){
-                x.spinhalf();
+                x.halfspin();
             }else{
                 x.spin();
             }

@@ -1,16 +1,6 @@
 
-let sentences = words.map(x=>{
-    if(x.match(/^[a|e|i|o|u]/)){
-        return "I have an " + x;
-    }else if(x.match(/[s]$/)){
-        return "I have " + x;
-    }else{
-        return "I have a " + x;
-    }
-});
 
-
-extras = ['fire']
+let extras = ['fire']
 let LOADED_IMAGES = new ImageLoader('../images/', extras);
 let loaded = false;
 
@@ -39,7 +29,7 @@ let promises = letters.map((letter, i) => {
                 par = new P(letter, Math.random() * (width - 100), Math.random() * 100);
                 par.set('color', 'white');
                 par.set('text-shadow', 'black 2px 2px 2px')
-                par.set('font-size',( width<400? 3: 5 )+'em');
+                par.set('font-size',( width<400? 2: 3 )+'em');
                 par.set('z-index', 5);
                 par.set('padding',0)
                 par.set('margin',0)
@@ -364,33 +354,36 @@ loop = function (now) {
                 let sh = letter.shape
                 let x = parseInt(sh.offsetLeft + sh.offsetWidth / 2)
                 let y = parseInt(sh.offsetTop + sh.offsetHeight / 2)
-                let l_v = new Vector(x, y);
 
                 fires.forEach(fire => {
                     let fire_y = fire.p.y + fire.h / 2;
                     let fire_x = fire.p.x + fire.w / 2;
                     let f_v = new Vector(fire_x, fire_y);
 
-                    if (l_v.dist(f_v) < fire.h / 2) {
+                    if (Math.abs(x-fire_x)<sh.offsetWidth/2 && Math.abs(y-fire_y)<sh.offsetHeight/2) {
                         reset(letter)
                     }
                 });
                 monsters.forEach(monster => {
                     let monster_y = monster.p.y + monster.h / 2;
                     let monster_x = monster.p.x + monster.w / 2;
-                    if (Math.sqrt((monster_x - x) ** 2 + (monster_y - y) ** 2) < 90) {
+                    if (Math.abs(x-monster_x)<sh.offsetWidth/2 && Math.abs(y-monster_y)<(sh.offsetHeight/2 + monster.sprite.shape.offsetHeight/3)) {
                         reset(letter)
                     }
 
                 })
-                lines.forEach(line => {
+                lines.forEach((line,index) => {
                     if (line.target === letter.string) {
-                        if (line.a.copy().add(new Vector(line.length/2, sh.offsetHeight/-4)).dist(new Vector(x, y)) < sh.offsetHeight/2) {
+                        if (line.a.copy().add(new Vector(line.length/2, sh.offsetHeight/-4)).dist(new Vector(x, y)) < sh.offsetHeight/4) {
                             letter.locked = true;
                             letter.set('color', 'green');
                             letter.set('z-index', 0);
                             letter.set('top',line.a.y -sh.offsetHeight*0.8+'px')
                             letter.set('left',line.a.x + line.length/2 - sh.offsetWidth/2+ 'px')
+                            if(index===0){
+                                letter.shape.textContent = letter.shape.textContent[0].toUpperCase() + letter.shape.textContent.slice(1)
+                                letter.mod('left', -5)
+                            }
                             letter.dragging = false;
                             line.target += 'done';
                         }

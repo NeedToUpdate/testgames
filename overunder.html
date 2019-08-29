@@ -1,0 +1,142 @@
+<html>
+
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
+    <script language="javascript" src="./lib/two.js"></script>
+    <script language="javascript" src="./lib/vector.js"></script>
+    <script language="javascript" src="./lib/matrix.js"></script>
+    <script language="javascript" src="./lib/drawbase.js"></script>
+    <script language="javascript" src="./lib/character.js"></script>
+    <script language="javascript" src="./lib/div.js"></script>
+    <script language="javascript" src="./lib/rect.js"></script>
+    <script language="javascript" src="./lib/eventemitter.js"></script>
+    <title>Artem's Over Under</title>
+    <link rel="stylesheet" href="./wheel.css">
+</head>
+
+<body>
+<button class="bluebtn" id="jmpleft">random</button>
+<script>
+    let allnames = [
+        'cat', 'dog',
+        'spiderman', 'ultraman', 'ironman',
+        'peppapig', 'spongebob', 'monkey',
+        'tiger', 'shark', 'cinderella',
+        'elsa', 'ariel', 'deadfish', 'mrkrabs', 'thanos', 'drstrange', 'sailormoon',
+        'genie', 'captainmarvel', 'simba', 'pikachu', 'spider', 'monster22', 'venom', 'thor', 'banana'
+    ];
+
+    let bw = 250;
+    let iw = 75
+    let bp = {x: width / 2 - bw / 2, y: height*.7 - bw / 2}
+    let xx = bp.x + bw / 2 - iw / 2
+    let yy = bp.y + bw / 2 - iw / 2
+
+    let div = new Img('./images/' + getRandom(allnames) + '.png', 50, 50, iw)
+    let character = new Flyer(50, 50, 'div');
+    character.nobounds = true;
+    character.addSprite(div)
+    let pos = {};
+    let check = 0;
+
+    function updatePos() {
+        let hh = character.sprite.shape.height;
+        pos = {
+            on: {x: xx, y: bp.y - hh +10, extra: ['zIndex 5']},
+            under: {x: xx, y: bp.y + bw/2 - hh + iw, extra: ['zIndex 0', 'transform rotate(90deg)']},
+           // above: {x: xx, y: bp.y - iw * 2},
+            inside: {x: xx, y: bp.y+ iw/2, extra: ['zIndex 5']},
+            behind: {x: xx + bw/ 4, y: yy- iw/4, extra: ['zIndex 0', 'transform rotate(45deg)']},
+            beside: {x: bp.x - iw, y: yy},
+            front: {x: xx, y: yy, extra: ['zIndex 1000']},
+            between: {x: xx + iw * 2, y: yy},
+          //  below: {x: xx, y: bp.y + bw + iw}
+        }
+        check = hh;
+    }
+
+    requestAnimationFrame(updatePos);
+    let currentPos = 'other';
+
+
+    let box = new Img('./images/box/box0.png',bp.x, bp.y, bw);
+    let boxfront = new Img('./images/box/box0front.png',bp.x, bp.y, bw);
+    boxfront.shape.style.zIndex = 10;
+    let btns = [];
+
+    function setup() {
+        Object.keys(pos).forEach((key, i) => {
+            let div = new Div(10 + 30 * i, 10, 'black', 20, 20, true)
+            div.shape.setAttribute('class', 'bluebtn')
+            let t = document.createTextNode(key.slice(0, 2))
+            div.shape.appendChild(t)
+            div.key = key;
+            div.shape.addEventListener('click', () => {
+                if(!check){
+                    updatePos()
+                }
+                if (currentPos.match(/behind|under/)) {
+                    character.sprite.set('transform', '')
+                    console.log('leaving ' + key)
+                }
+
+                function after() {
+                    if (pos[key].extra) {
+                        pos[key].extra.forEach(data => {
+                            let inst = data.split(' ')
+                            character.sprite.set(inst[0], inst[1])
+                            console.log(inst[0], character.sprite.shape.style[inst[0]])
+                        });
+
+                    }
+                }
+
+                if (key.match(/inside|on|under/)) {
+
+                    character.flyto(new Vector(pos.above || pos.on)).done(x => {
+                        if (key.match(/inside|front/)) after();
+                        character.flyto(new Vector(pos[key])).done(x => {
+                            after();
+                        })
+                    })
+                } else {
+                    character.flyto(new Vector(pos[key])).done(x => {
+                        after();
+                    })
+                }
+                currentPos = key;
+
+            })
+            btns.push(div)
+        })
+    }
+
+
+    id('jmpleft').addEventListener('click', ev => {
+        if (ev.target.nodeName === 'HTML') {
+            console.log('uh')
+        }
+        console.log(currentPos)
+        let btn = {key: currentPos}
+        while(btn.key === currentPos){
+            btn = getRandom(btns);
+        }
+        btn.shape.click();
+        console.log(currentPos)
+
+    });
+
+    loop = function () {
+        character.update();
+
+        requestAnimationFrame(loop)
+
+    };
+    requestAnimationFrame(setup);
+    requestAnimationFrame(loop);
+
+
+</script>
+
+</body>
+</html>
