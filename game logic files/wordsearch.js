@@ -1,4 +1,4 @@
-difficulty = 0;
+difficulty = 1;
 
 
 class WordSearch extends Matrix {
@@ -107,7 +107,7 @@ class WordSearch extends Matrix {
 
     init() {
         this.divsM.map((x, i, j) => {
-            let p = new P(this.cover_letters[i][j], this.width * .15 + i * this.col_size, this.height * .05 + j * this.row_size);
+            let p = new P(this.cover_letters[i][j], this.width * .05 + i * this.col_size, this.height * .05 + j * this.row_size);
             p.set('fontSize', this.row_size + 'px');
             p.set('color', 'black');
             p.set('margin', 0)
@@ -136,15 +136,17 @@ class WordSearch extends Matrix {
             return p;
         })
     }
+    clear(){
+        this.values = this.values.map(col=>col.map(()=>'?'));
+        this.words = [];
+    }
     generate(array){
         let tryattempt = 0;
-        array = array.filter(x=>x.length<=wordM.cols)
+        array = array.filter(x=>x.length<=wordM.cols);
         for(let i = 0; i<array.length; i++){
             let attempts = 0;
             let found = false;
-            if(tryattempt>10000){
-                throw 'unable to make word search';
-            }
+
             while(!found){
                 try{
                     wordM.addWord(array[i]);
@@ -152,6 +154,7 @@ class WordSearch extends Matrix {
                 }catch (e) {
                     attempts++;
                     tryattempt++;
+
                     if(attempts>100){
                         wordM.removeWord(array[i-1]);
                         i -=2;
@@ -159,7 +162,16 @@ class WordSearch extends Matrix {
                     }
                 }
             }
+            if(tryattempt>10000){
+                this.clear();
+                tryattempt = 0;
+                console.log('splice out ', words[i], i)
+                array.splice(i,1)
+                return this.generate(array);
+                //throw 'unable to make word search';
+            }
         }
+        return array;
     }
 }
 
@@ -167,10 +179,26 @@ class WordSearch extends Matrix {
 
 
 let wordM = new WordSearch(7 + 3 * difficulty, 7 + 3 * difficulty);
-wordM.generate(words);
+let newwords = wordM.generate(words);
 wordM.drawEmpty();
 setTimeout(()=>wordM.drawReal(), 4000);
 setTimeout(()=>wordM.draw(), 5000);
+let newwordsP = [];
+newwords.forEach((word,i)=>{
+    let x = width*0.75;
+    let y = height*0.1 + i*35;
+    if(y>height*.9){
+        x+= 70;
+        y = height*0.1 + (i-12)*35
+    }
+    let w = new P(word, x, y);
+    w.set('fontSize', wordM.row_size/2);
+    w.set('color', 'black');
+    w.set('margin', 0);
+    newwordsP.push(w)
+})
+
+
 
 let dragger = {}
 let dragging = false;
@@ -180,7 +208,7 @@ function startdrag(ev,i,j){
     if(!dragging) {
         let r = wordM.row_size;
         startpos = {i:i,j:j};
-        dragger = new Div(width * .15 + i * wordM.col_size - r / 4, height * .05 + j * r + r / 6, 'blue', r, r, 'true');
+        dragger = new Div(width * .05 + i * wordM.col_size - r / 5, height * .05 + j * r + r / 3, 'blue', r/1.5, r/1.5, 'true');
         dragger.set('borderRadius', r/2 + 'px');
         dragger.set('transformOrigin', r/2+ 'px 50%')
         dragger.set('zIndex', 0);
@@ -194,11 +222,19 @@ function stopdrag(){
         return each.i === startpos.i && each.j === startpos.j;
     });
     let isright = false;
-   let correct = ()=>{
+   let correct = (word)=>{
         circles.push(dragger);
         dragger.set('border', 'green solid 5px')
        dragger.mod('left', -3);
         dragger.mod('top', -3)
+       dragger = {};
+        //deal with words;
+       let found = newwordsP.filter(x=>x.string === word)[0];
+       let line = new DivLine(found.x,found.y + found.shape.offsetHeight/2,found.shape.offsetWidth, 0, 'red', 4)
+       newwords.splice(newwords.indexOf(word),1);
+       if(newwords.length===0){
+           console.log('ding ding ding')
+       }
        isright = true;
     }
     let wrong = ()=>{
@@ -209,17 +245,17 @@ function stopdrag(){
             let {word,dir,i,j} = foundword;
             if(dir===0){
                 if(startpos.i + word.length-1 === endpos.i && endpos.j - startpos.j === 0){
-                    correct();
+                    correct(word);
                 }
             }else
             if(dir===1){
                 if(startpos.j + word.length-1 === endpos.j && endpos.i - startpos.i === 0){
-                    correct();
+                    correct(word);
                 }
             }else
             if(dir===2){
                 if(startpos.j + word.length-1 ===  endpos.j && startpos.i + word.length-1 === endpos.i){
-                    correct();
+                    correct(word);
                 }
             }
         });
@@ -257,4 +293,37 @@ wordM.divsM.map((p,i,j)=>{
 });
 
 
-
+id('jmpleft').addEventListener('click',()=>{
+   // wordM.drawEmpty();
+    function yellow(){
+        wordM.divsM.map((div,i,j)=>{
+            if(div.string === wordM.values[i][j]){
+                div.set('color', 'yellow');
+            }
+            return div;
+        })
+    }
+    function black(){
+        wordM.divsM.map(div=>{
+            div.set('color', 'black');
+            return div;
+        });
+    }
+    yellow();
+    setTimeout(()=>{
+       // wordM.draw();
+        black()
+    },500);
+    setTimeout(()=>{
+        yellow()
+    },700)  ;
+    setTimeout(()=>{
+        black()
+    },800)  ;
+    setTimeout(()=>{
+        yellow()
+    },900) ;
+    setTimeout(()=>{
+        black()
+    },1200);
+});
