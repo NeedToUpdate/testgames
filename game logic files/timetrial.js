@@ -1,6 +1,6 @@
 difficulty = 0;
 let chosen = words[Math.random() * words.length | 0];
-FPS = 30;
+FPS = 60;
 let letters = chosen.split('');
 let colors = ['darkred', 'darkgreen', 'darkgoldenrod', 'purple', 'darkblue', 'darkorange', 'darkcyan', 'darkslategray' ]
 let extras = ['fire', 'stars']
@@ -32,8 +32,7 @@ id('jump').addEventListener('click', ()=>{
 });
 function play() {
     lasttime = window.performance.now()
-    requestAnimationFrame(draw)
-    MAINLOOP = setInterval(loop, 100)
+    MAINLOOP = setInterval(loop, 1000/FPS)
     LOOPING = true;
 }
 
@@ -243,9 +242,9 @@ function setAllLetters(attr, val) {
     })
 }
 let lasttime = window.performance.now()
-let draw = function (now) {
+let draw = function () {
     if(!winner){
-        timer -= (now-lasttime)/1000;
+        timer -= (window.performance.now()-lasttime)/1000;
         timer = timer.toPrecision(4)
         if (timer <= 0) {
             timer = 0;
@@ -263,14 +262,12 @@ let draw = function (now) {
         x.update();
         return x;
     })
-    lasttime = now;
-    if(LOOPING){
-            requestAnimationFrame(draw);
-    }
+    lasttime = window.performance.now();
+
 }
 loop = function(){
     grid.map(x => {
-        if (Math.random() < 0.006+difficulty*0.003) {
+        if (Math.random() < 0.003+difficulty*0.001) {
             x.jump();
         }
         if (Math.random() < 0.006+difficulty*0.003 + (difficulty>1?0.5: 0)) {
@@ -283,5 +280,6 @@ loop = function(){
         }
         return x;
     })
+    draw();
 }
 setupletters();

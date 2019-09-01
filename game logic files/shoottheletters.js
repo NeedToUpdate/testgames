@@ -1,8 +1,12 @@
+if('addEventListener' in document){
+    document.addEventListener('DOMContentLoaded', ()=>{
+        FastClick.attach(document.body)
+        console.log('hi')
+    }, false);
+}
 
 
-
-let gun = new Img('../images/gun.png', width / 2 - 50, height - 70, 75, true, 270);
-gun.set('zIndex', 100000)
+let gun = {}
 document.body.style.backgroundImage = 'url(../images/bg3.jpg)';
 
 let city = new Img('../images/city.png', 0, 0, width);
@@ -17,9 +21,7 @@ let aliendeathimg = new ImageLoader('../images/', ['electricball']);
 
 let extras = ['bullet'];
 let LOADED_IMAGES = new ImageLoader('../images/projectiles/', extras);
-gun.shape.addEventListener('click', () => {
-    shoot();
-});
+
 let dragging = false;
 let startpos = {x: 0, y: 0};
 
@@ -57,9 +59,11 @@ document.addEventListener('mouseup', dragStop);
 document.addEventListener('touchstop', dragStop);
 document.addEventListener('mousemove', drag);
 document.addEventListener('touchmove', (ev) => {
+    console.log('move')
     drag(ev.touches[0]);
 });
 document.addEventListener('touchstart', (ev) => {
+    console.log('start')
     dragStart(ev.touches[0]);
 });
 
@@ -67,22 +71,23 @@ let bullets = [];
 
 function shoot() {
     let angle = gun.angle;
+    let cos = Math.cos(angle * (Math.PI / 180));
+    let sin = Math.sin(angle * (Math.PI / 180));
     let w = gun.shape.offsetWidth;
     let h = gun.shape.offsetHeight;
-    let x = gun.shape.offsetLeft + w / 2 - 20 + Math.cos(gun.angle * (Math.PI / 180)) * 50;
-    let y = gun.shape.offsetTop + h / 2 - 25 + Math.sin(gun.angle * (Math.PI / 180)) * 50;
+    let x = gun.shape.offsetLeft + w / 2 - 20 +  cos* 50;
+    let y = gun.shape.offsetTop + h / 2 - 25 +  sin* 50;
     let bullet = new PowerBall(x, y, 'bullet');
     let bulletimg = new Img(LOADED_IMAGES.bullet.cloneNode(), x, y, 30, false, angle)
     bulletimg.set('zIndex', 1000)
     bullet.addSprite(bulletimg);
-    requestAnimationFrame(() => {
-        let vec = new Vector(Math.cos(gun.angle * (Math.PI / 180)), Math.sin(gun.angle * (Math.PI / 180)));
+        let vec = new Vector(cos, sin);
         bullet.a.add(vec.set(30))
         bullet.antigrav = true;
         bullet.bounds = {x: width, y: height};
         bullet.fragile = true;
         bullets.push(bullet)
-    })
+
 }
 
 let rescuedletters = '';
@@ -160,9 +165,6 @@ loop = function () {
             x.set('color', 'limegreen')
         })
     }
-    if (LOOPING) {
-        requestAnimationFrame(loop)
-    }
 
 };
 
@@ -201,6 +203,11 @@ function createAlien(target, vector) {
 }
 
 function setup() {
+    gun = new Img('../images/gun.png', width / 2 - 50, height - 70, 75, true, 270);
+    gun.set('zIndex', 10000)
+    gun.shape.addEventListener('click', () => {
+        shoot();
+    });
     let y_calc = height * 0.15;
     let space = 15;
     chosenletters = getRandom(GRAMMAR_MODE ? sentences : words);
@@ -252,25 +259,28 @@ function setup() {
 
 let started = false;
 id('jmpleft').addEventListener('click', () => {
-    started = true;
-    aliens.forEach((alien, i) => {
-        let target = new PowerBall(allletters[i].x, allletters[i].y, 'word');
-        target.nobounds = true;
-        target.addSprite(allletters[i]);
-        alien.target = target;
-        alien.flyto(new Vector(allletters[i].x, allletters[i].y)).done(x => {
-            alien.extras.pickup = target;
-            let bld = buildings[i];
-            alien.bld = bld;
-            bld.occupied = true;
-            alien.flyto(bld.vector.copy().add(new Vector(0, -30))).done(x => {
-                alien.hover()
-            });
+    if(!started){
+        started = true;
+        aliens.forEach((alien, i) => {
+            let target = new PowerBall(allletters[i].x, allletters[i].y, 'word');
+            target.nobounds = true;
+            target.addSprite(allletters[i]);
+            alien.target = target;
+            alien.flyto(new Vector(allletters[i].x, allletters[i].y)).done(x => {
+                alien.extras.pickup = target;
+                let bld = buildings[i];
+                alien.bld = bld;
+                bld.occupied = true;
+                alien.flyto(bld.vector.copy().add(new Vector(0, -30))).done(x => {
+                    alien.hover()
+                });
+            })
         })
-    })
+    }
+
 })
 
 LOOPING = true;
 //
 setup();
-requestAnimationFrame(loop)
+setInterval(()=>loop(), 1000/FPS)

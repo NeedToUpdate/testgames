@@ -1,9 +1,9 @@
 //============PHONICS=========
-//let words = ['Paul','cook','food','spoon','hook','boots','foot','august','autumn','paw','jaw','saw'];
+//let words = ['paul','cook','food','spoon','hook','boots','foot','august','autumn','paw','jaw','saw'];
 //let words = ['park','horse','fork','nurse','skirt','singer','farmer','bird','arm','car','turtle'];
 
 //==============ESLS==============
-//let words = ['happy','sad','nervous','relaxed','excited','energetic','tired','confused','scared','curious','bored','hungry','sleepy','angry','surprised','confident'];
+let words = ['happy','sad','nervous','relaxed','excited','energetic','tired','confused','scared','curious','bored','hungry','sleepy','angry','surprised','confident'];
 //let words = ['first', 'second', 'third', 'fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth','thirteenth',
 //    'fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth'];
 //let words = ['january','february','march','april','may','june','july','august','september','october','november','december']
@@ -17,10 +17,10 @@
 //let words = ['freshwater','people','animal','ocean','salt','melting','insect','river','lake','mountain',]
 //let words = ['fresh','fruit','vegetables','snack','meal','sports','wash','prepare','sick','important','exercise','hygiene','sleep']
 //let words = ['apple','banana','grape','broccoli','cabbage','bread','rice','cereal','pasta','milk','cheese','meat','chicken','egg'];
-// let words = ['apple','coconut','pomelo','lemon','pineapple','orange','mango','grapes','watermelon','kiwifruit','cherry', 'durian'
-// ,'eggplant','mushroom','strawberry','cauliflower','carrot','tomato','lettuce','potato','onion','corn','pumpkin'];
+//  let words = ['apple','coconut','pomelo','lemon','pineapple','orange','mango','grapes','watermelon','kiwifruit','cherry', 'durian'
+//      ,'eggplant','mushroom','strawberry','cauliflower','carrot','tomato','lettuce','potato','onion','corn','pumpkin'];
 //let words =['raining','thunder','storm','snowing','windy','hailing','sleeting','foggy','drizzling','cloudy'];
-//let words = ['firefighter','cleaner','doctor','chef','office worker','police officer','teacher','vet'];
+// let words = ['firefighter','cleaner','doctor','chef','office worker','police officer','teacher','vet'];
 // let words = ['autumn','crops','fruits','vegetables','farmer','festival','parade','dragon','mooncake','celebrate','mid fall','harvest']
 //let words = ['astronomer','search','telescope','screen','planet','science','computer','object','moon','camera'];
 //let words = ['history','study','place','people','question','answer','internet','object','museum','past','present','future']
@@ -39,8 +39,9 @@
 
 //===========MEB==================
 // let words = ['bike','block','ball','kite','marble','basketball','skateboard','boat','plane','toy','doll',
-//let words = ['apple tree','hawk','mushroom','carrot','dragonfly','bamboo','cougar','bacteria','daffodil','pigeon','snake','catfish','producer','consumer','decomposer'];
 //    'football','soccer ball','guitar','toy box'];
+//let words = ['apple tree','hawk','mushroom','carrot','dragonfly','bamboo','cougar','bacteria','daffodil','pigeon','snake','catfish','producer','consumer','decomposer'];
+
 //let words = ['kick a ball','catch a ball','sing songs','dance','ride a bike','jump rope','throw a ball','fly a kite','skate'];
 //let words = ['flowers','lemonade','tea','apples','milk','eggs','bread','meat','chocolate','children','meat','matches','dogs','books','coca-cola'];
 
@@ -50,6 +51,6 @@
 //let words = ['went','saw','drank','put','had','bought','caught','ate','flew','drove','knew','made','ran','sang','slept','spoke','swam'];
 
 
-let words = ['star','snake','snail','sun','telephone','tent','tiger','taxi'];
+//let words = ['star','snake','snail','sun','telephone','tent','tiger','taxi'];
 
 let difficulty = 1; //0 easy 1 med 2 difficult

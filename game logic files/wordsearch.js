@@ -1,5 +1,10 @@
 difficulty = 1;
 
+let topofsearch = height*.1;
+let leftofsearch = width*.1;
+
+document.body.style.backgroundImage = 'url(../images/bg0.jpg)'
+
 
 class WordSearch extends Matrix {
     constructor(rows, cols) {
@@ -107,9 +112,10 @@ class WordSearch extends Matrix {
 
     init() {
         this.divsM.map((x, i, j) => {
-            let p = new P(this.cover_letters[i][j], this.width * .05 + i * this.col_size, this.height * .05 + j * this.row_size);
+            let p = new P(this.cover_letters[i][j], leftofsearch + i * this.col_size, topofsearch + j * this.row_size);
             p.set('fontSize', this.row_size + 'px');
-            p.set('color', 'black');
+            p.set('color', 'white');
+            p.set('textShadow', 'white 1px 1px 1px 1px')
             p.set('margin', 0)
             p.set('zIndex', 10)
             return p;
@@ -179,21 +185,27 @@ class WordSearch extends Matrix {
 
 
 let wordM = new WordSearch(7 + 3 * difficulty, 7 + 3 * difficulty);
+let background = new Div(leftofsearch - 20,topofsearch - 20, 'black', wordM.col_size*wordM.cols, wordM.row_size*wordM.rows +40, true)
+
+background.set('backgroundImage', 'linear-gradient(to top left, #59c173, #a17fe0, #5d26c1)');
+background.set('borderRadius', '20px');
+background.set('border', 'solid 3px white');
+background.set('boxShadow', 'rgba(255,255,255,0.5) 0px 0px 5px 5px')
 let newwords = wordM.generate(words);
 wordM.drawEmpty();
 setTimeout(()=>wordM.drawReal(), 4000);
 setTimeout(()=>wordM.draw(), 5000);
 let newwordsP = [];
 newwords.forEach((word,i)=>{
-    let x = width*0.75;
-    let y = height*0.1 + i*35;
+    let x = leftofsearch + wordM.col_size * wordM.cols + 10;
+    let y = topofsearch + i*35;
     if(y>height*.9){
         x+= 70;
-        y = height*0.1 + (i-12)*35
+        y = height*0.1 + (i-11)*35
     }
     let w = new P(word, x, y);
     w.set('fontSize', wordM.row_size/2);
-    w.set('color', 'black');
+    w.set('color', 'white');
     w.set('margin', 0);
     newwordsP.push(w)
 })
@@ -208,7 +220,7 @@ function startdrag(ev,i,j){
     if(!dragging) {
         let r = wordM.row_size;
         startpos = {i:i,j:j};
-        dragger = new Div(width * .05 + i * wordM.col_size - r / 5, height * .05 + j * r + r / 3, 'blue', r/1.5, r/1.5, 'true');
+        dragger = new Div(leftofsearch + i * wordM.col_size - r / 5, topofsearch + j * r + r / 3, 'lightblue', r/1.5, r/1.5, 'true');
         dragger.set('borderRadius', r/2 + 'px');
         dragger.set('transformOrigin', r/2+ 'px 50%')
         dragger.set('zIndex', 0);
@@ -224,7 +236,7 @@ function stopdrag(){
     let isright = false;
    let correct = (word)=>{
         circles.push(dragger);
-        dragger.set('border', 'green solid 5px')
+        dragger.set('border', 'lightgreen solid 4px')
        dragger.mod('left', -3);
         dragger.mod('top', -3)
        dragger = {};
@@ -282,48 +294,62 @@ function drag(ev,i,j){
 document.addEventListener('mouseup', ()=>{
     stopdrag();
 });
+document.addEventListener('touchend', ()=>{
+    stopdrag();
+});
 wordM.divsM.map((p,i,j)=>{
     p.shape.addEventListener('mousedown',(ev)=>{
         startdrag(ev,i,j)
     });
     p.shape.addEventListener('mousemove', ev=>{
         drag(ev,i,j)
-    })
+    }) ;
+    p.shape.addEventListener('touchstart',(ev)=>{
+        console.log('touch')
+        startdrag(ev.touches[0],i,j)
+    });
+    p.shape.addEventListener('touchmove', ev=>{
+        ev = ev.touches[0]
+        let r = wordM.row_size;
+        let x = Math.floor((ev.clientX - leftofsearch + r/5)/(wordM.col_size))
+        let y = Math.floor((ev.clientY - topofsearch)/(r))
+        drag(ev,x,y)
+    });
     return p;
 });
 
 
 id('jmpleft').addEventListener('click',()=>{
    // wordM.drawEmpty();
-    function yellow(){
+    function lightblue(){
         wordM.divsM.map((div,i,j)=>{
             if(div.string === wordM.values[i][j]){
-                div.set('color', 'yellow');
+                div.set('color', 'lightblue');
             }
             return div;
         })
     }
-    function black(){
+    function white(){
         wordM.divsM.map(div=>{
-            div.set('color', 'black');
+            div.set('color', 'white');
             return div;
         });
     }
-    yellow();
+    lightblue();
     setTimeout(()=>{
        // wordM.draw();
-        black()
+        white()
     },500);
     setTimeout(()=>{
-        yellow()
+        lightblue()
     },700)  ;
     setTimeout(()=>{
-        black()
+        white()
     },800)  ;
     setTimeout(()=>{
-        yellow()
+        lightblue()
     },900) ;
     setTimeout(()=>{
-        black()
+        white()
     },1200);
 });

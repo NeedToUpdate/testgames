@@ -24,6 +24,7 @@
 // let words = ['autumn','crops','fruits','vegetables','farmer','festival','parade','dragon','mooncake','celebrate','mid fall','harvest']
 //let words = ['astronomer','search','telescope','screen','planet','science','computer','object','moon','camera'];
 //let words = ['history','study','place','people','question','answer','internet','object','museum','past','present','future']
+let words = ['awake','asleep','dark','light','rich','poor','up','down','day','night','long','short','big','small','old','young']
 
 //==========ESL2==================
 //let words = ['mountain','island','volcano','lake','waterfall','desert','ocean','Pacific','Everest','Sahara','Greenland','Vesuvius','Amazon','Arctic'];
@@ -38,8 +39,8 @@
 
 
 //===========MEB==================
-let words = ['bike','block','ball','kite','marble','basketball','skateboard','boat','plane','toy','doll',
-   'football','soccer ball','guitar','toy box'];
+// let words = ['bike','block','ball','kite','marble','basketball','skateboard','boat','plane','toy','doll',
+//    'football','soccer ball','guitar','toy box'];
 //let words = ['apple tree','hawk','mushroom','carrot','dragonfly','bamboo','cougar','bacteria','daffodil','pigeon','snake','catfish','producer','consumer','decomposer'];
 
 //let words = ['kick a ball','catch a ball','sing songs','dance','ride a bike','jump rope','throw a ball','fly a kite','skate'];
