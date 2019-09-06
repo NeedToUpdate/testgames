@@ -24,7 +24,10 @@
 // let words = ['autumn','crops','fruits','vegetables','farmer','festival','parade','dragon','mooncake','celebrate','mid fall','harvest']
 //let words = ['astronomer','search','telescope','screen','planet','science','computer','object','moon','camera'];
 //let words = ['history','study','place','people','question','answer','internet','object','museum','past','present','future']
-let words = ['awake','asleep','dark','light','rich','poor','up','down','day','night','long','short','big','small','old','young']
+// let words = ['awake','asleep','dark','light','rich','poor','up','down','day','night','long','short','big','small','old','young']
+let words = ['president','leader','law','founder','government','nation','country','sign','grow','safe','happy'];
+
+
 
 //==========ESL2==================
 //let words = ['mountain','island','volcano','lake','waterfall','desert','ocean','Pacific','Everest','Sahara','Greenland','Vesuvius','Amazon','Arctic'];

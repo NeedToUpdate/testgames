@@ -24,7 +24,7 @@
 // let words = ['autumn','crops','fruits','vegetables','farmer','festival','parade','dragon','mooncake','celebrate','mid fall','harvest']
 //let words = ['astronomer','search','telescope','screen','planet','science','computer','object','moon','camera'];
 //let words = ['history','study','place','people','question','answer','internet','object','museum','past','present','future']
-let words = ['movie theater','zoo','swimming pool','cafe','hospital','mall','hotel','library','park']
+//let words = ['movie theater','zoo','swimming pool','cafe','hospital','mall','hotel','library','park']
 
 //==========ESL2==================
 //let words = ['mountain','island','volcano','lake','waterfall','desert','ocean','Pacific','Everest','Sahara','Greenland','Vesuvius','Amazon','Arctic'];
@@ -53,5 +53,8 @@ let words = ['movie theater','zoo','swimming pool','cafe','hospital','mall','hot
 
 
 //let words = ['star','snake','snail','sun','telephone','tent','tiger','taxi'];
+
+let words = ['fast','slow','happy','sad','tired','wet','open','heavy','dirty','tall','scared','hot','loud','bright','sticky','scary','beautiful','ugly','sweet','sharp'];
+
 
 let difficulty = 1; //0 easy 1 med 2 difficult

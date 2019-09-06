@@ -1,12 +1,23 @@
 if('addEventListener' in document){
     document.addEventListener('DOMContentLoaded', ()=>{
         FastClick.attach(document.body)
-        console.log('hi')
     }, false);
 }
 
 
-let gun = {}
+let guntype = {
+    name: 'handgun',
+    delay: 10000,
+    ammo: 5,
+    backupammo: 5,
+};
+
+let ammoP = {};
+
+let gun = {};
+let selectedgun = new Character(0,0,guntype.name);
+selectedgun.nobounds = true;
+selectedgun.forces = [];
 document.body.style.backgroundImage = 'url(../images/bg3.jpg)';
 
 let city = new Img('../images/city.png', 0, 0, width);
@@ -37,16 +48,19 @@ function dragStop() {
 
 function drag(ev) {
     if (dragging) {
-        let n = gun.getVal('left');
+        let n = selectedgun.sprite.getVal('left');
         if (n + ev.clientX - startpos.x < 0) {
             //gun.set('left', 50)
             return
         }
         if (n + ev.clientX - startpos.x > width - 100) {
-            // gun.set('left', width-50 )
+            // selectedgun.sprite.set('left', width-50 )
             return
         }
-        gun.mod('left', (ev.clientX - startpos.x))
+        selectedgun.p.x += ev.clientX - startpos.x;
+        if(selectedgun.extras.reloadbar){
+            selectedgun.extras.reloadbar.p.x += ev.clientX - startpos.x;
+        }
         startpos.x = ev.clientX;
     }
 
@@ -59,24 +73,48 @@ document.addEventListener('mouseup', dragStop);
 document.addEventListener('touchstop', dragStop);
 document.addEventListener('mousemove', drag);
 document.addEventListener('touchmove', (ev) => {
-    console.log('move')
     drag(ev.touches[0]);
 });
 document.addEventListener('touchstart', (ev) => {
-    console.log('start')
     dragStart(ev.touches[0]);
 });
 
 let bullets = [];
 
+function reload() {
+    let loading = new PowerBall(selectedgun.p.x -30, selectedgun.p.y-50, 'health');
+    loading.nobounds = true;
+    let health = new LoadingBar(selectedgun.p.x - 30,selectedgun.p.y-50, 60, 10, 0,100,1);
+    loading.addSprite(health);
+    health.set('zIndex', 10000);
+    health.setBar('zIndex', 10001);
+    selectedgun.extras.reloadbar = loading;
+    gun.reloading = true;
+    let interval = setInterval(()=>{
+       health.value++
+       if(health.value>=100){
+           health.remove();
+           delete selectedgun.extras.reloadbar;
+           gun.reloading = false;
+           clearInterval(interval);
+       }
+   },guntype.delay/100)
+
+
+}
+
+
+
+
 function shoot() {
-    let angle = gun.angle;
+    if(gun.reloading) return;
+    let angle = selectedgun.sprite.angle;
     let cos = Math.cos(angle * (Math.PI / 180));
     let sin = Math.sin(angle * (Math.PI / 180));
-    let w = gun.shape.offsetWidth;
-    let h = gun.shape.offsetHeight;
-    let x = gun.shape.offsetLeft + w / 2 - 20 +  cos* 50;
-    let y = gun.shape.offsetTop + h / 2 - 25 +  sin* 50;
+    let w = selectedgun.sprite.shape.offsetWidth;
+    let h = selectedgun.sprite.shape.offsetHeight;
+    let x = selectedgun.sprite.shape.offsetLeft + w / 2 - 20 +  cos* 50;
+    let y = selectedgun.sprite.shape.offsetTop + h / 2 - 25 +  sin* 50;
     let bullet = new PowerBall(x, y, 'bullet');
     let bulletimg = new Img(LOADED_IMAGES.bullet.cloneNode(), x, y, 30, false, angle)
     bulletimg.set('zIndex', 1000)
@@ -93,6 +131,7 @@ function shoot() {
 let rescuedletters = '';
 let rescued_num = 0;
 loop = function () {
+    selectedgun.update()
     for (let i = things_to_update.length - 1; i >= 0; i--) {
         things_to_update[i].update();
         if (things_to_update[i].dead) {
@@ -203,9 +242,12 @@ function createAlien(target, vector) {
 }
 
 function setup() {
-    gun = new Img('../images/gun.png', width / 2 - 50, height - 70, 75, true, 270);
-    gun.set('zIndex', 10000)
-    gun.shape.addEventListener('click', () => {
+    let gunsprite = new Img('../images/gun.png', width / 2 - 50, height - 70, 75, true, 270);
+    selectedgun.p.x = width / 2 - 50;
+    selectedgun.p.y = height- 35;
+    selectedgun.addSprite(gunsprite);
+    selectedgun.sprite.set('zIndex', 10000);
+    selectedgun.sprite.shape.addEventListener('click', () => {
         shoot();
     });
     let y_calc = height * 0.15;
@@ -254,7 +296,7 @@ function setup() {
     for (let i = 0; i < splitletters.length; i++) {
         createAlien();
     }
-
+   // ammoP = new P(guntype.ammo + ' : ' + guntype.backupammo, width*.8, height*0.02)
 }
 
 let started = false;

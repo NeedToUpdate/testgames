@@ -45,8 +45,8 @@
         shownumbers = !shownumbers;
         if(shownumbers) {
             chars.forEach((char, i) => {
-                let p = new P(i, 15 + 50 * i, 100);
-                p.set('fontSize', '3em');
+                let p = new P(i+1, 15 + 50 * i, 100);
+                p.set('fontSize', '2.5em');
                 p.set('color', 'black');
                 ps.push(p);
             })
