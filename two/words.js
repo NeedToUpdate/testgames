@@ -25,7 +25,7 @@
 //let words = ['astronomer','search','telescope','screen','planet','science','computer','object','moon','camera'];
 //let words = ['history','study','place','people','question','answer','internet','object','museum','past','present','future']
 //let words = ['movie theater','zoo','swimming pool','cafe','hospital','mall','hotel','library','park']
-
+let words = ['freezing','warm','damp','bright','chilly','foggy','stormy'];
 //==========ESL2==================
 //let words = ['mountain','island','volcano','lake','waterfall','desert','ocean','Pacific','Everest','Sahara','Greenland','Vesuvius','Amazon','Arctic'];
 // let words = ['germs','microscope','flashlight','infection','disease','medicine','vaccine','sick','sore throat','stomach ache','defense'];
@@ -51,10 +51,11 @@
 // let words = ['sliding','swinging','riding','hiding','skating','jumping','climbing','flying','throwing','singing','kicking'];
 //let words = ['went','saw','drank','put','had','bought','caught','ate','flew','drove','knew','made','ran','sang','slept','spoke','swam'];
 
-
+//let words = ['sore','throat','cough','backache','cold','fever','headache','stomach','ache','earache'];
+//let words = ['sweater','skirt','shirt','coat','hat','dress','jacket','scarf','pants','shorts','shoes','socks']
 //let words = ['star','snake','snail','sun','telephone','tent','tiger','taxi'];
 
-let words = ['fast','slow','happy','sad','tired','wet','open','heavy','dirty','tall','scared','hot','loud','bright','sticky','scary','beautiful','ugly','sweet','sharp'];
+//let words = ['fast','slow','happy','sad','tired','wet','open','heavy','dirty','tall','scared','hot','loud','bright','sticky','scary','beautiful','ugly','sweet','sharp'];
 
 
 let difficulty = 1; //0 easy 1 med 2 difficult

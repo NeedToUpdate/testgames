@@ -12,6 +12,8 @@
 //    'board game','yoyo','car'];
 //let words = ['dishwasher','lamp','candle','microwave','broom','kettle','washing','machine','vacuum','cleaner','candle'];
 //let words = ['parrot','shark','frog','owl','snake','stingray','seagull','elephant','whale','crocodile','crocodile','eel','jellyfish','spider','toad','frog'];
+//let words = ['nutrients','carbohydrates','protein','fat','water','minerals','vitamins','body','healthy','muscles','energy'];
+//let words = ['beak','feathers','fins','pouch','fur','tail','teeth','wings'];
 
 //===========ESL1=================
 //let words = ['freshwater','people','animal','ocean','salt','melting','insect','river','lake','mountain',]
@@ -25,12 +27,13 @@
 //let words = ['astronomer','search','telescope','screen','planet','science','computer','object','moon','camera'];
 //let words = ['history','study','place','people','question','answer','internet','object','museum','past','present','future']
 // let words = ['awake','asleep','dark','light','rich','poor','up','down','day','night','long','short','big','small','old','young']
-let words = ['president','leader','law','founder','government','nation','country','sign','grow','safe','happy'];
-
-
+//let words = ['president','leader','law','founder','government','nation','country','sign','grow','safe','happy'];
+//let words = ['bird','mammal','reptile','fish','amphibian','warm-blooded','cold-blooded','wings','feathers','egg','scales'];
+//let words = ['movie theater','zoo','swimming pool','cafe','hospital','mall','hotel','library','park'];
+//let words = ['technology','travel','place','walk','bicycle','car','wheel','motor','jet','engine','airplane'];
 
 //==========ESL2==================
-//let words = ['mountain','island','volcano','lake','waterfall','desert','ocean','Pacific','Everest','Sahara','Greenland','Vesuvius','Amazon','Arctic'];
+//let words = ['mountain','island','volcano','lake','waterfall','desert','ocean',];
 // let words = ['germs','microscope','flashlight','infection','disease','medicine','vaccine','sick','sore throat','stomach ache','defense'];
 // let words = ['lived','covered','prepared','worked','planted','fixed','flooded','cared','disappeared','harvested','used','saved'];
 //let words = ['mayan','temple','palace','cotton','occasion','jewelry','jade','ordinary','gold','civilization'];
@@ -45,16 +48,17 @@ let words = ['president','leader','law','founder','government','nation','country
 // let words = ['bike','block','ball','kite','marble','basketball','skateboard','boat','plane','toy','doll',
 //    'football','soccer ball','guitar','toy box'];
 //let words = ['apple tree','hawk','mushroom','carrot','dragonfly','bamboo','cougar','bacteria','daffodil','pigeon','snake','catfish','producer','consumer','decomposer'];
-
+//let words = ['pudding','popcorn','sandwich','salad','yogurt','sugar','cheese','jam','pop','cola','toast','coffee','soup','pizza'];
 //let words = ['kick a ball','catch a ball','sing songs','dance','ride a bike','jump rope','throw a ball','fly a kite','skate'];
 //let words = ['flowers','lemonade','tea','apples','milk','eggs','bread','meat','chocolate','children','meat','matches','dogs','books','coca-cola'];
-
+//let words = ['president','leader','founder','decide','law','country','nation','safe','happy'];
 
 //======random================
 // let words = ['sliding','swinging','riding','hiding','skating','jumping','climbing','flying','throwing','singing','kicking'];
 //let words = ['went','saw','drank','put','had','bought','caught','ate','flew','drove','knew','made','ran','sang','slept','spoke','swam'];
+//let words = ['go','meet','stay','play','listen','draw','dance','read','sleep','learn','write','eat','drink','have','see','watch','like','get','take'];
 
-
-//let words = ['star','snake','snail','sun','telephone','tent','tiger','taxi'];
+let words = ['coke','juice','meat','cheese','ice cream','chocolate'];
+//let words = ['star','snake','snail','sun','telephone','tent','tiger','taxi', 'tennis','sausage','umbrella'];
 
 let difficulty = 1; //0 easy 1 med 2 difficult
