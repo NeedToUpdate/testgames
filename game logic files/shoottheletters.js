@@ -7,9 +7,10 @@ if('addEventListener' in document){
 
 let guntype = {
     name: 'handgun',
-    delay: 10000,
+    delay: 2000,
     ammo: 5,
-    backupammo: 5,
+    backupammo: 10,
+    ammocap: 5,
 };
 
 let ammoP = {};
@@ -30,16 +31,23 @@ let aliens = [];
 let aliendeathimg = new ImageLoader('../images/', ['electricball']);
 
 
-let extras = ['bullet'];
+let extras = ['bullet','fire'];
 let LOADED_IMAGES = new ImageLoader('../images/projectiles/', extras);
 
+let dragging_disabled = false;
 let dragging = false;
 let startpos = {x: 0, y: 0};
 
+function disableDragging(){
+    dragging_disabled = true;
+}
 function dragStart(ev) {
-    dragging = true;
-    startpos.x = ev.clientX;
-    startpos.y = ev.clientY;
+    if(!dragging_disabled){
+        dragging = true;
+        startpos.x = ev.clientX;
+        startpos.y = ev.clientY;
+    }
+
 }
 
 function dragStop() {
@@ -47,7 +55,7 @@ function dragStop() {
 }
 
 function drag(ev) {
-    if (dragging) {
+    if (dragging && !dragging_disabled) {
         let n = selectedgun.sprite.getVal('left');
         if (n + ev.clientX - startpos.x < 0) {
             //gun.set('left', 50)
@@ -82,23 +90,32 @@ document.addEventListener('touchstart', (ev) => {
 let bullets = [];
 
 function reload() {
-    let loading = new PowerBall(selectedgun.p.x -30, selectedgun.p.y-50, 'health');
-    loading.nobounds = true;
-    let health = new LoadingBar(selectedgun.p.x - 30,selectedgun.p.y-50, 60, 10, 0,100,1);
-    loading.addSprite(health);
-    health.set('zIndex', 10000);
-    health.setBar('zIndex', 10001);
-    selectedgun.extras.reloadbar = loading;
-    gun.reloading = true;
-    let interval = setInterval(()=>{
-       health.value++
-       if(health.value>=100){
-           health.remove();
-           delete selectedgun.extras.reloadbar;
-           gun.reloading = false;
-           clearInterval(interval);
-       }
-   },guntype.delay/100)
+    if(guntype.backupammo>0) {
+        guntype.backupammo -= guntype.ammocap;
+        guntype.ammo = guntype.ammocap;
+        ammoP.string = guntype.ammo + ' : ' + guntype.backupammo;
+
+        let loading = new PowerBall(selectedgun.p.x - 30, selectedgun.p.y - 50, 'health');
+        loading.nobounds = true;
+        let health = new LoadingBar(selectedgun.p.x - 30, selectedgun.p.y - 50, 60, 10, 0, 100, 1);
+        loading.addSprite(health);
+        health.set('zIndex', 10000);
+        health.setBar('zIndex', 10001);
+        selectedgun.extras.reloadbar = loading;
+        gun.reloading = true;
+        let interval = setInterval(() => {
+            health.value++;
+            if (health.value >= 100) {
+                health.remove();
+                delete selectedgun.extras.reloadbar;
+                gun.reloading = false;
+                clearInterval(interval);
+            }
+        }, guntype.delay / 100)
+    }else{
+        disableDragging();
+        lose();
+    }
 
 
 }
@@ -107,6 +124,10 @@ function reload() {
 
 
 function shoot() {
+    if(guntype.ammo<= 0){
+        reload();
+        return;
+    }
     if(gun.reloading) return;
     let angle = selectedgun.sprite.angle;
     let cos = Math.cos(angle * (Math.PI / 180));
@@ -125,7 +146,11 @@ function shoot() {
         bullet.bounds = {x: width, y: height};
         bullet.fragile = true;
         bullets.push(bullet)
-
+    guntype.ammo--
+    ammoP.string = guntype.ammo + ' : ' + guntype.backupammo
+    if(guntype.ammo<= 0){
+        reload();
+    }
 }
 
 let rescuedletters = '';
@@ -200,13 +225,37 @@ loop = function () {
 
     }
     if (chosenletters + (GRAMMAR_MODE ? ' ' : '') === rescuedletters) {
-        allletters.forEach(x => {
-            x.set('color', 'limegreen')
-        })
-    }
+        win();
+        }
 
 };
 
+function win(){
+    allletters.forEach(x => {
+        x.set('color', 'limegreen')
+    })
+}
+
+function lose(){
+    let promises = [];
+    aliens.forEach(alien=>{
+        alien.stophover()
+        alien.doflyto = false;
+        alien.flytovec = null;
+        promises.push(
+            new Promise((resolve,reject)=> {
+                alien.flyto(new Vector(selectedgun.p)).done(() => {
+                    console.log('done1')
+                    alien.kill();
+                    resolve();
+                })
+            })
+
+        )})
+    Promise.all(promises).then(()=>{
+        selectedgun.kill();
+    })
+}
 let allletters = [];
 let chosenletters = '';
 let splitletters = [];
@@ -217,12 +266,11 @@ function createAlien(target, vector) {
     let sprite = new Img(invaders[alien.name].cloneNode(), 10, 100, 50);
     sprite.set('zIndex', 1);
     alien.addSprite(sprite);
-    alien.addDeathImage(aliendeathimg.electricball)
+    alien.addDeathImage(aliendeathimg.electricball.cloneNode())
     alien.nobounds = true;
     alien.max_v = 5;
     if (target && vector) {
         alien.target = target;
-
         function pickUpLetter() { //needs to be separate to have a bindable this;
             this.extras.pickup = target;
             target.dead = false;
@@ -296,7 +344,8 @@ function setup() {
     for (let i = 0; i < splitletters.length; i++) {
         createAlien();
     }
-   // ammoP = new P(guntype.ammo + ' : ' + guntype.backupammo, width*.8, height*0.02)
+    ammoP = new P(guntype.ammo + ' : ' + guntype.backupammo, width*.9, height*0.01)
+    ammoP.set('fontSize','2em')
 }
 
 let started = false;
@@ -320,9 +369,9 @@ id('jmpleft').addEventListener('click', () => {
         })
     }
 
-})
+});
 
 LOOPING = true;
 //
 setup();
-setInterval(()=>loop(), 1000/FPS)
+setInterval(()=>loop(), 1000/FPS);

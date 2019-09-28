@@ -28,7 +28,7 @@
 //let words = ['history','study','place','people','question','answer','internet','object','museum','past','present','future']
 // let words = ['awake','asleep','dark','light','rich','poor','up','down','day','night','long','short','big','small','old','young']
 //let words = ['president','leader','law','founder','government','nation','country','sign','grow','safe','happy'];
-//let words = ['bird','mammal','reptile','fish','amphibian','warm-blooded','cold-blooded','wings','feathers','egg','scales'];
+let words = ['bird','mammal','reptile','fish','amphibian','warm-blooded','cold-blooded','wings','feathers','egg','scales'];
 //let words = ['movie theater','zoo','swimming pool','cafe','hospital','mall','hotel','library','park'];
 //let words = ['technology','travel','place','walk','bicycle','car','wheel','motor','jet','engine','airplane'];
 
@@ -58,7 +58,7 @@
 //let words = ['went','saw','drank','put','had','bought','caught','ate','flew','drove','knew','made','ran','sang','slept','spoke','swam'];
 //let words = ['go','meet','stay','play','listen','draw','dance','read','sleep','learn','write','eat','drink','have','see','watch','like','get','take'];
 
-let words = ['coke','juice','meat','cheese','ice cream','chocolate'];
+//let words = ['coke','juice','meat','cheese','ice cream','chocolate'];
 //let words = ['star','snake','snail','sun','telephone','tent','tiger','taxi', 'tennis','sausage','umbrella'];
 
 let difficulty = 1; //0 easy 1 med 2 difficult
