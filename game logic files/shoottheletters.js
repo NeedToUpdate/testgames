@@ -301,6 +301,9 @@ function setup() {
     let y_calc = height * 0.15;
     let space = 15;
     chosenletters = getRandom(GRAMMAR_MODE ? sentences : words);
+
+
+
     splitletters = chosenletters.split(GRAMMAR_MODE ? ' ' : '');
     splitletters.forEach((word, i) => {
         let p = new P(word, 0, y_calc);
