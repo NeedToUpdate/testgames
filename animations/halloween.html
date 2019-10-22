@@ -1,0 +1,135 @@
+<html>
+
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
+    <script language="javascript" src="../lib/two.js"></script>
+    <script language="javascript" src="../lib/vector.js"></script>
+    <script language="javascript" src="../lib/matrix.js"></script>
+    <script language="javascript" src="../lib/drawbase.js"></script>
+    <script language="javascript" src="../lib/character.js"></script>
+    <script language="javascript" src="../lib/div.js"></script>
+    <script language="javascript" src="../lib/rect.js"></script>
+    <script language="javascript" src="../lib/eventemitter.js"></script>
+    <title>Artem's Fighting Game</title>
+    <link rel="stylesheet" href="../wheel.css">
+</head>
+
+<body>
+<img src="../images/whitesquare.png" style="position: absolute;top: 0; left: 0; z-index: 9999; width: 50px;">
+<script>
+
+    let playing = true;
+    let background = 'background14.jpg';
+    document.body.style.backgroundColor = 'grey'
+    document.body.style.backgroundImage = 'url(../images/' + background.toString() + ')';
+    document.body.style.backgroundSize = width + 'px auto';
+    document.body.style.backgroundRepeat = 'no-repeat';
+    document.body.style.backgroundPosition = '0 -100px'
+
+    let people = [];
+
+    for(let i = 0; i<10; i++){
+        let ppl = new Character(getRandom(150),height-150,getRandom(['man','woman'])+ (Math.random()*3 |0));
+        let pplSprite = new Img('../images/people/' + ppl.name + '.png',0,0,50);
+        ppl.addSprite(pplSprite)
+        ppl.bounds.y = height - 100;
+        people.push(ppl)
+    }
+
+    function doAsGroup(funcname, argsarray){
+        people.forEach(ppl=>{
+            setTimeout(()=>{
+                if(argsarray){
+                    ppl[funcname](...argsarray)
+                } else {
+                    ppl[funcname]();
+                }
+            },getRandom(500));
+        })
+    }
+
+    //====ACTS===
+    let act_intro = true;
+    let act_intro_started = false;
+    let act_haunting = false;
+    let act_haunting_started = false;
+    let act_decorating = false;
+    let act_decorating_started = false;
+    let act_ending = false;
+    let act_ending_started = false;
+
+    function animate_intro(){
+        if(act_intro_started){
+            people.forEach(ppl=>{
+                if(ppl.p.x>= width-300){
+                    ppl.faceleft();
+                }
+                if(ppl.p.x<=50){
+                    ppl.faceright();
+                }
+                if(getRandom(10)<1) ppl.jumpfwd(0.3);
+                if(getRandom(100)<1) ppl.facing_right? ppl.faceleft() : ppl.faceright();
+            })
+        }else{
+            //default before the movie plays
+            people.forEach(ppl=>{
+                if(ppl.p.x>= width-300){
+                    ppl.faceleft();
+                }
+                if(ppl.p.x<=50){
+                    ppl.faceright();
+                }
+                if(getRandom(10)<1) ppl.jumpfwd(0.3);
+                if(getRandom(100)<1) ppl.facing_right? ppl.faceleft() : ppl.faceright();
+                if(getRandom(10000)<1) ppl.jump();
+                if(getRandom(10000)<1) ppl.spin();
+            })
+        }
+    }
+
+    function nextAct(){
+        if(act_intro_started){
+            act_intro = false;
+            act_haunting = true;
+            act_intro_started = false;
+        }
+        if(act_haunting_started){
+            act_haunting = false;
+            act_decorating = true;
+            act_haunting_started = false;
+        }
+        if(act_decorating_started){
+            act_decorating = false;
+            act_ending = true;
+            act_decorating_started = false;
+        }
+        if(act_ending_started){
+            act_ending = false;
+            act_ending_started = false;
+        }
+    }
+
+
+    loop = function (now) {
+        people.forEach(x=>{
+            x.update();
+        });
+
+        if(act_intro){
+            animate_intro();
+        }
+
+
+
+
+
+
+
+        if(playing) requestAnimationFrame(loop);
+    }
+
+    loop();
+
+</script>
+</body>
+</html>
