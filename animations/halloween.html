@@ -10,14 +10,20 @@
     <script language="javascript" src="../lib/div.js"></script>
     <script language="javascript" src="../lib/rect.js"></script>
     <script language="javascript" src="../lib/eventemitter.js"></script>
-    <title>Artem's Fighting Game</title>
+    <title>Artem's Halloween</title>
     <link rel="stylesheet" href="../wheel.css">
 </head>
 
 <body>
-<img src="../images/whitesquare.png" style="position: absolute;top: 0; left: 0; z-index: 9999; width: 50px;">
+<img id="testbtn" src="../images/whitesquare.png" style="position: absolute;top: 0; left: 0; z-index: 9999; width: 50px;">
 <script>
-    //===debug===
+    
+    id('testbtn').addEventListener('click',()=>{
+        
+        nextAct()
+    })
+
+  
 
 
     let playing = true;
@@ -65,7 +71,19 @@
 
     function animate_intro(){
         if(act_intro_started){
+            
             people.forEach(ppl=>{
+            if(ppl.scared){
+               if(getRandom(100)<1){
+                ppl.faceright()
+                ppl.hop()
+               }else{
+                 if(getRandom(10)<1){
+                 ppl.faceleft()
+                 ppl.jumpfwd(0.3)
+                 }
+               }
+            }else{
                 if(ppl.p.x>= width-300){
                     ppl.faceleft();
                 }
@@ -74,7 +92,9 @@
                 }
                 if(getRandom(10)<1) ppl.jumpfwd(0.3);
                 if(getRandom(100)<1) ppl.facing_right? ppl.faceleft() : ppl.faceright();
+            }
             })
+            
         }else{
             //default before the movie plays
             people.forEach(ppl=>{
@@ -94,7 +114,7 @@
 
     let haunters = []
 
-    let potential_haunters = ['ghost0','skeleton0','vampire0']
+    let potential_haunters = ['ghost0']
 
 
     function animate_haunting(){
@@ -115,8 +135,22 @@
             }
             console.log(promises)
             Promise.all(promises).then(()=>{
-                console.log('hey')
-                doAsGroup(haunters,'flyto', [new Vector(width-200 + getRandom(-10,10), 50+ getRandom(-10,10))]);
+                //doAsGroup(haunters,'flyto', [new Vector(width-200, 50)]).done();
+                 let flypromises = []
+                 haunters.forEach(haunter=>{
+                    let flying_promise = new Promise(resolve=>{       
+                        haunter.flyto(new Vector(width-200 + getRandom(-140,80),50 + getRandom(100))).done(()=>{
+                            haunter.hover()
+                            resolve()
+                        })
+                    })
+                    flypromises.push(flying_promise)
+                })
+                Promise.all(flypromises).then(()=>{
+                    people.forEach(ppl=>{
+                       ppl.scared = true
+                    })
+                })
             });
             act_haunting_started = true;
         }
@@ -124,6 +158,12 @@
             haunters.forEach(haunter=>{
                 haunter.update()
             })
+            haunters.forEach(h=>{
+                if(getRandom(100)<1 && !h.haunting){
+                   //choose random target to haunt
+                }
+            })
+            
         }
     }
 
