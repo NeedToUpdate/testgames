@@ -12,6 +12,8 @@
 //    'board game','yoyo','car'];
 //let words = ['dishwasher','lamp','candle','microwave','broom','kettle','washing','machine','vacuum','cleaner','candle'];
 //let words = ['parrot','shark','frog','owl','snake','stingray','seagull','elephant','whale','crocodile','crocodile','eel','jellyfish','spider','toad','frog'];
+let words = ['glue','scissors','notebook','ruler','white-out','eraser','sharpener','pencil','mechanical pencil','pencil case','highlighter'];
+
 
 //===========ESL1=================
 //let words = ['freshwater','people','animal','ocean','salt','melting','insect','river','lake','mountain',]
@@ -24,13 +26,15 @@
 // let words = ['autumn','crops','fruits','vegetables','farmer','festival','parade','dragon','mooncake','celebrate','mid fall','harvest']
 //let words = ['astronomer','search','telescope','screen','planet','science','computer','object','moon','camera'];
 //let words = ['history','study','place','people','question','answer','internet','object','museum','past','present','future']
-let words = ['movie theater','zoo','swimming pool','cafe','hospital','mall','hotel','library','park']
+//let words = ['movie theater','zoo','swimming pool','cafe','hospital','mall','hotel','library','park']
 //==========ESL2==================
 //let words = ['mountain','island','volcano','lake','waterfall','desert','ocean','Pacific','Everest','Sahara','Greenland','Vesuvius','Amazon','Arctic'];
 // let words = ['germs','microscope','flashlight','infection','disease','medicine','vaccine','sick','sore throat','stomach ache','defense'];
 // let words = ['lived','covered','prepared','worked','planted','fixed','flooded','cared','disappeared','harvested','used','saved'];
 //let words = ['mayan','temple','palace','cotton','occasion','jewelry','jade','ordinary','gold','civilization'];
 // let words = ['language','feeling','speak','country','gesture','meaning','polite','rude','acceptable','body','smile','index'];
+
+
 
 //============ESL3================
 //let words = ['stress','cope','reward','offline','exercise','manage','relax','challenge','overcome','difficulty','strategy','confident','exam','breathe']

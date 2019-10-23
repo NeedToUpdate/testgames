@@ -34,6 +34,7 @@
     //Debug Vars
     let LOGGING = true;
 
+    let HARDMODE = false;
     let characters = [
         'cat',
         'spiderman', 'ultraman', 'ironman',
@@ -102,6 +103,8 @@
     id('jmpright').addEventListener('click', function () {
         player.jumpright();
     });
+    let secret = false;
+    let secretTO;
     id('playpause').addEventListener('click', function () {
         playing = !playing;
         if(playing){
@@ -109,7 +112,17 @@
         }else{
             id('playpause').innerText = 'paused';
         }
+        if(secret){
+            id('playpause').innerText = 'Playing';
+            playing = true;
+            HARDMODE = true;
+        }
+        secret = true;
+        secretTO = setTimeout(()=>{
+            secret = false;
+        },1000);
     });
+
     id('jmpleft').addEventListener('click', function () {
         player.jumpleft();
     });
@@ -118,7 +131,6 @@
         if(Math.random()*4<3){
             monster.shoot();
         }
-
     });
     id('powerup').addEventListener('click', function () {
         player.powerup();
@@ -150,10 +162,9 @@
        }
 
     });
-
     setup();
     let hopstop = false;
-    let loog = false;
+    let monsterisshooting = false;
     loop = function (now) {
         player.update();
         //console.log(monster.dead);
@@ -161,7 +172,7 @@
         if(player.extras.attack && player.extras.attack.rect.d){
 
             if(player.extras.attack.rect.d.x > monster.rect.a.x && player.extras.attack.rect.d.y < monster.rect.b.y && !monster.shielded){
-               console.log('hit');
+                console.log('hit');
                 monster.health -=player.extras.attack.power;
                 monster.jumpbkwd(0.05*player.extras.attack.power);
                 player.extras.attack.kill();
@@ -171,6 +182,9 @@
                     unsub();
                 })
 
+            }else if(player.extras.attack.rect.d.x > monster.rect.a.x && player.extras.attack.rect.d.y < monster.rect.b.y && monster.shielded){
+                player.extras.attack.kill();
+                delete player.extras.attack;
             }
         }
         if(monster.rect.a){
@@ -186,13 +200,19 @@
 
 
        if(playing){
-           if(Math.random()*1000 < 10){
+           if(Math.random()*1000 < (HARDMODE? 30: 10)){
                monster.powerup();
            }
-           if(Math.random()*1000 <1){
-               monster.shoot();
+           if(Math.random()*1000 < (HARDMODE? 2: 1)){
+               if(!monsterisshooting && monster.poweringup){
+                   monster.shoot();
+                   monsterisshooting = true;
+               }
+
+
+
            }
-           if(Math.random()*2000 < (monster.health>30?20:5)){
+           if(Math.random()*2000 < (HARDMODE? (monster.health>30?30:10): (monster.health>30?20:5))){
                monster.hop();
            }
            if(Math.random()*3000 < 2){
@@ -208,9 +228,14 @@
         if(monster.extras.attack && monster.extras.attack.rect.a){
             if(monster.extras.attack.rect.a.x < player.rect.d.x && monster.extras.attack.rect.a.y < player.rect.c.y && monster.extras.attack.rect.b.y > player.rect.d.y && !player.shielded ){
                 console.log('take damage');
-                player.health -=monster.extras.attack.power * 0.2;
+                player.health -=monster.extras.attack.power * 0.25;
                 monster.extras.attack.kill();
                 delete monster.extras.attack;
+                monsterisshooting = false;
+            }else if(monster.extras.attack.rect.a.x < player.rect.d.x && monster.extras.attack.rect.a.y < player.rect.c.y && monster.extras.attack.rect.b.y > player.rect.d.y && player.shielded ){
+                monster.extras.attack.kill();
+                delete monster.extras.attack;
+                monsterisshooting = false;
             }
         }
 
@@ -219,6 +244,32 @@
 
         if(player.dead)  id('playerhp').innerText = " player: dead";
         if(monster.dead)   id('enemyhp').innerText = "monster: dead";
+
+        if(monster.dead && HARDMODE){
+            mons_name = 'monster'+ (Math.random()*30|0);
+            monster_powr_name = powers[Math.random()*powers.length |0];
+            if(mons_name.endsWith('15')){
+                monster_powr_name = 'spaghetti'
+            }
+            extras.push(powr_name + 'ball');
+            extras.push(monster_powr_name + 'ball');
+            monster = new Character(width-300, 100, mons_name);
+            id('enemyhp').innerText = "monster: " + (monster.health |0 || 0);
+
+            LOADED_IMAGES = new ImageLoader('./images/',extras);
+            monster.powertype = monster_powr_name;
+            monster.noskybox = true;
+            monster.addSprite(new Img("./images/" + monster.name + ".png", 125, 100, 400));
+            monster.jump_multiplier = 0.5;
+            monster.jumping = true;
+            monster.landing_emitter.subscribe('land',()=>{
+                monster.faceleft();
+            });
+
+            HARDMODE = false;
+        }
+
+
         LAST_TIME = now;
         if(LOOPING){
                 requestAnimationFrame(loop);

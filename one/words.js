@@ -1,7 +1,8 @@
 //============PHONICS=========
 //let words = ['paul','cook','food','spoon','hook','boots','foot','august','autumn','paw','jaw','saw'];
 //let words = ['park','horse','fork','nurse','skirt','singer','farmer','bird','arm','car','turtle'];
-let words = ['goat','coat','boat','cloak','clock','wall','green','grass','ball'];
+//let words = ['goat','coat','boat','cloak','clock','wall','green','grass','ball'];
+//let words = ['flute','luke','prune','sue','blue','glue','fruit','suit','juice','cute','mule','cube'];
 //==============ESLS==============
 //let words = ['happy','sad','nervous','relaxed','excited','energetic','tired','confused','scared','curious','bored','hungry','sleepy','angry','surprised','confident'];
 //let words = ['first', 'second', 'third', 'fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth','thirteenth',
@@ -16,6 +17,7 @@ let words = ['goat','coat','boat','cloak','clock','wall','green','grass','ball']
 //let words = ['beak','feathers','fins','pouch','fur','tail','teeth','wings'];
 
 //===========ESL1=================
+let words = ['car','robot','doll','bike','teddy bear'];
 //let words = ['freshwater','people','animal','ocean','salt','melting','insect','river','lake','mountain',]
 //let words = ['fresh','fruit','vegetables','snack','meal','sports','wash','prepare','sick','important','exercise','hygiene','sleep']
 //let words = ['apple','banana','grape','broccoli','cabbage','bread','rice','cereal','pasta','milk','cheese','meat','chicken','egg'];
@@ -33,7 +35,7 @@ let words = ['goat','coat','boat','cloak','clock','wall','green','grass','ball']
 //let words = ['technology','travel','place','walk','bicycle','car','wheel','motor','jet','engine','airplane'];
 
 //==========ESL2==================
-//let words = ['mountain','island','volcano','lake','waterfall','desert','ocean',];
+//let words = ['mountain','island','volcano','lake','waterfall','desert','ocean','Pacific','Everest','Sahara','Greenland','Vesuvius','Arctic','Antarctica'];
 // let words = ['germs','microscope','flashlight','infection','disease','medicine','vaccine','sick','sore throat','stomach ache','defense'];
 // let words = ['lived','covered','prepared','worked','planted','fixed','flooded','cared','disappeared','harvested','used','saved'];
 //let words = ['mayan','temple','palace','cotton','occasion','jewelry','jade','ordinary','gold','civilization'];

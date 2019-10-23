@@ -1,12 +1,13 @@
 //============PHONICS=========
 //let words = ['paul','cook','food','spoon','hook','boots','foot','august','autumn','paw','jaw','saw'];
 //let words = ['park','horse','fork','nurse','skirt','singer','farmer','bird','arm','car','turtle'];
+//let words = ['tape','cake','lake','tail','mail','nail','day','hay','pay'];
 
 //==============ESLS==============
 //let words = ['happy','sad','nervous','relaxed','excited','energetic','tired','confused','scared','curious','bored','hungry','sleepy','angry','surprised','confident'];
 //let words = ['first', 'second', 'third', 'fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth','thirteenth',
 //    'fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth'];
-//let words = ['january','february','march','april','may','june','july','august','september','october','november','december']
+let words = ['january','february','march','april','may','june','july','august','september','october','november','december']
 //let words = ['birthday','party','amazing','growth','interview','gift','meaningful','year','special'];
 //let words = ['skateboard','frisbee','football','robot','rubiks cube','basketball','guitar','puzzles','lego','hula hoop','doll',
 //    'board game','yoyo','car'];
@@ -26,7 +27,7 @@
 //let words = ['history','study','place','people','question','answer','internet','object','museum','past','present','future']
 //let words = ['movie theater','zoo','swimming pool','cafe','hospital','mall','hotel','library','park']
 //let words = ['freezing','warm','damp','bright','chilly','foggy','stormy', 'rainy','sunny','cloudy','windy','snowy','dry','spring','summer','autumn','winter'];
-let words = ['astronaut','space','moon','spaceship','landed','stepped','footprint','studied','rocks','soil']
+//let words = ['astronaut','space','moon','spaceship','landed','stepped','footprint','studied','rocks','soil']
 
 
 //==========ESL2==================

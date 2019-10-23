@@ -17,6 +17,8 @@
 <body>
 <img src="../images/whitesquare.png" style="position: absolute;top: 0; left: 0; z-index: 9999; width: 50px;">
 <script>
+    //===debug===
+
 
     let playing = true;
     let background = 'background14.jpg';
@@ -28,7 +30,10 @@
 
     let people = [];
 
-    for(let i = 0; i<10; i++){
+    let NUM_OF_PEOPLE = 10;
+    let NUM_OF_MONSTERS = 5;
+
+    for(let i = 0; i<NUM_OF_PEOPLE; i++){
         let ppl = new Character(getRandom(150),height-150,getRandom(['man','woman'])+ (Math.random()*3 |0));
         let pplSprite = new Img('../images/people/' + ppl.name + '.png',0,0,50);
         ppl.addSprite(pplSprite)
@@ -36,8 +41,8 @@
         people.push(ppl)
     }
 
-    function doAsGroup(funcname, argsarray){
-        people.forEach(ppl=>{
+    function doAsGroup(group, funcname, argsarray){
+        group.forEach(ppl=>{
             setTimeout(()=>{
                 if(argsarray){
                     ppl[funcname](...argsarray)
@@ -50,7 +55,7 @@
 
     //====ACTS===
     let act_intro = true;
-    let act_intro_started = false;
+    let act_intro_started = true;
     let act_haunting = false;
     let act_haunting_started = false;
     let act_decorating = false;
@@ -87,11 +92,46 @@
         }
     }
 
+    let haunters = []
+
+    let potential_haunters = ['ghost0','skeleton0','vampire0']
+
+
+    function animate_haunting(){
+        if(act_haunting && !act_haunting_started){
+            let promises = [];
+            for(let i = 0; i<NUM_OF_MONSTERS; i++){
+                let haunter = new Flyer(width - 150, height-50,getRandom(potential_haunters));
+                let haunterimg = new Img('../images/people/'+ haunter.name + '.png', 0,0,60);
+                haunter.addSprite(haunterimg);
+                let loading_promise = new Promise(resolve => {
+                    haunterimg.onload = function() {
+                        resolve();
+                    }
+                })
+                haunter.faceleft();
+                haunters.push(haunter);
+                promises.push(loading_promise);
+            }
+            console.log(promises)
+            Promise.all(promises).then(()=>{
+                console.log('hey')
+                doAsGroup(haunters,'flyto', [new Vector(width-200 + getRandom(-10,10), 50+ getRandom(-10,10))]);
+            });
+            act_haunting_started = true;
+        }
+        if(act_haunting_started && act_haunting){
+            haunters.forEach(haunter=>{
+                haunter.update()
+            })
+        }
+    }
+
     function nextAct(){
         if(act_intro_started){
             act_intro = false;
             act_haunting = true;
-            act_intro_started = false;
+            act_intro_started = true;
         }
         if(act_haunting_started){
             act_haunting = false;
@@ -114,11 +154,14 @@
         people.forEach(x=>{
             x.update();
         });
-
+        animate_intro();
+        animate_haunting()
         if(act_intro){
-            animate_intro();
-        }
 
+        }
+        if(act_haunting){
+
+        }
 
 
 
@@ -127,6 +170,10 @@
 
         if(playing) requestAnimationFrame(loop);
     }
+    function loggg(){
+        console.log(act_intro ,act_intro_started,act_haunting,act_haunting_started, act_decorating , act_decorating_started , act_ending ,act_ending_started)
+    }
+
 
     loop();
 
