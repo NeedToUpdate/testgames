@@ -3,6 +3,8 @@
 //let words = ['park','horse','fork','nurse','skirt','singer','farmer','bird','arm','car','turtle'];
 //let words = ['goat','coat','boat','cloak','clock','wall','green','grass','ball'];
 //let words = ['flute','luke','prune','sue','blue','glue','fruit','suit','juice','cute','mule','cube'];
+let words = ['tape','cake','lake','tail','mail','nail','day','hay','pay'];
+
 //==============ESLS==============
 //let words = ['happy','sad','nervous','relaxed','excited','energetic','tired','confused','scared','curious','bored','hungry','sleepy','angry','surprised','confident'];
 //let words = ['first', 'second', 'third', 'fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth','thirteenth',
@@ -17,7 +19,7 @@
 //let words = ['beak','feathers','fins','pouch','fur','tail','teeth','wings'];
 
 //===========ESL1=================
-let words = ['car','robot','doll','bike','teddy bear'];
+//let words = ['car','robot','doll','bike','teddy bear'];
 //let words = ['freshwater','people','animal','ocean','salt','melting','insect','river','lake','mountain',]
 //let words = ['fresh','fruit','vegetables','snack','meal','sports','wash','prepare','sick','important','exercise','hygiene','sleep']
 //let words = ['apple','banana','grape','broccoli','cabbage','bread','rice','cereal','pasta','milk','cheese','meat','chicken','egg'];

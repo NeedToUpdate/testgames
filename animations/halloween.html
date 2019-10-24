@@ -133,7 +133,6 @@
                 haunters.push(haunter);
                 promises.push(loading_promise);
             }
-            console.log(promises)
             Promise.all(promises).then(() => {
                 //doAsGroup(haunters,'flyto', [new Vector(width-200, 50)]).done();
                 let flypromises = []
@@ -160,18 +159,14 @@
             })
             for (let i = haunters.length - 1; i >= 0; i--) {
                 let haunter = haunters[i];
-
-                if (getRandom(50) < 1 && !haunter.haunting && !haunter.doflyto) {
+                if (!haunter.haunting && !haunter.doflyto && haunter.dohover && !haunter.dead) {
                     //choose random target to haunt
 
                     let target = getRandom(people.filter(x => x.targeted !== true));
                     if (!target) {
                         target = {targeted: true};
                     }
-
-                    console.log(target.targeted, haunter.haunting)
                     if (target.p && !target.targeted) {
-                        console.log(target, target.sprite.shape);
                         haunter.haunting = true;
                         target.targeted = true;
 
@@ -181,28 +176,33 @@
                             target.replaceSprite(targetimg);
                             target.scared = false;
                             haunter.remove();
-                            haunters.splice(i, 1);
 
-                            if (people.filter(x => x.targeted !== true).length > haunters.length) {
-                                let haunter = new Flyer(width - 150, height - 50, getRandom(potential_haunters));
-                                let haunterimg = new Img('../images/people/' + haunter.name + '.png', 0, 0, 60);
-                                haunter.addSprite(haunterimg);
-                                let loading_promise = new Promise(resolve => {
-                                    haunterimg.onload = function () {
-                                        resolve();
-                                    }
-                                })
-                                haunter.faceleft();
-                                haunters.push(haunter);
-                                haunter.flyto(new Vector(width - 200 + getRandom(-140, 80), 50 + getRandom(100))).done(() => {
-                                    haunter.hover()
-                                })
-                            }
+
 
                         })
                     }
                 }
             }
+            for (let i = haunters.length - 1; i >= 0; i--) {
+                if(haunters[i].dead) haunters.splice(i,1)
+            }
+            if(haunters.length <= 0 && people.filter(x=>x.targeted !== true).length > 0){
+                    let haunter = new Flyer(width - 150, height - 50, getRandom(potential_haunters));
+                    let haunterimg = new Img('../images/people/' + haunter.name + '.png', 0, 0, 60);
+                    haunter.addSprite(haunterimg);
+                    let loading_promise = new Promise(resolve => {
+                        haunterimg.onload = function () {
+                            resolve();
+                        }
+                    });
+                    haunter.faceleft();
+                    haunters.push(haunter);
+                    haunter.flyto(new Vector(width - 200 + getRandom(-140, 80), 50 + getRandom(100))).done(() => {
+                        haunter.hover()
+                    })
+
+            }
+
 
         }
     }
