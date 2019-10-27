@@ -24,7 +24,7 @@
         nextAct()
     })
 
-
+    let portal = {};
     let playing = true;
     let background = 'background14.jpg';
     document.body.style.backgroundColor = 'grey'
@@ -36,22 +36,27 @@
     let people = [];
 
     let NUM_OF_PEOPLE = 10;
-    let NUM_OF_MONSTERS = 5;
+    let NUM_OF_MONSTERS = 7;
 
-    function createPeople(){
+    function createPeople() {
         for (let i = 0; i < NUM_OF_PEOPLE; i++) {
-            let ppl = new Character(getRandom(100, width-100), height - 150, getRandom(['man', 'woman']) + (Math.random() * 3 | 0));
+            let ppl = new Character(getRandom(100, width - 100), height - 150, getRandom(['man', 'woman']) + (Math.random() * 3 | 0));
             let pplSprite = new Img('../images/people/' + ppl.name + '.png', 0, 0, 50);
             pplSprite.shape.style.zIndex = '1000'
+
             ppl.addSprite(pplSprite)
             ppl.bounds.y = height - 100;
             people.push(ppl)
         }
     }
+
     createPeople()
-    function create_haunter(){
-        let haunter = new Flyer(width - 150, height - 50, getRandom(potential_haunters));
+
+    function create_haunter() {
+        let haunter = new Flyer(width - 100, height - 100, getRandom(potential_haunters));
         let haunterimg = new Img('../images/people/' + haunter.name + '.png', 0, 0, 60);
+        haunterimg.shape.style.zIndex = '1000'
+        haunterimg.shape.style.animation = 'fadeIn 1s'
         haunter.addSprite(haunterimg);
         let loading_promise = new Promise(resolve => {
             haunterimg.onload = function () {
@@ -60,7 +65,7 @@
         });
         haunter.faceleft();
         haunters.push(haunter);
-        loading_promise.then(()=>{
+        loading_promise.then(() => {
             haunter.flyto(new Vector(width - 200 + getRandom(-140, 80), 50 + getRandom(100))).done(() => {
                 haunter.hover()
             })
@@ -87,15 +92,15 @@
     let act_haunting_started = false;
     let act_decorating = false;
     let act_decorating_started = false;
-    let act_haunting2 = false;
-    let act_haunting2_started = false;
+    let act_costumes = false;
+    let act_costumes_started = false;
     let act_ending = false;
     let act_ending_started = false;
 
     function animate_intro() {
-       // if (act_intro_started) {
-
-            people.forEach(ppl => {
+        // if (act_intro_started) {
+        people.forEach(ppl => {
+            if (!ppl.dragging) {
                 if (ppl.scared) {
                     if (getRandom(100) < 1) {
                         ppl.faceright()
@@ -116,7 +121,8 @@
                     if (getRandom(10) < 1) ppl.jumpfwd(0.3);
                     if (getRandom(100) < 1) ppl.facing_right ? ppl.faceleft() : ppl.faceright();
                 }
-            })
+            }
+        })
 
         // } else {
         //     //default before the movie plays
@@ -142,40 +148,45 @@
 
 
     function animate_haunting() {
-        if (act_haunting && !act_haunting_started) {
+        if (act_haunting && !act_haunting_started && !portal_is_open) {
             let promises = [];
-            for (let i = 0; i < NUM_OF_MONSTERS; i++) {
-                let haunter = new Flyer(width - 150, height - 50, getRandom(potential_haunters));
-                let haunterimg = new Img('../images/people/' + haunter.name + '.png', 0, 0, 60);
-                haunter.addSprite(haunterimg);
-                let loading_promise = new Promise(resolve => {
-                    haunterimg.onload = function () {
-                        resolve();
-                    }
-                })
-                haunter.faceleft();
-                haunters.push(haunter);
-                promises.push(loading_promise);
-            }
-            Promise.all(promises).then(() => {
-                //doAsGroup(haunters,'flyto', [new Vector(width-200, 50)]).done();
-                let flypromises = []
-                haunters.forEach(haunter => {
-                    let flying_promise = new Promise(resolve => {
-                        haunter.flyto(new Vector(width - 200 + getRandom(-140, 80), 50 + getRandom(100))).done(() => {
-                            haunter.hover()
-                            resolve()
+            open_portal().then(() => {
+                for (let i = 0; i < NUM_OF_MONSTERS; i++) {
+                    let haunter = new Flyer(width - 100, height - 100, getRandom(potential_haunters));
+                    let haunterimg = new Img('../images/people/' + haunter.name + '.png', 0, 0, 60);
+                    haunterimg.shape.style.zIndex = '1000';
+                    haunterimg.shape.style.animation = 'fadeIn 1s'
+                    haunter.addSprite(haunterimg);
+                    let loading_promise = new Promise(resolve => {
+                        haunterimg.onload = function () {
+                            resolve();
+                        }
+                    })
+                    haunter.faceleft();
+                    haunters.push(haunter);
+                    promises.push(loading_promise);
+                }
+                Promise.all(promises).then(() => {
+                    //doAsGroup(haunters,'flyto', [new Vector(width-200, 50)]).done();
+                    let flypromises = []
+                    haunters.forEach(haunter => {
+                        let flying_promise = new Promise(resolve => {
+                            haunter.flyto(new Vector(width - 200 + getRandom(-140, 80), 50 + getRandom(100))).done(() => {
+                                haunter.hover()
+                                resolve()
+                            })
+                        })
+                        flypromises.push(flying_promise)
+                    })
+                    Promise.all(flypromises).then(() => {
+                        close_portal()
+                        people.forEach(ppl => {
+                            ppl.scared = true
                         })
                     })
-                    flypromises.push(flying_promise)
-                })
-                Promise.all(flypromises).then(() => {
-                    people.forEach(ppl => {
-                        ppl.scared = true
-                    })
-                })
+                });
+                act_haunting_started = true;
             });
-            act_haunting_started = true;
         }
         if (act_haunting_started && act_haunting) {
 
@@ -196,7 +207,7 @@
                             console.log('attacked ' + target.name);
                             let targetimg = new Img('../images/people/' + getRandom(potential_targets) + '.png', 0, 0, 60);
                             target.replaceSprite(targetimg);
-                            if(!target.facing_right){
+                            if (!target.facing_right) {
                                 target.faceleft();
                             }
                             target.scared = false;
@@ -210,14 +221,19 @@
             for (let i = haunters.length - 1; i >= 0; i--) {
                 if (haunters[i].dead) haunters.splice(i, 1)
             }
-            if (haunters.length <= 0 && people.filter(x => x.targeted !== true).length > 0) {
-                let diff = people.filter(x => x.targeted !== true).length - haunters.length;
-                let num = diff > 2 ? 3 : diff > 1 ? 2 : 1;
-                for (let i = num; i > 0; i--) {
-                    create_haunter();
-                }
-            }else if(act_haunting_started && people.filter(x => x.targeted !== true).length ===0 && haunters.length === 0){
+            if (haunters.length <= 0 && people.filter(x => x.targeted !== true).length > 0 && !portal_is_open) {
+                open_portal().then(()=>{
+                    let diff = people.filter(x => x.targeted !== true).length - haunters.length;
+                    let num = diff > 2 ? 3 : diff > 1 ? 2 : 1;
+                    for (let i = num; i > 0; i--) {
+                        create_haunter();
+                    }
+                    setTimeout(close_portal,1000);
+                })
+
+            } else if (act_haunting_started && people.filter(x => x.targeted !== true).length === 0 && haunters.length === 0) {
                 act_haunting = false;
+                testdragging()
             }
 
 
@@ -226,100 +242,110 @@
 
     let alldecors = [];
 
-    function animate_decorating(){
-        if(act_decorating && !act_decorating_started){
+    function animate_decorating() {
+        if (act_decorating && !act_decorating_started) {
             reset()
             act_decorating_started = true;
         }
-        if(act_decorating && act_decorating_started){
-            people.forEach(ppl=>{
-                if(getRandom(300)<1 && !ppl.jumping){
+        if (act_decorating && act_decorating_started) {
+            people.forEach(ppl => {
+                if (getRandom(300) < 1 && !ppl.jumping) {
 
-                    let h =  getRandom(getXYpairing(ppl.p.x),300)
+                    let h = getRandom(getXYpairing(ppl.p.x), 300)
                     let x = ppl.p.x;
-                    console.log(ppl.p.x, getXYpairing(ppl.p.x), h, ((310-h)/500) + 0.4)
-                    ppl.jump(((310-h)/800 )+ 0.3);
-                    setTimeout(()=>{
+                    console.log(ppl.p.x, getXYpairing(ppl.p.x), h, ((310 - h) / 500) + 0.4)
+                    ppl.jump(((310 - h) / 800) + 0.3);
+                    setTimeout(() => {
                         let decor = new Img('../images/decor/decor' + getRandom(10) + '.png', x, h, 50);
                         alldecors.push(decor);
-                    }, 200 + 300- h)
+                    }, 200 + 300 - h)
                 }
             })
         }
 
     }
-    function animate_haunting2(){
-        if(act_haunting2 && !act_haunting2_started) {
+
+    function animate_costumes() {
+        if (act_costumes && !act_costumes_started) {
             people.forEach(ppl => {
-               let maskimg = new Img('../images/decor/mask' + getRandom(4) + '.png', ppl.p.x, ppl.p.y, 50)
-                let mask = new PowerBall(ppl.p.x,ppl.p.y, 'mask')
+                let maskimg = new Img('../images/decor/mask' + getRandom(4) + '.png', ppl.p.x, ppl.p.y, 50)
+                let mask = new PowerBall(ppl.p.x, ppl.p.y, 'mask')
                 mask.addSprite(maskimg)
                 maskimg.shape.style.zIndex = '1001';
                 ppl.extras.mask = mask;
             });
-            for(let i = 0; i<5; i++){
-                create_haunter();
-            }
-            act_haunting2_started = true;
-        }
-        if(act_haunting2 && act_haunting2_started){
-            haunters.forEach(hntr => {
 
-                    if (hntr.p.x >= width - 100) {
-                        hntr.faceleft();
-                    }
-                    if (hntr.p.x <= 50) {
-                        hntr.faceright();
-                    }
-                    if (getRandom(10) < 1 && !hntr.doflyto) hntr.flyto(new Vector(hntr.facing_right? hntr.p.x+50: hntr.p.x -50, hntr.p.y));
-                    if (getRandom(100) < 1) hntr.facing_right ? hntr.faceleft() : hntr.faceright();
+            act_costumes_started = true;
+        }
+        if (act_costumes && act_costumes_started) {
+
+        }
+    }
+
+    function animate_ending() {
+        if (act_ending && !act_ending_started) {
+            open_portal().then(()=>{
+                for (let i = 0; i < 5; i++) {
+                    create_haunter();
+                }
+                act_ending_started = true;
+                setTimeout(close_portal, 2000)
+            })
+        }
+        else if(act_ending && act_ending_started){
+            haunters.forEach(hntr => {
+                if (hntr.p.x >= width - 100) {
+                    hntr.faceleft();
+                }
+                if (hntr.p.x <= 50) {
+                    hntr.faceright();
+                }
+                if (getRandom(10) < 1 && !hntr.doflyto) hntr.flyto(new Vector(hntr.facing_right ? hntr.p.x + 50 : hntr.p.x - 50, hntr.p.y));
+                if (getRandom(100) < 1) hntr.facing_right ? hntr.faceleft() : hntr.faceright();
 
             })
         }
     }
-    function animate_ending(){
 
-    }
-
-    function reset(){
-        let wipe = new Div(0,0,'black',width,height,true);
+    function reset() {
+        let wipe = new Div(0, 0, 'black', width, height, true);
         wipe.shape.style.opacity = '0';
         wipe.shape.style.backgroundColor = 'black';
         wipe.shape.style.zIndex = '1000000';
-        wipe.shape.style.animation = 'fadeIn 2.1s';
-        setTimeout(()=>{
-            people.forEach(x=>{
+        wipe.shape.style.animation = 'fadeInOut 2.1s';
+        setTimeout(() => {
+            people.forEach(x => {
                 x.remove()
             });
             people = [];
             createPeople()
-            haunters.forEach(x=>{
+            haunters.forEach(x => {
                 x.remove();
             })
-        },1000)
-        setTimeout(()=>{
+        }, 1000)
+        setTimeout(() => {
             wipe.remove();
-        },3000)
+        }, 3000)
     }
 
 
-    function getXYpairing(x){
-        x = x+25;
-        if(x<53){
+    function getXYpairing(x) {
+        x = x + 25;
+        if (x < 53) {
             return 262;
-        }else if(x<121){
+        } else if (x < 121) {
             return 78;
-        }else if(x<287){
+        } else if (x < 287) {
             return 148;
-        }else if(x<436){
+        } else if (x < 436) {
             return 36
-        }else if(x<592){
+        } else if (x < 592) {
             return 272;
-        }else if(x<741){
+        } else if (x < 741) {
             return 88;
-        }else if(x<927){
+        } else if (x < 927) {
             return 116
-        }else{
+        } else {
             return 255;
         }
     }
@@ -339,18 +365,18 @@
         }
         if (act_decorating_started) {
             act_decorating = false;
-            act_haunting2 = true;
+            act_costumes = true;
             act_decorating_started = false;
             console.log('ending decorating')
         }
-        if (act_haunting2_started) {
-            act_haunting2 = false;
+        if (act_costumes_started) {
+            act_costumes = false;
             act_ending = true;
-            act_haunting2_started = false;
+            act_costumes_started = false;
         }
         if (act_ending_started) {
-            act_ending = false;
-            act_ending_started = false;
+            // act_ending = false;
+            // act_ending_started = false;
         }
     }
 
@@ -358,23 +384,29 @@
     loop = function (now) {
         people.forEach(x => {
             x.update();
+            if(x.dragging){
+                console.log(x.p.x)
+            }
         });
-        haunters.forEach(x=>{
+        haunters.forEach(x => {
             x.update();
         })
+        if (Object.keys(portal).length > 0) {
+            portal.update()
+        }
         animate_intro();
         animate_haunting();
         animate_decorating();
-        animate_haunting2()
+        animate_costumes()
         animate_ending();
 
 
         if (playing) requestAnimationFrame(loop);
     }
 
-    document.addEventListener('click', ev=>{
-        console.log(ev.clientX, ev.clientY);
-    })
+    // document.addEventListener('click', ev=>{
+    //     console.log(ev.clientX, ev.clientY);
+    // })
 
     function loggg() {
         console.log(act_intro, act_intro_started, act_haunting, act_haunting_started, act_decorating, act_decorating_started, act_ending, act_ending_started)
@@ -382,6 +414,137 @@
 
 
     loop();
+
+    document.addEventListener('mouseup', () => {
+        dropAll()
+        console.log('dropAll')
+    });
+    document.addEventListener('touchend', () => {
+        dropAll()
+    });
+
+    document.addEventListener('mousemove', (ev) => {
+        drag(ev)
+    });
+    document.addEventListener('touchmove', (ev) => {
+        if (ev.touches.length > 1) {
+            ev = ev.touches[ev.touches.length - 1];
+        } else {
+            ev = ev.touches[0];
+        }
+        drag(ev)
+    });
+
+
+    function dropAll() {
+        people.forEach(x => {
+            drop(x)
+        })
+    }
+
+    function testdragging() {
+        people.forEach(ppl => {
+            ppl.sprite.shape.addEventListener('mousedown', ev => {
+                pickup(ppl, ev);
+            });
+            ppl.sprite.shape.addEventListener('touchstart', ev => {
+                pickup(ppl, ev.touches[0]);
+            })
+        })
+    }
+
+    testdragging()
+
+    function drag(ev) {
+        people.forEach(x => {
+            if (x.dragging) {
+                x.p.y = ev.clientY - x.h / 2;
+                x.p.x = ev.clientX - x.h / 2;
+                console.log(x.p.x)
+            }
+        })
+    }
+
+    function pickup(people, ev) {
+        if (!people.dead) {
+            people.p.y = ev.clientY - people.h / 2;
+            people.p.x = ev.clientX - people.h / 2;
+            people.v.clear();
+            people.a.clear();
+            people.dragging = true;
+            people.antigrav = true;
+            if(people.targeted){
+                open_portal();
+            }
+        }
+    }
+
+    function drop(person) {
+        if (!person.dead && person.dragging) {
+            person.dragging = false;
+            person.antigrav = false;
+            if(portal_is_open && person.p.x < width-200){
+                close_portal();
+                console.log(width-200, person.p.x)
+            }else if(portal_is_open && person.p.x > width-200){
+               // console.log('die')
+                setTimeout(()=>{
+                    person.remove();
+                    people.splice(people.indexOf(person),1)
+                    close_portal();
+                },300);
+
+            }
+        }
+    }
+
+
+    let portal_is_open = false;
+    let loaded = new ImageLoader('../images/decor/',['portal']);
+
+    function open_portal() {
+        if(!portal_is_open){
+            portal_is_open = true;
+            return new Promise((resolve,reject) => {
+                if (Object.keys(portal).length === 0) {
+                    let portalimg = new Img(loaded.portal.cloneNode(), width - 200, height - 200, 200);
+                    portalimg.shape.style.zIndex = 999;
+                    portalimg.shape.style.animation = 'growIn 1s'
+                    portal = new Flyer(width - 200, height - 200, 'portal')
+                    portal.addSprite(portalimg)
+                    portal.spin()
+                    setTimeout(resolve, 1001);
+                }else{
+                    reject()
+                }
+            })
+        }else{
+            return new Promise(((resolve, reject) => reject()))
+        }
+    }
+
+    function close_portal() {
+        if(portal_is_open){
+            return new Promise((resolve, reject) => {
+                if (Object.keys(portal).length > 0) {
+                    portal_is_open = false;
+                    let portalimg = new Img(loaded.portal.cloneNode(), width - 200, height - 200, 200);
+                    portalimg.shape.style.zIndex = 999;
+                    portalimg.shape.style.animation = 'growOut 1s'
+                    portal.replaceSprite(portalimg);
+                    setTimeout(() => {
+                            portal.remove()
+                            portal = {}
+                            resolve();
+                        }
+                        , 800);
+                }else{
+                    reject()
+                }
+            })
+        }
+        }
+
 
 </script>
 </body>

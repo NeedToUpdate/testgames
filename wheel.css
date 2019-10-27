@@ -162,8 +162,15 @@ p, img{
         opacity: 0;
     }
 }
-
 @keyframes fadeIn {
+    from{
+        opacity: 0;
+    }
+}
+
+
+
+@keyframes fadeInOut {
     0%{
         opacity: 0;
     }
@@ -173,6 +180,20 @@ p, img{
     100%{
         opacity: 0;
     }
+}
+
+@keyframes growIn {
+    from{
+        width: 0;
+    }
+
+}
+
+@keyframes growOut {
+    to{
+        width: 0;
+    }
+
 }
 
 

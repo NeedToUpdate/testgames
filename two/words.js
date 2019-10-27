@@ -28,6 +28,8 @@
 //let words = ['movie theater','zoo','swimming pool','cafe','hospital','mall','hotel','library','park']
 //let words = ['freezing','warm','damp','bright','chilly','foggy','stormy', 'rainy','sunny','cloudy','windy','snowy','dry','spring','summer','autumn','winter'];
 //let words = ['astronaut','space','moon','spaceship','landed','stepped','footprint','studied','rocks','soil']
+let words = ['movie theater','zoo','swimming pool','cafe','hospital','mall','hotel','library','park','north','east','south','west'];
+
 
 
 //==========ESL2==================

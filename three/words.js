@@ -13,7 +13,7 @@
 //let words = ['dishwasher','lamp','candle','microwave','broom','kettle','washing','machine','vacuum','cleaner','candle'];
 //let words = ['parrot','shark','frog','owl','snake','stingray','seagull','elephant','whale','crocodile','crocodile','eel','jellyfish','spider','toad','frog'];
 //let words = ['glue','scissors','notebook','ruler','white-out','eraser','sharpener','pencil','mechanical pencil','pencil case','highlighter'];
-
+let words = ['stones','bones','sticks','quill','ink','brush','ancient','pencil','water']
 
 //===========ESL1=================
 //let words = ['freshwater','people','animal','ocean','salt','melting','insect','river','lake','mountain',]
@@ -34,7 +34,7 @@
 //let words = ['mayan','temple','palace','cotton','occasion','jewelry','jade','ordinary','gold','civilization'];
 // let words = ['language','feeling','speak','country','gesture','meaning','polite','rude','acceptable','body','smile','index'];
 
-
+//let words = ['freezing','warm','damp','foggy','chilly','stormy','icy','sunny','cloudy','stormy','rainy']
 
 //============ESL3================
 //let words = ['stress','cope','reward','offline','exercise','manage','relax','challenge','overcome','difficulty','strategy','confident','exam','breathe']

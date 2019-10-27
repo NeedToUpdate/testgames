@@ -27,19 +27,19 @@
 // let sentences = ['they have walked to school','she has cleaned every day','he has slept ten hours','they have signed laws','they have helped him',
 // 'they have had a big job','we have watched many movies','she has drawn many pictures','he has learned english','he has talked for very long',
 // 'they have had breakfast','she has cooked many meals','we have learned this already','he has said this before'];
-//
-// let animals = ['parrot','shark','frog','owl','snake','stingray','seagull','elephant','whale','crocodile','crocodile','eel','jellyfish','spider','toad','frog'];
-// // let adjs = ['smaller','smarter','scarier','bigger','fatter','smellier','angrier','happier','uglier','prettier','cuter','funnier','thinner','stronger','weaker'];
-// // let sentences = Array(10).fill('').map(x=>{
-// //    let a1 = getRandom(animals);
-// //    let adj = getRandom(adjs);
-// //    let a2 = getRandom(animals);
-// //    while(a1 === a2){
-// //        a2 = getRandom(animals);
-// //    }
-// //    return 'the ' + a1 + ' is ' + adj + ' than the ' + a2;
-// // });
-//
+
+let animals = ['parrot','shark','frog','owl','snake','stingray','seagull','elephant','whale','crocodile','crocodile','eel','jellyfish','spider','toad','frog'];
+let adjs = ['smaller','smarter','scarier','bigger','fatter','smellier','angrier','happier','uglier','prettier','cuter','funnier','thinner','stronger','weaker'];
+let sentences = Array(10).fill('').map(x=>{
+   let a1 = getRandom(animals);
+   let adj = getRandom(adjs);
+   let a2 = getRandom(animals);
+   while(a1 === a2){
+       a2 = getRandom(animals);
+   }
+   return 'the ' + a1 + ' is ' + adj + ' than the ' + a2;
+});
+
 // let sentences = Array(10).fill('').map(x=>{
 //    let ans = ['where do ' + getRandom(animals) + 's live',
 //    'what do '+ getRandom(animals) + 's eat',
@@ -47,6 +47,6 @@
 //     return getRandom(ans);
 // });
 
-let sentences = ['My name is Connor','What\'s your name','nice to meet you','how old are you','I\'m from China','I am siz years old'];
+//let sentences = ['My name is Connor','What\'s your name','nice to meet you','how old are you','I\'m from China','I am siz years old'];
 
 //let sentences = words.map(x=>'the word is ' +x);
