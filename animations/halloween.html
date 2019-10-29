@@ -15,11 +15,11 @@
 </head>
 
 <body>
-<img id="testbtn" src="../images/whitesquare.png"
+<img id="nextbtn" src="../images/decor/decor6.png"
      style="position: absolute;top: 0; left: 0; z-index: 9999; width: 50px;">
 <script>
 
-    id('testbtn').addEventListener('click', () => {
+    id('nextbtn').addEventListener('click', () => {
 
         nextAct()
     })
@@ -40,7 +40,7 @@
 
     function createPeople() {
         for (let i = 0; i < NUM_OF_PEOPLE; i++) {
-            let ppl = new Character(getRandom(100, width - 100), height - 150, getRandom(['man', 'woman']) + (Math.random() * 3 | 0));
+            let ppl = new Character(getRandom(100, width - 100), height - 150, getRandom(['man', 'woman']) + (Math.random() *4 | 0));
             let pplSprite = new Img('../images/people/' + ppl.name + '.png', 0, 0, 50);
             pplSprite.shape.style.zIndex = '1000'
 
@@ -144,7 +144,7 @@
     let haunters = []
 
     let potential_haunters = ['ghost0']
-    let potential_targets = ['vampire0', 'zombie0', 'zombie1', 'witch0', 'mummy0'];
+    let potential_targets = ['vampire0','vampire1', 'zombie0', 'zombie1', 'witch0', 'mummy0','skeleton0','skeleton1','monster0','monster1'];
 
 
     function animate_haunting() {
@@ -152,7 +152,7 @@
             let promises = [];
             open_portal().then(() => {
                 for (let i = 0; i < NUM_OF_MONSTERS; i++) {
-                    let haunter = new Flyer(width - 100, height - 100, getRandom(potential_haunters));
+                    let haunter = new Flyer(width - 100, height - 100,  getRandom(potential_haunters));
                     let haunterimg = new Img('../images/people/' + haunter.name + '.png', 0, 0, 60);
                     haunterimg.shape.style.zIndex = '1000';
                     haunterimg.shape.style.animation = 'fadeIn 1s'
@@ -205,11 +205,8 @@
 
                         haunter.flyto(target.p).done(() => {
                             console.log('attacked ' + target.name);
-                            let targetimg = new Img('../images/people/' + getRandom(potential_targets) + '.png', 0, 0, 60);
+                            let targetimg = new Img('../images/people/' +( i<(potential_targets.length-1)? potential_targets[i]:getRandom(potential_targets)) + '.png', 0, 0, 60);
                             target.replaceSprite(targetimg);
-                            if (!target.facing_right) {
-                                target.faceleft();
-                            }
                             target.scared = false;
                             haunter.remove();
 
@@ -315,6 +312,9 @@
         wipe.shape.style.animation = 'fadeInOut 2.1s';
         setTimeout(() => {
             people.forEach(x => {
+                if(Object.keys(x.extras).includes('mask')){
+                    x.extras.mask.remove();
+                }
                 x.remove()
             });
             people = [];
@@ -322,6 +322,11 @@
             haunters.forEach(x => {
                 x.remove();
             })
+            if(alldecors.length>0){
+                alldecors.forEach(x=>{
+                    x.destroy();
+                })
+            }
         }, 1000)
         setTimeout(() => {
             wipe.remove();
@@ -373,10 +378,15 @@
             act_costumes = false;
             act_ending = true;
             act_costumes_started = false;
+            console.log('ending costumes')
         }
         if (act_ending_started) {
-            // act_ending = false;
-            // act_ending_started = false;
+            act_ending = false;
+            act_ending_started = false;
+            reset()
+            act_intro_started = true;
+            act_intro = true;
+            console.log('ending ending')
         }
     }
 

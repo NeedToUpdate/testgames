@@ -201,3 +201,12 @@ p, img{
      font-family: 'quikhand';
      src: url("./quikhand.ttf") format("truetype");
  }
+
+
+#nextbtn{
+    border-radius: 50%;
+    color: blue;
+    border: darkblue 4px solid;
+    background-color: lightblue;
+    width: 75px;
+}
