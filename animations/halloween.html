@@ -118,7 +118,7 @@
                     if (ppl.p.x <= 50) {
                         ppl.faceright();
                     }
-                    if (getRandom(10) < 1) ppl.jumpfwd(0.3);
+                    if (getRandom(ppl.targeted? 50: 10) < 1) ppl.jumpfwd(0.3);
                     if (getRandom(100) < 1) ppl.facing_right ? ppl.faceleft() : ppl.faceright();
                 }
             }
@@ -145,7 +145,7 @@
 
     let potential_haunters = ['ghost0']
     let potential_targets = ['vampire0','vampire1', 'zombie0', 'zombie1', 'witch0', 'mummy0','skeleton0','skeleton1','monster0','monster1'];
-
+    let k = potential_targets.length -1
 
     function animate_haunting() {
         if (act_haunting && !act_haunting_started && !portal_is_open) {
@@ -191,6 +191,7 @@
         if (act_haunting_started && act_haunting) {
 
             for (let i = haunters.length - 1; i >= 0; i--) {
+
                 let haunter = haunters[i];
                 if (!haunter.haunting && !haunter.doflyto && haunter.dohover && !haunter.dead) {
                     //choose random target to haunt
@@ -205,7 +206,8 @@
 
                         haunter.flyto(target.p).done(() => {
                             console.log('attacked ' + target.name);
-                            let targetimg = new Img('../images/people/' +( i<(potential_targets.length-1)? potential_targets[i]:getRandom(potential_targets)) + '.png', 0, 0, 60);
+                            let targetimg = new Img('../images/people/' +( k<(potential_targets.length-1)? potential_targets[k]:getRandom(potential_targets)) + '.png', 0, 0, 60);
+                            k--;
                             target.replaceSprite(targetimg);
                             target.scared = false;
                             haunter.remove();
@@ -391,39 +393,7 @@
     }
 
 
-    loop = function (now) {
-        people.forEach(x => {
-            x.update();
-            if(x.dragging){
-                console.log(x.p.x)
-            }
-        });
-        haunters.forEach(x => {
-            x.update();
-        })
-        if (Object.keys(portal).length > 0) {
-            portal.update()
-        }
-        animate_intro();
-        animate_haunting();
-        animate_decorating();
-        animate_costumes()
-        animate_ending();
 
-
-        if (playing) requestAnimationFrame(loop);
-    }
-
-    // document.addEventListener('click', ev=>{
-    //     console.log(ev.clientX, ev.clientY);
-    // })
-
-    function loggg() {
-        console.log(act_intro, act_intro_started, act_haunting, act_haunting_started, act_decorating, act_decorating_started, act_ending, act_ending_started)
-    }
-
-
-    loop();
 
     document.addEventListener('mouseup', () => {
         dropAll()
@@ -483,8 +453,14 @@
             people.a.clear();
             people.dragging = true;
             people.antigrav = true;
+            people.sprite.shape.style.backgroundColor = 'rgba(180,0,200,0.8)'
+            people.sprite.shape.style.borderRadius = '15px';
             if(people.targeted){
-                open_portal();
+                setTimeout(()=>{
+                    if(people.dragging){
+                        open_portal();
+                    }
+                },1000);
             }
         }
     }
@@ -492,6 +468,7 @@
     function drop(person) {
         if (!person.dead && person.dragging) {
             person.dragging = false;
+            person.sprite.shape.style.backgroundColor = ''
             person.antigrav = false;
             if(portal_is_open && person.p.x < width-200){
                 close_portal();
@@ -514,6 +491,10 @@
 
     function open_portal() {
         if(!portal_is_open){
+            if(Object.keys(portal).length>0){
+                portal.remove();
+                portal = {};
+            }
             portal_is_open = true;
             return new Promise((resolve,reject) => {
                 if (Object.keys(portal).length === 0) {
@@ -554,7 +535,38 @@
             })
         }
         }
+    loop = function (now) {
+        people.forEach(x => {
+            x.update();
+            if(x.dragging){
+                console.log(x.p.x)
+            }
+        });
+        haunters.forEach(x => {
+            x.update();
+        })
+        if (Object.keys(portal).length > 0) {
+            portal.update()
+        }
+        animate_intro();
+        animate_haunting();
+        animate_decorating();
+        animate_costumes()
+        animate_ending();
 
+        if (playing) requestAnimationFrame(loop);
+    }
+
+    // document.addEventListener('click', ev=>{
+    //     console.log(ev.clientX, ev.clientY);
+    // })
+
+    function loggg() {
+        console.log(act_intro, act_intro_started, act_haunting, act_haunting_started, act_decorating, act_decorating_started, act_ending, act_ending_started)
+    }
+
+
+    loop();
 
 </script>
 </body>
