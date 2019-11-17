@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
+    <script language="javascript" src="./lib/two.js"></script>
+    <script language="javascript" src="./lib/vector.js"></script>
+    <script language="javascript" src="./lib/matrix.js"></script>
+    <script language="javascript" src="./lib/drawbase.js"></script>
+    <script language="javascript" src="./lib/character.js"></script>
+    <script language="javascript" src="./lib/div.js"></script>
+    <script language="javascript" src="./lib/rect.js"></script>
+    <script language="javascript" src="./lib/eventemitter.js"></script>
+    <script language="javascript" src="./external/ml5.min.js"></script>
+
+    <title>Artem's Writing Game</title>
+    <link rel="stylesheet" href="./wheel.css">
+</head>
+
+<body>
+<canvas id="canvas"></canvas>
+<button id="clear-canvas" class="bluebtn">clear</button>
+<script>
+
+        console.log(ml5.version);
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+        const clearCanvas = document.getElementById('clear-canvas');
+        const radius = 4;
+        let painting = false;
+
+        function paintBackground() {
+            context.fillStyle = 'black';
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            context.fillStyle = 'white';
+        }
+
+        function putPoint(e) {
+            if (!painting) return;
+
+            context.lineTo(e.offsetX, e.offsetY);
+            context.stroke();
+
+            context.beginPath();
+            context.arc(e.offsetX, e.offsetY, radius, 0, Math.PI * 2);
+            context.fill();
+
+            context.beginPath();
+            context.moveTo(e.offsetX, e.offsetY);
+        }
+
+        function startStroke(e) {
+            painting = true;
+            putPoint(e);
+        }
+
+        function endStroke() {
+            painting = false;
+            context.beginPath();
+        }
+
+        canvas.width = 200;
+        canvas.height = 200;
+        context.lineWidth = radius * 2;
+        context.strokeStyle = 'white';
+
+        paintBackground();
+
+        canvas.addEventListener('mousedown', startStroke);
+        canvas.addEventListener('mousemove', putPoint);
+        canvas.addEventListener('mouseup', endStroke);
+        canvas.addEventListener('mouseleave', endStroke);
+
+        clearCanvas.addEventListener('click', () => paintBackground());
+
+    </script>
+</body>
+</html>

@@ -13,6 +13,10 @@
 //    'board game','yoyo','car'];
 //let words = ['dishwasher','lamp','candle','microwave','broom','kettle','washing','machine','vacuum','cleaner','candle'];
 //let words = ['parrot','shark','frog','owl','snake','stingray','seagull','elephant','whale','crocodile','crocodile','eel','jellyfish','spider','toad','frog'];
+//let words = ['hat','cap','sunglasses','tie','bowtie','scarf','belt','socks','jacket','coat','vest','suit','sweater','sweatshirt','shirt','jeans','shorts','sweatpants','skirt','sandals','sneakers','flats','heels','slippers','boots']
+//let words = ['projector','whiteboard','marker pen','eraser','desk','light','teacher','floor','wall','door','student','table','window','curtain','computer','mouse','keyboard'];
+
+
 
 //===========ESL1=================
 //let words = ['freshwater','people','animal','ocean','salt','melting','insect','river','lake','mountain',]
@@ -21,15 +25,18 @@
 //  let words = ['apple','coconut','pomelo','lemon','pineapple','orange','mango','grapes','watermelon','kiwifruit','cherry', 'durian'
 //      ,'eggplant','mushroom','strawberry','cauliflower','carrot','tomato','lettuce','potato','onion','corn','pumpkin'];
 //let words =['raining','thunder','storm','snowing','windy','hailing','sleeting','foggy','drizzling','cloudy'];
-// let words = ['firefighter','cleaner','doctor','chef','office worker','police officer','teacher','vet'];
+//let words = ['firefighter','cleaner','doctor','chef','office worker','police officer','teacher','vet'];
 // let words = ['autumn','crops','fruits','vegetables','farmer','festival','parade','dragon','mooncake','celebrate','mid fall','harvest']
 //let words = ['astronomer','search','telescope','screen','planet','science','computer','object','moon','camera'];
 //let words = ['history','study','place','people','question','answer','internet','object','museum','past','present','future']
 //let words = ['movie theater','zoo','swimming pool','cafe','hospital','mall','hotel','library','park']
 //let words = ['freezing','warm','damp','bright','chilly','foggy','stormy', 'rainy','sunny','cloudy','windy','snowy','dry','spring','summer','autumn','winter'];
 //let words = ['astronaut','space','moon','spaceship','landed','stepped','footprint','studied','rocks','soil']
-let words = ['movie theater','zoo','swimming pool','cafe','hospital','mall','hotel','library','park','north','east','south','west'];
+//let words = ['movie theater','zoo','swimming pool','cafe','hospital','mall','hotel','library','park','east','west','north','south'];
 
+//let words = ['hair','eyebrow','eye','nose','mouth','chest','stomach','leg','knee','foot','toe','head','neck','back','arm','elbow','finger','tongue','shoulder','hand','ankle','heel']
+//let words =['science','animals','pets','veterinarian','sick','diet','healthy','owners'];
+let words = ['bananas','cabbages','potatoes','cucumbers','strawberries','carrots','peppers','grapes','oranges','pears','bread','turkey','tomatoes','mustard','eggs'];
 
 
 //==========ESL2==================
