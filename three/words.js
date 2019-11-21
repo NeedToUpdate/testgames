@@ -1,7 +1,7 @@
 //============PHONICS=========
 //let words = ['paul','cook','food','spoon','hook','boots','foot','august','autumn','paw','jaw','saw'];
 //let words = ['park','horse','fork','nurse','skirt','singer','farmer','bird','arm','car','turtle'];
-let words = ['tape','cake','lake','tail','mail','nail','day','hay','pay'];
+//let words = ['tape','cake','lake','tail','mail','nail','day','hay','pay'];
 //==============ESLS==============
 //let words = ['happy','sad','nervous','relaxed','excited','energetic','tired','confused','scared','curious','bored','hungry','sleepy','angry','surprised','confident'];
 //let words = ['first', 'second', 'third', 'fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth','thirteenth',
@@ -15,7 +15,7 @@ let words = ['tape','cake','lake','tail','mail','nail','day','hay','pay'];
 //let words = ['glue','scissors','notebook','ruler','white-out','eraser','sharpener','pencil','mechanical pencil','pencil case','highlighter'];
 //let words = ['stones','bones','sticks','quill','ink','brush','ancient','pencil','water']
 //let words = ['projector','whiteboard','marker pen','eraser','desk','light','teacher','floor','wall','door','student','table','window','curtain','computer','mouse','keyboard'];
-
+let words = ['red','yellow','green','blue','purple','orange','violet','white','black','gray','light','dark','pink'];
 
 //===========ESL1=================
 //let words = ['freshwater','people','animal','ocean','salt','melting','insect','river','lake','mountain',]
