@@ -1,5 +1,7 @@
-let words = ['park','horse','fork','nurse','skirt','singer','farmer','bird','arm','car','turtle'];
+//let words = ['park','horse','fork','nurse','skirt','singer','farmer','bird','arm','car','turtle'];
 //let words = ['tape','cake','lake','tail','mail','nail','day','hay','pay'];
+
+let words = ['sword','storm','morning','corn','hard','jar','star','card','her','spider','runner','dancer','purse','purple','turn','fur'];
 
 //==============ESLS==============
 //let words = ['happy','sad','nervous','relaxed','excited','energetic','tired','confused','scared','curious','bored','hungry','sleepy','angry','surprised','confident'];

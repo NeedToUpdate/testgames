@@ -6,7 +6,7 @@
 //let words = ['tape','cake','lake','tail','mail','nail','day','hay','pay'];
 //let words = ['hamburger','egg','carrot','hot dog','sausage','tomato','noodle','cookie','candy','dumpling','chip','sandwich','kiwifruit','pineapple','watermelon','grape','peach','strawberry'];
 //let words = ['trousers','truck','train','strawberry','trash','tree','draw','drink','dragon','driver','drum','drawer'];
-//let words = ['meat','sea','jeep','seat','green','feet','me','he','we','candy','happy','puppy'];
+let words = ['meat','sea','jeep','seat','green','feet','me','he','we','candy','happy','puppy'];
 
 //==============ESLS==============
 //let words = ['living room','dining room','bedroom','garage','kitchen','terrace','bathroom','yard']
@@ -50,7 +50,7 @@
 //words = words.concat(['bananas','cabbages','potatoes'])
 
 //==========ESL2==================
-let words = ['mountain','island','volcano','lake','waterfall','desert','ocean','Pacific','Everest','Sahara','Greenland','Vesuvius','Arctic','Antarctica'];
+//let words = ['mountain','island','volcano','lake','waterfall','desert','ocean','Pacific','Everest','Sahara','Greenland','Vesuvius','Arctic','Antarctica'];
 // let words = ['germs','microscope','flashlight','infection','disease','medicine','vaccine','sick','sore throat','stomach ache','defense'];
 // let words = ['lived','covered','prepared','worked','planted','fixed','flooded','cared','disappeared','harvested','used','saved'];
 //let words = ['mayan','temple','palace','cotton','occasion','jewelry','jade','ordinary','gold','civilization'];
