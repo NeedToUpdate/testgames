@@ -35,27 +35,30 @@
     let LOGGING = true;
 
     let HARDMODE = false;
+    let NUM_OF_MONSTERS = 30;
     let characters = [
         'cat',
         'spiderman', 'ultraman', 'ironman',
         'peppapig', 'spongebob', 'monkey',
         'tiger', 'shark', 'cinderella',
         'elsa', 'ariel', 'deadfish', 'mrkrabs', 'thanos', 'pikachu', 'drstrange',
-        'superman', 'genie', 'simba', 'captainmarvel', 'mewtwo', 'sailormoon', 'venom', 'thor'
+        'superman', 'genie', 'simba', 'captainmarvel', 'mewtwo', 'sailormoon', 'venom', 'thor',
+        'ultraman2', 'ultraman3', 'olaf','hulk', 'gundam', 'optimus', 'snowwhite'
     ];
     let powers = [
         'blueenergy',
-        'web', 'fire', 'fire',
-        'pinkenergy', 'water', 'banana',
+        'web', 'bluebeam', 'fire',
+        'pinkenergy', 'krabbypatty', 'banana',
         'fire', 'water', 'blueenergy',
         'ice', 'water', 'nuke', 'water', 'blackenergy', 'electric', 'magic',
-        'fire', 'magic', 'magic', 'electric', 'magic', 'pinkenergy', 'blackenergy', 'electric'
+        'fire', 'magic', 'magic', 'electric', 'magic', 'pinkenergy', 'blackenergy', 'electric',
+        'magic','electric', 'ice','rock' , 'bluebeam' , 'bullet', 'bluebeam'
     ]
     let extras = [
-        'fire', 'fireballleft', 'fireballright', 'shield',
+        'fire', 'shield',
     ]
 
-    let background = 'background' + (Math.random()*13|0).toString() + '.jpg';
+    let background = 'background' + (Math.random()*20|0).toString() + '.jpg';
     document.body.style.backgroundColor = 'grey'
     document.body.style.backgroundImage = 'url(./images/' + background.toString() + ')';
     document.body.style.backgroundSize = width + 'px auto';
@@ -67,8 +70,25 @@
     if(char_name === 'deadfish'){
         powr_name = 'nuke';
     }
-    let mons_name = 'monster'+ (Math.random()*30|0);
+    if(char_name === 'snowwhite'){
+        powr_name = 'bluebird';
+    }
+    let mons_num = getRandom(NUM_OF_MONSTERS+2)
+    let mons_name = '';
     let monster_powr_name = powers[Math.random()*powers.length |0];
+    if(mons_num>NUM_OF_MONSTERS){
+        let exception = mons_num-NUM_OF_MONSTERS;
+        if(exception>1){
+            mons_name = 'thanos'
+            monster_powr_name = 'blackenergy'
+        }else if(exception>0){
+            mons_name = 'venom'
+            monster_powr_name = 'blackenergy'
+        }
+    }else{
+        mons_name = 'monster'+ (Math.random()*NUM_OF_MONSTERS|0);
+    }
+
     if(mons_name.endsWith('15')){
         monster_powr_name = 'spaghetti'
     }
@@ -165,6 +185,9 @@
     setup();
     let hopstop = false;
     let monsterisshooting = false;
+    let monsterrapidfire = false;
+
+
     loop = function (now) {
         player.update();
         //console.log(monster.dead);
@@ -187,7 +210,7 @@
                 delete player.extras.attack;
             }
         }
-        if(monster.rect.a){
+        if(monster.rect.a && monster.rect.d){
             if(monster.rect.a.x < player.rect.d.x && !monster.dead){
                 if(player.shielded){
                     monster.jumpbkwd();
@@ -197,20 +220,18 @@
 
             }
         }
-
-
        if(playing){
            if(Math.random()*1000 < (HARDMODE? 30: 10)){
-               monster.powerup();
+               if(!monsterisshooting){
+                   monster.powerup();
+               }
+
            }
            if(Math.random()*1000 < (HARDMODE? 2: 1)){
                if(!monsterisshooting && monster.poweringup){
                    monster.shoot();
                    monsterisshooting = true;
                }
-
-
-
            }
            if(Math.random()*2000 < (HARDMODE? (monster.health>30?30:10): (monster.health>30?20:5))){
                monster.hop();
@@ -218,11 +239,31 @@
            if(Math.random()*3000 < 2){
                monster.jump();
            }
+           if(Math.random()*10000 < (HARDMODE? 3: 2)){
+               monsterrapidfire = true;
+               console.log('rapid fire!')
+           }
            if(monster.health>80 && Math.random()*1000 < 5 && !hopstop){
                monster.sparhop().then(()=>{
                    hopstop = false
                });
               hopstop = true;
+           }
+           if(monsterrapidfire){
+               //console.log('pew');
+               if(!monsterisshooting){
+                   console.log('pow')
+                   monster.powerup();
+                   monster.shoot();
+                   if(Math.random()<0.2){
+                       monster.jump();
+                   }
+                   monsterisshooting = true;
+                   if(Math.random()<0.1){
+                       monsterrapidfire = false;
+                   }
+               }
+
            }
        }
         if(monster.extras.attack && monster.extras.attack.rect.a){
@@ -235,6 +276,8 @@
             }else if(monster.extras.attack.rect.a.x < player.rect.d.x && monster.extras.attack.rect.a.y < player.rect.c.y && monster.extras.attack.rect.b.y > player.rect.d.y && player.shielded ){
                 monster.extras.attack.kill();
                 delete monster.extras.attack;
+                monsterisshooting = false;
+            }else if(monsterisshooting && !monster.poweringup && monster.extras.attack.rect.a.x<=0){
                 monsterisshooting = false;
             }
         }

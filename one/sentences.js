@@ -13,6 +13,8 @@
 // let sentences = ['carbohydrates provide energy','proteins help your muscles','water helps you move','minerals help your bones','vitamins help your brain',
 // 'fats give you','fats help your heart'];
 
+let sentences = ['open your book','listen to your teacher','raise your hand','take out your pen','don\'t talk loud','put away your toys','stand up','sit down','close your book','open your book'];
+
 //let sentences = ['I like to dance on sunday mornings','I like to sleep on saturday mornings','I like to watch tv on friday evenings',
 //    'I like to stay home on sunday afternoons','Do you read on monday nights','Do you play tennis on wednesdays'];
 
@@ -28,17 +30,17 @@
 // 'they have had a big job','we have watched many movies','she has drawn many pictures','he has learned english','he has talked for very long',
 // 'they have had breakfast','she has cooked many meals','we have learned this already','he has said this before'];
 
-let animals = ['parrot','shark','frog','owl','snake','stingray','seagull','elephant','whale','crocodile','crocodile','eel','jellyfish','spider','toad','frog'];
-let adjs = ['smaller','smarter','scarier','bigger','fatter','smellier','angrier','happier','uglier','prettier','cuter','funnier','thinner','stronger','weaker'];
-let sentences = Array(10).fill('').map(x=>{
-   let a1 = getRandom(animals);
-   let adj = getRandom(adjs);
-   let a2 = getRandom(animals);
-   while(a1 === a2){
-       a2 = getRandom(animals);
-   }
-   return 'the ' + a1 + ' is ' + adj + ' than the ' + a2;
-});
+// let animals = ['parrot','shark','frog','owl','snake','stingray','seagull','elephant','whale','crocodile','crocodile','eel','jellyfish','spider','toad','frog'];
+// let adjs = ['smaller','smarter','scarier','bigger','fatter','smellier','angrier','happier','uglier','prettier','cuter','funnier','thinner','stronger','weaker'];
+// let sentences = Array(10).fill('').map(x=>{
+//    let a1 = getRandom(animals);
+//    let adj = getRandom(adjs);
+//    let a2 = getRandom(animals);
+//    while(a1 === a2){
+//        a2 = getRandom(animals);
+//    }
+//    return 'the ' + a1 + ' is ' + adj + ' than the ' + a2;
+// });
 
 // let sentences = Array(10).fill('').map(x=>{
 //    let ans = ['where do ' + getRandom(animals) + 's live',

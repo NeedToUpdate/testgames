@@ -15,7 +15,9 @@
 //let words = ['glue','scissors','notebook','ruler','white-out','eraser','sharpener','pencil','mechanical pencil','pencil case','highlighter'];
 //let words = ['stones','bones','sticks','quill','ink','brush','ancient','pencil','water']
 //let words = ['projector','whiteboard','marker pen','eraser','desk','light','teacher','floor','wall','door','student','table','window','curtain','computer','mouse','keyboard'];
-let words = ['red','yellow','green','blue','purple','orange','violet','white','black','gray','light','dark','pink'];
+//let words = ['red','yellow','green','blue','purple','orange','violet','white','black','gray','light','dark','pink'];
+//let words = ['exercise','body','healthy','stronger','lungs','heart','energy','muscles','stretch'];
+//let words = ['hair','eyebrow','eye','nose','mouth','chest','stomach','leg','knee','foot','toe','head','neck','back','arm','elbow','finger','tongue','shoulder','hand','ankle','heel']
 
 //===========ESL1=================
 //let words = ['freshwater','people','animal','ocean','salt','melting','insect','river','lake','mountain',]
@@ -29,6 +31,7 @@ let words = ['red','yellow','green','blue','purple','orange','violet','white','b
 //let words = ['astronomer','search','telescope','screen','planet','science','computer','object','moon','camera'];
 //let words = ['history','study','place','people','question','answer','internet','object','museum','past','present','future']
 //let words = ['movie theater','zoo','swimming pool','cafe','hospital','mall','hotel','library','park']
+let words = ['dishwasher','lamp','candle','microwave','broom','kettle','washing','machine','vacuum','cleaner','candle'];
 //==========ESL2==================
 //let words = ['mountain','island','volcano','lake','waterfall','desert','ocean','Pacific','Everest','Sahara','Greenland','Vesuvius','Amazon','Arctic'];
 // let words = ['germs','microscope','flashlight','infection','disease','medicine','vaccine','sick','sore throat','stomach ache','defense'];

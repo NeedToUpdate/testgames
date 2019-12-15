@@ -1,6 +1,4 @@
-//============PHONICS=========
-//let words = ['paul','cook','food','spoon','hook','boots','foot','august','autumn','paw','jaw','saw'];
-//let words = ['park','horse','fork','nurse','skirt','singer','farmer','bird','arm','car','turtle'];
+let words = ['park','horse','fork','nurse','skirt','singer','farmer','bird','arm','car','turtle'];
 //let words = ['tape','cake','lake','tail','mail','nail','day','hay','pay'];
 
 //==============ESLS==============
@@ -15,7 +13,7 @@
 //let words = ['parrot','shark','frog','owl','snake','stingray','seagull','elephant','whale','crocodile','crocodile','eel','jellyfish','spider','toad','frog'];
 //let words = ['hat','cap','sunglasses','tie','bowtie','scarf','belt','socks','jacket','coat','vest','suit','sweater','sweatshirt','shirt','jeans','shorts','sweatpants','skirt','sandals','sneakers','flats','heels','slippers','boots']
 //let words = ['projector','whiteboard','marker pen','eraser','desk','light','teacher','floor','wall','door','student','table','window','curtain','computer','mouse','keyboard'];
-
+//let words = ['bag','cap','doll','frog','girl','apple','elephant','insect','orange','umbrella','airplane','parrot','baby','hat','egg','rabbit','mouse','armchair'];
 
 
 //===========ESL1=================
@@ -33,12 +31,12 @@
 //let words = ['freezing','warm','damp','bright','chilly','foggy','stormy', 'rainy','sunny','cloudy','windy','snowy','dry','spring','summer','autumn','winter'];
 //let words = ['astronaut','space','moon','spaceship','landed','stepped','footprint','studied','rocks','soil']
 //let words = ['movie theater','zoo','swimming pool','cafe','hospital','mall','hotel','library','park','east','west','north','south'];
-
-let words = ['hair','eyebrow','eye','nose','mouth','chest','stomach','leg','knee','foot','toe','head','neck','back','arm','elbow','finger','tongue','shoulder','hand','ankle','heel']
+//let words = ['hear','see','taste','touch','smell','sour','sweet','bitter','colorful','soft','hard','warm','cold','grass','trees','animals'];
+//let words = ['hair','eyebrow','eye','nose','mouth','chest','stomach','leg','knee','foot','toe','head','neck','back','arm','elbow','finger','tongue','shoulder','hand','ankle','heel']
 //let words =['science','animals','pets','veterinarian','sick','diet','healthy','owners'];
 //let words = ['bananas','cabbages','potatoes','cucumbers','strawberries','carrots','peppers','grapes','oranges','pears','bread','turkey','tomatoes','mustard','eggs'];
 
-
+//let words = ['exercise','body','healthy','stronger','lungs','heart','energy','muscles','stretch'];
 //==========ESL2==================
 //let words = ['mountain','island','volcano','lake','waterfall','desert','ocean','Pacific','Everest','Sahara','Greenland','Vesuvius','Amazon','Arctic'];
 // let words = ['germs','microscope','flashlight','infection','disease','medicine','vaccine','sick','sore throat','stomach ache','defense'];
