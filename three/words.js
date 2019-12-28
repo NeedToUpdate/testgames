@@ -29,7 +29,7 @@
 // let words = ['firefighter','cleaner','doctor','chef','office worker','police officer','teacher','vet'];
 // let words = ['autumn','crops','fruits','vegetables','farmer','festival','parade','dragon','mooncake','celebrate','mid fall','harvest']
 //let words = ['astronomer','search','telescope','screen','planet','science','computer','object','moon','camera'];
-let words = ['history','study','place','people','question','answer','internet','object','museum','past','present','future']
+let words = ['history','study','place','people','question','answer','internet','object','museum','past','present','future'];
 //let words = ['movie theater','zoo','swimming pool','cafe','hospital','mall','hotel','library','park']
 //let words = ['dishwasher','lamp','candle','microwave','broom','kettle','washing','machine','vacuum','cleaner','candle'];
 //==========ESL2==================

@@ -46,11 +46,12 @@ let words = ['meat','sea','jeep','seat','green','feet','me','he','we','candy','h
 //let words = ['technology','travel','place','walk','bicycle','car','wheel','motor','jet','engine','airplane'];
 //let words = ['bread','turkey','green pepper','cucumber','tomato','mustard','egg'];
 //let words = ['tennis','gymnastics','volleyball','judo','basketball','ping-pong','football','baseball','badminton']
-
+//let words = ['long','straight','curly','short','hair','beard','mustache','blond','black','glasses']
 //words = words.concat(['bananas','cabbages','potatoes'])
 
 //==========ESL2==================
 //let words = ['mountain','island','volcano','lake','waterfall','desert','ocean','Pacific','Everest','Sahara','Greenland','Vesuvius','Arctic','Antarctica'];
+//let words = ['long','black','straight','curly','mustache','beard','blond','short','glasses'];
 // let words = ['germs','microscope','flashlight','infection','disease','medicine','vaccine','sick','sore throat','stomach ache','defense'];
 // let words = ['lived','covered','prepared','worked','planted','fixed','flooded','cared','disappeared','harvested','used','saved'];
 //let words = ['mayan','temple','palace','cotton','occasion','jewelry','jade','ordinary','gold','civilization'];
