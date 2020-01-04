@@ -6,8 +6,8 @@
 //let words = ['tape','cake','lake','tail','mail','nail','day','hay','pay'];
 //let words = ['hamburger','egg','carrot','hot dog','sausage','tomato','noodle','cookie','candy','dumpling','chip','sandwich','kiwifruit','pineapple','watermelon','grape','peach','strawberry'];
 //let words = ['trousers','truck','train','strawberry','trash','tree','draw','drink','dragon','driver','drum','drawer'];
-let words = ['meat','sea','jeep','seat','green','feet','me','he','we','candy','happy','puppy'];
-
+//let words = ['meat','sea','jeep','seat','green','feet','me','he','we','candy','happy','puppy'];
+//let words = ['pie','tie','necktie','bite','nine','kite','hi','climb','blind','fly','cry','sky'];
 //==============ESLS==============
 //let words = ['living room','dining room','bedroom','garage','kitchen','terrace','bathroom','yard']
 //let words = ['happy','sad','nervous','relaxed','excited','energetic','tired','confused','scared','curious','bored','hungry','sleepy','angry','surprised','confident'];
@@ -25,6 +25,8 @@ let words = ['meat','sea','jeep','seat','green','feet','me','he','we','candy','h
 //let words = ['ten','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety','hundred','thousand'];
 //let words = ['stones','bones','sticks','quill','ink','brush','pencil','pen','marker','crayon'];
 //words = words.concat(['hat','cap','sunglasses','tie','bowtie','scarf','belt','socks','jacket','coat','vest','suit','sweater','sweatshirt','shirt','jeans','shorts','sweatpants','skirt','sandals','sneakers','flats','heels','slippers','boots'])
+
+let words = ['mirror','lamp','laptop','wardrobe','laptop','chair','rug','football','alarm clock','picture','bed'];
 
 //===========ESL1=================
 //let words = ['car','robot','doll','bike','teddy bear'];

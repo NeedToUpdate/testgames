@@ -29,7 +29,7 @@
 // let words = ['firefighter','cleaner','doctor','chef','office worker','police officer','teacher','vet'];
 // let words = ['autumn','crops','fruits','vegetables','farmer','festival','parade','dragon','mooncake','celebrate','mid fall','harvest']
 //let words = ['astronomer','search','telescope','screen','planet','science','computer','object','moon','camera'];
-let words = ['history','study','place','people','question','answer','internet','object','museum','past','present','future'];
+//let words = ['history','study','place','people','question','answer','internet','object','museum','past','present','future'];
 //let words = ['movie theater','zoo','swimming pool','cafe','hospital','mall','hotel','library','park']
 //let words = ['dishwasher','lamp','candle','microwave','broom','kettle','washing','machine','vacuum','cleaner','candle'];
 //==========ESL2==================
@@ -40,6 +40,8 @@ let words = ['history','study','place','people','question','answer','internet','
 // let words = ['language','feeling','speak','country','gesture','meaning','polite','rude','acceptable','body','smile','index'];
 
 //let words = ['freezing','warm','damp','foggy','chilly','stormy','icy','sunny','cloudy','stormy','rainy']
+let words = ['horseback riding','go shopping','go to the movies','listen to music','meet my friends','play computer games','stay home'];
+
 
 //============ESL3================
 //let words = ['stress','cope','reward','offline','exercise','manage','relax','challenge','overcome','difficulty','strategy','confident','exam','breathe']
@@ -50,7 +52,6 @@ let words = ['history','study','place','people','question','answer','internet','
 // let words = ['bike','block','ball','kite','marble','basketball','skateboard','boat','plane','toy','doll',
 //    'football','soccer ball','guitar','toy box'];
 //let words = ['apple tree','hawk','mushroom','carrot','dragonfly','bamboo','cougar','bacteria','daffodil','pigeon','snake','catfish','producer','consumer','decomposer'];
-
 //let words = ['kick a ball','catch a ball','sing songs','dance','ride a bike','jump rope','throw a ball','fly a kite','skate'];
 //let words = ['flowers','lemonade','tea','apples','milk','eggs','bread','meat','chocolate','children','meat','matches','dogs','books','coca-cola'];
 
