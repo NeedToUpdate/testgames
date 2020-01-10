@@ -4,7 +4,7 @@ import cv2
 dir = os.getcwd() + '\\'
 
 for file in os.listdir(dir):
-	if(file.startswith('ultraman2') or file.startswith('ultraman4')):
+	if(file.startswith('charizard')):
 		print(dir+file);
 		img = cv2.imread(dir + file, -1)
 		new_img = cv2.flip(img, 1)

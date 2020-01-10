@@ -40,7 +40,9 @@
 // let words = ['language','feeling','speak','country','gesture','meaning','polite','rude','acceptable','body','smile','index'];
 
 //let words = ['freezing','warm','damp','foggy','chilly','stormy','icy','sunny','cloudy','stormy','rainy']
-let words = ['horseback riding','go shopping','go to the movies','listen to music','meet my friends','play computer games','stay home'];
+//let words = ['horseback riding','go shopping','go to the movies','listen to music','meet my friends','play computer games','stay home'];
+
+let words = ['astronaut','space','moon','spaceship','landed','stepped','footprint','rocks','soil','studied','flag'];
 
 
 //============ESL3================

@@ -29,8 +29,6 @@
 <script>
 
 
-
-
     //Debug Vars
     let LOGGING = true;
 
@@ -43,7 +41,8 @@
         'tiger', 'shark', 'cinderella',
         'elsa', 'ariel', 'deadfish', 'mrkrabs', 'thanos', 'pikachu', 'drstrange',
         'superman', 'genie', 'simba', 'captainmarvel', 'mewtwo', 'sailormoon', 'venom', 'thor',
-        'ultraman2', 'ultraman3', 'olaf','hulk', 'gundam', 'optimus', 'snowwhite'
+        'ultraman2', 'ultraman3', 'olaf', 'hulk', 'gundam', 'optimus', 'snowwhite', 'deadpool',
+        'goku','ash','charizard', 'captainamerica', 'nakoruru'
     ];
     let powers = [
         'blueenergy',
@@ -52,95 +51,185 @@
         'fire', 'water', 'blueenergy',
         'ice', 'water', 'nuke', 'water', 'blackenergy', 'electric', 'magic',
         'fire', 'magic', 'magic', 'electric', 'magic', 'pinkenergy', 'blackenergy', 'electric',
-        'magic','electric', 'ice','rock' , 'bluebeam' , 'bullet', 'bluebeam'
-    ]
-    let extras = [
-        'fire', 'shield',
-    ]
+        'magic', 'electric', 'ice', 'rock', 'bluebeam', 'bullet', 'bluebeam', 'bullet',
+        'bluebeam','fire','fire', 'fire', 'fire'
+    ];
 
-    let background = 'background' + (Math.random()*20|0).toString() + '.jpg';
+
+    let background = 'background' + (Math.random() * 20 | 0).toString() + '.jpg';
     document.body.style.backgroundColor = 'grey'
     document.body.style.backgroundImage = 'url(./images/' + background.toString() + ')';
     document.body.style.backgroundSize = width + 'px auto';
     document.body.style.backgroundRepeat = 'no-repeat'
 
-    let chosennum = Math.random() * characters.length | 0;
-    let char_name = characters[chosennum];
-    let powr_name = powers[chosennum];
-    if(char_name === 'deadfish'){
-        powr_name = 'nuke';
-    }
-    if(char_name === 'snowwhite'){
-        powr_name = 'bluebird';
-    }
-    let mons_num = getRandom(NUM_OF_MONSTERS+2)
-    let mons_name = '';
-    let monster_powr_name = powers[Math.random()*powers.length |0];
-    if(mons_num>NUM_OF_MONSTERS){
-        let exception = mons_num-NUM_OF_MONSTERS;
-        if(exception>1){
-            mons_name = 'thanos'
-            monster_powr_name = 'blackenergy'
-        }else if(exception>0){
-            mons_name = 'venom'
-            monster_powr_name = 'blackenergy'
+    function create_player(num) {
+        let chosennum = num || getRandom(characters.length);
+        if(num === 0){
+            chosennum = 0;
         }
-    }else{
-        mons_name = 'monster'+ (Math.random()*NUM_OF_MONSTERS|0);
+        let char_name = characters[chosennum];
+        let powr_name = powers[chosennum];
+        if (char_name === 'deadfish') {
+            powr_name = 'nuke';
+        }
+        if (char_name === 'snowwhite') {
+            powr_name = 'bluebird';
+        }
+        if(char_name === 'ash'){
+            powr_name = 'poke';
+        }
+        if(char_name === 'captainamerica'){
+            powr_name = 'cashield';
+        }
+        if(char_name === 'nakoruru'){
+            powr_name = 'mamahaha'
+        }
+        return {num: chosennum, name: char_name, power: powr_name};
     }
 
-    if(mons_name.endsWith('15')){
-        monster_powr_name = 'spaghetti'
+    function create_monster(num) {
+        let mons_num = num || getRandom(NUM_OF_MONSTERS + 2);
+        let mons_name = '';
+        let monster_powr_name = powers[Math.random() * powers.length | 0];
+        if (mons_num > NUM_OF_MONSTERS) {
+            let exception = mons_num - NUM_OF_MONSTERS;
+            if (exception > 1) {
+                mons_name = 'thanos';
+                monster_powr_name = 'blackenergy'
+            } else if (exception > 0) {
+                mons_name = 'venom';
+                monster_powr_name = 'blackenergy'
+            }
+        } else {
+            mons_name = 'monster' + (Math.random() * NUM_OF_MONSTERS | 0);
+        }
+        if (mons_name.endsWith('15')) {
+            monster_powr_name = 'spaghetti'
+        }
+        return {num: mons_num, name: mons_name, power: monster_powr_name};
     }
-    extras.push(powr_name + 'ball')
-    extras.push(monster_powr_name + 'ball')
 
-    let LOADED_IMAGES = new ImageLoader('./images/',extras);
+    let player_char;
+    let monster_char;
+    function choose_your_fighter() {
+        let num_of_choices = 4;
+        let chosen_nums = [];
+        for (let i = 0; i < num_of_choices; i++) {
+            let num = getRandom(characters.length);
+            while (chosen_nums.includes(num)) {
+                num = getRandom(characters.length);
+            }
+            chosen_nums.push(num);
+        }
+        let screenx = 200;
+        let screenw = 600;
+        let screeny = 120;
+        let screenh = 200;
+        let screen = new Div(screenx, screeny, 'blue', screenw, screenh, true);
+        let screenstyle = {
+            backgroundColor: 'grey',
+            borderRadius: '10px',
+            border: 'blue solid 5px'
+        };
+        Object.assign(screen.shape.style, screenstyle);
+        let crop = new Div(screenx + 2, screeny + screenh / 3 - 2, 'none', screenw, screenh / 3, true);
+        crop.shape.style.overflow = 'hidden';
+        crop.shape.style.backgroundColor = 'yellow';
+        crop.shape.style.border = 'blue solid 3px';
 
-    let player = new Character(25, 100, char_name);
-    let monster = new Character(width-300, 100, mons_name);
-    setup = function () {
-       // let floor = new Div(0, height-250, 'black', width,1, true);
-        player.powertype = powr_name;
+        let images = [];
+        let lines = [];
+        let text = new P('Choose Your Fighter', screenx + screenw / 4, screeny - 20);
+        let names = [];
+        text.shape.style.fontSize = '2em';
+
+        function start_the_game(num){
+            crop.remove();
+            lines.forEach(line=>{
+                line.destroy();
+            });
+            names.forEach(name=>{
+                name.remove();
+            });
+            text.remove();
+            screen.remove();
+            player_char = create_player(num);
+            monster_char = create_monster();
+            setup();
+        }
+
+        chosen_nums.forEach((num, i) => {
+            let img = new Img('./images/' + characters[num] + '.png', ((screenw / chosen_nums.length)) * i + 10, 0, (screenw / chosen_nums.length) - 20, true);
+            crop.add(img.shape);
+            if (i !== 0) {
+                let line = new Line(screenx + 5 + (screenw / chosen_nums.length) * i, screeny + screenh / 1.5, screenx + 5 + (screenw / chosen_nums.length) * i + 20, screeny + screenh / 3)
+                line.line.shape.style.backgroundColor = 'blue';
+                line.line.shape.style.height = '4px';
+                lines.push(line);
+            }
+            img.shape.addEventListener('click', () => {
+                start_the_game(num);
+            });
+            let name = new P(characters[num], screenx + (screenw / chosen_nums.length) * (i + .1) + 10, screeny + screenh / 1.5 - 10);
+            if (name.shape.clientWidth > screenw / chosen_nums.length) {
+                name.string = characters[num].slice(0, 7) + '..'
+            }
+            names.push(name);
+            images.push(img);
+        });
+
+       return chosen_nums;
+    }
+
+
+    let LOADED_IMAGES;// = new ImageLoader('./images/', ['fire', 'shield', monster_char.power + 'ball', player_char.power + 'ball']);
+    let player;// = new Character(25, 100, player_char.name);
+    let monster;// = new Character(width - 300, 100, monster_char.name);
+
+    function setup() {
+        LOADED_IMAGES = new ImageLoader('./images/', ['fire', 'shield', monster_char.power + 'ball', player_char.power + 'ball']);
+        player = new Character(25, 100, player_char.name);
+        monster = new Character(width - 300, 100, monster_char.name);
+
+        player.powertype = player_char.power;
         player.noskybox = true;
-        player.addSprite(new Img("./images/" + char_name + ".png", 25, 100, 150));
-        player.landing_emitter.subscribe('land', ()=>{
+        player.addSprite(new Img("./images/" + player_char.name + ".png", 25, 100, 150));
+        player.landing_emitter.subscribe('land', () => {
             player.faceright();
         });
-        monster.powertype = monster_powr_name;
+        monster.powertype = monster_char.power;
         monster.noskybox = true;
         monster.addSprite(new Img("./images/" + monster.name + ".png", 125, 100, 400));
         monster.jump_multiplier = 0.5;
         monster.jumping = true;
-        monster.landing_emitter.subscribe('land',()=>{
+        monster.landing_emitter.subscribe('land', () => {
             monster.faceleft();
         })
+        start();
+    }
 
-
-    };
-
-    let playing = false;
+    let PLAYING = false;
     id('jmpright').addEventListener('click', function () {
         player.jumpright();
     });
-    let secret = false;
-    let secretTO;
+    let secret = false; //for the hardmode double click
+    let secretTO; //timeout needed for doubleclock
     id('playpause').addEventListener('click', function () {
-        playing = !playing;
-        if(playing){
+        PLAYING = !PLAYING;
+        if (PLAYING) {
             id('playpause').innerText = 'playing';
-        }else{
+        } else {
             id('playpause').innerText = 'paused';
         }
-        if(secret){
+        if (secret) {
             id('playpause').innerText = 'Playing';
-            playing = true;
+            PLAYING = true;
             HARDMODE = true;
         }
         secret = true;
-        secretTO = setTimeout(()=>{
+        secretTO = setTimeout(() => {
             secret = false;
-        },1000);
+        }, 1000);
     });
 
     id('jmpleft').addEventListener('click', function () {
@@ -148,7 +237,7 @@
     });
     id('jump').addEventListener('click', function () {
         player.jump();
-        if(Math.random()*4<3){
+        if (getRandom(4) < 1 && !monster.dead) {
             monster.shoot();
         }
     });
@@ -157,32 +246,29 @@
     });
     id('shootright').addEventListener('click', function () {
         player.shoot();
-        if(playing){
-            let n = Math.random()*10;
-            if(n > 9){
-                if(monster.health>90){
+        if (PLAYING) {
+            let n = Math.random() * 10;
+            if (n > 9) {
+                if (monster.health > 90) {
                     monster.jump();
                 }
-            }else if(n>8){
+            } else if (n > 8) {
                 monster.shield();
             }
+        }
+    });
+    id('shield').addEventListener('click', () => {
+        if (!player.shielded) {
+            player.shield();
+            if (Math.random() * 2 < 1.5) {
+                setTimeout(() => {
+                    monster.shoot();
+                }, 1500);
 
+            }
         }
 
     });
-    id('shield').addEventListener('click', ()=>{
-       if(!player.shielded){
-           player.shield();
-           if(Math.random()*2<1.5){
-               setTimeout(()=>{
-                   monster.shoot();
-               },1500);
-
-           }
-       }
-
-    });
-    setup();
     let hopstop = false;
     let monsterisshooting = false;
     let monsterrapidfire = false;
@@ -192,138 +278,134 @@
         player.update();
         //console.log(monster.dead);
         monster.update();
-        if(player.extras.attack && player.extras.attack.rect.d){
-
-            if(player.extras.attack.rect.d.x > monster.rect.a.x && player.extras.attack.rect.d.y < monster.rect.b.y && !monster.shielded){
+        if (player.extras.attack && player.extras.attack.rect.d) {
+            if (player.extras.attack.rect.d.x > monster.rect.a.x && player.extras.attack.rect.d.y < monster.rect.b.y && !monster.shielded && !monster.dead) {
                 console.log('hit');
-                monster.health -=player.extras.attack.power;
-                monster.jumpbkwd(0.05*player.extras.attack.power);
+                monster.health -= player.extras.attack.power;
+                monster.jumpbkwd(0.05 * player.extras.attack.power);
                 player.extras.attack.kill();
                 delete player.extras.attack;
-                let unsub = monster.landing_emitter.subscribe('land', ()=>{
-                    setTimeout(()=> monster.jumpfwd(), 500);
+                let unsub = monster.landing_emitter.subscribe('land', () => {
+                    setTimeout(() => monster.jumpfwd(), 500);
                     unsub();
                 })
 
-            }else if(player.extras.attack.rect.d.x > monster.rect.a.x && player.extras.attack.rect.d.y < monster.rect.b.y && monster.shielded){
+            } else if (player.extras.attack.rect.d.x > monster.rect.a.x && player.extras.attack.rect.d.y < monster.rect.b.y && monster.shielded) {
                 player.extras.attack.kill();
                 delete player.extras.attack;
             }
         }
-        if(monster.rect.a && monster.rect.d){
-            if(monster.rect.a.x < player.rect.d.x && !monster.dead){
-                if(player.shielded){
+        if (monster.rect.a && monster.rect.d) {
+            if (monster.rect.a.x < player.rect.d.x && !monster.dead) {
+                if (player.shielded) {
                     monster.jumpbkwd();
-                }else{
+                } else {
                     player.kill();
                 }
 
             }
         }
-       if(playing){
-           if(Math.random()*1000 < (HARDMODE? 30: 10)){
-               if(!monsterisshooting){
-                   monster.powerup();
-               }
+        //monster's movements
+        if (PLAYING && !monster.dead) {
+            if (Math.random() * 1000 < (HARDMODE ? 30 : 10)) {
+                if (!monsterisshooting) {
+                    monster.powerup();
+                }
+            }
+            if (getRandom(10000) < (HARDMODE ? 2 : 1)) {
+                monster.shield();
+            }
+            if (Math.random() * 1000 < (HARDMODE ? 2 : 1)) {
+                if (!monsterisshooting && monster.poweringup) {
+                    monster.shoot();
+                    monsterisshooting = true;
+                }
+            }
+            if (Math.random() * 2000 < (HARDMODE ? (monster.health > 30 ? 30 : 10) : (monster.health > 30 ? 20 : 5))) {
+                monster.hop();
+            }
+            if (Math.random() * 3000 < 2) {
+                monster.jump();
+            }
+            if (Math.random() * 10000 < (HARDMODE ? 3 : 2)) {
+                monsterrapidfire = true;
+                console.log('rapid fire!')
+            }
+            if (monster.health > 80 && Math.random() * 1000 < 5 && !hopstop) {
+                monster.sparhop().then(() => {
+                    hopstop = false
+                });
+                hopstop = true;
+            }
+            if (monsterrapidfire) {
+                if (!monsterisshooting) {
+                    monster.powerup();
+                    monster.shoot();
+                    if (Math.random() < 0.2) {
+                        monster.jump();
+                    }
+                    monsterisshooting = true;
+                    if (Math.random() < 0.1) {
+                        monsterrapidfire = false;
+                    }
+                }
 
-           }
-           if(Math.random()*1000 < (HARDMODE? 2: 1)){
-               if(!monsterisshooting && monster.poweringup){
-                   monster.shoot();
-                   monsterisshooting = true;
-               }
-           }
-           if(Math.random()*2000 < (HARDMODE? (monster.health>30?30:10): (monster.health>30?20:5))){
-               monster.hop();
-           }
-           if(Math.random()*3000 < 2){
-               monster.jump();
-           }
-           if(Math.random()*10000 < (HARDMODE? 3: 2)){
-               monsterrapidfire = true;
-               console.log('rapid fire!')
-           }
-           if(monster.health>80 && Math.random()*1000 < 5 && !hopstop){
-               monster.sparhop().then(()=>{
-                   hopstop = false
-               });
-              hopstop = true;
-           }
-           if(monsterrapidfire){
-               //console.log('pew');
-               if(!monsterisshooting){
-                   console.log('pow')
-                   monster.powerup();
-                   monster.shoot();
-                   if(Math.random()<0.2){
-                       monster.jump();
-                   }
-                   monsterisshooting = true;
-                   if(Math.random()<0.1){
-                       monsterrapidfire = false;
-                   }
-               }
-
-           }
-       }
-        if(monster.extras.attack && monster.extras.attack.rect.a){
-            if(monster.extras.attack.rect.a.x < player.rect.d.x && monster.extras.attack.rect.a.y < player.rect.c.y && monster.extras.attack.rect.b.y > player.rect.d.y && !player.shielded ){
+            }
+        }
+        if (monster.extras.attack && monster.extras.attack.rect.a) {
+            if (monster.extras.attack.rect.a.x < player.rect.d.x && monster.extras.attack.rect.a.y < player.rect.c.y && monster.extras.attack.rect.b.y > player.rect.d.y && !player.shielded) {
                 console.log('take damage');
-                player.health -=monster.extras.attack.power * 0.25;
+                player.health -= monster.extras.attack.power * 0.25;
                 monster.extras.attack.kill();
                 delete monster.extras.attack;
                 monsterisshooting = false;
-            }else if(monster.extras.attack.rect.a.x < player.rect.d.x && monster.extras.attack.rect.a.y < player.rect.c.y && monster.extras.attack.rect.b.y > player.rect.d.y && player.shielded ){
+            } else if (monster.extras.attack.rect.a.x < player.rect.d.x && monster.extras.attack.rect.a.y < player.rect.c.y && monster.extras.attack.rect.b.y > player.rect.d.y && player.shielded) {
                 monster.extras.attack.kill();
                 delete monster.extras.attack;
                 monsterisshooting = false;
-            }else if(monsterisshooting && !monster.poweringup && monster.extras.attack.rect.a.x<=0){
+            } else if (monsterisshooting && !monster.poweringup && monster.extras.attack.rect.a.x <= 0) {
                 monsterisshooting = false;
             }
         }
 
-        id('playerhp').innerText = " player: " + (player.health |0 || 0);
-        id('enemyhp').innerText = "monster: " + (monster.health |0 || 0);
+        id('playerhp').innerText = " player: " + (player.health | 0 || 0);
+        id('enemyhp').innerText = "monster: " + (monster.health | 0 || 0);
 
-        if(player.dead)  id('playerhp').innerText = " player: dead";
-        if(monster.dead)   id('enemyhp').innerText = "monster: dead";
+        if (player.dead) id('playerhp').innerText = " player: dead";
+        if (monster.dead) id('enemyhp').innerText = "monster: dead";
 
-        if(monster.dead && HARDMODE){
-            mons_name = 'monster'+ (Math.random()*30|0);
-            monster_powr_name = powers[Math.random()*powers.length |0];
-            if(mons_name.endsWith('15')){
-                monster_powr_name = 'spaghetti'
-            }
-            extras.push(powr_name + 'ball');
-            extras.push(monster_powr_name + 'ball');
-            monster = new Character(width-300, 100, mons_name);
-            id('enemyhp').innerText = "monster: " + (monster.health |0 || 0);
-
-            LOADED_IMAGES = new ImageLoader('./images/',extras);
-            monster.powertype = monster_powr_name;
+        if (monster.dead && HARDMODE) {
+            monster_char = create_monster();
+            monster = new Character(width - 300, 100, monster_char.name);
+            id('enemyhp').innerText = "monster: " + (monster.health | 0 || 0);
+            LOADED_IMAGES.add(monster_char.power + 'ball');
+            monster.powertype = monster_char.power;
             monster.noskybox = true;
             monster.addSprite(new Img("./images/" + monster.name + ".png", 125, 100, 400));
             monster.jump_multiplier = 0.5;
             monster.jumping = true;
-            monster.landing_emitter.subscribe('land',()=>{
+            monster.landing_emitter.subscribe('land', () => {
                 monster.faceleft();
             });
-
             HARDMODE = false;
+
+            //add loading;
         }
 
 
         LAST_TIME = now;
-        if(LOOPING){
-                requestAnimationFrame(loop);
-                }
+        if (LOOPING) {
+            requestAnimationFrame(loop);
+        }
     };
-    start = function(){
+    start = function () {
         LOOPING = true;
         LAST_TIME = window.performance.now();
         requestAnimationFrame(loop);
-    }
-    start();
+    };
+
+
+    choose_your_fighter();
 
 </script>
 </body>
