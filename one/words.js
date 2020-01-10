@@ -13,7 +13,7 @@
 //let words = ['happy','sad','nervous','relaxed','excited','energetic','tired','confused','scared','curious','bored','hungry','sleepy','angry','surprised','confident'];
 //let words = ['first', 'second', 'third', 'fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth','thirteenth',
 //    'fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth'];
-//let words = ['january','february','march','april','may','june','july','august','september','october','november','december']
+let words = ['january','february','march','april','may','june','july','august','september','october','november','december']
 //let words = ['birthday','party','amazing','growth','interview','gift','meaningful','year','special'];
 //let words = ['skateboard','frisbee','football','robot','rubiks cube','basketball','guitar','puzzles','lego','hula hoop','doll',
 //    'board game','yoyo','car'];
@@ -26,7 +26,7 @@
 //let words = ['stones','bones','sticks','quill','ink','brush','pencil','pen','marker','crayon'];
 //words = words.concat(['hat','cap','sunglasses','tie','bowtie','scarf','belt','socks','jacket','coat','vest','suit','sweater','sweatshirt','shirt','jeans','shorts','sweatpants','skirt','sandals','sneakers','flats','heels','slippers','boots'])
 
-let words = ['mirror','lamp','laptop','wardrobe','laptop','chair','rug','football','alarm clock','picture','bed'];
+//let words = ['mirror','lamp','laptop','wardrobe','laptop','chair','rug','football','alarm clock','picture','bed'];
 
 //===========ESL1=================
 //let words = ['car','robot','doll','bike','teddy bear'];
@@ -50,6 +50,9 @@ let words = ['mirror','lamp','laptop','wardrobe','laptop','chair','rug','footbal
 //let words = ['tennis','gymnastics','volleyball','judo','basketball','ping-pong','football','baseball','badminton']
 //let words = ['long','straight','curly','short','hair','beard','mustache','blond','black','glasses']
 //words = words.concat(['bananas','cabbages','potatoes'])
+//let words = ['astronaut','space','moon','spaceship','landed','stepped','footprint','rocks','soil','studied','flag'];
+
+//let words = ['touch your nose','stretch up high','clap your hands','bend your feet','shake your body','lift your leg','wave your arms','stomp your feet','spin around']
 
 //==========ESL2==================
 //let words = ['mountain','island','volcano','lake','waterfall','desert','ocean','Pacific','Everest','Sahara','Greenland','Vesuvius','Arctic','Antarctica'];
