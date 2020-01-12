@@ -10,8 +10,8 @@
 //    'fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth'];
 //let words = ['january','february','march','april','may','june','july','august','september','october','november','december']
 //let words = ['birthday','party','amazing','growth','interview','gift','meaningful','year','special'];
-let words = ['skateboard','frisbee','football','robot','rubiks cube','basketball','guitar','puzzles','lego','hula hoop','doll',
-    'board game','yoyo','car'];
+//let words = ['skateboard','frisbee','football','robot','rubiks cube','basketball','guitar','puzzles','lego','hula hoop','doll',
+//    'board game','yoyo','car'];
 //let words = ['bedroom','living room','dining room','kitchen','garage','bathroom','bathroom'];
 //let words = ['dishwasher','lamp','candle','microwave','broom','kettle','washing','machine','vacuum','cleaner','candle'];
 //let words = ['parrot','shark','frog','owl','snake','stingray','seagull','elephant','whale','crocodile','crocodile','eel','jellyfish','spider','toad','frog'];

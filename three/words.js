@@ -42,7 +42,9 @@
 //let words = ['freezing','warm','damp','foggy','chilly','stormy','icy','sunny','cloudy','stormy','rainy']
 //let words = ['horseback riding','go shopping','go to the movies','listen to music','meet my friends','play computer games','stay home'];
 
-let words = ['astronaut','space','moon','spaceship','landed','stepped','footprint','rocks','soil','studied','flag'];
+//let words = ['astronaut','space','moon','spaceship','landed','stepped','footprint','rocks','soil','studied','flag'];
+
+let words = ['technology','travel','place','drive','bicycle','wheel','motor','airplane','jet','engine'];
 
 
 //============ESL3================

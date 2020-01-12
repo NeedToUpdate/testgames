@@ -11,9 +11,9 @@
 //==============ESLS==============
 //let words = ['living room','dining room','bedroom','garage','kitchen','terrace','bathroom','yard']
 //let words = ['happy','sad','nervous','relaxed','excited','energetic','tired','confused','scared','curious','bored','hungry','sleepy','angry','surprised','confident'];
-//let words = ['first', 'second', 'third', 'fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth','thirteenth',
-//    'fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth'];
-let words = ['january','february','march','april','may','june','july','august','september','october','november','december']
+let words = ['first', 'second', 'third', 'fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth','thirteenth',
+    'fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth'];
+//let words = ['january','february','march','april','may','june','july','august','september','october','november','december']
 //let words = ['birthday','party','amazing','growth','interview','gift','meaningful','year','special'];
 //let words = ['skateboard','frisbee','football','robot','rubiks cube','basketball','guitar','puzzles','lego','hula hoop','doll',
 //    'board game','yoyo','car'];
@@ -84,4 +84,5 @@ let words = ['january','february','march','april','may','june','july','august','
 //let words = ['coke','juice','meat','cheese','ice cream','chocolate'];
 //let words = ['star','snake','snail','sun','telephone','tent','tiger','taxi', 'tennis','sausage','umbrella'];
 
+//let words = ['xenon','xerox','xylem']
 let difficulty = 1; //0 easy 1 med 2 difficult
