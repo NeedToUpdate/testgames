@@ -1,73 +1,49 @@
-<html>
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <title>Title</title>
     <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
-    <script language="javascript" src="./lib/two.js"></script>
-    <script language="javascript" src="./lib/vector.js"></script>
-    <script language="javascript" src="./lib/matrix.js"></script>
-    <script language="javascript" src="./lib/drawbase.js"></script>
-    <script language="javascript" src="./lib/character.js"></script>
-    <script language="javascript" src="./lib/div.js"></script>
-    <script language="javascript" src="./lib/rect.js"></script>
-    <script language="javascript" src="./lib/eventemitter.js"></script>
-    <title>Artem's Testing</title>
-    <link rel="stylesheet" href="./wheel.css">
+    <script language="javascript" type="text/javascript"  src="./lib/vector.js"></script>
+    <script language="javascript" type="text/javascript"  src="./lib/drawbase.js"></script>
+    <script language="javascript"  type="text/javascript" src="./lib/matrix.js"></script>
+    <script language="javascript"  type="text/javascript" src="./lib/character.js"></script>
+    <script language="javascript"  type="text/javascript" src="./lib/div.js"></script>
+    <script language="javascript"  type="text/javascript" src="./lib/rect.js"></script>
+    <script language="javascript" type="text/javascript" src="./lib/eventemitter.js"></script>
+    <script language="javascript" type="text/javascript"  src="./one/words.js"></script>
+    <script language="javascript" type="text/javascript"  src="./one/sentences.js"></script>
 </head>
-
 <body>
-<button class="bluebtn" id="jmpleft">line up</button>
-<button class="bluebtn" id="jump">numbers</button>
+<p id="test"></p>
+<p id="words"></p>
+<p id="sentences"></p>
+
 <script>
-    let allnames = [
-        'cat', 'dog', 'rabbit',
-        'spiderman', 'ultraman', 'ironman',
-        'peppapig', 'spongebob', 'monkey',
-        'tiger', 'shark', 'cinderella',
-        'elsa', 'ariel', 'deadfish', 'mrkrabs', 'thanos', 'drstrange', 'sailormoon',
-        'genie', 'captainmarvel', 'simba', 'pikachu', 'spider','monster22','venom','thor','banana','olaf','hulk','snowwhite','ash'
-    ];
+   // id('words').innerText = words;
+   // id('sentences').innerText = sentences;
+    let p = document.getElementById('test');
 
-    allnames = shuffle(allnames).slice(0,19)
-    let chars = allnames.map(name=>{
-        let char = new Flyer(0,0,name);
-        let charimg = new Img('./images/' + char.name + '.png', 0,0,50);
-        char.addSprite(charimg);
-        return char;
-    });
-
-    id('jmpleft').addEventListener('click', ()=>{
-        chars.forEach((char,i)=>{
-            char.flyto(new Vector(10+ 50*i, 200));
+    document.addEventListener('touchstart',ev=>{
+        //ev.touches.length;
+        p.innerText =  'touched with '+ ev.touches.length + ' fingers at: ';
+        Array(ev.touches.length).fill('').forEach((bleh,i)=>{
+            let x = ev.touches[i].clientX;
+            let y =  ev.touches[i].clientY;
+            p.innerText += '\nx: '+ x + '| y:   ' + (y);
+            let tmp = new P('X',x,y-25);
+            tmp.shape.style.color = 'black'
+            tmp.shape.style.fontsize = '2em';
+            setTimeout(()=>{
+                tmp.remove();
+            },1000)
         })
-    })
-    let ps = [];
-    let shownumbers = false;
-    id('jump').addEventListener('click', ()=>{
-        shownumbers = !shownumbers;
-        if(shownumbers) {
-            chars.forEach((char, i) => {
-                let p = new P(i+1, 15 + 50 * i, 100);
-                p.set('fontSize', '2.5em');
-                p.set('color', 'black');
-                ps.push(p);
-            })
-        }else{
-            ps.forEach(x=>{
-                x.remove()
-            })
-            ps = [];
-        }
 
     })
 
-    loop = function(){
-        chars.forEach(char=>{
-            char.update();
-        })
-        requestAnimationFrame(loop)
-    }
-    loop()
 
-    </script>
+
+</script>
+
 </body>
 </html>

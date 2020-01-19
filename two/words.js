@@ -36,7 +36,7 @@
 //let words = ['astronaut','space','moon','spaceship','landed','stepped','footprint','studied','rocks','soil']
 //let words = ['movie theater','zoo','swimming pool','cafe','hospital','mall','hotel','library','park','east','west','north','south'];
 //let words = ['hear','see','taste','touch','smell','sour','sweet','bitter','colorful','soft','hard','warm','cold','grass','trees','animals'];
-//let words = ['hair','eyebrow','eye','nose','mouth','chest','stomach','leg','knee','foot','toe','head','neck','back','arm','elbow','finger','tongue','shoulder','hand','ankle','heel']
+let words = ['hair','eyebrow','eye','nose','mouth','chest','stomach','leg','knee','foot','toe','head','neck','back','arm','elbow','finger','tongue','shoulder','hand','ankle','heel']
 //let words =['science','animals','pets','veterinarian','sick','diet','healthy','owners'];
 //let words = ['bananas','cabbages','potatoes','cucumbers','strawberries','carrots','peppers','grapes','oranges','pears','bread','turkey','tomatoes','mustard','eggs'];
 
@@ -52,7 +52,7 @@
 //let words = ['stress','cope','reward','offline','exercise','manage','relax','challenge','overcome','difficulty','strategy','confident','exam','breathe']
 // let words = ['dream','travel','adventure','kilometer','camp','outdoors','cycle','baggage','traveller','journey','road','desert','rain forest','mountain'];
 
-
+//let words = ['fields','hotels','cars','houses','horses','rivers','flowers','streets','taxis','peoples','dogs','mountains'];
 //===========MEB==================
 // let words = ['bike','block','ball','kite','marble','basketball','skateboard','boat','plane','toy','doll',
 //    'football','soccer ball','guitar','toy box'];

@@ -1,0 +1,79 @@
+<html>
+
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
+    <script language="javascript" src="./lib/two.js"></script>
+    <script language="javascript" src="./lib/vector.js"></script>
+    <script language="javascript" src="./lib/matrix.js"></script>
+    <script language="javascript" src="./lib/drawbase.js"></script>
+    <script language="javascript" src="./lib/character.js"></script>
+    <script language="javascript" src="./lib/div.js"></script>
+    <script language="javascript" src="./lib/rect.js"></script>
+    <script language="javascript" src="./lib/eventemitter.js"></script>
+    <title>Artem's Testing</title>
+    <link rel="stylesheet" href="./wheel.css">
+</head>
+
+<body>
+<button class="bluebtn" id="jmpleft">line up</button>
+<button class="bluebtn" id="jump">numbers</button>
+<script>
+    let background = 'background12.jpg';
+    document.body.style.backgroundColor = 'grey'
+    document.body.style.backgroundImage = 'url(./images/' + background.toString() + ')';
+    document.body.style.backgroundSize = width + 'px auto';
+    document.body.style.backgroundRepeat = 'no-repeat'
+    let allnames = [
+        'cat', 'dog', 'rabbit',
+        'spiderman', 'ultraman', 'ironman',
+        'peppapig', 'spongebob', 'monkey',
+        'tiger', 'shark', 'cinderella',
+        'elsa', 'ariel', 'deadfish', 'mrkrabs', 'thanos', 'drstrange', 'sailormoon',
+        'genie', 'captainmarvel', 'simba', 'pikachu', 'spider','monster22','venom','thor','banana','olaf','hulk','snowwhite','ash',
+        'krabbypattyball','zebra','whale','jellyfish','starfish'
+    ];
+
+    allnames = shuffle(allnames).slice(0,19)
+    let chars = allnames.map(name=>{
+        let char = new Flyer(0,0,name);
+        let charimg = new Img('./images/' + char.name + '.png', 0,0,50);
+        char.addSprite(charimg);
+        return char;
+    });
+
+    id('jmpleft').addEventListener('click', ()=>{
+        chars.forEach((char,i)=>{
+            char.flyto(new Vector(10+ 50*i, 200));
+        })
+    })
+    let ps = [];
+    let shownumbers = false;
+    id('jump').addEventListener('click', ()=>{
+        shownumbers = !shownumbers;
+        if(shownumbers) {
+            chars.forEach((char, i) => {
+                let p = new P(i+1, 15 + 50 * i, 100);
+                p.set('fontSize', '2.5em');
+                p.set('color', 'black');
+                ps.push(p);
+            })
+        }else{
+            ps.forEach(x=>{
+                x.remove()
+            })
+            ps = [];
+        }
+
+    })
+
+    loop = function(){
+        chars.forEach(char=>{
+            char.update();
+        })
+        requestAnimationFrame(loop)
+    }
+    loop()
+
+    </script>
+</body>
+</html>

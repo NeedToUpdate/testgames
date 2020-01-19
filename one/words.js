@@ -11,8 +11,7 @@
 //==============ESLS==============
 //let words = ['living room','dining room','bedroom','garage','kitchen','terrace','bathroom','yard']
 //let words = ['happy','sad','nervous','relaxed','excited','energetic','tired','confused','scared','curious','bored','hungry','sleepy','angry','surprised','confident'];
-let words = ['first', 'second', 'third', 'fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth','thirteenth',
-    'fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth'];
+//let words = ['first', 'second', 'third', 'fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth','thirteenth',    'fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth'];
 //let words = ['january','february','march','april','may','june','july','august','september','october','november','december']
 //let words = ['birthday','party','amazing','growth','interview','gift','meaningful','year','special'];
 //let words = ['skateboard','frisbee','football','robot','rubiks cube','basketball','guitar','puzzles','lego','hula hoop','doll',
@@ -51,8 +50,11 @@ let words = ['first', 'second', 'third', 'fourth','fifth','sixth','seventh','eig
 //let words = ['long','straight','curly','short','hair','beard','mustache','blond','black','glasses']
 //words = words.concat(['bananas','cabbages','potatoes'])
 //let words = ['astronaut','space','moon','spaceship','landed','stepped','footprint','rocks','soil','studied','flag'];
-
+let words = ['houses','comfortable','weather','cave','igloo','stilt house','house','place'];
 //let words = ['touch your nose','stretch up high','clap your hands','bend your feet','shake your body','lift your leg','wave your arms','stomp your feet','spin around']
+//let words = ['special','birthday','party','picture','art','question','year'];
+
+
 
 //==========ESL2==================
 //let words = ['mountain','island','volcano','lake','waterfall','desert','ocean','Pacific','Everest','Sahara','Greenland','Vesuvius','Arctic','Antarctica'];
