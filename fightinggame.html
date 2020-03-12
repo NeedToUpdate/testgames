@@ -57,10 +57,10 @@
 
 
     let background = 'background' + (Math.random() * 20 | 0).toString() + '.jpg';
-    document.body.style.backgroundColor = 'grey'
+    document.body.style.backgroundColor = 'grey';
     document.body.style.backgroundImage = 'url(./images/' + background.toString() + ')';
     document.body.style.backgroundSize = width + 'px auto';
-    document.body.style.backgroundRepeat = 'no-repeat'
+    document.body.style.backgroundRepeat = 'no-repeat';
 
     function create_player(num) {
         let chosennum = num || getRandom(characters.length);
@@ -162,7 +162,7 @@
             let img = new Img('./images/' + characters[num] + '.png', ((screenw / chosen_nums.length)) * i + 10, 0, (screenw / chosen_nums.length) - 20, true);
             crop.add(img.shape);
             if (i !== 0) {
-                let line = new Line(screenx + 5 + (screenw / chosen_nums.length) * i, screeny + screenh / 1.5, screenx + 5 + (screenw / chosen_nums.length) * i + 20, screeny + screenh / 3)
+                let line = new Line(screenx + 5 + (screenw / chosen_nums.length) * i, screeny + screenh / 1.5, screenx + 5 + (screenw / chosen_nums.length) * i + 20, screeny + screenh / 3);
                 line.line.shape.style.backgroundColor = 'blue';
                 line.line.shape.style.height = '4px';
                 lines.push(line);
@@ -204,7 +204,7 @@
         monster.jumping = true;
         monster.landing_emitter.subscribe('land', () => {
             monster.faceleft();
-        })
+        });
         start();
     }
 

@@ -3,7 +3,7 @@ difficulty = 1;
 let topofsearch = height*.1;
 let leftofsearch = width*.1;
 
-document.body.style.backgroundImage = 'url(../images/bg0.jpg)'
+document.body.style.backgroundImage = 'url(../images/bg0.jpg)';
 
 
 class WordSearch extends Matrix {
@@ -19,7 +19,7 @@ class WordSearch extends Matrix {
         this.map((x, i, j) => {
             let letter = '?';
             return letter;
-        })
+        });
         this.divsM = this.copy();
         this.words = [];
         this.init();
@@ -115,9 +115,9 @@ class WordSearch extends Matrix {
             let p = new P(this.cover_letters[i][j], leftofsearch + i * this.col_size, topofsearch + j * this.row_size);
             p.set('fontSize', this.row_size + 'px');
             p.set('color', 'white');
-            p.set('textShadow', 'white 1px 1px 1px 1px')
-            p.set('margin', 0)
-            p.set('zIndex', 10)
+            p.set('textShadow', 'white 1px 1px 1px 1px');
+            p.set('margin', 0);
+            p.set('zIndex', 10);
             return p;
         })
     }
@@ -171,8 +171,8 @@ class WordSearch extends Matrix {
             if(tryattempt>10000){
                 this.clear();
                 tryattempt = 0;
-                console.log('splice out ', words[i], i)
-                array.splice(i,1)
+                console.log('splice out ', words[i], i);
+                array.splice(i,1);
                 return this.generate(array);
                 //throw 'unable to make word search';
             }
@@ -185,12 +185,12 @@ class WordSearch extends Matrix {
 
 
 let wordM = new WordSearch(7 + 3 * difficulty, 7 + 3 * difficulty);
-let background = new Div(leftofsearch - 20,topofsearch - 20, 'black', wordM.col_size*wordM.cols, wordM.row_size*wordM.rows +40, true)
+let background = new Div(leftofsearch - 20,topofsearch - 20, 'black', wordM.col_size*wordM.cols, wordM.row_size*wordM.rows +40, true);
 
 background.set('backgroundImage', 'linear-gradient(to top left, #59c173, #a17fe0, #5d26c1)');
 background.set('borderRadius', '20px');
 background.set('border', 'solid 3px white');
-background.set('boxShadow', 'rgba(255,255,255,0.5) 0px 0px 5px 5px')
+background.set('boxShadow', 'rgba(255,255,255,0.5) 0px 0px 5px 5px');
 let newwords = wordM.generate(words);
 wordM.drawEmpty();
 setTimeout(()=>wordM.drawReal(), 4000);
@@ -208,11 +208,11 @@ newwords.forEach((word,i)=>{
     w.set('color', 'white');
     w.set('margin', 0);
     newwordsP.push(w)
-})
+});
 
 
 
-let dragger = {}
+let dragger = {};
 let dragging = false;
 let startpos = {};
 let endpos = {};
@@ -222,7 +222,7 @@ function startdrag(ev,i,j){
         startpos = {i:i,j:j};
         dragger = new Div(leftofsearch + i * wordM.col_size - r / 5, topofsearch + j * r + r / 3, 'lightblue', r/1.5, r/1.5, 'true');
         dragger.set('borderRadius', r/2 + 'px');
-        dragger.set('transformOrigin', r/2+ 'px 50%')
+        dragger.set('transformOrigin', r/2+ 'px 50%');
         dragger.set('zIndex', 0);
         dragging = true;
     }
@@ -236,22 +236,22 @@ function stopdrag(){
     let isright = false;
    let correct = (word)=>{
         circles.push(dragger);
-        dragger.set('border', 'lightgreen solid 4px')
+        dragger.set('border', 'lightgreen solid 4px');
        dragger.mod('left', -3);
-        dragger.mod('top', -3)
+        dragger.mod('top', -3);
        dragger = {};
         //deal with words;
        let found = newwordsP.filter(x=>x.string === word)[0];
-       let line = new DivLine(found.x,found.y + found.shape.offsetHeight/2,found.shape.offsetWidth, 0, 'red', 4)
+       let line = new DivLine(found.x,found.y + found.shape.offsetHeight/2,found.shape.offsetWidth, 0, 'red', 4);
        newwords.splice(newwords.indexOf(word),1);
        if(newwords.length===0){
            console.log('ding ding ding')
        }
        isright = true;
-    }
+    };
     let wrong = ()=>{
         if(!isright) dragger.remove();
-    }
+    };
     if(found.length){
         found.forEach(foundword=>{
             let {word,dir,i,j} = foundword;
@@ -287,7 +287,7 @@ function drag(ev,i,j){
         let width = Math.sqrt(dy**2 + dx**2);
         dragger.set('width', width + r + 'px');
         let angle = Math.atan2(dy,dx)*180/Math.PI;
-        dragger.rotateTo(angle)
+        dragger.rotateTo(angle);
         endpos = {i:i,j:j};
     }
 }
@@ -305,14 +305,14 @@ wordM.divsM.map((p,i,j)=>{
         drag(ev,i,j)
     }) ;
     p.shape.addEventListener('touchstart',(ev)=>{
-        console.log('touch')
+        console.log('touch');
         startdrag(ev.touches[0],i,j)
     });
     p.shape.addEventListener('touchmove', ev=>{
-        ev = ev.touches[0]
+        ev = ev.touches[0];
         let r = wordM.row_size;
-        let x = Math.floor((ev.clientX - leftofsearch + r/5)/(wordM.col_size))
-        let y = Math.floor((ev.clientY - topofsearch)/(r))
+        let x = Math.floor((ev.clientX - leftofsearch + r/5)/(wordM.col_size));
+        let y = Math.floor((ev.clientY - topofsearch)/(r));
         drag(ev,x,y)
     });
     return p;
