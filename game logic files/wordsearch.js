@@ -10,7 +10,7 @@ document.body.style.backgroundRepeat = 'no-repeat';
 
 
 
-let colors = ['red','yellow','teal','grey','pink','purple','blue','green','orange',];
+let colors = ['red','yellow','teal','grey','black','purple','blue','green','orange',];
 
 class WordSearch extends Matrix {
     constructor(rows, cols, w, h, x, y) {
@@ -65,36 +65,36 @@ class WordSearch extends Matrix {
         let found = this.words.filter(word => word.word === string);
         if (found.length === 0) throw 'word not found';
         let {word, dir, i, j} = found[0];
-        let checkValue = (val, checki, checkj) => {
+        let checkValue = (val, check_i, check_j) => {
             let candidates = this.words.filter(each => {
-                let isntthisword = each.word !== word;
-                let containsletter = each.word.match(val);
-                let wordiswithindistancehorizontally = checki - each.i >= 0 && checki - each.i < each.word.length;
-                let wordiswithindistancevertically = checkj - each.j >= 0 && checkj - each.j < each.word.length;
-                return isntthisword && containsletter && wordiswithindistancehorizontally && wordiswithindistancevertically;
+                let notTargetWord = each.word !== word;
+                let containsLetter = each.word.match(val);
+                let wordIsWithinDistanceHorizontally = check_i - each.i >= 0 && check_i - each.i < each.word.length;
+                let wordIsWithinDistanceVertically = check_j - each.j >= 0 && check_j - each.j < each.word.length;
+                return notTargetWord && containsLetter && wordIsWithinDistanceHorizontally && wordIsWithinDistanceVertically;
             });
             if (candidates.length) {
                 let round2 = candidates.filter(each => {
-                    let splitword = each.word.split(''); //array of the word
-                    let indicies = splitword.reduce((a, b, index) => {
-                        if (b === val) { //find all occurences of the value we're looking for
+                    let splitWord = each.word.split(''); //array of the word
+                    let indices = splitWord.reduce((a, b, index) => {
+                        if (b === val) { //find all occurrences of the value we're looking for
                             a.push(index);
                         }
                         return a;
                     }, []);
-                    let found = indicies.map(index => {
+                    let found = indices.map(index => {
                         if (each.dir === 0) { //if its horizontal, then the value should be 'index' steps away from the each.i, the start point
-                            if (checki - each.i === index) {
+                            if (check_i - each.i === index) {
                                 return true;
                             }
                         }
                         if (each.dir === 1) { //same for vertical
-                            if (checkj - each.j === index) {
+                            if (check_j - each.j === index) {
                                 return true;
                             }
                         }
                         if (each.dir === 2) { //and diagonal
-                            if (checkj - each.j === index && checki - each.i === index) {
+                            if (check_j - each.j === index && check_i - each.i === index) {
                                 return true;
                             }
                         }
@@ -120,20 +120,20 @@ class WordSearch extends Matrix {
     init() {
         this.divsM.map((x, i, j) => {
             let p = new P(this.cover_letters[i][j], this.startx + this.width*0.025 + j * this.col_size, this.starty+ i * this.row_size);
-            let fontsize = this.row_size<this.col_size? this.row_size*0.8 : this.col_size*0.8
+            let fontsize = this.row_size<this.col_size? this.row_size*0.8 : this.col_size*0.8;
             p.set('fontSize',fontsize + 'px');
             p.set('color', 'white');
             p.set('textShadow', 'white 1px 1px 1px 1px');
             p.set('margin', 0);
-            p.set('padding', 0)
+            p.set('padding', 0);
             p.set('zIndex', 10);
-            p.set('display', 'none')
+            p.set('display', 'none');
             return p;
         })
     }
-    unhide(){
-        this.divsM.map((p, i, j) => {
-            p.set('display', '')
+    reveal(){
+        this.divsM.map((p) => {
+            p.set('display', '');
             return p;
         })
     }
@@ -189,7 +189,7 @@ class WordSearch extends Matrix {
             if (tryattempt > 2000) {
                 this.clear();
                 tryattempt = 0;
-                console.log('splice out ', words[i], i);
+                //console.log('splice out ', words[i], i);
                 array.splice(i, 1);
                 return this.generate(array);
                 //throw 'unable to make word search';
@@ -207,6 +207,7 @@ let newwords;
 let newwordsP;
 let background;
 let logicSetUp = false;
+let fakeDragger = {remove:function () {}};
 
 function setupLogic(rows, cols, w, h, x, y){
     wordM = new WordSearch(rows, cols, w, h, x ,y);
@@ -222,13 +223,13 @@ function setupBoard(){
     background.set('borderRadius', '20px');
     background.set('border', 'solid 3px white');
     background.set('boxShadow', 'rgba(255,255,255,0.5) 0px 0px 5px 5px');
-    wordM.unhide();
+    wordM.reveal();
     wordM.drawEmpty();
-    setTimeout(() => wordM.drawReal(), 4000);
-    setTimeout(() => wordM.draw(), 5000);
+    setTimeout(() => wordM.drawReal(), 3000);
+    setTimeout(() => wordM.draw(), 4000);
     newwordsP = [];
     newwords.forEach((word, i) => {
-        let x = leftofsearch + wordM.col_size * wordM.cols + 10;
+        let x = leftofsearch + wordM.col_size * wordM.cols + 10 + 20;
         let y = topofsearch + i * 35;
         if (y > height * .9) {
             x += 70;
@@ -240,19 +241,19 @@ function setupBoard(){
         w.set('margin', 0);
         newwordsP.push(w)
     });
-    document.addEventListener('mouseup', () => {
+    document.body.addEventListener('mouseup', () => {
         stopdrag();
     });
-    document.addEventListener('touchend', () => {
+    document.body.addEventListener('touchend', () => {
         stopdrag();
     });
-    document.addEventListener('touchmove', ev => {
-        ev = ev.touches[0];
-        let x = Math.floor((ev.clientX - leftofsearch) / (wordM.col_size));
-            let y = Math.floor((ev.clientY - topofsearch) / (wordM.row_size));
-            drag(ev, y, x)
+    document.body.addEventListener('touchmove', ev => {
+        let touch = ev.touches[0];
+        let x = Math.floor((touch.clientX - leftofsearch) / (wordM.col_size));
+            let y = Math.floor((touch.clientY - topofsearch) / (wordM.row_size));
+            drag(touch, y, x)
     });
-    document.addEventListener('mousemove', (ev) => {
+    document.body.addEventListener('mousemove', (ev) => {
         let x = Math.floor((ev.clientX - leftofsearch) / (wordM.col_size));
         let y = Math.floor((ev.clientY - topofsearch) / (wordM.row_size));
         drag(ev, y, x)
@@ -266,7 +267,6 @@ function setupBoard(){
         //     drag(ev, i, j)
         // });
         p.shape.addEventListener('touchstart', (ev) => {
-            console.log('touch');
             startdrag(ev.touches[0], i, j)
         });
         // p.shape.addEventListener('touchmove', ev => {
@@ -283,7 +283,7 @@ function setupBoard(){
 }
 
 
-let dragger = {};
+let dragger = fakeDragger;
 let overlayDragger = {};
 let dragging = false;
 let startpos = {};
@@ -294,13 +294,13 @@ function startdrag(ev, i, j) {
     if (!dragging) {
         let r = wordM.row_size>wordM.col_size? wordM.col_size : wordM.row_size;
         startpos = {i: i, j: j};
-        startcoords = {x: leftofsearch + j * wordM.col_size - wordM.col_size/ 5 + wordM.width*0.025, y: topofsearch + i * wordM.row_size + wordM.row_size / 3}
-        dragger = new Div(startcoords.x, startcoords.y, 'lightblue', r / 1.5, r / 1.5, 'true');
-        overlayDragger = new Div(startcoords.x, startcoords.y, 'green', r / 1.5, r / 1.5, 'true');
+        startcoords = {x: leftofsearch + j * wordM.col_size - wordM.col_size/ 5 + wordM.width*0.025, y: topofsearch + i * wordM.row_size + wordM.row_size / 3};
+        dragger = new Div(startcoords.x, startcoords.y, 'lightblue', r / 1.5, r / 1.5, true);
+        overlayDragger = new Div(startcoords.x - wordM.col_size/4 +10, startcoords.y - wordM.row_size/4, 'red solid 4px', r / 1.5, r / 1.5, true);
         dragger.set('borderRadius', r / 2 + 'px');
         dragger.set('transformOrigin', r / 2 + 'px 50%');
         dragger.set('zIndex', 0);
-        dragger.set('display', 'none')
+        dragger.set('display', 'none');
         overlayDragger.set('borderRadius', r / 2 + 'px');
         overlayDragger.set('transformOrigin', r / 2 + 'px 50%');
         overlayDragger.set('zIndex', 0);
@@ -310,6 +310,8 @@ function startdrag(ev, i, j) {
 
 let circles = [];
 
+let redLines = [];
+
 function stopdrag() {
     dragging = false;
     let found = wordM.words.filter(each => {
@@ -318,16 +320,17 @@ function stopdrag() {
     let isright = false;
     let correct = (word) => {
         circles.push(dragger);
-        dragger.set('display', '')
+        dragger.set('display', '');
         dragger.set('border', 'lightgreen solid 4px');
         dragger.mod('left', -5);
         dragger.mod('top', -10);
-        dragger = {};
+        dragger = fakeDragger;
         overlayDragger.remove();
         overlayDragger = {};
         //deal with words;
         let found = newwordsP.filter(x => x.string === word)[0];
         let line = new DivLine(found.x, found.y + found.shape.offsetHeight / 2, found.shape.offsetWidth, 0, 'red', 4);
+        redLines.push(line)
         newwords.splice(newwords.indexOf(word), 1);
         wordM.words = wordM.words.filter(each =>each.word !== word);
         if (newwords.length === 0) {
@@ -375,11 +378,12 @@ function drag(ev, i, j) {
         //console.log('x:' + (xDiff|0), 'y: ' + (yDiff|0))
         let distanceToReal = Math.sqrt(xDiff**2 + yDiff**2);
        // console.log(distanceToReal)
-        console.log(startpos.i-i, startpos.j-j)
+        //console.log(startpos.i-i, startpos.j-j);
+
         if(distanceToReal<15 && (startpos.i === i || startpos.j ===j || startpos.i-i === startpos.j-j)){
-            overlayDragger.set('borderColor', 'green')
+            overlayDragger.set('border', 'blue solid 4px')
         }else{
-            overlayDragger.set('borderColor', 'red')
+            overlayDragger.set('border', 'red solid 4px')
         }
 
         let width = Math.sqrt(dy ** 2 + dx ** 2);
@@ -452,7 +456,7 @@ function setupScreen(){
     let startx= width*0.3;
     let  starty = height*0.2;
     let w = width*0.4;
-    let h = height*0.5
+    let h = height*0.5;
     setupbg = new Div(startx, starty, 'white', w,h, true);
     setupbg.set('border', 'solid blue 3px');
     setupbg.set('borderRadius', '10px');
@@ -481,8 +485,8 @@ function setupScreen(){
     byP = new P('by',startx + width*0.105,starty+ height*0.22);
     Object.assign(byP.shape.style, buttonstyle);
 
-    numofwords = new P('0 words', startx + width*0.25 , starty+ height*0.22)
-    goBtn = new P('GO!', startx + width*0.18 , starty+ height*0.4)
+    numofwords = new P('0 words', startx + width*0.25 , starty+ height*0.22);
+    goBtn = new P('GO!', startx + width*0.18 , starty+ height*0.4);
     Object.assign(numofwords.shape.style,{
         color: 'green',
         fontSize: '2em',
@@ -507,7 +511,7 @@ function setupScreen(){
         let calcstarty = (height-calcheight)/2;
         leftofsearch = calcstartx;
         topofsearch = calcstarty;
-        console.log('calcwidth', calcwidth, ' h ', calcheight)
+        //console.log('calcwidth', calcwidth, ' h ', calcheight);
         requestAnimationFrame(()=>requestAnimationFrame(()=>numofwords.string = setupLogic(wVal,hVal,calcwidth,calcheight,calcstartx,calcstarty) + ' words'));
     }
     updateNum();
@@ -537,16 +541,12 @@ function setupScreen(){
         let everything = [setupbg,numofwords,goBtn,byP,hP, wP, hPlusP, hMinusP, wPlusP, wMinusP];
         everything.forEach(thing=>{
             thing.remove();
-        })
+        });
         setupBoard();
     })
-
-
-
-
 
 }
 
 
-setupScreen()
+setupScreen();
 //setup();
