@@ -324,9 +324,8 @@ function stopdrag() {
         dragger.set('border', 'lightgreen solid 4px');
         dragger.mod('left', -5);
         dragger.mod('top', -10);
-        dragger = fakeDragger;
         overlayDragger.remove();
-        overlayDragger = {};
+        overlayDragger = fakeDragger;
         //deal with words;
         let found = newwordsP.filter(x => x.string === word)[0];
         let line = new DivLine(found.x, found.y + found.shape.offsetHeight / 2, found.shape.offsetWidth, 0, 'red', 4);
@@ -342,6 +341,7 @@ function stopdrag() {
         if (!isright) {
             dragger.remove();
             overlayDragger.remove();
+            overlayDragger = fakeDragger;
         }
     };
     if (found.length) {
