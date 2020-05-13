@@ -584,9 +584,10 @@ function setupScreen() {
 
     function updateNum() {
         numofwords.string = 'loading...';
-        let calcwidth = width*0.6;
-        if (calcwidth > width * 0.95) calcwidth = width * 0.95;
+
         let calcheight = height * 0.95;
+        let calcwidth = (width*0.6 > calcheight)? calcheight : width*0.6;
+        if (calcwidth > width * 0.95) calcwidth = width * 0.95;
         if (calcheight > height * 0.9) calcheight = height * 0.95;
         let calcstartx = (width - calcwidth) / 2;
         let calcstarty = (height - calcheight) / 2;
