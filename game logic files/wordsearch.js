@@ -368,12 +368,12 @@ function startdrag(ev, i, j) {
         let r = wordM.row_size > wordM.col_size ? wordM.col_size : wordM.row_size;
         startpos = {i: i, j: j};
         startcoords = {
-            x: leftofsearch + j * wordM.col_size - wordM.col_size / 5 + wordM.width * 0.025,
-            y: topofsearch + i * wordM.row_size - wordM.row_size / 5 +wordM.height *0.025,
+            x: wordM.divsM.values[i][j].x - wordM.col_size/4,
+            y: wordM.divsM.values[i][j].y + wordM.row_size/8,
         };
-        dragger = new Div(startcoords.x, startcoords.y, 'lightblue', r / 1.5, r / 1.5, true);
-        let yAdjust = 1*wordM.rows/2.7 |0;
-        overlayDragger = new Div(startcoords.x, startcoords.y - yAdjust, 'red', r / 1.5, r / 1.5, true);
+        dragger = new Div(startcoords.x , startcoords.y, 'lightblue', r / 1.5, r / 1.5, true);
+        //minus 4 for the border size
+        overlayDragger = new Div(startcoords.x -4, startcoords.y -4, 'red', r / 1.5, r / 1.5, true);
         dragger.set('borderRadius', r / 2 + 'px');
         dragger.set('transformOrigin', r / 2 + 'px 50%');
         dragger.set('zIndex', 0);
@@ -400,10 +400,9 @@ function stopdrag() {
         dragger.set('display', '');
         dragger.set('border', 'lightgreen solid 4px');
        // dragger.mod('left', 0);
-        //not sure why but needs to be adjusted variably
-        let yAdjust = -1*wordM.rows/2.7 |0
-        dragger.mod('top', yAdjust);
-        console.log(yAdjust);
+        //due to border width it needs to be adjusted;
+        dragger.mod('top' -4);
+        //dragger.mod('left' -4);
         circles.push(dragger);
         overlayDragger.remove();
         dragger = fakeDragger;
@@ -458,10 +457,7 @@ function drag(ev, i, j) {
 
         let xDiff = j * wordM.col_size + leftofsearch - ev.clientX + wordM.col_size / 3;
         let yDiff = i * wordM.row_size + topofsearch - ev.clientY + wordM.row_size / 3;
-        //console.log('x:' + (xDiff|0), 'y: ' + (yDiff|0))
         let distanceToReal = Math.sqrt(xDiff ** 2 + yDiff ** 2);
-        // console.log(distanceToReal)
-        //console.log(startpos.i-i, startpos.j-j);
 
         if (distanceToReal < 25 && (startpos.i === i || startpos.j === j || startpos.i - i === startpos.j - j)) {
             overlayDragger.set('border', 'blue solid 4px')
