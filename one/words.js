@@ -50,7 +50,7 @@
 //let words = ['long','straight','curly','short','hair','beard','mustache','blond','black','glasses']
 //words = words.concat(['bananas','cabbages','potatoes'])
 //let words = ['astronaut','space','moon','spaceship','landed','stepped','footprint','rocks','soil','studied','flag'];
-let words = ['houses','comfortable','weather','cave','igloo','stilt house','house','place'];
+//let words = ['comfortable','weather','cave','igloo','stilt house','house','place'];
 //let words = ['touch your nose','stretch up high','clap your hands','bend your feet','shake your body','lift your leg','wave your arms','stomp your feet','spin around']
 //let words = ['special','birthday','party','picture','art','question','year'];
 
@@ -87,4 +87,5 @@ let words = ['houses','comfortable','weather','cave','igloo','stilt house','hous
 //let words = ['star','snake','snail','sun','telephone','tent','tiger','taxi', 'tennis','sausage','umbrella'];
 
 //let words = ['xenon','xerox','xylem']
+let words = ['aaaaaaaaaa']
 let difficulty = 1; //0 easy 1 med 2 difficult

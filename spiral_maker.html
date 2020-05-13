@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
+    <script language="javascript" type="text/javascript" src="lib/vector.js"></script>
+    <script language="javascript" type="text/javascript" src="lib/matrix.js"></script>
+    <script language="javascript" type="text/javascript" src="lib/character.js"></script>
+    <script language="javascript" type="text/javascript" src="lib/div.js"></script>
+    <script language="javascript" type="text/javascript" src="lib/rect.js"></script>
+    <script language="javascript" type="text/javascript" src="lib/line.js"></script>
+    <script language="javascript" type="text/javascript" src="lib/eventemitter.js"></script>
+    <script language="javascript" src="lib/drawbase.js"></script>
+    <title>Testing</title>
+
+</head>
+
+<body>
+<script>
+    let stopCount = 0;
+    let tick = 0;
+    let x = 200;
+    let y = 200;
+    function dot(x,y){
+        return new Div(x,y,'blue');
+    }
+    new Div(x,y,'green')
+    new Div(400,400,'red')
+    let repeat = 1;
+    function getx(num){return (5*num)*Math.cos(num) + 400}
+    function gety(num){return (5*num)*Math.sin(num) + 400}
+    function findT(x,y){
+        let found = 0;
+        for(let t=0; t<400; t+=0.1){
+            let testx = getx(t);
+            let testy = gety(t);
+            if(Math.abs(x-testx) <10 && Math.abs(y-testy)<10){
+                found = t;
+                t = 500;
+            }
+        }
+        return found;
+    }
+    let OMG = dot(x,y);
+    OMG.t = findT(x,y);
+
+    function loop() {
+        for(let i = 0; i<repeat; i++){
+            let t = OMG.t;
+           dot(getx(t),gety(t))
+            OMG.t-=0.1
+
+            stopCount++;
+        }
+        if(OMG.t >0) requestAnimationFrame(loop)
+    }
+    loop();
+</script>
+</body>
+</html>
