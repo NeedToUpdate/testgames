@@ -235,7 +235,8 @@ function win() {
         word.remove();
     });
     wordM.divsM.map((div) => {
-        div.set('animation','')
+        div.set('transition', 'color 2s');
+        div.set('color', getRandom(colors));
         div.t = findSpiralT(div.x,div.y);
         div.shootDir = Vector.random();
         return div
@@ -243,12 +244,13 @@ function win() {
 
 
 
-    winLoop()
+    setTimeout(winLoop,1800)
 }
 
-
-function getSpiralX(num){return (7*num)*Math.cos(num) + leftofsearch + wordM.width/2}
-function getSpiralY(num){return (7*num)*Math.sin(num) + topofsearch + wordM.height/2 - wordM.row_size/2}
+let randSpiralXMult = getRandom(7,10);
+let randSpiralYMult = getRandom(5,9);
+function getSpiralX(num){return (randSpiralXMult*num)*Math.cos(num) + leftofsearch + wordM.width/2}
+function getSpiralY(num){return (randSpiralYMult*num)*Math.sin(num) + topofsearch + wordM.height/2 - wordM.row_size/2}
 function findSpiralT(x,y){
     let found = 0;
     for(let t=0; t<400; t+=0.1){
@@ -264,7 +266,7 @@ function findSpiralT(x,y){
 function smoothPoints(x,y, targetx,targety){
     let currVec = new Vector(x,y);
     let targetVec = new Vector(targetx,targety);
-    targetVec.sub(currVec).set(targetVec.mag()/2);
+    targetVec.sub(currVec).set(targetVec.mag()/4);
     return currVec.add(targetVec);
 }
 
@@ -284,8 +286,6 @@ function winLoop() {
         }
         return div
     });
-   // winIterator+= (winIterator - winIterator/2)/winIterator;
-
     if(WINNING) requestAnimationFrame(winLoop)
 }
 
@@ -369,17 +369,19 @@ function startdrag(ev, i, j) {
         startpos = {i: i, j: j};
         startcoords = {
             x: leftofsearch + j * wordM.col_size - wordM.col_size / 5 + wordM.width * 0.025,
-            y: topofsearch + i * wordM.row_size + wordM.row_size / 3
+            y: topofsearch + i * wordM.row_size - wordM.row_size / 5 +wordM.height *0.025,
         };
         dragger = new Div(startcoords.x, startcoords.y, 'lightblue', r / 1.5, r / 1.5, true);
-        overlayDragger = new Div(startcoords.x - wordM.col_size / 4 + 10, startcoords.y - wordM.row_size / 4, 'red solid 4px', r / 1.5, r / 1.5, true);
+        let yAdjust = 1*wordM.rows/2.7 |0;
+        overlayDragger = new Div(startcoords.x, startcoords.y - yAdjust, 'red', r / 1.5, r / 1.5, true);
         dragger.set('borderRadius', r / 2 + 'px');
         dragger.set('transformOrigin', r / 2 + 'px 50%');
         dragger.set('zIndex', 0);
         dragger.set('display', 'none');
         overlayDragger.set('borderRadius', r / 2 + 'px');
         overlayDragger.set('transformOrigin', r / 2 + 'px 50%');
-        overlayDragger.set('zIndex', 0);
+        overlayDragger.set('zIndex', 10);
+        overlayDragger.set('border', 'red solid 4px')
         dragging = true;
     }
 }
@@ -395,13 +397,16 @@ function stopdrag() {
     });
     let isright = false;
     let correct = (word) => {
-        circles.push(dragger);
         dragger.set('display', '');
         dragger.set('border', 'lightgreen solid 4px');
-        dragger.mod('left', -5);
-        dragger.mod('top', -10);
-        dragger = fakeDragger;
+       // dragger.mod('left', 0);
+        //not sure why but needs to be adjusted variably
+        let yAdjust = -1*wordM.rows/2.7 |0
+        dragger.mod('top', yAdjust);
+        console.log(yAdjust);
+        circles.push(dragger);
         overlayDragger.remove();
+        dragger = fakeDragger;
         overlayDragger = fakeDragger;
         //deal with words;
         let found = newwordsP.filter(x => x.string === word)[0];
@@ -452,13 +457,13 @@ function drag(ev, i, j) {
         let dx = -(startpos.j - j) * wordM.col_size;
 
         let xDiff = j * wordM.col_size + leftofsearch - ev.clientX + wordM.col_size / 3;
-        let yDiff = i * wordM.row_size + topofsearch - ev.clientY + wordM.row_size / 1.5;
+        let yDiff = i * wordM.row_size + topofsearch - ev.clientY + wordM.row_size / 3;
         //console.log('x:' + (xDiff|0), 'y: ' + (yDiff|0))
         let distanceToReal = Math.sqrt(xDiff ** 2 + yDiff ** 2);
         // console.log(distanceToReal)
         //console.log(startpos.i-i, startpos.j-j);
 
-        if (distanceToReal < 15 && (startpos.i === i || startpos.j === j || startpos.i - i === startpos.j - j)) {
+        if (distanceToReal < 25 && (startpos.i === i || startpos.j === j || startpos.i - i === startpos.j - j)) {
             overlayDragger.set('border', 'blue solid 4px')
         } else {
             overlayDragger.set('border', 'red solid 4px')
@@ -583,9 +588,9 @@ function setupScreen() {
 
     function updateNum() {
         numofwords.string = 'loading...';
-        let calcwidth = wVal * width * 0.05;
+        let calcwidth = width*0.6;
         if (calcwidth > width * 0.95) calcwidth = width * 0.95;
-        let calcheight = hVal * height * 0.095;
+        let calcheight = height * 0.95;
         if (calcheight > height * 0.9) calcheight = height * 0.95;
         let calcstartx = (width - calcwidth) / 2;
         let calcstarty = (height - calcheight) / 2;
@@ -596,23 +601,40 @@ function setupScreen() {
     }
 
     updateNum();
+    let maxDiff = 2;
     hMinusP.shape.addEventListener('click', () => {
         hVal--;
+        if(Math.abs(hVal-wVal)>maxDiff){
+            wVal--;
+            wP.string = wVal;
+        }
         hP.string = hVal;
         updateNum();
     });
     hPlusP.shape.addEventListener('click', () => {
         hVal++;
+        if(Math.abs(hVal-wVal)>maxDiff){
+            wVal++;
+            wP.string = wVal;
+        }
         hP.string = hVal;
         updateNum();
     });
     wMinusP.shape.addEventListener('click', () => {
         wVal--;
+        if(Math.abs(hVal-wVal)>maxDiff){
+          hVal--;
+          hP.string = hVal;
+        }
         wP.string = wVal;
         updateNum();
     });
     wPlusP.shape.addEventListener('click', () => {
         wVal++;
+        if(Math.abs(hVal-wVal)>maxDiff){
+            hVal++;
+            hP.string = hVal;
+        }
         wP.string = wVal;
         updateNum();
     });

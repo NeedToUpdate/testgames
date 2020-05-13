@@ -25,7 +25,7 @@
 //let words = ['stones','bones','sticks','quill','ink','brush','pencil','pen','marker','crayon'];
 //words = words.concat(['hat','cap','sunglasses','tie','bowtie','scarf','belt','socks','jacket','coat','vest','suit','sweater','sweatshirt','shirt','jeans','shorts','sweatpants','skirt','sandals','sneakers','flats','heels','slippers','boots'])
 
-//let words = ['mirror','lamp','laptop','wardrobe','laptop','chair','rug','football','alarm clock','picture','bed'];
+let words = ['mirror','lamp','laptop','wardrobe','chair','rug','football','alarm clock','picture','bed'];
 
 //===========ESL1=================
 //let words = ['car','robot','doll','bike','teddy bear'];
@@ -87,5 +87,5 @@
 //let words = ['star','snake','snail','sun','telephone','tent','tiger','taxi', 'tennis','sausage','umbrella'];
 
 //let words = ['xenon','xerox','xylem']
-let words = ['aaaaaaaaaa']
+//let words = ['aaaaaaaaaa']
 let difficulty = 1; //0 easy 1 med 2 difficult

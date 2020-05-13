@@ -26,14 +26,14 @@
     new Div(x,y,'green')
     new Div(400,400,'red')
     let repeat = 1;
-    function getx(num){return (5*num)*Math.cos(num) + 400}
-    function gety(num){return (5*num)*Math.sin(num) + 400}
+    function getx(num){return (10*num)*Math.cos(num*0.7) + 400}
+    function gety(num){return (10*num)*Math.sin(num) + 400}
     function findT(x,y){
         let found = 0;
         for(let t=0; t<400; t+=0.1){
             let testx = getx(t);
             let testy = gety(t);
-            if(Math.abs(x-testx) <10 && Math.abs(y-testy)<10){
+            if(Math.abs(x-testx) <25 && Math.abs(y-testy)<25){
                 found = t;
                 t = 500;
             }
@@ -48,10 +48,9 @@
             let t = OMG.t;
            dot(getx(t),gety(t))
             OMG.t-=0.1
-
             stopCount++;
         }
-        if(OMG.t >0) requestAnimationFrame(loop)
+        if(OMG.t>0) requestAnimationFrame(loop)
     }
     loop();
 </script>
