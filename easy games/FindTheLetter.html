@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
+    <script language="javascript" type="text/javascript"  src="../lib/vector.js"></script>
+    <script language="javascript"  type="text/javascript" src="../lib/matrix.js"></script>
+    <script language="javascript"  type="text/javascript" src="../lib/character.js"></script>
+    <script language="javascript"  type="text/javascript" src="../lib/div.js"></script>
+    <script language="javascript"  type="text/javascript" src="../lib/rect.js"></script>
+    <script language="javascript"  type="text/javascript"  src="../lib/line.js"></script>
+    <script language="javascript" type="text/javascript" src="../lib/eventemitter.js"></script>
+    <script language="javascript" type="text/javascript" src="../lib/drawbase.js"></script>
+    <title>Artem's Find The Letter</title>
+    <link rel="stylesheet" type="text/css" href="../global_styles.css">
+</head>
+<body>
+    <script>
+        let LEFT_PADDING = width*0.1;
+        let TOP_PADDING = height*0.05;
+        let LETTER_WIDTH = 80;
+        function calcColNum(){
+            return ((width-LEFT_PADDING*2)/LETTER_WIDTH |0) +1;
+        }
+        let COL_NUM = calcColNum();
+
+        function makeLetter(letter,x,y){
+            let div = new Div(x,y,'white',LETTER_WIDTH-10,LETTER_WIDTH-10,true);
+            div.set('border', 'solid white 3px');
+            div.set('borderRadius', '10px');
+            div.set('display', 'grid');
+            div.set('justify-items', 'center');
+            div.set('backgroundColor', 'rgba(255,255,255,0.2)');
+            let l = new P(letter,0,0);
+            l.set('position', '');
+            l.set('color','white');
+            l.set('font-family','sans');
+            l.set('font-size','2em');
+            l.set('padding', '0');
+            l.set('margin', 'auto 0');
+            div.letter = letter;
+            div.add(l);
+            return div;
+        }
+        function setupKeyboard(){
+            let alphabet_divs = [];
+
+
+
+            let backgroundimage = 'bg' + (Math.random() * 8 | 0).toString() + '.jpg';
+            document.body.style.backgroundColor = 'grey';
+            document.body.style.backgroundImage = 'url(../images/' + backgroundimage.toString() + ')';
+            document.body.style.backgroundRepeat = 'no-repeat';
+            return new Promise(resolve=>{
+                let selectedletters = '';
+                let selectednumber = 0;
+                (alphabet+'357✔').split('').forEach((letter,i)=>{
+                    let div = makeLetter(letter,LEFT_PADDING+LETTER_WIDTH*(i%COL_NUM),TOP_PADDING+LETTER_WIDTH*(i/COL_NUM |0));
+                    div.shape.addEventListener('click',()=>{
+                        div.set('border', 'green solid 4px');
+                        if(parseInt(letter)){
+                            selectednumber = letter;
+                            //fancy way of setting the other numbers to white
+                            alphabet_divs.filter(x=>('357'.replace(letter,'').includes(x.letter))).forEach(x=>{
+                                x.set('border', 'white solid 4px')
+                            })
+                        }else if(alphabet.includes(letter)){
+                            if(selectedletters.includes(letter)){
+                                selectedletters = selectedletters.replace(letter,'');
+                                div.set('border', 'white solid 4px')
+                            }else{
+                                selectedletters += letter;
+                            }
+
+                        }else{
+                            resolve({letters: selectedletters, num: selectednumber,
+                            removeFn: function(){
+                                alphabet_divs.forEach(div=>{
+                                    div.remove();
+                                })
+                            }})
+                        }
+                    });
+                    alphabet_divs.push(div)
+                })
+            })
+
+        }
+        async function createKeyboard(){
+            let info = await setupKeyboard();
+            return new Promise(resolve => {
+                resolve(info)
+            })
+        }
+        createKeyboard().then(x=>{
+            x.removeFn();
+            let letterDivs = [];
+            let letters = x.letters.split('');
+            let num = x.num;
+            LETTER_WIDTH = 120;
+            TOP_PADDING = height*0.3;
+            LEFT_PADDING = width*0.2;
+            COL_NUM = calcColNum();
+            let highestIndex = alphabet.indexOf(letters.reduce((a,b)=>alphabet.indexOf(a)>alphabet.indexOf(b)?a:b));
+            for(let i = letters.length; i<num; i++){
+                let rand = getRandom(alphabet.split('').splice(0,highestIndex));
+                console.log(rand, highestIndex)
+                while(letters.includes(rand) || !rand){
+                    rand = getRandom(alphabet.split(''));
+                }
+                letters.push(rand)
+            }
+            letters.forEach((letter,i)=>{
+                let div = makeLetter(letter,LEFT_PADDING+LETTER_WIDTH*(i%COL_NUM),TOP_PADDING+LETTER_WIDTH*(i/COL_NUM |0));
+                letterDivs.push(div);
+            })
+        })
+
+    </script>
+
+
+</body>
+</html>
