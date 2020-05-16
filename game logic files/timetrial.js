@@ -40,6 +40,7 @@ function play() {
 let grid = new Matrix(2, 6);
 let lines = [];
 let gamearea = {};
+
 let setupletters = function () {
     let w = 50; //line width
     let space = 5; //space
@@ -98,201 +99,214 @@ function addStartGameTrigger(btn, letter) {
             }
         })
     }
+}
+
+function genLetter() {
+
+    let nextletter = chosen[final_word.length];
+    if (!nextletter) {
+        return alphabet[Math.random() * 26 | 0];
     }
 
-    function genLetter() {
-
-        let nextletter = chosen[final_word.length];
-        if (!nextletter) {
-            return alphabet[Math.random() * 26 | 0];
-        }
-
-        if (final_word.length === 0 && total_letters < max_num_of_letters) {
-            console.log('tot', total_letters);
-            if (Math.random() > .3 && max_num_of_letters - 1 > total_letters) {
-                gen_times++;
-                total_letters++;
-                return alphabet[Math.random() * 26 | 0];
-            } else {
-                gen_times = 0;
-                last_letter = final_word.length;
-                total_letters++;
-                return nextletter;
-            }
-        } else if (final_word.length === 0) {
+    if (final_word.length === 0 && total_letters < max_num_of_letters) {
+        if (Math.random() > .3 && max_num_of_letters - 1 > total_letters) {
+            gen_times++;
             total_letters++;
-            console.log('here');
-            return Array.from(alphabet).filter(x => x !== nextletter)[getRandom(alphabet.length - 1) | 0]
-        } else if (final_word.length > 0) {
-            if (Math.random() > .3 && max_num_of_letters - 1 > total_letters) {
-                gen_times++;
-                total_letters++;
-                return alphabet[Math.random() * alphabet.length | 0];
-            } else {
-                gen_times = 0;
-                last_letter = final_word.length;
-                total_letters++;
-                return nextletter;
-            }
-        }
-
-
-    }
-
-
-    function genButton(string, x, y) {
-        let g = new GameButton(string, [x, y]);
-        [x, y] = pos2xy(x, y);
-        g.x = x;
-        g.y = y;
-        g.set('top', y + 'px');
-        g.set('left', x + 'px');
-        return g;
-    }
-
-    function pos2xy(xpos, ypos) {
-        let top = height * 0.4;
-        let left = width / 2 - 85 * grid.cols / 2;
-        return [left + xpos * 85, top + 30 + ypos * 85]
-    }
-
-    let final_word = "";
-    let final_letters = [];
-
-    function replaceButton(pos, correct) {
-        if (correct) {
-            grid.values[pos[1]][pos[0]].correctkill();
+            return alphabet[Math.random() * 26 | 0];
         } else {
-            grid.values[pos[1]][pos[0]].kill();
+            gen_times = 0;
+            last_letter = final_word.length;
+            total_letters++;
+            return nextletter;
         }
-        total_letters--;
-        if (grid.values[pos[1]][pos[0]].dead) {
-            setTimeout(() => {
-                requestAnimationFrame(() => {
-                    let letter = genLetter();
-                    let newbtn = genButton(letter, pos[0], pos[1]);
-                    if (grid.values[pos[1]][pos[0]].div) {
-                        if (document.body.contains(grid.values[pos[1]][pos[0]].div.shape)) {
-                            grid.values[pos[1]][pos[0]].div.remove();
-                        }
-                    }
-                    if (!LOOPING) addStartGameTrigger(newbtn,letter);
-                    requestAnimationFrame(() => {
-                        grid.values[pos[1]][pos[0]] = newbtn;
-                    })
-                })
-
-            }, 500)
+    } else if (final_word.length === 0) {
+        total_letters++;
+        console.log('here');
+        return Array.from(alphabet).filter(x => x !== nextletter)[getRandom(alphabet.length - 1) | 0]
+    } else if (final_word.length > 0) {
+        if (Math.random() > .3 && max_num_of_letters - 1 > total_letters) {
+            gen_times++;
+            total_letters++;
+            return alphabet[Math.random() * alphabet.length | 0];
+        } else {
+            gen_times = 0;
+            last_letter = final_word.length;
+            total_letters++;
+            return nextletter;
         }
-
     }
 
-    function clickHandler(string, pos) {
-        if (final_word.length >= chosen.length) {
-            if (!winner) win();
-            return
+
+}
+
+
+function genButton(string, x, y) {
+    let pos = [x,y]
+    let g = new GameButton(string, pos, winner? 'limegreen' : 'white');
+    [x, y] = pos2xy(x, y);
+    g.x = x;
+    g.y = y;
+    g.set('top', y + 'px');
+    g.set('left', x + 'px');
+    g.div.shape.addEventListener('click', () => {
+        if(Math.random()<0.05){
+            if(Math.random()<0.5) {
+                g.jumpright();
+            }else {
+
+                g.jumpleft();
+            }
+        }else{
+            clickHandler(string, pos);
         }
-        let currentLine = lines[final_word.length].line;
-        let temp_p = new P(string, currentLine.x, currentLine.y - 134, "white");
-        temp_p.set('fontSize', '4em');
 
+    });
+    return g;
+}
 
-        temp_p.x += (50 - temp_p.shape.offsetWidth) / 2;
-        let temp = final_word + string;
-        if (chosen.startsWith(temp)) {
-            //CORRECT
-            final_word += string;
-            final_letters.push(temp_p);
-            replaceButton(pos, true);
-            grid.values.forEach((row, y) => {
-                row.forEach((col, x) => {
-                    if (Math.random() < .4 && (x !== pos[0] || y !== pos[1])) {
-                        replaceButton([x, y], true)
+function pos2xy(xpos, ypos) {
+    let top = height * 0.4;
+    let left = width / 2 - 85 * grid.cols / 2;
+    return [left + xpos * 85, top + 30 + ypos * 85]
+}
+
+let final_word = "";
+let final_letters = [];
+
+function replaceButton(pos, correct) {
+    if (correct) {
+        grid.values[pos[1]][pos[0]].correctkill();
+    } else {
+        grid.values[pos[1]][pos[0]].kill();
+    }
+    total_letters--;
+    if (grid.values[pos[1]][pos[0]].dead) {
+        setTimeout(() => {
+            requestAnimationFrame(() => {
+                let letter = genLetter();
+                let newbtn = genButton(letter, pos[0], pos[1]);
+                if (grid.values[pos[1]][pos[0]].div) {
+                    if (document.body.contains(grid.values[pos[1]][pos[0]].div.shape)) {
+                        grid.values[pos[1]][pos[0]].div.remove();
                     }
-
+                }
+                if (!LOOPING) addStartGameTrigger(newbtn, letter);
+                requestAnimationFrame(() => {
+                    grid.values[pos[1]][pos[0]] = newbtn;
                 })
             })
-        } else {
-            //WRONG
-            replaceButton(pos);
-            setTimeout(() => {
-                temp_p.set('color', 'red');
-                setTimeout(() => {
-                    temp_p.remove();
-                }, 700)
-            }, 100)
-        }
-        if (final_word === chosen) {
-            win();
-        }
-        if (chosen[final_word.length] === " ") {
-            final_word += " ";
-        }
+
+        }, 500)
     }
 
-    function win() {
-        winner = true;
-        setAll('border', 'limegreen solid 5px');
-        setAllLetters('color', 'limegreen');
-        stop();
+}
+
+function clickHandler(string, pos) {
+    if (final_word.length >= chosen.length) {
+        if (!winner) win();
+        return
     }
+    let currentLine = lines[final_word.length].line;
+    let temp_p = new P(string, currentLine.x, currentLine.y - 134, "white");
+    temp_p.set('fontSize', '4em');
 
-    function setAll(attr, val) {
-        grid.map((x, i, j) => {
-            if (!x) {
-                //   console.log(i, j, grid)
-            }
-            x.set(attr, val);
 
-            return x;
-        })
-    }
-
-    function setAllLetters(attr, val) {
-        final_letters.forEach(x => {
-            x.set(attr, val)
-        })
-    }
-
-    let lasttime = window.performance.now();
-    let draw = function () {
-        if (!winner) {
-            timer -= (window.performance.now() - lasttime) / 1000;
-            timer = timer.toPrecision(4);
-            if (timer <= 0) {
-                timer = 0;
-                id('timep').style.color = "red";
-                setAll('border', 'red solid 5px');
-                grid.map(x => {
-                    x.kill();
-                    return x;
-                });
-                stop();
-            }
-            timep.innerText = timer;
-        }
-        grid.map(x => {
-            x.update();
-            return x;
-        });
-        lasttime = window.performance.now();
-
-    };
-    loop = function () {
-        grid.map(x => {
-            if (Math.random() < 0.003 + difficulty * 0.001) {
-                x.jump();
-            }
-            if (Math.random() < 0.006 + difficulty * 0.003 + (difficulty > 1 ? 0.5 : 0)) {
-                if (difficulty > 0) {
-                    x.halfspin();
-                } else {
-                    x.spin();
+    temp_p.x += (50 - temp_p.shape.offsetWidth) / 2;
+    let temp = final_word + string;
+    if (chosen.startsWith(temp)) {
+        //CORRECT
+        final_word += string;
+        final_letters.push(temp_p);
+        replaceButton(pos, true);
+        grid.values.forEach((row, y) => {
+            row.forEach((col, x) => {
+                if (Math.random() < .4 && (x !== pos[0] || y !== pos[1])) {
+                    replaceButton([x, y], true)
                 }
 
+            })
+        })
+    } else {
+        //WRONG
+        replaceButton(pos);
+        setTimeout(() => {
+            temp_p.set('color', 'red');
+            setTimeout(() => {
+                temp_p.remove();
+            }, 700)
+        }, 100)
+    }
+    if (final_word === chosen) {
+        win();
+    }
+    if (chosen[final_word.length] === " ") {
+        final_word += " ";
+    }
+}
+
+function win() {
+    winner = true;
+    setAll('border', 'limegreen solid 5px');
+    setAllLetters('color', 'limegreen');
+    stop();
+}
+
+function setAll(attr, val) {
+    grid.map((x, i, j) => {
+        if (!x) {
+            //   console.log(i, j, grid)
+        }
+        x.set(attr, val);
+
+        return x;
+    })
+}
+
+function setAllLetters(attr, val) {
+    final_letters.forEach(x => {
+        x.set(attr, val)
+    })
+}
+
+let lasttime = window.performance.now();
+let draw = function () {
+    if (!winner) {
+        timer -= (window.performance.now() - lasttime) / 1000;
+        timer = timer.toPrecision(4);
+        if (timer <= 0) {
+            timer = 0;
+            id('timep').style.color = "red";
+            setAll('border', 'red solid 5px');
+            grid.map(x => {
+                x.kill();
+                return x;
+            });
+            stop();
+        }
+        timep.innerText = timer;
+    }
+    grid.map(x => {
+        x.update();
+        return x;
+    });
+    lasttime = window.performance.now();
+
+};
+loop = function () {
+    grid.map(x => {
+        if (Math.random() < 0.003 + difficulty * 0.001) {
+            x.jump();
+        }
+        if (Math.random() < 0.006 + difficulty * 0.003 + (difficulty > 1 ? 0.5 : 0)) {
+            if (difficulty > 0) {
+                x.halfspin();
+            } else {
+                x.spin();
             }
-            return x;
-        });
-        draw();
-    };
-    setupletters();
+
+        }
+        return x;
+    });
+    draw();
+};
+setupletters();

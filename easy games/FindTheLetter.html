@@ -18,6 +18,7 @@
         let LEFT_PADDING = width*0.1;
         let TOP_PADDING = height*0.05;
         let LETTER_WIDTH = 80;
+        let RUNNING_LETTERS = true;
         function calcColNum(){
             return ((width-LEFT_PADDING*2)/LETTER_WIDTH |0) +1;
         }
@@ -85,6 +86,14 @@
             })
 
         }
+        function selectLetter(letter){
+           THINGS_TO_UPDATE.forEach(x=>{
+               x.kill();
+           });
+            let chars = ['peppapig'];
+            let char = new Character(width/2,300,getRandom(chars));
+
+        }
         async function createKeyboard(){
             let info = await setupKeyboard();
             return new Promise(resolve => {
@@ -109,11 +118,46 @@
                 }
                 letters.push(rand)
             }
+            letters = shuffle(letters)
             letters.forEach((letter,i)=>{
-                let div = makeLetter(letter,LEFT_PADDING+LETTER_WIDTH*(i%COL_NUM),TOP_PADDING+LETTER_WIDTH*(i/COL_NUM |0));
-                letterDivs.push(div);
+                let letterChar = new GameButton(letter,);
+                letterDivs.push(letterChar);
+                letterChar.div.shape.addEventListener('click',()=>{
+                   if(RUNNING_LETTERS){
+                       if(!letterChar.div.runcount){
+                           letterChar.div.runcount = 0;
+                       }
+                       if(letterChar.div.runcount<2){
+                           letterChar.a = Vector.random(getRandom(5,6))
+                           letterChar.div.runcount+= Math.random()*0.2 + 0.7;
+                       }else{
+                           selectLetter(letter)
+                       }
+                   }
+                });
+                letterChar.p = new Vector(LEFT_PADDING+LETTER_WIDTH*(i%COL_NUM),TOP_PADDING+LETTER_WIDTH*(i/COL_NUM |0));
+                letterChar.antigrav = true;
+                letterChar.bounds = {x:width,y:height};
+                letterChar.friction = 0.02;
+                letterChar.canBounce = true;
+                letterChar.update();
+                THINGS_TO_UPDATE.push(letterChar);
+                start();
             })
-        })
+        });
+        let THINGS_TO_UPDATE = [];
+        function loop(){
+          for(let i = THINGS_TO_UPDATE.length-1; i>=0; i--){
+              THINGS_TO_UPDATE[i].update();
+              if(THINGS_TO_UPDATE.dead){
+                  THINGS_TO_UPDATE.splice(i,1);
+              }
+          }
+          requestAnimationFrame(loop);
+        };
+        function start(){
+            requestAnimationFrame(loop);
+        }
 
     </script>
 
