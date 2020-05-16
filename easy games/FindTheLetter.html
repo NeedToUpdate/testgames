@@ -2,164 +2,188 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
-    <script language="javascript" type="text/javascript"  src="../lib/vector.js"></script>
-    <script language="javascript"  type="text/javascript" src="../lib/matrix.js"></script>
-    <script language="javascript"  type="text/javascript" src="../lib/character.js"></script>
-    <script language="javascript"  type="text/javascript" src="../lib/div.js"></script>
-    <script language="javascript"  type="text/javascript" src="../lib/rect.js"></script>
-    <script language="javascript"  type="text/javascript"  src="../lib/line.js"></script>
+    <script language="javascript" type="text/javascript" src="../lib/vector.js"></script>
+    <script language="javascript" type="text/javascript" src="../lib/matrix.js"></script>
+    <script language="javascript" type="text/javascript" src="../lib/character.js"></script>
+    <script language="javascript" type="text/javascript" src="../lib/div.js"></script>
+    <script language="javascript" type="text/javascript" src="../lib/rect.js"></script>
+    <script language="javascript" type="text/javascript" src="../lib/line.js"></script>
     <script language="javascript" type="text/javascript" src="../lib/eventemitter.js"></script>
     <script language="javascript" type="text/javascript" src="../lib/drawbase.js"></script>
     <title>Artem's Find The Letter</title>
     <link rel="stylesheet" type="text/css" href="../global_styles.css">
 </head>
 <body>
-    <script>
-        let LEFT_PADDING = width*0.1;
-        let TOP_PADDING = height*0.05;
-        let LETTER_WIDTH = 80;
-        let RUNNING_LETTERS = true;
-        function calcColNum(){
-            return ((width-LEFT_PADDING*2)/LETTER_WIDTH |0) +1;
-        }
-        let COL_NUM = calcColNum();
+<script>
+    let LEFT_PADDING = width * 0.1;
+    let TOP_PADDING = height * 0.05;
+    let LETTER_WIDTH = 80;
+    let RUNNING_LETTERS = false;
 
-        function makeLetter(letter,x,y){
-            let div = new Div(x,y,'white',LETTER_WIDTH-10,LETTER_WIDTH-10,true);
-            div.set('border', 'solid white 3px');
-            div.set('borderRadius', '10px');
-            div.set('display', 'grid');
-            div.set('justify-items', 'center');
-            div.set('backgroundColor', 'rgba(255,255,255,0.2)');
-            let l = new P(letter,0,0);
-            l.set('position', '');
-            l.set('color','white');
-            l.set('font-family','sans');
-            l.set('font-size','2em');
-            l.set('padding', '0');
-            l.set('margin', 'auto 0');
-            div.letter = letter;
-            div.add(l);
-            return div;
-        }
-        function setupKeyboard(){
-            let alphabet_divs = [];
+    function calcColNum() {
+        return ((width - LEFT_PADDING * 2) / LETTER_WIDTH | 0) + 1;
+    }
 
+    let COL_NUM = calcColNum();
 
+    function makeLetter(letter, x, y) {
+        let div = new Div(x, y, 'white', LETTER_WIDTH - 10, LETTER_WIDTH - 10, true);
+        div.set('border', 'solid white 3px');
+        div.set('borderRadius', '10px');
+        div.set('display', 'grid');
+        div.set('justify-items', 'center');
+        div.set('backgroundColor', 'rgba(255,255,255,0.2)');
+        let l = new P(letter, 0, 0);
+        l.set('position', '');
+        l.set('color', 'white');
+        l.set('font-family', 'sans');
+        l.set('font-size', '2em');
+        l.set('padding', '0');
+        l.set('margin', 'auto 0');
+        div.letter = letter;
+        div.add(l);
+        return div;
+    }
 
-            let backgroundimage = 'bg' + (Math.random() * 8 | 0).toString() + '.jpg';
-            document.body.style.backgroundColor = 'grey';
-            document.body.style.backgroundImage = 'url(../images/' + backgroundimage.toString() + ')';
-            document.body.style.backgroundRepeat = 'no-repeat';
-            return new Promise(resolve=>{
-                let selectedletters = '';
-                let selectednumber = 0;
-                (alphabet+'357✔').split('').forEach((letter,i)=>{
-                    let div = makeLetter(letter,LEFT_PADDING+LETTER_WIDTH*(i%COL_NUM),TOP_PADDING+LETTER_WIDTH*(i/COL_NUM |0));
-                    div.shape.addEventListener('click',()=>{
-                        div.set('border', 'green solid 4px');
-                        if(parseInt(letter)){
-                            selectednumber = letter;
-                            //fancy way of setting the other numbers to white
-                            alphabet_divs.filter(x=>('357'.replace(letter,'').includes(x.letter))).forEach(x=>{
-                                x.set('border', 'white solid 4px')
-                            })
-                        }else if(alphabet.includes(letter)){
-                            if(selectedletters.includes(letter)){
-                                selectedletters = selectedletters.replace(letter,'');
-                                div.set('border', 'white solid 4px')
-                            }else{
-                                selectedletters += letter;
-                            }
+    function setupKeyboard() {
+        let alphabet_divs = [];
+        let backgroundimage = 'bg' + (Math.random() * 8 | 0).toString() + '.jpg';
+        document.body.style.backgroundColor = 'grey';
+        document.body.style.backgroundImage = 'url(../images/' + backgroundimage.toString() + ')';
+        document.body.style.backgroundRepeat = 'no-repeat';
+        return new Promise(resolve => {
+            let selectedletters = '';
+            let selectednumber = 0;
+            (alphabet + '357✔').split('').forEach((letter, i) => {
+                let div = makeLetter(letter, LEFT_PADDING + LETTER_WIDTH * (i % COL_NUM), TOP_PADDING + LETTER_WIDTH * (i / COL_NUM | 0));
+                div.shape.addEventListener('click', () => {
+                    div.set('border', 'green solid 4px');
+                    if (parseInt(letter)) {
+                        selectednumber = letter;
+                        //fancy way of setting the other numbers to white
+                        alphabet_divs.filter(x => ('357'.replace(letter, '').includes(x.letter))).forEach(x => {
+                            x.set('border', 'white solid 4px')
+                        })
+                    } else if (alphabet.includes(letter)) {
+                        if (selectedletters.includes(letter)) {
+                            selectedletters = selectedletters.replace(letter, '');
+                            div.set('border', 'white solid 4px')
+                        } else {
+                            selectedletters += letter;
+                        }
 
-                        }else{
-                            resolve({letters: selectedletters, num: selectednumber,
-                            removeFn: function(){
-                                alphabet_divs.forEach(div=>{
+                    } else {
+                        resolve({
+                            letters: selectedletters, num: selectednumber,
+                            removeFn: function () {
+                                alphabet_divs.forEach(div => {
                                     div.remove();
                                 })
-                            }})
-                        }
-                    });
-                    alphabet_divs.push(div)
-                })
-            })
-
-        }
-        function selectLetter(letter){
-           THINGS_TO_UPDATE.forEach(x=>{
-               x.kill();
-           });
-            let chars = ['peppapig'];
-            let char = new Character(width/2,300,getRandom(chars));
-
-        }
-        async function createKeyboard(){
-            let info = await setupKeyboard();
-            return new Promise(resolve => {
-                resolve(info)
-            })
-        }
-        createKeyboard().then(x=>{
-            x.removeFn();
-            let letterDivs = [];
-            let letters = x.letters.split('');
-            let num = x.num;
-            LETTER_WIDTH = 120;
-            TOP_PADDING = height*0.3;
-            LEFT_PADDING = width*0.2;
-            COL_NUM = calcColNum();
-            let highestIndex = alphabet.indexOf(letters.reduce((a,b)=>alphabet.indexOf(a)>alphabet.indexOf(b)?a:b));
-            for(let i = letters.length; i<num; i++){
-                let rand = getRandom(alphabet.split('').splice(0,highestIndex));
-                console.log(rand, highestIndex)
-                while(letters.includes(rand) || !rand){
-                    rand = getRandom(alphabet.split(''));
-                }
-                letters.push(rand)
-            }
-            letters = shuffle(letters)
-            letters.forEach((letter,i)=>{
-                let letterChar = new GameButton(letter,);
-                letterDivs.push(letterChar);
-                letterChar.div.shape.addEventListener('click',()=>{
-                   if(RUNNING_LETTERS){
-                       if(!letterChar.div.runcount){
-                           letterChar.div.runcount = 0;
-                       }
-                       if(letterChar.div.runcount<2){
-                           letterChar.a = Vector.random(getRandom(5,6))
-                           letterChar.div.runcount+= Math.random()*0.2 + 0.7;
-                       }else{
-                           selectLetter(letter)
-                       }
-                   }
+                            }
+                        })
+                    }
                 });
-                letterChar.p = new Vector(LEFT_PADDING+LETTER_WIDTH*(i%COL_NUM),TOP_PADDING+LETTER_WIDTH*(i/COL_NUM |0));
-                letterChar.antigrav = true;
-                letterChar.bounds = {x:width,y:height};
-                letterChar.friction = 0.02;
-                letterChar.canBounce = true;
-                letterChar.update();
-                THINGS_TO_UPDATE.push(letterChar);
-                start();
+                alphabet_divs.push(div)
             })
-        });
-        let THINGS_TO_UPDATE = [];
-        function loop(){
-          for(let i = THINGS_TO_UPDATE.length-1; i>=0; i--){
-              THINGS_TO_UPDATE[i].update();
-              if(THINGS_TO_UPDATE.dead){
-                  THINGS_TO_UPDATE.splice(i,1);
-              }
-          }
-          requestAnimationFrame(loop);
-        };
-        function start(){
-            requestAnimationFrame(loop);
-        }
+        })
 
-    </script>
+    }
+
+    function selectLetter(letter) {
+        THINGS_TO_UPDATE.forEach(x => {
+            x.kill();
+        });
+        let chars = ['peppapig'];
+        let char = new Character(-200, 0, getRandom(chars));
+        let sprite = new Img('../images/' + char.name + '.png', -200, 0, 200, true);
+        char.addSprite(sprite);
+        char.bounds = {x: width, y: height};
+        THINGS_TO_UPDATE.push(char)
+        setTimeout(() => {
+            char.jumpright();
+        }, 1000)
+        let unsub = char.landing_emitter.subscribe('land', () => {
+            if (char.p.x > width / 2) {
+                unsub();
+            } else {
+                char.jumpright();
+
+            }
+
+        })
+    }
+
+    async function createKeyboard() {
+        let info = await setupKeyboard();
+        return new Promise(resolve => {
+            resolve(info)
+        })
+    }
+
+    createKeyboard().then(x => {
+        x.removeFn();
+        let letterDivs = [];
+        let letters = x.letters.split('');
+        let num = x.num;
+        LETTER_WIDTH = 120;
+        TOP_PADDING = height * 0.3;
+        LEFT_PADDING = width * 0.2;
+        COL_NUM = calcColNum();
+        let highestIndex = alphabet.indexOf(letters.reduce((a, b) => alphabet.indexOf(a) > alphabet.indexOf(b) ? a : b));
+        for (let i = letters.length; i < num; i++) {
+            let rand = getRandom(alphabet.split('').splice(0, highestIndex));
+            console.log(rand, highestIndex)
+            while (letters.includes(rand) || !rand) {
+                rand = getRandom(alphabet.split(''));
+            }
+            letters.push(rand)
+        }
+        letters = shuffle(letters);
+        letters.forEach((letter, i) => {
+            let letterChar = new GameButton(letter,);
+            letterDivs.push(letterChar);
+            letterChar.div.shape.addEventListener('click', () => {
+                if (RUNNING_LETTERS) {
+                    if (!letterChar.div.runcount) {
+                        letterChar.div.runcount = 0;
+                    }
+                    if (letterChar.div.runcount < 2) {
+                        letterChar.a = Vector.random(getRandom(5, 6))
+                        letterChar.div.runcount += Math.random() * 0.2 + 0.7;
+                    } else {
+                        selectLetter(letter)
+                    }
+                } else {
+                    selectLetter(letter)
+                }
+            });
+            letterChar.p = new Vector(LEFT_PADDING + LETTER_WIDTH * (i % COL_NUM), TOP_PADDING + LETTER_WIDTH * (i / COL_NUM | 0));
+            letterChar.antigrav = true;
+            letterChar.bounds = {x: width, y: height};
+            letterChar.friction = 0.02;
+            letterChar.canBounce = true;
+            letterChar.update();
+            THINGS_TO_UPDATE.push(letterChar);
+            start();
+        })
+    });
+    let THINGS_TO_UPDATE = [];
+
+    function loop() {
+        for (let i = THINGS_TO_UPDATE.length - 1; i >= 0; i--) {
+            THINGS_TO_UPDATE[i].update();
+            if (THINGS_TO_UPDATE[i].dead) {
+                THINGS_TO_UPDATE.splice(i, 1);
+            }
+        }
+        requestAnimationFrame(loop);
+    };
+
+    function start() {
+        requestAnimationFrame(loop);
+    }
+
+</script>
 
 
 </body>

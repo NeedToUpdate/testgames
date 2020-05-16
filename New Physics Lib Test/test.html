@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
+    <script language="javascript" type="text/javascript" src="../lib/drawbase.js"></script>
+    <script language="javascript" type="text/javascript"  src="../lib/vector.js"></script>
+    <script language="javascript"  type="text/javascript" src="../lib/matrix.js"></script>
+    <script language="javascript"  type="text/javascript" src="./DomObject.js"></script>
+    <script language="javascript"  type="text/javascript" src="./PhysicsObject.js"></script>
+
+    <title>Tests</title>
+</head>
+<body>
+  <script>
+    function setup(){
+        return new Promise(resolve => {
+
+
+
+
+
+            resolve()
+        })
+    }
+
+    function loop(){
+
+
+        if(LOOPING) requestAnimationFrame(loop)
+    }
+
+    setup().then(()=>{
+        loop()
+    })
+  </script>
+<script>
+
+
+
+</script>
+</body>
+</html>
