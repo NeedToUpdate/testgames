@@ -58,6 +58,12 @@ class DomObject {
     get border(){
         return this.shape.style.border;
     }
+    get width(){
+        return this.shape.offsetWidth;
+    }
+    get height(){
+        return this.shape.offsetHeight;
+    }
 
     get(attr) {
         return this.shape.style[attr];
@@ -91,11 +97,11 @@ class DomObject {
 
     moveTo(p) {
         if(arguments.length === 2){
-            this.set('top', arguments[1] - (this.isRectangle ? 0 : this.r) + 'px');
-            this.set('left', arguments[0] - (this.isRectangle ? 0 : this.r) + 'px');
+            this.set('top', arguments[1] - (this.isRectangle ? 0 : this.radius) + 'px');
+            this.set('left', arguments[0] - (this.isRectangle ? 0 : this.radius) + 'px');
         }
-        this.set('top', p.y - (this.isRectangle ? 0 : this.r) + 'px');
-        this.set('left', p.x - (this.isRectangle ? 0 : this.r) + 'px');
+        this.set('top', p.y - (this.isRectangle ? 0 : this.radius) + 'px');
+        this.set('left', p.x - (this.isRectangle ? 0 : this.radius) + 'px');
     }
 
 
@@ -165,9 +171,9 @@ class Div extends DomObject {
             console.error('radius/width/height is negative, might cause issues with this', this)
         }
         this.isLine = h === 1;
-        this.isRectangle = (x && y && r && h) || this.isLine; //if r and h are given, then it must be a square
+        this.isRectangle = (!!r && !!h) || this.isLine; //if r and h are given, then it must be a square
         this.radius = r || 1; //if isRect then this is w
-        this.w = this.isRectangle ? r : 0;
+        this.w = this.isRectangle? r: r*2;
         this.h = h || 0;
         this.theta = theta || 0;
         this.shape = document.createElement('div');
@@ -178,14 +184,25 @@ class Div extends DomObject {
         Object.assign(this.shape.style, {
             height: (this.isRectangle ? this.h : this.radius * 2) + 'px',
             width: (this.isRectangle ? this.w : this.radius * 2) + 'px',
-            top: this.p.y - (this.isRectangle ? 0 : this.radius + 1) + 'px',
-            left: this.p.x - (this.isRectangle ? 0 : this.radius + 1) + 'px',
+            top: this.p.y - (this.isRectangle ? 0 : this.radius)+ 'px',
+            left: this.p.x - (this.isRectangle ? 0 : this.radius) + 'px',
             transformOrigin: (this.isLine ? '0% 50%' : 'center center'),
             //backgroundColor: 'white',
             borderRadius: this.isRectangle ? '' : '50%',
             position: 'absolute',
             transform: this.theta ? 'rotate(' + this.theta + 'deg)' : ''
         });
+        jlog({
+        height: (this.isRectangle ? this.h : this.radius * 2) + 'px',
+        width: (this.isRectangle ? this.w : this.radius * 2) + 'px',
+        top: this.p.y - (this.isRectangle ? 0 : this.radius)+ 'px',
+        left: this.p.x - (this.isRectangle ? 0 : this.radius) + 'px',
+        transformOrigin: (this.isLine ? '0% 50%' : 'center center'),
+        //backgroundColor: 'white',
+        borderRadius: this.isRectangle ? '' : '50%',
+        position: 'absolute',
+        transform: this.theta ? 'rotate(' + this.theta + 'deg)' : ''
+        })
         this.color = this.DEFAULT_COLOR;
         document.body.appendChild(this.shape);
     }

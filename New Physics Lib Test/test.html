@@ -12,20 +12,39 @@
 </head>
 <body>
   <script>
+     LOOPING = true
     function setup(){
+        setBackground('black')
         return new Promise(resolve => {
-
-
-
-
-
-            resolve()
+           let gravity = new Vector(0,1)
+           gravity.constant = true
+           for(let i=0; i<5;i++){
+           
+           let ball = new Blank(getRandom(0,200),100,50,50,1)
+           let sprite = new Circle(100,100,getRandom(20,40)).asOutline('white')
+           ball.addSprite(sprite)
+           ball.addForce(gravity)
+           ball.canBounce = true
+           ball.bounce_coeff = 0.8
+           THINGS_TO_UPDATE.push(ball)
+           jlog(ball)
+           sprite.shape.addEventListener('click',()=>{
+               let f = new Vector(10,-2)
+               ball.addForce(f)
+           })
+           }
+           resolve()
         })
     }
-
+    THINGS_TO_UPDATE = []
     function loop(){
-
-
+        for (let i = THINGS_TO_UPDATE.length - 1; i >= 0; i--) {
+            THINGS_TO_UPDATE[i].update();
+            if (THINGS_TO_UPDATE[i].dead) {
+                THINGS_TO_UPDATE.splice(i, 1);
+            }
+        }
+        //console.log(jlog(THINGS_TO_UPDATE[0]))
         if(LOOPING) requestAnimationFrame(loop)
     }
 
