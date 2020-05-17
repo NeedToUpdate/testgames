@@ -192,17 +192,6 @@ class Div extends DomObject {
             position: 'absolute',
             transform: this.theta ? 'rotate(' + this.theta + 'deg)' : ''
         });
-        jlog({
-        height: (this.isRectangle ? this.h : this.radius * 2) + 'px',
-        width: (this.isRectangle ? this.w : this.radius * 2) + 'px',
-        top: this.p.y - (this.isRectangle ? 0 : this.radius)+ 'px',
-        left: this.p.x - (this.isRectangle ? 0 : this.radius) + 'px',
-        transformOrigin: (this.isLine ? '0% 50%' : 'center center'),
-        //backgroundColor: 'white',
-        borderRadius: this.isRectangle ? '' : '50%',
-        position: 'absolute',
-        transform: this.theta ? 'rotate(' + this.theta + 'deg)' : ''
-        })
         this.color = this.DEFAULT_COLOR;
         document.body.appendChild(this.shape);
     }

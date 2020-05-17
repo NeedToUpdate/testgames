@@ -3,57 +3,70 @@
 <head>
     <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
     <script language="javascript" type="text/javascript" src="../lib/drawbase.js"></script>
-    <script language="javascript" type="text/javascript"  src="../lib/vector.js"></script>
-    <script language="javascript"  type="text/javascript" src="../lib/matrix.js"></script>
-    <script language="javascript"  type="text/javascript" src="./DomObject.js"></script>
-    <script language="javascript"  type="text/javascript" src="./PhysicsObject.js"></script>
+    <script language="javascript" type="text/javascript" src="../lib/vector.js"></script>
+    <script language="javascript" type="text/javascript" src="../lib/matrix.js"></script>
+    <script language="javascript" type="text/javascript" src="../lib/collisioncontainer.js"></script>
+    <script language="javascript" type="text/javascript" src="./DomObject.js"></script>
+    <script language="javascript" type="text/javascript" src="./PhysicsObject.js"></script>
 
     <title>Tests</title>
 </head>
 <body>
-  <script>
-     LOOPING = true
-    function setup(){
-        setBackground('black')
+<script>
+    LOOPING = true
+
+    function setup() {
+       // setBackground('black')
         return new Promise(resolve => {
-           let gravity = new Vector(0,1)
-           gravity.constant = true
-           for(let i=0; i<5;i++){
-           
-           let ball = new Blank(getRandom(0,200),100,50,50,1)
-           let sprite = new Circle(100,100,getRandom(20,40)).asOutline('white')
-           ball.addSprite(sprite)
-           ball.addForce(gravity)
-           ball.canBounce = true
-           ball.bounce_coeff = 0.8
-           THINGS_TO_UPDATE.push(ball)
-           jlog(ball)
-           sprite.shape.addEventListener('click',()=>{
-               let f = new Vector(10,-2)
-               ball.addForce(f)
-           })
-           }
-           resolve()
+            let gravity = new Vector(0, 1);
+            gravity.constant = true;
+            for (let i = 0; i < 2; i++) {
+
+                let ball = new Blank(getRandom(100, 500), 100, 50, 50, 1);
+                let sprite = new Circle(100, 100, getRandom(20, 40)).asOutline('black');
+                ball.addSprite(sprite);
+                ball.addForce(gravity);
+                ball.hasBounce = true;
+                ball.bounce_coeff = 0.6;
+                ball.update();
+                THINGS_TO_UPDATE.push(ball);
+                document.addEventListener('click', () => {
+                    let f = new Vector(100, -2);
+                    ball.addForce(f)
+                })
+            }
+            resolve()
         })
     }
+
     THINGS_TO_UPDATE = []
-    function loop(){
+
+    function loop() {
         for (let i = THINGS_TO_UPDATE.length - 1; i >= 0; i--) {
             THINGS_TO_UPDATE[i].update();
+            if(Object.keys(THINGS_TO_UPDATE[i].hitbox).length>0) {
+                THINGS_TO_UPDATE.forEach(thing => {
+                    if (Object.keys(thing.hitbox).length > 0 && THINGS_TO_UPDATE.indexOf(thing) !== i) {
+                        if(THINGS_TO_UPDATE[i].hitbox.contains(thing.hitbox)){
+                            THINGS_TO_UPDATE[i].sprite.border = 'green solid 1px';
+                            //console.log(THINGS_TO_UPDATE[i].hitbox,thing.hitbox);
+                        }
+                    }
+                });
+            }
             if (THINGS_TO_UPDATE[i].dead) {
                 THINGS_TO_UPDATE.splice(i, 1);
             }
         }
         //console.log(jlog(THINGS_TO_UPDATE[0]))
-        if(LOOPING) requestAnimationFrame(loop)
+        if (LOOPING) requestAnimationFrame(loop)
     }
 
-    setup().then(()=>{
+    setup().then(() => {
         loop()
     })
-  </script>
+</script>
 <script>
-
 
 
 </script>
