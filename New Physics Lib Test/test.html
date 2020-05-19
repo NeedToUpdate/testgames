@@ -13,7 +13,7 @@
 </head>
 <body>
 <script>
-    LOOPING = true
+    LOOPING = true;
 
     function setup() {
        // setBackground('black')
@@ -23,11 +23,11 @@
             for (let i = 0; i < 2; i++) {
 
                 let ball = new Blank(getRandom(100, 500), 100, 50, 50, 1);
-                let sprite = new Circle(100, 100, getRandom(20, 40)).asOutline('black');
+                let sprite = new Square(100, 100, getRandom(20, 40)).fromCenter();
                 ball.addSprite(sprite);
                 ball.addForce(gravity);
                 ball.hasBounce = true;
-                ball.bounce_coeff = 0.6;
+                ball.bounce_coeff = getRandom(0.7,0.99);
                 ball.update();
                 THINGS_TO_UPDATE.push(ball);
                 document.addEventListener('click', () => {
@@ -48,7 +48,7 @@
                 THINGS_TO_UPDATE.forEach(thing => {
                     if (Object.keys(thing.hitbox).length > 0 && THINGS_TO_UPDATE.indexOf(thing) !== i) {
                         if(THINGS_TO_UPDATE[i].hitbox.contains(thing.hitbox)){
-                            THINGS_TO_UPDATE[i].sprite.border = 'green solid 1px';
+                            THINGS_TO_UPDATE[i].sprite.color = 'green';
                             //console.log(THINGS_TO_UPDATE[i].hitbox,thing.hitbox);
                         }
                     }

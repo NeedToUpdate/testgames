@@ -69,16 +69,16 @@ class Blank {
         return Object.keys(this.sprite).length > 0
     }
 
-    get hashitbox() {
+    get hasHitbox() {
         return Object.keys(this.hitbox).length > 0
     }
 
     addSprite(image) {
         if (image instanceof DomObject) {
             this.sprite = image;
-            this.sprite.moveTo(this.p)
+            this.sprite.moveTo(this.p);
             if(this.sprite.isRectangle){
-                this.hitbox = new Hitbox(this.p.x,this.p.y,this.sprite.width,this.sprite.height,true);
+                this.hitbox = new Hitbox(this.p.x,this.p.y,this.sprite.width,this.sprite.height,true).fromCenter();
             }else{
                 this.hitbox = new Hitbox(this.p.x,this.p.y,this.sprite.width/2);
             }
@@ -114,7 +114,7 @@ class Blank {
         //if(this.v.mag < this.V_FLOOR_LIMIT && Math.abs(this.old_v.mag - this.v.mag) <= 0.5) this.v.clear();
         this.p.add(this.v.copy().add(this.old_v).div(2));
         this.a.clear();
-        if(this.hasHitbox) this.hitbox.moveTo(this.p);
+        if(this.hasHitbox) this.hitbox.moveTo(this.p.copy());
         this.handleBounds();
         if (this.isDrawn) this.draw();
     }

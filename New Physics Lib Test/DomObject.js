@@ -19,6 +19,7 @@ class DomObject {
         this.type = 'DomObject';
         this.DEFAULT_COLOR = 'black';
         this.attachments = {};
+        this.isfromCenter = false;
     }
 
     init(){
@@ -29,21 +30,21 @@ class DomObject {
     }
 
     get x() {
-        return parseInt(this.shape.style.left) || this.p.x;
+        return (parseInt(this.shape.style.left) || this.p.x) + (this.isfromCenter? this.width/2 : 0);
     }
 
     set x(val) {
         this.p.x = val;
-        this.set('left', val - (this.isRectangle ? 0 : this.radius + 1) + 'px')
+        this.set('left', val - (this.isfromCenter? this.width/2 : 0) + 'px')
     }
 
     get y() {
-        return parseInt(this.shape.style.top) || this.p.y;
+        return (parseInt(this.shape.style.top) || this.p.y) + (this.isfromCenter? this.height/2 : 0);
     }
 
     set y(val) {
         this.p.y = val;
-        this.set('top', val - (this.isRectangle ? 0 : this.radius + 1) + 'px')
+        this.set('top', val - (this.isfromCenter? -this.height/2 : 0) + 'px')
     }
 
     set color(string){
@@ -97,11 +98,11 @@ class DomObject {
 
     moveTo(p) {
         if(arguments.length === 2){
-            this.set('top', arguments[1] - (this.isRectangle ? 0 : this.radius) + 'px');
-            this.set('left', arguments[0] - (this.isRectangle ? 0 : this.radius) + 'px');
+            this.set('top', arguments[1] - ((this.isRectangle&&!this.isfromCenter) ? 0 : this.height/2) + 'px');
+            this.set('left', arguments[0] - ((this.isRectangle&&!this.isfromCenter) ? 0 : this.width/2) + 'px');
         }
-        this.set('top', p.y - (this.isRectangle ? 0 : this.radius) + 'px');
-        this.set('left', p.x - (this.isRectangle ? 0 : this.radius) + 'px');
+        this.set('top', p.y - ((this.isRectangle&&!this.isfromCenter) ? 0 : this.height/2) + 'px');
+        this.set('left', p.x - ((this.isRectangle&&!this.isfromCenter) ? 0 : this.width/2) + 'px');
     }
 
 
@@ -159,6 +160,14 @@ class DomObject {
                 x.remove();
             })
         })
+    }
+
+    fromCenter(){
+        this.x =  this.x - this.width/2;
+        this.y = this.y - this.height/2;
+        this.isfromCenter = true;
+        return this;
+
     }
 }
 
