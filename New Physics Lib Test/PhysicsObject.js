@@ -10,7 +10,8 @@ class Blank {
         this.old_v = new Vector(0, 0);
         this.v = new Vector(0, 0);
         this.a = new Vector(0, 0);
-
+        this.theta = 0;
+        
         //forces should be of class vector. if the force should be constant, add a .constant = true property to the vector.
         this.forces = [];
         this.isDrawn = true;
@@ -37,6 +38,22 @@ class Blank {
         this.hasBounce = false;
         //TODO change to has
         this.bounce_coeff = 0.8;
+        
+        //cache is used for the subroutines to store 
+        //values like speed and target distance
+        
+        this.cache = {};
+        
+        this.subroutines = ['Spin','MoveTo']
+        
+        //subroutine will call a method that is
+        // named .do${name}() and check with
+        // .isDoing${name} 
+        //the subroutine should be also acticated with that same function
+        //subroutimes can callback as well, stored in cache
+        this.isDoingSpin = false;
+        this.isDoingMoveTo = false;
+        
     }
 
     get x() {
@@ -58,11 +75,11 @@ class Blank {
     }
 
     get angle() {
-
+      return this.theta
     }
 
     set angle(val) {
-
+      this.theta = parseInt(val)
     }
 
     get hasSprite() {
@@ -114,7 +131,16 @@ class Blank {
         //if(this.v.mag < this.V_FLOOR_LIMIT && Math.abs(this.old_v.mag - this.v.mag) <= 0.5) this.v.clear();
         this.p.add(this.v.copy().add(this.old_v).div(2));
         this.a.clear();
-        if(this.hasHitbox) this.hitbox.moveTo(this.p.copy());
+        
+        this.subroutines.forEach(name=>{
+            if(this['isDoing'+name]) this['do' +name]()
+        })
+        
+        
+        if(this.hasHitbox) {
+            this.hitbox.moveTo(this.p.copy());
+            this.hitbox.rotateTo(this.theta)
+        }
         this.handleBounds();
         if (this.isDrawn) this.draw();
     }
@@ -122,6 +148,7 @@ class Blank {
     draw() {
         if (!this.hasSprite) return;
         this.sprite.moveTo(this.p);
+        this.sprite.rotateTo(this.theta);
     }
 
     dynamicFrictionCheck() {
@@ -175,6 +202,33 @@ class Blank {
             this.sprite.remove();
         }
         this.sprite = {};
+    }
+    
+    doSpin(theta,speed){
+        if(!this.isDoingSpin){
+           this.cache.doSpin = {};
+           this.cache.doSpin.target = this.theta + theta;
+           this.cache.doSpin.speed = speed;
+           this.cache.doSpin.clockwise = theta > 0;
+           this.cache.doSpin.callback = {}
+           this.isDoingSpin = true;
+           return {then: (fn)=>{
+               this.cache.doSpin.callback = fn;
+                }
+           }
+        }
+        let config = this.cache.doSpin;
+        let hasdiff = ()=>{ return config.clockwise? (config.target>this.theta) : (config.target<this.theta)}
+        if(hasdiff()){
+            this.angle  = this.angle + (config.speed* (config.clockwise? 1 : -1))
+            if(!hasdiff()) this.angle = config.target
+        }else{
+           this.isDoingSpin = false;
+           //TODO emit event?
+           if(typeof config.callback === 'function') config.callback()
+           this.theta = this.theta % 360
+           delete this.cache.doSpin
+        }
     }
 
 }

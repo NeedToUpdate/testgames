@@ -65,6 +65,13 @@ class DomObject {
     get height(){
         return this.shape.offsetHeight;
     }
+    get angle(){
+        return this.theta;
+    }
+    set angle(val){
+        this.rotateTo(val);
+        this.theta = parseInt(val)
+    }
 
     get(attr) {
         return this.shape.style[attr];

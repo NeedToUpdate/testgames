@@ -14,9 +14,30 @@
 <body>
 <script>
     LOOPING = true;
-
+    let a;
     function setup() {
        // setBackground('black')
+       
+        for(let i = 1; i<5;i++){
+            for(let j = 1; j <5;j++){
+               new Div(50*i,50*j)
+           }
+        }
+        
+         a = new Blank(100,100,50,50,1)
+         b = new Blank(100,150,50,50,1)
+        let sprite = new Square(0,0,50).asOutline('black').fromCenter()
+        let spr = new Square(0,0,50).asOutline('black').fromCenter()
+       a.addSprite(sprite)
+       b.addSprite(spr)
+       a.doSpin(360,1).then(()=>{
+           b.doSpin(360,1).then(()=>{
+               a.doSpin(-360,2).then(()=>{
+                  b.doSpin(16030,40)
+               })})})
+      
+        THINGS_TO_UPDATE.push(a)
+        THINGS_TO_UPDATE.push(b)
         return new Promise(resolve => {
             let gravity = new Vector(0, 1);
             gravity.constant = true;
@@ -29,6 +50,7 @@
                 ball.hasBounce = true;
                 ball.bounce_coeff = getRandom(0.7,0.99);
                 ball.update();
+                ball.angle = 100
                 THINGS_TO_UPDATE.push(ball);
                 document.addEventListener('click', () => {
                     let f = new Vector(100, -2);
