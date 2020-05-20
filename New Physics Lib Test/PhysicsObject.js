@@ -7,6 +7,7 @@ class Blank {
         this.mass = mass || 1;
         this.name = 'blank';
         this.p = new Vector(x, y);
+        this.old_p = new Vector(x,y);
         this.old_v = new Vector(0, 0);
         this.v = new Vector(0, 0);
         this.a = new Vector(0, 0);
@@ -16,6 +17,7 @@ class Blank {
         this.forces = [];
         this.isDrawn = true;
         this.sprite = {};
+        this.hitbox = {};
 
         this.maxbounds = {x: width || window.innerWidth, y: height || window.innerHeight};
         this.minbounds = {x: 0, y: 0};
@@ -25,9 +27,13 @@ class Blank {
         this.dead = false;
         this.fragile = false;
         this.cache = {};
+
+        //handler for dealing with objects attached to this object
         this.attachments = {};
+        this.attachment_offset = null;
+
         this.health = 100;
-        this.facing_right = true;
+        this.dead = false;
         this.hasAntiGrav = false;
         this.hasNoSkyBox = false;
         this.hasNoBounds = false;
@@ -104,6 +110,9 @@ class Blank {
         }
         return this;
     }
+    createHitbox(){
+
+    }
 
 
     replaceSprite(sprite) {
@@ -112,14 +121,78 @@ class Blank {
         this.addSprite(sprite);
     }
 
+    addAttachment(thing,offset){
+        if(!(thing instanceof Blank)){
+            console.error(`${this.name} can't attach a ${typeof thing}`);
+            return;
+        }
+        if(this.attachmentList.includes(thing.name)){
+            thing.name += '#' + this.attachmentList.reduce((sum,next)=>{
+                let num = next.split('#')[1];
+                if(num){
+                    return sum+1;
+                }
+                return sum;
+            },1)
+        }
+        if(!offset) offset = new Vector(0,0);
+        thing.p = this.p.copy().add(offset);
+        thing.attachment_offset = offset.copy();
+        if(this.hasSprite && thing.hasSprite){
+            thing.sprite.moveTo(offset.copy().add(new Vector(this.w/2,this.h/2)));
+            this.sprite.attach(thing.sprite);
+            thing.isDrawn = false;
+        }
+        this.attachments[thing.name] = thing;
+        return thing;
+    }
+
+    get attachmentList(){
+        return Object.keys(this.attachments);
+    }
+
+    findAttachement(name){
+        if(this.attachmentList.includes(name)){
+            return this.attachments[name];
+        }else{
+            return undefined;
+        }
+    }
+
+    detachAttachment(name){
+        if(this.attachmentList.includes(name)){
+            let thing = this.attachments[name];
+            thing.isDrawn = this.isDrawn;
+            thing.attachment_offset = null;
+            let sprite = thing.sprite.detach();
+            DomObject.attach(sprite);
+            thing.sprite.moveTo(thing.p);
+            delete this.attachments[name];
+        }else{
+            return undefined;
+        }
+    }
+
+    changeAttachementOffset(name,offset){
+        if(this.attachmentList.includes(name)){
+            this.attachments[name].attachment_offset = offset.copy();
+            return this.attachments[name];
+        }else{
+            return undefined;
+        }
+    }
 
     update() {
+        if(this.health<=0) this.kill();
+        if(this.dead) return;
         for (let i = this.forces.length - 1; i >= 0; i--) {
             this.a.add(this.forces[i]);
             if (!this.forces[i].constant) {
                 this.forces.splice(i, 1)
             }
         }
+        //if(this.attachment_offset) this.p.add(this.attachment_offset);
+
         this.a.limit(this.MAX_F);
         this.old_v = this.v.copy();
         this.v.add(this.a);
@@ -129,6 +202,7 @@ class Blank {
         }
         this.v.limit(this.MAX_V);
         //if(this.v.mag < this.V_FLOOR_LIMIT && Math.abs(this.old_v.mag - this.v.mag) <= 0.5) this.v.clear();
+        this.old_p = this.p.copy();
         this.p.add(this.v.copy().add(this.old_v).div(2));
         this.a.clear();
 
@@ -143,6 +217,16 @@ class Blank {
         }
         this.handleBounds();
         if (this.isDrawn) this.draw();
+
+        if(this.attachmentList.length){
+            this.attachmentList.forEach(name=>{
+                let thing = this.attachments[name];
+                thing.p.add(this.p.copy().sub(this.old_p));
+                thing.angle = this.theta;
+                thing.update();
+                //TODO deal with rotation;
+            })
+        }
     }
 
     draw() {
@@ -166,12 +250,13 @@ class Blank {
     }
 
     handleBounds() {
+        if(this.hasNoBounds) return;
         let paddingx = 0;
         let paddingy = 0;
         if (this.hasSprite) {
             paddingx = this.sprite.width / 2;
             paddingy = this.sprite.height / 2;
-            if (!paddingy || !paddingx) console.error("issue with " + this.name + "'s sprite")
+            if (paddingy ===undefined || paddingx ===undefined) console.error("issue with " + this.name + "'s sprite")
         }
         if (this.p.x + paddingx > this.maxbounds.x) {
             this.p.x = this.maxbounds.x - paddingx;
@@ -202,13 +287,15 @@ class Blank {
             this.sprite.remove();
         }
         this.sprite = {};
+
+        //TODO handle remove
     }
 
     doSpin(theta, speed) {
         if (!this.isDoingSpin) {
             this.cache.doSpin = {};
             this.cache.doSpin.target = this.theta + theta;
-            this.cache.doSpin.speed = speed;
+            this.cache.doSpin.speed = speed || 1;
             this.cache.doSpin.clockwise = theta > 0;
             this.cache.doSpin.callback = {};
             this.isDoingSpin = true;

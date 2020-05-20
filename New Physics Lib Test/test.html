@@ -4,10 +4,11 @@
     <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
     <script language="javascript" type="text/javascript" src="../lib/drawbase.js"></script>
     <script language="javascript" type="text/javascript" src="../lib/vector.js"></script>
-    <script language="javascript" type="text/javascript" src="../lib/matrix.js"></script>
+    <script language="javascript" type="text/javascript" src="../lib/eventemitter.js"></script>
     <script language="javascript" type="text/javascript" src="../lib/collisioncontainer.js"></script>
     <script language="javascript" type="text/javascript" src="./DomObject.js"></script>
     <script language="javascript" type="text/javascript" src="./PhysicsObject.js"></script>
+    <script language="javascript" type="text/javascript" src="./Character.js"></script>
 
     <title>Tests</title>
 </head>
@@ -16,7 +17,8 @@
     LOOPING = true;
     let a;
     let b;
-
+    let c;
+    let d;
     function setup() {
         // setBackground('black')
 
@@ -28,10 +30,20 @@
 
         a = new Blank(100, 100, 50, 50, 1);
         b = new Blank(100, 150, 50, 50, 1);
-        let sprite = new Square(0, 0, 50).asOutline('black').fromCenter();
+        let sprite = new Img('../images/deadpool.png',0, 0, 50).fromCenter().onLoad(()=>{
+            a.addSprite(sprite)
+        });
         let spr = new Square(0, 0, 50).asOutline('black').fromCenter();
-        a.addSprite(sprite);
-        b.addSprite(spr);
+
+        b.addSprite(spr)
+
+        c = new Blank(400, 100, 50, 50, 1);
+        d = new Blank(500, 150, 50, 50, 1);
+        let spr2 = new Square(0, 0, 50).asOutline('black').fromCenter();
+        let spr3 = new Square(0, 0, 25).asOutline('black').fromCenter();
+        c.addSprite(spr2);
+        d.addSprite(spr3);
+
         a.doSpin(360, 1).then(() => {
             b.doSpin(360, 1).then(() => {
                 a.doSpin(-360, 2).then(() => {
@@ -42,6 +54,8 @@
 
         THINGS_TO_UPDATE.push(a);
         THINGS_TO_UPDATE.push(b);
+        THINGS_TO_UPDATE.push(c);
+        THINGS_TO_UPDATE.push(d);
         return new Promise(resolve => {
             let gravity = new Vector(0, 1);
             gravity.constant = true;
@@ -72,7 +86,7 @@
             THINGS_TO_UPDATE[i].update();
             if (Object.keys(THINGS_TO_UPDATE[i].hitbox).length > 0) {
                 THINGS_TO_UPDATE.forEach(thing => {
-                    if (Object.keys(thing.hitbox).length > 0 && THINGS_TO_UPDATE.indexOf(thing) !== i) {
+                    if (thing.hasHitbox > 0 && THINGS_TO_UPDATE.indexOf(thing) !== i) {
                         if (THINGS_TO_UPDATE[i].hitbox.contains(thing.hitbox)) {
                             THINGS_TO_UPDATE[i].sprite.color = 'green';
                             //console.log(THINGS_TO_UPDATE[i].hitbox,thing.hitbox);

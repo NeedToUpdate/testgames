@@ -115,7 +115,10 @@ class DomObject {
 
 
     rotateTo(num) {
-        this.set('transform', 'rotate(' + num + 'deg)')
+        let tran =  this.shape.style.transform;
+        this.shape.style.transform.match(/rotate\(\d+deg\)/) !== null ?
+            this.shape.style.transform = tran.replace(/rotate\(\d+deg\)/, 'rotate(' + num + 'deg)') :
+            this.shape.style.transform += ' rotate(' + num + 'deg)'
     }
 
     attach(div) {
@@ -169,12 +172,32 @@ class DomObject {
         })
     }
 
+    detach(){
+        return this.shape.parentNode.removeChild(this.shape);
+    }
+
     fromCenter(){
         this.x =  this.x - this.width/2;
         this.y = this.y - this.height/2;
         this.isfromCenter = true;
         return this;
 
+    }
+
+    static attach(node){
+        document.body.appendChild(node);
+    }
+
+    flip(dir){
+        let current_dir = '';
+        let flipped = this.get('transform');
+        if(flipped.includes('scaleX(-1)')){
+            current_dir = 'left';
+        }else{
+            current_dir = 'right';
+        }
+        if(dir === current_dir) return;
+        current_dir === 'right'? this.shape.style.transform += ' scaleX(-1)' : this.shape.style.transform = this.shape.style.transform.replace('scaleX(-1)', '');
     }
 }
 
@@ -313,6 +336,55 @@ class P extends DomObject {
         this.shape.appendChild(this.text);
         document.body.appendChild(this.shape)
     }
+}
+
+class Img extends DomObject{
+    constructor(image,x,y,r,h,theta){
+        super(x,y);
+        this.type = 'img';
+        this.isRectangle = true;
+        this.radius = r ;
+        this.w = r;
+        this.h = h || 1;
+        this.theta = theta || 0;
+        this.shape = new Image();
+        this.src = image;
+        this.onLoadCallback = {};
+        this.loaded = false;
+        this.init();
+    }
+
+    init() {
+        if(this.src instanceof HTMLElement){
+            this.shape = this.src;
+        }else{
+            this.shape.src = this.src;
+        }
+        Object.assign(this.shape.style, {
+            height: this.h >1 ? this.h + 'px' : '',
+            width: (this.w) + 'px',
+            top: this.p.y +'px',
+            left: this.p.x +  'px',
+            transformOrigin: 'center center',
+            position: 'absolute',
+            transform: this.theta ? 'rotate(' + this.theta + 'deg)' : ''
+        });
+        this.shape.onload= ()=>{
+            this.h = parseInt(this.shape.offsetHeight);
+            this.loaded = true;
+            if(typeof this.onLoadCallback === 'function') this.onLoadCallback();
+            console.log(this.h)
+        };
+
+
+        document.body.appendChild(this.shape);
+    }
+
+    onLoad(fn){
+        this.onLoadCallback = fn;
+        return this;
+    }
+
 }
 
 class ImageLoader {
