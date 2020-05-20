@@ -15,29 +15,33 @@
 <script>
     LOOPING = true;
     let a;
+    let b;
+
     function setup() {
-       // setBackground('black')
-       
-        for(let i = 1; i<5;i++){
-            for(let j = 1; j <5;j++){
-               new Div(50*i,50*j)
-           }
+        // setBackground('black')
+
+        for (let i = 1; i < 5; i++) {
+            for (let j = 1; j < 5; j++) {
+                new Div(50 * i, 50 * j)
+            }
         }
-        
-         a = new Blank(100,100,50,50,1)
-         b = new Blank(100,150,50,50,1)
-        let sprite = new Square(0,0,50).asOutline('black').fromCenter()
-        let spr = new Square(0,0,50).asOutline('black').fromCenter()
-       a.addSprite(sprite)
-       b.addSprite(spr)
-       a.doSpin(360,1).then(()=>{
-           b.doSpin(360,1).then(()=>{
-               a.doSpin(-360,2).then(()=>{
-                  b.doSpin(16030,40)
-               })})})
-      
-        THINGS_TO_UPDATE.push(a)
-        THINGS_TO_UPDATE.push(b)
+
+        a = new Blank(100, 100, 50, 50, 1);
+        b = new Blank(100, 150, 50, 50, 1);
+        let sprite = new Square(0, 0, 50).asOutline('black').fromCenter();
+        let spr = new Square(0, 0, 50).asOutline('black').fromCenter();
+        a.addSprite(sprite);
+        b.addSprite(spr);
+        a.doSpin(360, 1).then(() => {
+            b.doSpin(360, 1).then(() => {
+                a.doSpin(-360, 2).then(() => {
+                    b.doSpin(16030, 40)
+                })
+            })
+        });
+
+        THINGS_TO_UPDATE.push(a);
+        THINGS_TO_UPDATE.push(b);
         return new Promise(resolve => {
             let gravity = new Vector(0, 1);
             gravity.constant = true;
@@ -48,9 +52,9 @@
                 ball.addSprite(sprite);
                 ball.addForce(gravity);
                 ball.hasBounce = true;
-                ball.bounce_coeff = getRandom(0.7,0.99);
+                ball.bounce_coeff = getRandom(0.7, 0.99);
                 ball.update();
-                ball.angle = 100
+                ball.angle = 100;
                 THINGS_TO_UPDATE.push(ball);
                 document.addEventListener('click', () => {
                     let f = new Vector(100, -2);
@@ -61,15 +65,15 @@
         })
     }
 
-    THINGS_TO_UPDATE = []
+    THINGS_TO_UPDATE = [];
 
     function loop() {
         for (let i = THINGS_TO_UPDATE.length - 1; i >= 0; i--) {
             THINGS_TO_UPDATE[i].update();
-            if(Object.keys(THINGS_TO_UPDATE[i].hitbox).length>0) {
+            if (Object.keys(THINGS_TO_UPDATE[i].hitbox).length > 0) {
                 THINGS_TO_UPDATE.forEach(thing => {
                     if (Object.keys(thing.hitbox).length > 0 && THINGS_TO_UPDATE.indexOf(thing) !== i) {
-                        if(THINGS_TO_UPDATE[i].hitbox.contains(thing.hitbox)){
+                        if (THINGS_TO_UPDATE[i].hitbox.contains(thing.hitbox)) {
                             THINGS_TO_UPDATE[i].sprite.color = 'green';
                             //console.log(THINGS_TO_UPDATE[i].hitbox,thing.hitbox);
                         }

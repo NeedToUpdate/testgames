@@ -11,7 +11,7 @@ class Blank {
         this.v = new Vector(0, 0);
         this.a = new Vector(0, 0);
         this.theta = 0;
-        
+
         //forces should be of class vector. if the force should be constant, add a .constant = true property to the vector.
         this.forces = [];
         this.isDrawn = true;
@@ -38,14 +38,14 @@ class Blank {
         this.hasBounce = false;
         //TODO change to has
         this.bounce_coeff = 0.8;
-        
+
         //cache is used for the subroutines to store 
         //values like speed and target distance
-        
+
         this.cache = {};
-        
-        this.subroutines = ['Spin','MoveTo']
-        
+
+        this.subroutines = ['Spin', 'MoveTo'];
+
         //subroutine will call a method that is
         // named .do${name}() and check with
         // .isDoing${name} 
@@ -53,7 +53,7 @@ class Blank {
         //subroutimes can callback as well, stored in cache
         this.isDoingSpin = false;
         this.isDoingMoveTo = false;
-        
+
     }
 
     get x() {
@@ -75,11 +75,11 @@ class Blank {
     }
 
     get angle() {
-      return this.theta
+        return this.theta
     }
 
     set angle(val) {
-      this.theta = parseInt(val)
+        this.theta = parseInt(val)
     }
 
     get hasSprite() {
@@ -94,10 +94,10 @@ class Blank {
         if (image instanceof DomObject) {
             this.sprite = image;
             this.sprite.moveTo(this.p);
-            if(this.sprite.isRectangle){
-                this.hitbox = new Hitbox(this.p.x,this.p.y,this.sprite.width,this.sprite.height,true).fromCenter();
-            }else{
-                this.hitbox = new Hitbox(this.p.x,this.p.y,this.sprite.width/2);
+            if (this.sprite.isRectangle) {
+                this.hitbox = new Hitbox(this.p.x, this.p.y, this.sprite.width, this.sprite.height, true).fromCenter();
+            } else {
+                this.hitbox = new Hitbox(this.p.x, this.p.y, this.sprite.width / 2);
             }
         } else {
             console.error('Unsupported Format')
@@ -131,13 +131,13 @@ class Blank {
         //if(this.v.mag < this.V_FLOOR_LIMIT && Math.abs(this.old_v.mag - this.v.mag) <= 0.5) this.v.clear();
         this.p.add(this.v.copy().add(this.old_v).div(2));
         this.a.clear();
-        
-        this.subroutines.forEach(name=>{
-            if(this['isDoing'+name]) this['do' +name]()
-        })
-        
-        
-        if(this.hasHitbox) {
+
+        this.subroutines.forEach(name => {
+            if (this['isDoing' + name]) this['do' + name]()
+        });
+
+
+        if (this.hasHitbox) {
             this.hitbox.moveTo(this.p.copy());
             this.hitbox.rotateTo(this.theta)
         }
@@ -195,39 +195,77 @@ class Blank {
         }
     }
 
-    kill(){
+    kill() {
         this.health = 0;
         this.dead = true;
-        if(this.hasSprite){
+        if (this.hasSprite) {
             this.sprite.remove();
         }
         this.sprite = {};
     }
-    
-    doSpin(theta,speed){
-        if(!this.isDoingSpin){
-           this.cache.doSpin = {};
-           this.cache.doSpin.target = this.theta + theta;
-           this.cache.doSpin.speed = speed;
-           this.cache.doSpin.clockwise = theta > 0;
-           this.cache.doSpin.callback = {}
-           this.isDoingSpin = true;
-           return {then: (fn)=>{
-               this.cache.doSpin.callback = fn;
+
+    doSpin(theta, speed) {
+        if (!this.isDoingSpin) {
+            this.cache.doSpin = {};
+            this.cache.doSpin.target = this.theta + theta;
+            this.cache.doSpin.speed = speed;
+            this.cache.doSpin.clockwise = theta > 0;
+            this.cache.doSpin.callback = {};
+            this.isDoingSpin = true;
+            return {
+                then: (fn) => {
+                    this.cache.doSpin.callback = fn;
                 }
-           }
+            }
         }
         let config = this.cache.doSpin;
-        let hasdiff = ()=>{ return config.clockwise? (config.target>this.theta) : (config.target<this.theta)}
-        if(hasdiff()){
-            this.angle  = this.angle + (config.speed* (config.clockwise? 1 : -1))
-            if(!hasdiff()) this.angle = config.target
+        let hasdiff = () => {
+            return config.clockwise ? (config.target > this.theta) : (config.target < this.theta)
+        };
+        if (hasdiff()) { //TODO can be rearanged
+            this.angle = this.angle + (config.speed * (config.clockwise ? 1 : -1));
+            if (!hasdiff()) this.angle = config.target
+        } else {
+            this.isDoingSpin = false;
+            this.theta = this.theta % 360;
+            let callback = undefined;
+            if (typeof config.callback === 'function')  callback = config.callback;
+            delete this.cache.doSpin;
+            if(callback) callback();
+        }
+    }
+
+    doMoveTo(vector,force) {
+        if (!this.isDoingMoveTo) {
+            if(!(vector instanceof Vector)){
+                console.error(`${this.name} expects a vector for .doMoveTo(), recieved ${typeof vector}`);
+                return;
+            }
+            this.cache.doMoveTo = {};
+            this.cache.doMoveTo.target = vector.copy();
+            this.cache.doMoveTo.force = force || this.MAX_F;
+            this.isDoingMoveTo = true;
+            return {
+                then: (fn) => {
+                    this.cache.doMoveTo.callback = fn;
+                }
+            }
+        }
+        let config = this.cache.doMoveTo;
+        let dist = this.p.dist(config.target);
+        if(dist>this.MAX_F){
+            let targetVec = config.target.copy().sub(this.p);
+            let steer = targetVec.sub(this.v).normalize().mult(config.force);
+            this.forces.push(steer);
         }else{
-           this.isDoingSpin = false;
-           //TODO emit event?
-           if(typeof config.callback === 'function') config.callback()
-           this.theta = this.theta % 360
-           delete this.cache.doSpin
+            //so theres no bouncing, the last few pixels can be skipped
+            this.p = config.target.copy();
+            this.v.clear();
+            this.isDoingMoveTo = false;
+            let callback = undefined;
+            if(typeof config.callback === 'function') callback = config.callback;
+            delete this.cache.doMoveTo;
+            if(callback) callback();
         }
     }
 
