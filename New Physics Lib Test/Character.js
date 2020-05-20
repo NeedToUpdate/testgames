@@ -5,25 +5,37 @@ class Character extends Blank{
         this.health = 100;
         this.power = 0;
         this.jump_multiplier = 1;
-        this.facing_right = true;
-        this.shielded = false;
+        this.isFacingRight = true;
+        this.isShielded = false;
         this.powertype = 'fire';
+
+        this.subroutines = this.subroutines.concat(['Land'])
+
+        this.isDoingLand = true;
+
         this.landing_emitter = new EventEmitter();
-        this.unsub_landing_emmitter = this.landing_emitter.subscribe('land', this.emit_landing.bind(this));
+        this.unsub_landing_emmitter = this.landing_emitter.subscribe('land', this.emitLanding.bind(this));
+
+        this.shieldTime = 8000;
+
         this.deathImage = {}
+        this.shieldImage = {}
     }
     addDeathImage(image) {
-        this.deathimage = image;
+        if(image instanceof HTMLElement) this.deathImage = image;
+    }
+    addShieldImage(image){
+        if(image instanceof HTMLElement) this.shieldImage = image;
     }
     faceRight() {
-        if (!this.facing_right) {
-            this.facing_right = true;
+        if (!this.isFacingRight) {
+            this.isFacingRight = true;
             this.sprite.flip('right')
         }
     }
     faceLeft() {
-        if (this.facing_right) {
-            this.facing_right = false;
+        if (this.isFacingRight) {
+            this.isFacingRight = false;
             this.sprite.flip('left')
         }
     }
@@ -49,71 +61,57 @@ class Character extends Blank{
         if (this.dead) return;
         if (!this.jumping) {
             this.jumping = true;
-            this.a.add(new Vector(0, -10));
+            this.forces.push(new Vector(0, -10));
         }
 
     }
-    jump(val) {
+    jumpUp(val) {
         if (this.dead) return;
         if (!val) val = 1;
         if (!this.jumping) {
             this.jumping = true;
-            this.a.add(new Vector(0, -40 * val))
+            this.forces.push(new Vector(0, -40 * val))
         }
     }
 
-    jumpfwd(val) {
+    jumpFwd(val) {
         if (this.dead) return;
         if (!this.jumping) {
             this.jumping = true;
             let yval = -30;
-            let xval = this.facing_right ? 10 : -10;
+            let xval = this.isFacingRight ? 10 : -10;
             if (val) {
-                yval *= (val / 2);
+                yval *= (Math.abs(val) / 2);
                 xval += val;
             }
             this.a.add(new Vector(xval * this.jump_multiplier, yval));
         }
     }
 
-    jumpbkwd(val) {
-        if (this.dead) return;
-        if (!this.jumping) {
-            this.jumping = true;
-            let yval = -30;
-            let xval = this.facing_right ? -10 : 10;
-            if (val) {
-                yval *= (val / 2);
-                xval += val;
-            }
-            this.a.add(new Vector(xval * this.jump_multiplier, yval));
-        }
-    }
-
-    jumpright() {
+    jumpRight() {
         if (this.dead) return;
         this.faceright();
         this.jumpfwd();
     }
 
-    jumpleft() {
+    jumpLeft() {
         if (this.dead) return;
         this.faceleft();
         this.jumpfwd();
     }
 
-    emit_landing() {
+    emitLanding() {
         this.jumping = false;
     }
 
 
     shield() {
-        if (this.shielded) return;
-        this.shielded = true;
-        let shield = new Img(LOADED_IMAGES.shield.cloneNode(), this.p.x - 50, this.p.y, 300);
+        if (this.isShielded) return;
+        this.isShielded = true;
+        let shield = new Img(this.shieldImage.cloneNode(), this.p.x - 50, this.p.y, 300);
         shield.permaload = true;
         setTimeout(() => {
-            this.shielded = false;
+            this.isShielded = false;
             shield.destroy();
         }, 8000)
     }
@@ -144,7 +142,7 @@ class Character extends Blank{
                 this.extras.attack.kill();
                 delete this.extras.attack;
             }
-            let attack = new PowerBall(this.p.x + (this.facing_right ? this.sprite.shape.width : this.sprite.shape.width / -4), this.p.y - 50 + this.sprite.shape.height / 2, "fire");
+            let attack = new PowerBall(this.p.x + (this.isFacingRight ? this.sprite.shape.width : this.sprite.shape.width / -4), this.p.y - 50 + this.sprite.shape.height / 2, "fire");
             attack.power = 1;
             attack.noskybox = true;
             if (attack.x < 0) {
@@ -160,7 +158,7 @@ class Character extends Blank{
                     attack.kill();
                 });
                 attack.sprite.set('z-index', 10000);
-                if (this.facing_right) {
+                if (this.isFacingRight) {
                     attack.faceright();
                 } else {
                     attack.faceleft();
@@ -205,7 +203,7 @@ class Character extends Blank{
 
     shoot() {
         if (this.poweringup) {
-            this.extras.attack.a.add(new Vector((this.facing_right ? 100 : -100), -10));
+            this.extras.attack.a.add(new Vector((this.isFacingRight ? 100 : -100), -10));
             this.poweringup = false;
         }
     }
@@ -251,24 +249,10 @@ class Character extends Blank{
         this.health = 0;
     }
 
-    remove() {
-        if (this.dead) return;
-        this.dead = true;
-        if (Object.keys(this.sprite).length > 0) {
-            this.sprite.destroy();
-
+    doLand(){
+        if (this.jumping && this.p.y + this.h / 2 >= this.bounds.y) {
+            this.landing_emitter.emit('land')
         }
-        if (Object.keys(this.rect).length > 0) {
-            this.rect.destroy();
-        }
-        if (this.poweringup) {
-            if (this.extras.attack) {
-                this.extras.attack.kill();
-            }
-
-            this.poweringup = false;
-        }
-        this.unsub_landing_emmitter();
     }
 
 }

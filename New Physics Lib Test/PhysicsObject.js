@@ -286,9 +286,15 @@ class Blank {
         if (this.hasSprite) {
             this.sprite.remove();
         }
+        if(this.hasHitbox){
+            this.hitbox.destroy();
+        }
+        if(this.attachmentList.length){
+            this.attachmentList.forEach(name=>{
+                this.attachments[name].kill();
+            })
+        }
         this.sprite = {};
-
-        //TODO handle remove
     }
 
     doSpin(theta, speed) {
