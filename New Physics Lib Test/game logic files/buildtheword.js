@@ -150,6 +150,7 @@ let powers = ['ice_projectile', 'electric_projectile', 'magic_projectile', 'fire
 function generateObstacles(mode) {
     switch (mode) {
         case modes[0]:
+            //fires
             let firenum = (Math.random() * (difficulty * 2 + 1) | 0) + 5 + (difficulty>2? 5 : 0);
             if (Math.random() < (0.4 + difficulty / 10)) {
                 monsters.push(new Character(width*Math.random(), 300, 'monster' + (Math.random() * 30 | 0)));
@@ -179,14 +180,11 @@ function generateObstacles(mode) {
             fires.forEach(fire => {
                 let sprite = new Img(IMAGE_PATH + 'projectiles/' + fire.name + '.png', 100, 100, 50).fromCenter().onLoad(()=>{
                     fire.addSprite(sprite);
+                    fires.forEach(fire => {
+                        fire.doOrbit(fire.p.copy().add(Vector.random(25)),getRandom(2,5));
+                    });
                 });
                 fire.hasNoBounds = true;
-            });
-
-            requestAnimationFrame(() => {
-                fires.forEach(fire => {
-                    fire.doOrbit(new Vector(Math.random() * 40 - 20, Math.random() * 40 - 20));
-                });
             });
             break;
         case modes[1]:

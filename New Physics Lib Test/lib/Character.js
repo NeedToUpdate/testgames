@@ -284,8 +284,24 @@ class Flyer extends Character{
        stopOscillate(){
        
        }
-       doOrbit(target){
-       
+       doOrbit(target,speed){
+           if (!this.isDoingOrbit) {
+               this.cache.doOrbit = {};
+               this.cache.doOrbit.forces = this.forces;
+               this.cache.doOrbit.origXY = this.p.copy();
+               this.cache.doOrbit.target = target.copy();
+               this.cache.doOrbit.speed = speed;
+               this.forces = [];
+               let force = target.copy().sub(this.p).perp().set(speed);
+               this.forces.push(force);
+               this.isDoingOrbit = true;
+           } else {
+               let config = this.cache.doOrbit;
+               let o = config.target;
+               let d = this.p.dist(o.copy());
+               let target = o.copy().sub(this.p);
+               this.forces.push(target.set(config.speed / (d ** (1 / 2))));
+           }
        }
        stopOrbit(){
        
