@@ -1,0 +1,452 @@
+<html>
+
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
+    <script language="javascript" src="lib/vector.js"></script>
+    <script language="javascript" src="lib/drawbase.js"></script>
+    <script language="javascript" src="lib/PhysicsObject.js"></script>
+    <script language="javascript" src="lib/DomObject.js"></script>
+    <script language="javascript" src="lib/Character.js"></script>
+    <script language="javascript" src="lib/collisioncontainer.js"></script>
+    <script language="javascript" src="lib/eventemitter.js"></script>
+    <title>Artem's Fighting Game</title>
+    <link rel="stylesheet" href="../global_styles.css">
+</head>
+
+<body>
+<p id="playerhp">10</p>
+<p id="enemyhp">10</p>
+<button id="jmpleft" class="bluebtn"><--</button>
+<!--<button id="hover" class="bluebtn">hover</button>-->
+<button id="jump" class="bluebtn">jump</button>
+<button id="jmpright" class="bluebtn">--></button>
+<button id="powerup" class="bluebtn">power</button>
+<button id="shootright" class="bluebtn">shoot</button>
+<button id="shield" class="bluebtn">block</button>
+<button id="playpause" class="bluebtn">paused</button>
+<img src="../images/whitesquare.png" style="position: absolute;top: 0; left: 0; z-index: 9999; width: 50px;">
+<script>
+
+
+    let HARDMODE = false;
+    let NUM_OF_MONSTERS = 30;
+    let IMAGE_PATH = '../images/';
+
+    let characters = [
+        'cat',
+        'spiderman', 'ultraman', 'ironman',
+        'peppapig', 'spongebob', 'monkey',
+        'tiger', 'shark', 'cinderella',
+        'elsa', 'ariel', 'deadfish', 'mrkrabs', 'thanos', 'pikachu', 'drstrange',
+        'superman', 'genie', 'simba', 'captainmarvel', 'mewtwo', 'sailormoon', 'venom', 'thor',
+        'ultraman2', 'ultraman3', 'olaf', 'hulk', 'gundam', 'optimus', 'snowwhite', 'deadpool',
+        'goku', 'ash', 'charizard', 'captainamerica', 'nakoruru'
+    ];
+    let powers = [
+        'blueenergy',
+        'web', 'bluebeam', 'fire',
+        'pinkenergy', 'krabbypatty', 'banana',
+        'fire', 'water', 'blueenergy',
+        'ice', 'water', 'nuke', 'water', 'blackenergy', 'electric', 'magic',
+        'fire', 'magic', 'magic', 'electric', 'magic', 'pinkenergy', 'blackenergy', 'electric',
+        'magic', 'electric', 'ice', 'rock', 'bluebeam', 'bullet', 'bluebeam', 'bullet',
+        'bluebeam', 'fire', 'fire', 'fire', 'fire'
+    ];
+
+
+    let background = 'background' + (Math.random() * 20 | 0).toString() + '.jpg';
+    document.body.style.backgroundColor = 'grey';
+    document.body.style.backgroundImage = 'url(' + IMAGE_PATH + background.toString() + ')';
+    document.body.style.backgroundSize = width + 'px auto';
+    document.body.style.backgroundRepeat = 'no-repeat';
+
+    function create_player(num) {
+        let chosennum = num || getRandom(characters.length);
+        if (num === 0) {
+            chosennum = 0;
+        }
+        let char_name = characters[chosennum];
+        let powr_name = powers[chosennum];
+        if (char_name === 'deadfish') {
+            powr_name = 'nuke';
+        }
+        if (char_name === 'snowwhite') {
+            powr_name = 'bluebird';
+        }
+        if (char_name === 'ash') {
+            powr_name = 'poke';
+        }
+        if (char_name === 'captainamerica') {
+            powr_name = 'cashield';
+        }
+        if (char_name === 'nakoruru') {
+            powr_name = 'mamahaha'
+        }
+        return {num: chosennum, name: char_name, power: powr_name};
+    }
+
+    function create_monster(num) {
+        let mons_num = num || getRandom(NUM_OF_MONSTERS + 2);
+        let mons_name = '';
+        let monster_powr_name = powers[Math.random() * powers.length | 0];
+        if (mons_num > NUM_OF_MONSTERS) {
+            let exception = mons_num - NUM_OF_MONSTERS;
+            if (exception > 1) {
+                mons_name = 'thanos';
+                monster_powr_name = 'blackenergy'
+            } else if (exception > 0) {
+                mons_name = 'venom';
+                monster_powr_name = 'blackenergy'
+            }
+        } else {
+            mons_name = 'monster' + (Math.random() * NUM_OF_MONSTERS | 0);
+        }
+        if (mons_name.endsWith('15')) {
+            monster_powr_name = 'spaghetti'
+        }
+        return {num: mons_num, name: mons_name, power: monster_powr_name};
+    }
+
+    let player_char;
+    let monster_char;
+
+    function choose_your_fighter() {
+        let num_of_choices = 4;
+        let chosen_nums = [];
+        for (let i = 0; i < num_of_choices; i++) {
+            let num = getRandom(characters.length);
+            while (chosen_nums.includes(num)) {
+                num = getRandom(characters.length);
+            }
+            chosen_nums.push(num);
+        }
+        let screenx = 200;
+        let screenw = 600;
+        let screeny = 120;
+        let screenh = 200;
+        let screen = new Rectangle(screenx, screeny, screenw, screenh);
+        let screenstyle = {
+            backgroundColor: 'grey',
+            borderRadius: '10px',
+            border: 'blue solid 5px'
+        };
+        Object.assign(screen.shape.style, screenstyle);
+        let crop = new Rectangle(screenx + 2, screeny + screenh / 3 - 2, screenw, screenh / 3);
+        crop.shape.style.overflow = 'hidden';
+        crop.shape.style.backgroundColor = 'yellow';
+        crop.shape.style.border = 'blue solid 3px';
+
+        let images = [];
+        let lines = [];
+        let text = new P('Choose Your Fighter', screenx + screenw / 4, screeny - 20);
+        let names = [];
+        text.shape.style.fontSize = '2em';
+
+        function start_the_game(num) {
+            crop.remove();
+            lines.forEach(line => {
+                line.remove();
+            });
+            names.forEach(name => {
+                name.remove();
+            });
+            text.remove();
+            screen.remove();
+            player_char = create_player(num);
+            monster_char = create_monster();
+            setup();
+        }
+
+        chosen_nums.forEach((num, i) => {
+            let img = new Img(IMAGE_PATH + characters[num] + '.png', ((screenw / chosen_nums.length)) * i + 10, 0, (screenw / chosen_nums.length) - 20);
+            crop.attach(img);
+            if (i !== 0) {
+                let line = Line.fromPoints(screenx + 5 + (screenw / chosen_nums.length) * i, screeny + screenh / 1.5, screenx + 5 + (screenw / chosen_nums.length) * i + 20, screeny + screenh / 3);
+                line.shape.style.backgroundColor = 'blue';
+                line.shape.style.height = '4px';
+                lines.push(line);
+            }
+            img.shape.addEventListener('click', () => {
+                start_the_game(num);
+            });
+            let name = new P(characters[num], screenx + (screenw / chosen_nums.length) * (i + .1) + 10, screeny + screenh / 1.5 - 10);
+            if (name.shape.clientWidth > screenw / chosen_nums.length) {
+                name.string = characters[num].slice(0, 7) + '..'
+            }
+            names.push(name);
+            images.push(img);
+        });
+
+        return chosen_nums;
+    }
+
+
+    let LOADED_IMAGES;// = new ImageLoader('./images/', ['fire', 'shield', monster_char.power + 'ball', player_char.power + 'ball']);
+    let player;// = new Character(25, 100, player_char.name);
+    let monster;// = new Character(width - 300, 100, monster_char.name);
+    let projectiles = [];
+
+    function setup() {
+        LOADED_IMAGES = new ImageLoader(IMAGE_PATH + 'projectiles/', ['fire', 'shield', monster_char.power + '_projectile', player_char.power + '_projectile']);
+        player = new Character(100, 100, player_char.name);
+        monster = new Character(width - 200, 100, monster_char.name);
+
+        player.powerType = player_char.power;
+        player.hasNoSkyBox = true;
+        let player_sprite = new Img(IMAGE_PATH + player_char.name + ".png", 0, 0, 150).fromCenter().onLoad(() => {
+            player.addSprite(player_sprite);
+            player.addDeathImage(LOADED_IMAGES['fire'].cloneNode());
+            player.addShieldImage(LOADED_IMAGES['shield'].cloneNode());
+        });
+        player.landing_emitter.subscribe('land', () => {
+            player.faceRight();
+        });
+        monster.powerType = monster_char.power;
+        monster.hasNoSkyBox = true;
+        let monster_sprite = new Img(IMAGE_PATH + monster.name + ".png", 0, 0, 400).fromCenter().onLoad(() => {
+            monster.addSprite(monster_sprite);
+            monster.projectileOffsetHeight = 1;
+            monster.addDeathImage(LOADED_IMAGES['fire'].cloneNode());
+            monster.addShieldImage(LOADED_IMAGES['shield'].cloneNode());
+            monster.maxbounds.y = monster.height>height/1.9 ? height: height-100;
+            if(monster.height>height) monster.width *=0.8;
+        });
+        monster.jumpMult = 20;
+        monster.isJumping = true;
+        monster.landing_emitter.subscribe('land', () => {
+            monster.faceLeft();
+        });
+        let gravity = new Vector(0, 1);
+        gravity.constant = true;
+        player.addForce(gravity);
+        monster.addForce(gravity);
+        start();
+    }
+
+    let PLAYING = false;
+    id('jmpright').addEventListener('click', function () {
+        player.jumpRight();
+    });
+    let secret = false; //for the hardmode double click
+    let secretTO; //timeout needed for doubleclick
+    id('playpause').addEventListener('click', function () {
+        PLAYING = !PLAYING;
+        if (PLAYING) {
+            id('playpause').innerText = 'playing';
+        } else {
+            id('playpause').innerText = 'paused';
+        }
+        if (secret) {
+            id('playpause').innerText = 'Playing';
+            PLAYING = true;
+            HARDMODE = true;
+        }
+        secret = true;
+        secretTO = setTimeout(() => {
+            secret = false;
+        }, 1000);
+    });
+
+    id('jmpleft').addEventListener('click', function () {
+        player.jumpLeft();
+    });
+    id('jump').addEventListener('click', function () {
+        player.jumpUp();
+        if (getRandom(4) < 1 && !monster.dead) {
+            monsterShoot();
+        }
+    });
+    id('powerup').addEventListener('click', function () {
+        player.powerUp(null, 7);
+    });
+    id('shootright').addEventListener('click', function () {
+        let projectile = player.shoot();
+        if(projectile){
+            projectile.owner = 'player';
+            projectiles.push(projectile);
+            if (PLAYING) {
+                let n = Math.random() * 10;
+                if (n > 9) {
+                    if (monster.health > 90) {
+                        monster.jumpUp();
+                    }
+                } else if (n > 8) {
+                    monster.shield();
+                }
+            }
+        }
+
+    });
+    id('shield').addEventListener('click', () => {
+        if (!player.isShielded) {
+            player.shield();
+            if (Math.random() * 2 < 1.5) {
+                setTimeout(() => {
+                    monsterShoot();
+                }, 1500);
+
+            }
+        }
+
+    });
+    let hopstop = false;
+    let monsterisshooting = false;
+    let monsterrapidfire = false;
+
+    function monsterShoot() {
+        let atk = monster.shoot();
+        if (atk) {
+            atk.owner = 'monster';
+            projectiles.push(atk)
+        }
+    }
+
+    loop = function (now) {
+        player.update();
+        monster.update();
+
+        //projectiles hit calcs
+        projectiles.forEach(projectile => {
+            projectile.update();
+            if (projectile.owner === 'player') {
+                if (projectile.hitbox.contains(monster.hitbox)) {
+                    if (!monster.isShielded) {
+                        monster.health -= projectile.power;
+                        monster.jumpFwd(-0.5 + projectile.power/1000);
+                        let unsub = monster.landing_emitter.subscribe('land', () => {
+                            setTimeout(() => monster.jumpFwd(0.6 + projectile.power/1000 ), 500);
+                            unsub();
+                        })
+                    }
+                    projectile.owner = '';
+                    setTimeout(() => {
+                        projectile.kill()
+                    }, 200);
+                }
+                if (projectile.p.x > width) projectile.kill();
+            }
+            if (projectile.owner === 'monster') {
+                if (projectile.hitbox.contains(player.hitbox)) {
+                    if (!player.isShielded) {
+                        player.health -= projectile.power;
+                    }
+                    projectile.owner = '';
+                    setTimeout(() => {
+                        projectile.kill()
+                    }, 200);
+                }
+                if (projectile.p.x < 0) projectile.kill();
+            }
+        });
+
+
+        //monster's movements
+        if (PLAYING && !monster.dead) {
+            if (Math.random() * 1000 < (HARDMODE ? 30 : 10)) {
+                if (!monsterisshooting) {
+                    monster.powerUp(null, 2);
+                }
+            }
+            if (getRandom(10000) < (HARDMODE ? 2 : 1)) {
+                monster.shield();
+            }
+            if (Math.random() * 1000 < (HARDMODE ? 2 : 1)) {
+                if (monster.isPoweringUp) {
+                    monsterShoot();
+                }
+            }
+            if (Math.random() * 2000 < (HARDMODE ? (monster.health > 30 ? 30 : 10) : (monster.health > 30 ? 20 : 5))) {
+                monster.hop();
+            }
+            if (Math.random() * 3000 < 2) {
+                monster.jumpUp();
+            }
+            if (Math.random() * 10000 < (HARDMODE ? 3 : 2)) {
+                monsterrapidfire = true;
+                console.log('rapid fire!')
+            }
+            if (monster.health > 80 && Math.random() * 1000 < 5 && !hopstop) {
+                monster.sparHop().then(() => {
+                    hopstop = false
+                });
+                hopstop = true;
+            }
+            if (monsterrapidfire && !monsterisshooting) {
+                monster.powerUp(null, 1);
+                monsterisshooting = true;
+                setTimeout(() => {
+                    monsterShoot();
+                    monsterisshooting = false;
+                }, 700);
+                if (Math.random() < 0.2) {
+                    monster.jumpUp();
+                }
+                if (Math.random() < 0.1) {
+                    monsterrapidfire = false;
+                }
+
+
+            }
+        }
+
+        id('playerhp').innerText = " player: " + (player.health | 0 || 0);
+        id('enemyhp').innerText = "monster: " + (monster.health | 0 || 0);
+
+        if (player.dead) id('playerhp').innerText = " player: dead";
+        if (monster.dead) id('enemyhp').innerText = "monster: dead";
+
+        if (monster.dead && HARDMODE) {
+            monster_char = create_monster();
+            setTimeout(()=>{
+                id('enemyhp').innerText = "DANGER";
+                let sprite = new Img(IMAGE_PATH + monster_char.name + ".png", 0,0, 400).fromCenter().onLoad(()=>{
+                    monster = new Character(width - 100, -1000, monster_char.name);
+                    LOADED_IMAGES.add(monster_char.power + '_projectile');
+                    monster.powerType = monster_char.power;
+                    monster.hasNoSkyBox = true;
+                    monster.addSprite(sprite);
+                    monster.jumpMult = 20;
+                    monster.isJumping = true;
+                    let g= new Vector(0,1);
+                    g.constant = true;
+                    monster.addForce(g);
+                    monster.maxbounds.y = monster.height>height/1.9 ? height: height-100;
+                    if(monster.height>height) monster.width *=0.8;
+                    monster.addDeathImage(LOADED_IMAGES.fire.cloneNode());
+                    monster.addShieldImage(LOADED_IMAGES.shield.cloneNode());
+                    monster.projectileOffsetHeight= 1;
+                    monster.landing_emitter.subscribe('land', () => {
+                        monster.faceLeft();
+                    });
+                    id('enemyhp').innerText = "monster: " + (monster.health | 0 || 0);
+
+                });
+            },2000);
+            HARDMODE = false;
+
+
+
+
+
+            //add loading;
+        }
+
+
+        LAST_TIME = now;
+        if (LOOPING) {
+            requestAnimationFrame(loop);
+        }
+    };
+    start = function () {
+        LOOPING = true;
+        LAST_TIME = window.performance.now();
+        requestAnimationFrame(loop);
+    };
+
+
+    choose_your_fighter();
+
+</script>
+</body>
+
+</html>

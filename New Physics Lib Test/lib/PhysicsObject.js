@@ -80,6 +80,36 @@ class Blank {
         this.p.y = val;
     }
 
+    get height(){
+        return this.hasSprite? this.sprite.height :this.h;
+    }
+    set height(val){
+        if(this.hasHitbox){
+            this.hitbox.modHeight(val-this.height)
+        }
+        if(this.hasSprite){
+            this.sprite.height = val;
+        }else{
+            this.h = val;
+        }
+    }
+    get width(){
+        return this.hasSprite? this.sprite.width :this.w;
+    }
+    set width(val){
+        if(this.hasHitbox){
+            this.hitbox.modHeight(this.height -this.hitbox.h)
+            this.hitbox.modWidth(val-this.width)
+        }
+        if(this.hasSprite){
+            this.sprite.width = val;
+        }else{
+            this.w = val;
+        }
+
+    }
+
+
     get angle() {
         return this.theta
     }
@@ -97,6 +127,7 @@ class Blank {
     }
 
     addSprite(image) {
+        if(this.hasSprite) return this.replaceSprite(image);
         if (image instanceof DomObject) {
             this.sprite = image;
             this.sprite.moveTo(this.p);
@@ -105,6 +136,8 @@ class Blank {
             } else {
                 this.hitbox = new Hitbox(this.p.x, this.p.y, this.sprite.width / 2);
             }
+            this.h = this.sprite.height;
+            this.w = this.sprite.width;
         } else {
             console.error('Unsupported Format')
         }
@@ -118,7 +151,9 @@ class Blank {
     replaceSprite(sprite) {
         this.sprite.remove();
         this.hitbox.destroy();
-        this.addSprite(sprite);
+        this.sprite = {};
+        this.hitbox = {};
+        return this.addSprite(sprite);
     }
 
     addAttachment(thing,offset){
@@ -168,6 +203,7 @@ class Blank {
             DomObject.attach(sprite);
             thing.sprite.moveTo(thing.p);
             delete this.attachments[name];
+            return thing;
         }else{
             return undefined;
         }
@@ -273,8 +309,8 @@ class Blank {
             this.v.x = this.hasBounce ? (this.v.x * -1 * this.bounce_coeff) : 0;
             if (this.fragile) this.kill()
         }
-        if (this.p.y - paddingy < (this.noskybox ? -3000 : this.minbounds.y)) {
-            this.p.y = this.minbounds.y + paddingy - (this.noskybox ? 3000 : 0);
+        if (this.p.y - paddingy < (this.hasNoSkyBox ? -3000 : this.minbounds.y)) {
+            this.p.y = this.minbounds.y + paddingy - (this.hasNoSkyBox ? 3000 : 0);
             this.v.y = this.hasBounce ? (this.v.y * -1 * this.bounce_coeff) : 0;
             if (this.fragile) this.kill()
         }

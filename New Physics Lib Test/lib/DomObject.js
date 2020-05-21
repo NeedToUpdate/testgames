@@ -65,6 +65,12 @@ class DomObject {
     get height(){
         return this.shape.offsetHeight;
     }
+    set width(val){
+        this.set('width',val);
+    }
+    set height(val){
+        this.set('height',val);
+    }
     get angle(){
         return this.theta;
     }
@@ -373,7 +379,6 @@ class Img extends DomObject{
             this.h = parseInt(this.shape.offsetHeight);
             this.loaded = true;
             if(typeof this.onLoadCallback === 'function') this.onLoadCallback();
-            console.log(this.h)
         };
 
 
