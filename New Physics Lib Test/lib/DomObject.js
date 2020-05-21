@@ -122,8 +122,8 @@ class DomObject {
 
     rotateTo(num) {
         let tran =  this.shape.style.transform;
-        this.shape.style.transform.match(/rotate\(\d+deg\)/) !== null ?
-            this.shape.style.transform = tran.replace(/rotate\(\d+deg\)/, 'rotate(' + num + 'deg)') :
+        this.shape.style.transform.match(/rotate\(-?\d+.*\d*deg\)/) !== null ?
+            this.shape.style.transform = tran.replace(/rotate\(-?\d+.*\d*deg\)/, 'rotate(' + num + 'deg)') :
             this.shape.style.transform += ' rotate(' + num + 'deg)'
     }
 
