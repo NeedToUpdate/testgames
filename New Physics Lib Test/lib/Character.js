@@ -135,19 +135,6 @@ class Character extends Blank{
         }, this.shieldTime)
     }
 
-    chase(vector) {
-    //TODO probably can remove
-        let target = vector.copy().sub(this.p);
-        target.add(new Vector(Math.random() / 10, Math.random() / 10));
-        target.set(this.max_v);
-        let steer = target.copy().sub(this.v);
-        if (steer.x >= 0) {
-            this.faceright()
-        } else {
-            this.faceleft()
-        }
-        this.a.add(steer);
-    }
 
     powerUp(power,num) {
         if (this.dead) return;
@@ -306,6 +293,18 @@ class Flyer extends Character{
        doFlyTo(target){
        
        }
+    steerTo(vector) {
+        let target = vector.copy().sub(this.p);
+        target.add(new Vector(Math.random() / 10, Math.random() / 10));
+        target.set(this.MAX_V);
+        let steer = target.copy().sub(this.v);
+        if (steer.x >= 0) {
+            this.faceRight()
+        } else {
+            this.faceLeft()
+        }
+        this.forces.push(steer);
+    }
 
 }
 

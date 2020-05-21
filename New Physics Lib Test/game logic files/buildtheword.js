@@ -1,13 +1,13 @@
 
 
 extras = ['fire'];
-let IMAGE_PATH = '../../images'
+let IMAGE_PATH = '../../images/'
 let LOADED_IMAGES = new ImageLoader(IMAGE_PATH, extras);
 let loaded = false;
 
 let background = 'bg' + (Math.random() * 8 | 0).toString() + '.jpg';
 document.body.style.backgroundColor = 'grey';
-document.body.style.backgroundImage = 'url(../images/' + background.toString() + ')';
+document.body.style.backgroundImage = 'url(' + IMAGE_PATH + background.toString() + ')';
 //document.body.style.backgroundSize = width + 'px auto';
 document.body.style.backgroundRepeat = 'no-repeat';
 
@@ -145,7 +145,7 @@ document.addEventListener('touchmove', (ev) => {
 });
 let fires = [];
 let monsters = [];
-let powers = ['iceball', 'electricball', 'magicball', 'fire', 'waterball', 'blackenergyball', 'blueenergyball', 'tornadoball', 'pinkenergyball']
+let powers = ['ice_projectile', 'electric_projectile', 'magic_projectile', 'fire', 'water_projectile', 'blackenergy_projectile', 'blueenergy_projectile', 'tornado_projectile', 'pinkenergy_projectile']
 
 function generateObstacles(mode) {
     switch (mode) {
@@ -153,22 +153,17 @@ function generateObstacles(mode) {
             let firenum = (Math.random() * (difficulty * 2 + 1) | 0) + 5 + (difficulty>2? 5 : 0);
             if (Math.random() < (0.4 + difficulty / 10)) {
                 monsters.push(new Character(width*Math.random(), 300, 'monster' + (Math.random() * 30 | 0)));
-                monsters[0].bounds.y = height - 150;
-                monsters[0].bounds.x = width
-                monsters[0].addSprite(new Img('../images/' + monsters[0].name + '.png', monsters[0].x, 300, 200));
-                requestAnimationFrame(() => {
+                monsters[0].maxbounds.y = height - 150;
+                monsters[0].maxbounds.x = width;
+                let g = new Vector(0,1);
+                g.constant = true;
+                monsters[0].forces.push(g);
+                let sprite = new Img(IMAGE_PATH + monsters[0].name + '.png', monsters[0].x, 300, 200).fromCenter().onLoad(()=>{
+                    monsters[0].addSprite(sprite);
                     monsters[0].sprite.shape.addEventListener('click', () => {
-                        let n = Math.random()
-                        monsters[0].a.add(new Vector(n*40-20,-30))
-                       /* if (n > .7) {
-                            monsters[0].jumpleft();
-                        } else if (n > .3) {
-                            monsters[0].jump()
-                        } else {
-                            monsters[0].jumpright();
-                        }*/
+                        monsters[0].forces.push(Vector.random().set(Math.random()*10))
                     })
-                })
+                });
             } else {
                 firenum += 2;
             }
@@ -179,50 +174,41 @@ function generateObstacles(mode) {
                 if (xx > width*.3 && xx < width*.7 && yy > height*.7) {
                     yy -= height*.4;
                 }
-                fires.push(new PowerBall(xx, yy, powers[Math.random() * powers.length | 0]));
+                fires.push(new Flyer(xx, yy, powers[Math.random() * powers.length | 0]));
             }
             fires.forEach(fire => {
-                fire.addSprite(new Img('../images/' + fire.name + '.png', 100, 100, 50));
-                fire.nobounds = true;
+                let sprite = new Img(IMAGE_PATH + 'projectiles/' + fire.name + '.png', 100, 100, 50).fromCenter().onLoad(()=>{
+                    fire.addSprite(sprite);
+                });
+                fire.hasNoBounds = true;
             });
 
-
-            // let point = new Div(fire_x_test,fire_y_test,'black',5)
             requestAnimationFrame(() => {
                 fires.forEach(fire => {
-                    fire.orbit(new Vector(Math.random() * 40 - 20, Math.random() * 40 - 20));
+                    fire.doOrbit(new Vector(Math.random() * 40 - 20, Math.random() * 40 - 20));
                 });
             });
             break;
         case modes[1]:
             let num = (Math.random()*2  | 0) + difficulty + 1 + (difficulty>2? 1 : 0);
-
             for (let i = 0; i < num; i++) {
-
                 let mon = new Character(width*.1 + ((width*.8)/ num) * i, 300, 'monster' + (Math.random() * 30 | 0));
-                mon.addSprite(new Img('../images/' + mon.name + '.png', mon.x, 300, 200))
-                requestAnimationFrame(() => {
+                let sprite = new Img(IMAGE_PATH + mon.name + '.png', mon.x, 300, 200).fromCenter().onLoad(()=>{
+                    mon.addSprite(sprite)
                     mon.sprite.shape.addEventListener('click', () => {
-                        let n = Math.random()
-                        mon.a.add(new Vector(n*40-20,-30))
-                        /*
-                        if (n > .7) {
-                            mon.jumpleft();
-                        } else if (n > .3) {
-                            mon.jump()
-                        } else {
-                            mon.jumpright();
-                        }*/
+                        let n = Math.random();
+                        mon.forces.push(new Vector(n*40-20,-30))
                     })
-                })
-                mon.bounds.x = width
-                mon.bounds.y = height - 100;
+                });
+                mon.maxbounds.x = width;
+                mon.maxbounds.y = height - 100;
+                let g = new Vector(0,1);
+                g.constant = true;
+                mon.forces.push(g);
                 monsters.push(mon)
-
             }
             break;
         case modes[2]:
-
             let chasenum = (Math.random() * (difficulty * 3) | 0) + 4 + (difficulty>2? 3 : 0);
             for (let i = 0; i < chasenum; i++) {
                 let xx = Math.random() * width*0.05 + (width*.8 / chasenum) * i + (Math.random() * 40 - 20);
@@ -230,23 +216,19 @@ function generateObstacles(mode) {
                 if (xx > width*.3 && xx < width*.7 && yy > height*.7) {
                 yy -= height*.4;
                 }
-                fires.push(new Character(xx, yy, 'ghost' + i % 11));
+                fires.push(new Flyer(xx, yy, 'ghost' + i % 11));
             }
             fires.forEach(fire => {
-                fire.addSprite(new Img('../images/' + fire.name + '.png', 100, 100, 50));
-                fire.bounds = {x: width, y: height}
-                fire.antigrav = true;
-                fire.max_v = Math.random() * 7 + 9 * difficulty;
-                fire.max_f = Math.random() * (difficulty*1.1 + .6) / (9 - (difficulty ));
+                let sprite = new Img(IMAGE_PATH + fire.name + '.png', 100, 100, 50).fromCenter().onLoad(()=>{
+                    fire.addSprite(sprite);
+                });
+                fire.maxbounds = {x: width, y: height};
+                fire.MAX_V = Math.random() * 7 + 9 * difficulty;
+                fire.MAX_F = Math.random() * (difficulty*1.1 + .6) / (9 - (difficulty ));
             });
-
-
-        default:
     }
-    id('jmpleft').innerText = diff2word(difficulty)
-    
-    id('jump').innerText = modes[chosen_mode]
-    
+    id('jmpleft').innerText = diff2word(difficulty);
+    id('jump').innerText = modes[chosen_mode];
     loaded = true;
 }
 
@@ -256,11 +238,11 @@ function winningCleanup(mode) {
         case modes[2]:
             fires.forEach(f => {
                 f.kill();
-            })
+            });
         case modes[1]:
             monsters.forEach(m => {
                 m.kill();
-            })
+            });
             stop();
     }
 }
@@ -269,14 +251,12 @@ function cleanup(mode) {
         case modes[0]:
         case modes[2]:
             fires.forEach(f => {
-                f.sprite.destroy()
-                f.rect.destroy()
+                f.kill()
             })
             fires = [];
         case modes[1]:
             monsters.forEach(m => {
-                m.sprite.destroy()
-                m.rect.destroy()
+                m.kill()
             })
             monsters = []
     }
@@ -284,7 +264,6 @@ function cleanup(mode) {
 function reset(letter) {
     requestAnimationFrame(() => {
         if (!letter.locked) {
-
             letter.set('color', 'red')
             letter.dragging = false;
             letter.resetting = true;
@@ -309,8 +288,7 @@ loop = function (now) {
                 if (p.dragging) {
                     let x = parseInt(p.shape.offsetLeft + p.shape.offsetWidth / 2);
                     let y = parseInt(p.shape.offsetTop + p.shape.offsetHeight / 2);
-
-                    fire.chase(new Vector(x, y))
+                    fire.steerTo(new Vector(x, y))
                 }
             })
 
@@ -328,13 +306,13 @@ loop = function (now) {
             monster.hop();
         }
         if (Math.random() * 3000 < 2) {
-            monster.jump();
+            monster.jumpUp();
         }
         if (Math.random() * 1000 < 5) {
-            monster.jumpleft();
+            monster.jumpLeft();
         }
         if (Math.random() * 1000 < 5) {
-            monster.jumpright();
+            monster.jumpRight();
         }
 
 
