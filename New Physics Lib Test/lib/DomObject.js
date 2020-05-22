@@ -31,36 +31,48 @@ class DomObject {
     }
 
     get x() {
-        if(this.USING_NEW_TRANSFORM) return parseInt(this.shape.style.transform.match(/translateX\(-?\d+.*d*px\)/)[0].match(/-?\d+.*\d*/)[0]) || this.p.x;
-        return (parseInt(this.shape.style.left) || this.p.x) + (this.isfromCenter? this.width/2 : 0);
+        let val = 0;
+        if(this.USING_NEW_TRANSFORM) {
+            val = parseInt(this.shape.style.transform.match(/translateX\(-?\d+.*d*px\)/)[0].match(/-?\d+.*\d*/)[0]) || this.p.x;
+        }else{
+            val = (parseInt(this.shape.style.left) || this.p.x);
+        }
+        return val  + (this.isfromCenter? this.width/2 : 0)
     }
 
     set x(val) {
         this.p.x = val;
+        val = val - ((this.isRectangle&&!this.isfromCenter) ? 0 : this.width/2);
         if(this.USING_NEW_TRANSFORM){
             let value =  this.shape.style.transform;
             value.match(/translateX\(-?\d+\.?\d*px\)/gu) !== null ?
                 (this.shape.style.transform = value.replace(/translateX\(-?\d+\.?\d*px\)/gu, 'translateX(' + val + 'px)') ):
                 (this.shape.style.transform += ' translateX(' + val + 'px)');
         }else{
-            this.set('left', val - ((this.isRectangle&&!this.isfromCenter) ? 0 : this.width/2) + 'px')
+            this.set('left', val  + 'px')
         }
     }
 
     get y() {
-        if(this.USING_NEW_TRANSFORM) return parseInt(this.shape.style.transform.match(/translateY\(-?\d+.*d*px\)/gu)[0].match(/-?\d+.*\d*/)[0]) ||this.p.y;
-        return (parseInt(this.shape.style.top) || this.p.y) + (this.isfromCenter? this.height/2 : 0);
+        let val = 0;
+        if(this.USING_NEW_TRANSFORM) {
+            val = parseInt(this.shape.style.transform.match(/translateY\(-?\d+.*d*px\)/gu)[0].match(/-?\d+.*\d*/)[0]) ||this.p.y;
+        }else{
+            val = (parseInt(this.shape.style.top) || this.p.y);
+        }
+        return val + (this.isfromCenter? this.height/2 : 0);
     }
 
     set y(val) {
         this.p.y = val;
+        val =  val - ((this.isRectangle&&!this.isfromCenter) ? 0 : this.height/2)
         if(this.USING_NEW_TRANSFORM){
             let value =  this.shape.style.transform;
             value.match(/translateY\(-?\d+\.?\d*px\)/gu) !== null ?
                 this.shape.style.transform = value.replace(/translateY\(-?\d+\.?\d*px\)/gu, 'translateY(' + val + 'px)') :
                 this.shape.style.transform += ' translateY(' + val + 'px)';
         }else{
-            this.set('top', val - ((this.isRectangle&&!this.isfromCenter) ? 0 : this.height/2) + 'px');
+            this.set('top', val + 'px');
         }
     }
 
@@ -182,8 +194,8 @@ class DomObject {
 
     usingNewTransform(){
         let [x,y] = [this.x,this.y];
-        this.x = 0;
-        this.y = 0;
+        this.x = (this.isfromCenter ? this.width / 2 : 0);
+        this.y = (this.isfromCenter ? this.height / 2 : 0);
         this.USING_NEW_TRANSFORM = true;
         this.x = x;
         this.y = y;
@@ -364,6 +376,8 @@ class P extends DomObject {
             top: this.p.y + 'px',
             left: this.p.x + 'px',
             color: 'white',
+            margin: '0',
+            padding: '0'
         });
         this.text = document.createTextNode(this.stringVal);
         this.shape.appendChild(this.text);

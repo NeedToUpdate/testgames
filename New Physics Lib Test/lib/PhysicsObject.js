@@ -134,9 +134,9 @@ class Blank {
             this.sprite = image;
             this.sprite.moveTo(this.p);
             if (this.sprite.isRectangle) {
-                this.hitbox = new Hitbox(this.p.x, this.p.y, this.sprite.width, this.sprite.height, true).fromCenter();
+                this.hitbox = new Hitbox(this.p.x, this.p.y, this.sprite.width, this.sprite.height).fromCenter();
             } else {
-                this.hitbox = new Hitbox(this.p.x, this.p.y, this.sprite.width / 2);
+                this.hitbox = new Hitbox(this.p.x, this.p.y, this.sprite.width / 2,true);
             }
             this.h = this.sprite.height;
             this.w = this.sprite.width;

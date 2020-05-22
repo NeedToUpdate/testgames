@@ -171,7 +171,7 @@ function generateObstacles(mode) {
                 let g = new Vector(0, 1);
                 g.constant = true;
                 monsters[0].forces.push(g);
-                let sprite = new Img(IMAGE_PATH + monsters[0].name + '.png', monsters[0].x, 300, 200).fromCenter().onLoad(() => {
+                let sprite = new Img(IMAGE_PATH + monsters[0].name + '.png', monsters[0].x, 300, 200).fromCenter().usingNewTransform().onLoad(() => {
                     monsters[0].addSprite(sprite);
                     monsters[0].sprite.shape.addEventListener('click', () => {
                         monsters[0].forces.push(Vector.random().set(Math.random() * 10))
@@ -190,7 +190,7 @@ function generateObstacles(mode) {
                 fires.push(new Flyer(xx, yy, powers[Math.random() * powers.length | 0]));
             }
             fires.forEach(fire => {
-                let sprite = new Img(IMAGE_PATH + 'projectiles/' + fire.name + '.png', 100, 100, 50).fromCenter().onLoad(() => {
+                let sprite = new Img(IMAGE_PATH + 'projectiles/' + fire.name + '.png', 100, 100, 50).fromCenter().usingNewTransform().onLoad(() => {
                     fire.addSprite(sprite);
                     fires.forEach(fire => {
                         fire.doOrbit(fire.p.copy().add(Vector.random(25)), getRandom(2, 5));
@@ -203,7 +203,7 @@ function generateObstacles(mode) {
             let num = (Math.random() * 2 | 0) + difficulty + 1 + (difficulty > 2 ? 1 : 0);
             for (let i = 0; i < num; i++) {
                 let mon = new Character(width * .1 + ((width * .8) / num) * i, 300, 'monster' + (Math.random() * 30 | 0));
-                let sprite = new Img(IMAGE_PATH + mon.name + '.png', mon.x, 300, 200).fromCenter().onLoad(() => {
+                let sprite = new Img(IMAGE_PATH + mon.name + '.png', mon.x, 300, 200).fromCenter().usingNewTransform().onLoad(() => {
                     mon.addSprite(sprite);
                     mon.sprite.shape.addEventListener('click', () => {
                         let n = Math.random();
@@ -229,7 +229,7 @@ function generateObstacles(mode) {
                 fires.push(new Flyer(xx, yy, 'ghost' + i % 11));
             }
             fires.forEach(fire => {
-                let sprite = new Img(IMAGE_PATH + fire.name + '.png', 100, 100, 50).fromCenter().onLoad(() => {
+                let sprite = new Img(IMAGE_PATH + fire.name + '.png', 100, 100, 50).fromCenter().usingNewTransform().onLoad(() => {
                     fire.addSprite(sprite);
                 });
                 fire.maxbounds = {x: width, y: height};

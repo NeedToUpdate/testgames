@@ -36,6 +36,13 @@ let lines = [];
 let gamearea = {};
 LOOPING = false;
 
+function play(){
+    LOOPING = true;
+    lasttime = window.performance.now();
+    loop()
+}
+
+
 let setupletters = function () {
     let w = 50; //line width
     let space = 5; //space
@@ -61,7 +68,7 @@ let setupletters = function () {
     let start_x = (width / 2) - (w + space) * num / 2;
     lines = letters.map((x, i) => {
         if (x !== " ") {
-            let l = Line.fromPoints(start_x + (w + space) * i, y_calc - button_space * 2, start_x + w + (w + space) * i, y_calc - button_space * 2, 2);
+            let l = Line.fromPoints(start_x + (w + space) * i, y_calc - button_space *3, start_x + w + (w + space) * i, y_calc - button_space * 3, 2);
             l.color = 'white';
             l.set('box-shadow', 'black 2px 2px 2px');
             l.target = x;
@@ -190,9 +197,10 @@ function clickHandler(string, pos) {
         return
     }
     let currentLine = lines[final_word.length];
-    let temp_p = new P(string, currentLine.x, currentLine.y - 134, "white");
+    let temp_p = new P(string, currentLine.x, currentLine.y).setColor('white');
     temp_p.set('fontSize', '4em');
-    temp_p.x += (50 - temp_p.shape.offsetWidth) / 2;
+    temp_p.x += 25
+    temp_p.y -= (temp_p.height) / 3;
     let temp = final_word + string;
     if (chosen.startsWith(temp)) {
         //CORRECT
