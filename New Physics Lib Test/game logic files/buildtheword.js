@@ -234,7 +234,7 @@ function generateObstacles(mode) {
                 });
                 fire.maxbounds = {x: width, y: height};
                 fire.MAX_V = Math.random() * 7 + 9 * difficulty;
-                fire.MAX_F = Math.random() * (difficulty * 1.1 + .6) / (9 - (difficulty));
+                fire.MAX_F = Math.random() * (difficulty * 1.1 + 1.6) / (9 - (difficulty));
             });
     }
     id('jmpleft').innerText = diff2word(difficulty);

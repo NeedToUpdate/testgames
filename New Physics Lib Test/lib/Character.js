@@ -254,8 +254,8 @@ class Flyer extends Character{
                this.forces = [];
                this.forces.push(new Vector(0, -1));
                return({
-                   then: function(fn){
-                       this.cache.doHover = fn;
+                   then: (fn)=>{
+                       this.cache.doHover.callback = fn;
                    }
                })
            }
@@ -275,6 +275,10 @@ class Flyer extends Character{
             this.forces = config.forces;
             this.p = config.origXY;
             this.isDoingHover = false;
+            let callback = undefined;
+            if(typeof config.callback === 'function') callback = config.callback;
+            delete this.cache.doHover;
+            if(callback) callback();
        }
        doOscillate(target){
        
@@ -305,7 +309,44 @@ class Flyer extends Character{
        
        }
        doFlyTo(target){
-       
+           if (!this.isDoingFlyTo) {
+               if (target instanceof Vector) {
+                   this.cache.doFlyTo = {};
+                   this.cache.doFlyTo.target = target.copy();
+               } else {
+                   console.error(this.name + ' cant .doFlyTo() to a' , target);
+               }
+               this.isDoingFlyTo = true;
+               return({
+                   then: (fn)=>{
+                       this.cache.doFlyTo.callback = fn;
+                   }
+               })
+           } else {
+               let config = this.cache.doFlyTo;
+               let dir = config.target.copy().sub(this.p);
+               let distX = Math.abs(dir.x);
+               let dist = config.target.dist(this.p);
+               if (dist > 120) {
+                   let target = new Vector(dir.x, dir.y - Math.sin((distX / width) * Math.PI * 20) * 500);
+                   let steer = target.copy().sub(this.v).set(this.MAX_V);
+                   this.addForce(steer);
+
+               } else if (dist > 5) {
+                   let target = new Vector(dir.x, dir.y);
+                   let steer = target.copy().sub(this.v);
+                   this.addForce(steer);
+               } else if (dist > 0.5) {
+                   this.v = new Vector(dir.x, dir.y);
+               } else {
+                   this.v.clear();
+                   this.isDoingFlyTo = false;
+                   let callback = undefined;
+                   if(typeof config.callback === 'function') callback = config.callback;
+                   delete this.cache.doFlyTo;
+                   if(callback) callback();
+               }
+           }
        }
     steerTo(vector) {
         let target = vector.copy().sub(this.p);

@@ -25,7 +25,7 @@ class Blank {
         this.MAX_F = 30;
         this.V_FLOOR_LIMIT = 2.1;
         this.dead = false;
-        this.fragile = false;
+        this.isFragile = false;
         this.cache = {};
 
         //handler for dealing with objects attached to this object
@@ -118,6 +118,7 @@ class Blank {
 
     set angle(val) {
         this.theta = parseInt(val)
+        if(this.hasSprite) this.sprite.rotateTo(val)
     }
 
     get hasSprite() {
@@ -200,10 +201,11 @@ class Blank {
         if(this.attachmentList.includes(name)){
             let thing = this.attachments[name];
             thing.isDrawn = this.isDrawn;
+            thing.p = this.p.copy()
             thing.attachment_offset = null;
-            let sprite = thing.sprite.detach();
+            let sprite = thing.sprite.detachSelf();
+            this.sprite.detach(thing.sprite);
             DomObject.attach(sprite);
-            thing.sprite.moveTo(thing.p);
             delete this.attachments[name];
             return thing;
         }else{
@@ -260,9 +262,7 @@ class Blank {
             this.attachmentList.forEach(name=>{
                 let thing = this.attachments[name];
                 thing.p.add(this.p.copy().sub(this.old_p));
-                thing.angle = this.theta;
                 thing.update();
-                //TODO deal with rotation;
             })
         }
     }
@@ -270,7 +270,8 @@ class Blank {
     draw() {
         if (!this.hasSprite) return;
         this.sprite.moveTo(this.p);
-        this.sprite.rotateTo(this.theta);
+        //no need to do this, DOM will handle it
+        //this.sprite.rotateTo(this.theta);
     }
 
     dynamicFrictionCheck() {
@@ -299,22 +300,22 @@ class Blank {
         if (this.p.x + paddingx > this.maxbounds.x) {
             this.p.x = this.maxbounds.x - paddingx;
             this.v.x = this.hasBounce ? (this.v.x * -1 * this.bounce_coeff) : 0;
-            if (this.fragile) this.kill()
+            if (this.isFragile) this.kill()
         }
         if (this.p.y + paddingy > this.maxbounds.y) {
             this.p.y = this.maxbounds.y - paddingy;
             this.v.y = this.hasBounce ? (this.v.y * -1 * this.bounce_coeff) : 0;
-            if (this.fragile) this.kill()
+            if (this.isFragile) this.kill()
         }
         if (this.p.x - paddingx < this.minbounds.x) {
             this.p.x = this.minbounds.x + paddingx;
             this.v.x = this.hasBounce ? (this.v.x * -1 * this.bounce_coeff) : 0;
-            if (this.fragile) this.kill()
+            if (this.isFragile) this.kill()
         }
         if (this.p.y - paddingy < (this.hasNoSkyBox ? -3000 : this.minbounds.y)) {
             this.p.y = this.minbounds.y + paddingy - (this.hasNoSkyBox ? 3000 : 0);
             this.v.y = this.hasBounce ? (this.v.y * -1 * this.bounce_coeff) : 0;
-            if (this.fragile) this.kill()
+            if (this.isFragile) this.kill()
         }
     }
 

@@ -33,11 +33,14 @@ class DomObject {
     get x() {
         let val = 0;
         if(this.USING_NEW_TRANSFORM) {
-            val = parseInt(this.shape.style.transform.match(/translateX\(-?\d+.*d*px\)/)[0].match(/-?\d+.*\d*/)[0]) || this.p.x;
+            val = this.shape.style.transform.match(/translateX\(-?\d+.*d*px\)/);
+            if(val){
+                val = val[0].match(/-?\d+.*\d*/)[0];
+            }
         }else{
-            val = (parseInt(this.shape.style.left) || this.p.x);
+            val = this.shape.style.left || this.p.x;
         }
-        return val  + (this.isfromCenter? this.width/2 : 0)
+        return val !== null? parseInt(val)  + (this.isfromCenter? this.width/2 : 0) : this.p.x
     }
 
     set x(val) {
@@ -45,9 +48,10 @@ class DomObject {
         val = val - ((this.isRectangle&&!this.isfromCenter) ? 0 : this.width/2);
         if(this.USING_NEW_TRANSFORM){
             let value =  this.shape.style.transform;
-            value.match(/translateX\(-?\d+\.?\d*px\)/gu) !== null ?
-                (this.shape.style.transform = value.replace(/translateX\(-?\d+\.?\d*px\)/gu, 'translateX(' + val + 'px)') ):
+            value.match(/translateX\(-?\d+\.?\d*px\)/g) !== null ?
+                (this.shape.style.transform = value.replace(/translateX\(-?\d+\.?\d*px\)/g, 'translateX(' + val + 'px)') ):
                 (this.shape.style.transform += ' translateX(' + val + 'px)');
+            this.shape.style.transformOrigin = this.x + 'px ' + this.y + 'px'
         }else{
             this.set('left', val  + 'px')
         }
@@ -56,11 +60,14 @@ class DomObject {
     get y() {
         let val = 0;
         if(this.USING_NEW_TRANSFORM) {
-            val = parseInt(this.shape.style.transform.match(/translateY\(-?\d+.*d*px\)/gu)[0].match(/-?\d+.*\d*/)[0]) ||this.p.y;
+            val = this.shape.style.transform.match(/translateY\(-?\d+.*d*px\)/g)
+            if(val){
+                val = val[0].match(/-?\d+.*\d*/)[0];
+            }
         }else{
-            val = (parseInt(this.shape.style.top) || this.p.y);
+            val = this.shape.style.top || this.p.y;
         }
-        return val + (this.isfromCenter? this.height/2 : 0);
+        return val !== null? parseInt(val) + (this.isfromCenter? this.height/2 : 0) : this.p.y;
     }
 
     set y(val) {
@@ -68,12 +75,21 @@ class DomObject {
         val =  val - ((this.isRectangle&&!this.isfromCenter) ? 0 : this.height/2)
         if(this.USING_NEW_TRANSFORM){
             let value =  this.shape.style.transform;
-            value.match(/translateY\(-?\d+\.?\d*px\)/gu) !== null ?
-                this.shape.style.transform = value.replace(/translateY\(-?\d+\.?\d*px\)/gu, 'translateY(' + val + 'px)') :
+            value.match(/translateY\(-?\d+\.?\d*px\)/g) !== null ?
+                this.shape.style.transform = value.replace(/translateY\(-?\d+\.?\d*px\)/g, 'translateY(' + val + 'px)') :
                 this.shape.style.transform += ' translateY(' + val + 'px)';
+            this.shape.style.transformOrigin = this.x + 'px ' + this.y + 'px'
         }else{
             this.set('top', val + 'px');
         }
+    }
+
+
+    rotateTo(num) {
+        let tran =  this.shape.style.transform;
+        this.shape.style.transform.match(/rotate\(-?\d+\.?\d*deg\)/g) !== null ?
+            this.shape.style.transform = tran.replace(/rotate\(-?\d+\.?\d*deg\)/g, 'rotate(' + num + 'deg)') :
+            this.shape.style.transform += ' rotate(' + num + 'deg)'
     }
 
     set color(string){
@@ -150,13 +166,6 @@ class DomObject {
 
 
 
-    rotateTo(num) {
-        let tran =  this.shape.style.transform;
-        this.shape.style.transform.match(/rotate\(-?\d+\.*\d*deg\)/gu) !== null ?
-            this.shape.style.transform = tran.replace(/rotate\(-?\d+\.*\d*deg\)/gu, 'rotate(' + num + 'deg)') :
-            this.shape.style.transform += ' rotate(' + num + 'deg)'
-    }
-
     attach(div) {
         if (div instanceof DomObject) {
             this.shape.appendChild(div.shape);
@@ -218,7 +227,11 @@ class DomObject {
         })
     }
 
-    detach(){
+    detach(obj){
+        this.attachments[obj.type + 's'].splice(this.attachments[obj.type + 's'].indexOf(obj),1);
+    }
+
+    detachSelf(){
         return this.shape.parentNode.removeChild(this.shape);
     }
 
@@ -272,11 +285,11 @@ class Div extends DomObject {
             transformOrigin: (this.isLine ? '0% 50%' : 'center center'),
             borderRadius: this.isRectangle ? '' : '50%',
             position: 'absolute',
-            transform: this.theta ? 'rotate(' + this.theta + 'deg)' : ''
         });
         this.y = this.p.y - (this.isRectangle ? 0 : this.radius);
         this.x = this.p.x - (this.isRectangle ? 0 : this.radius);
         this.color = this.DEFAULT_COLOR;
+        this.angle = this.theta;
         document.body.appendChild(this.shape);
     }
 }
@@ -412,10 +425,10 @@ class Img extends DomObject{
             width: (this.w) + 'px',
             transformOrigin: 'center center',
             position: 'absolute',
-            transform: this.theta ? 'rotate(' + this.theta + 'deg)' : ''
         });
         this.y = this.p.y;
         this.x = this.p.x;
+        this.angle = this.theta
         this.shape.onload= ()=>{
             this.h = parseInt(this.shape.offsetHeight);
             this.loaded = true;
@@ -432,6 +445,71 @@ class Img extends DomObject{
     }
 
 }
+
+
+class LoadingBar extends DomObject{
+    constructor(x,y,w,h,start,stop,val){
+        super(x,y);
+        this.w = w || 100;
+        this.h = h || 10;
+        this.startVal = start || 0;
+        this.stopVal = stop || 100;
+        this.currVal = val || 100;
+        this.type = 'health';
+        this.barShape = document.createElement('div');
+        this.shape = document.createElement('div');
+        this.isRectangle = true;
+        this.init();
+    }
+    init(){
+        Object.assign(this.shape.style,{
+            position: 'absolute',
+            height: this.h -4 + 'px',
+            width: this.w -4 + 'px',
+            border: 'solid black 2px',
+            top: this.y + 'px',
+            left: this.x + 'px',
+        });
+        Object.assign(this.barShape.style, {
+            position: 'absolute',
+            height: this.h - 4 + 'px',
+            width: '0px',
+            backgroundColor: 'green',
+        });
+        this.value = this.currVal;
+        document.body.appendChild(this.shape);
+        this.shape.appendChild(this.barShape)
+    }
+    set(attr, val) {
+        if(this.removed) return;
+        this.shape.style[attr] = val;
+    }
+    setBar(attr, val){
+        if(this.removed) return;
+        this.barShape.style[attr] = val;
+    }
+    set value(val){
+        this.currVal = val;
+        let percent = (this.currVal-this.startVal)/(this.stopVal===0?1:this.stopVal);
+        this.setBar('width', this.w*percent + 'px');
+
+        if(this.type === 'health') {
+            if (percent > .5) {
+                this.setBar('backgroundColor', 'green');
+            } else if (percent > .1) {
+                this.setBar('backgroundColor', 'yellow');
+            } else if (percent >= 0) {
+                this.setBar('backgroundColor', 'red');
+            }
+        }
+    }
+    get value(){
+        return this.currVal;
+    }
+
+}
+
+
 
 class ImageLoader {
     constructor(path, array_of_names) {
@@ -491,178 +569,6 @@ class StyleMaker {
         if (this.type === 'small') {
             this.default.width = '50px';
             return this.default;
-        }
-    }
-}
-
-
-
-class ImgOld {
-    constructor(src, x, y, w, loadcenter, theta, h) {
-        this.x = x;
-        this.y = y;
-        this.w = w || -1;
-        this.h = h || -1;
-        this.theta = theta || 0;
-        this.shape = {};
-        this.shape.src = '';
-        this.permaload = false;
-        this.loadcenter = loadcenter;
-        if (typeof src === "string") {
-            this.shape = document.createElement("img");
-            this.shape.src = src;
-        } else {
-            this.shape = src;
-        }
-        this.removed = false;
-        if (this.y === 'bottom' && typeof src === 'string') {
-            this.shape.onload = () => {
-                this.draw();
-                this.y = height - this.shape.height;
-                this.set('top', this.y + 'px');
-                this.onload();
-            }
-        } else {
-            this.shape.onload = () => {
-                this.onload();
-            };
-            this.draw();
-        }
-
-    }
-
-    get vector() {
-        return new Vector(parseInt(this.shape.style.left, 10), parseInt(this.shape.style.top, 10))
-    }
-
-    get theta() {
-        //very specific, only used when rotation is already set
-        let rotation = this.shape.style.transform;
-        let theta = 0;
-        if (rotation.match('rotate')) {
-            theta = parseInt(this.shape.style.transform.replace(/[rotate(|)]/gi, ""));
-            if (!isNaN(theta)) {
-                return theta;
-            } else {
-                return 0
-            }
-        } else {
-            return 0;
-        }
-    }
-
-    set theta(val) {
-
-        this.shape.style.transform = "rotate(" + val + 'deg)';
-        this.theta = val;
-    }
-
-    onload() {
-    }
-
-    get(attr) {
-        return this.shape.style[attr];
-    }
-
-    getVal(attr) {
-        return parseInt(this.shape.style[attr], 10);
-    }
-
-    add(div, remove) {
-        if (div instanceof DomObject) {
-            if (remove) {
-                div.shape.parentNode.removeChild(div.shape)
-            }
-            this.shape.appendChild(div.shape)
-        } else {
-            this.shape.appendChild(div)
-        }
-    }
-
-    draw() {
-
-        if (this.removed) return;
-        document.body.appendChild(this.shape);
-
-        let style = {
-            position: "absolute",
-
-            transform: this.rot ? "rotate(" + this.theta + "deg)" : "",
-        };
-        if (this.w > -1) {
-            style.width = this.w + 'px';
-        }
-        if (this.h > -1) {
-            style.height = this.h + 'px';
-        }
-        style.top = this.y - (this.loadcenter ? this.shape.style.height : 0) + "px";
-        style.left = this.x - (this.loadcenter ? this.shape.style.width : 0) + "px";
-        Object.assign(this.shape.style, style);
-    }
-
-    set(attr, val) {
-        if (this.removed) return;
-        if (attr === 'top' && this.loadcenter) {
-            val = parseInt(val, 10);
-            val -= this.shape.height / 2;
-            val += 'px'
-        }
-        if (attr === 'left' && this.loadcenter) {
-            val = parseInt(val, 10);
-            val -= this.shape.width / 2;
-            val += 'px'
-        }
-
-        this.shape.style[attr] = val;
-    }
-
-    mod(attr, val) {
-
-        if (this.removed) return;
-
-        if (attr === "rotate") {
-            let theta = parseInt(this.shape.style.transform.replace(/[rotate(|)]/gi, ""));
-            if (!isNaN(theta)) {
-                theta += val;
-            } else {
-                theta = val;
-            }
-            this.shape.style.transform = "rotate(" + theta + 'deg)';
-            return;
-
-        }
-        let attribute = this.shape.style[attr];
-        let value = parseInt(attribute);
-        if (isNaN(value)) {
-            let e = new ErrorHandler('attr is not a value', this);
-            return;
-        }
-        //probably is a beter way for this
-        let suffix = attribute.split(value)[1];
-        value += val;
-        this.shape.style[attr] = value + suffix;
-    }
-
-    destroy() {
-        if (this.removed) return;
-        if (this.shape) {
-            if (!this.permaload) {
-                try {
-                    document.body.removeChild(this.shape);
-                } catch (e) {
-                    console.log(e)
-                }
-
-                this.shape = undefined;
-                this.removed = true;
-            } else {
-                this.set('width', '50');
-                this.set('top', '0');
-                this.set('left', '0');
-                this.shape = undefined;
-                this.removed = true;
-            }
-
         }
     }
 }
