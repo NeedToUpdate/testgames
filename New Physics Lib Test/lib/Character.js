@@ -190,7 +190,7 @@ class Character extends Blank{
     kill() {
         if (this.dead) return;
         function explode() {
-            let explosion = new Img(this.deathImage, this.p.x, this.p.y, this.width).fromCenter();
+            let explosion = new Img(this.deathImage, this.p.x, this.p.y, this.width).fromCenter().usingNewTransform();
             let loop = setInterval(() => {
                 explosion.mod("width", this.width/30 |0);
                 explosion.mod("left", this.width/-60 |0);

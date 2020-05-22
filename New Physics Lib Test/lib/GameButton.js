@@ -3,7 +3,7 @@ class GameButton extends Character {
     constructor(string, pos, color) {
         super(0,0,string);
         this.pDiv = new P(string, 0, 0);
-        this.div = new Square(0, 0, 70).fromCenter();
+        this.div = new Square(0, 0, 70).fromCenter().usingNewTransform();
         this.div.attach(this.pDiv);
         this.pos = pos;
         this.string = string;

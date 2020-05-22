@@ -42,7 +42,6 @@ class DomObject {
             value.match(/translateX\(-?\d+\.?\d*px\)/gu) !== null ?
                 (this.shape.style.transform = value.replace(/translateX\(-?\d+\.?\d*px\)/gu, 'translateX(' + val + 'px)') ):
                 (this.shape.style.transform += ' translateX(' + val + 'px)');
-            console.log(this.shape.style.transform)
         }else{
             this.set('left', val - ((this.isRectangle&&!this.isfromCenter) ? 0 : this.width/2) + 'px')
         }
@@ -59,8 +58,7 @@ class DomObject {
             let value =  this.shape.style.transform;
             value.match(/translateY\(-?\d+\.?\d*px\)/gu) !== null ?
                 this.shape.style.transform = value.replace(/translateY\(-?\d+\.?\d*px\)/gu, 'translateY(' + val + 'px)') :
-                this.shape.style.transform += ' translateY(' + val + 'px)'
-            console.log(this.shape.style.transform)
+                this.shape.style.transform += ' translateY(' + val + 'px)';
         }else{
             this.set('top', val - ((this.isRectangle&&!this.isfromCenter) ? 0 : this.height/2) + 'px');
         }
