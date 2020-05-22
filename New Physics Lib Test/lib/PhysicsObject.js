@@ -161,7 +161,7 @@ class Blank {
 
     addAttachment(thing,offset){
         if(!(thing instanceof Blank)){
-            console.error(`${this.name} can't attach a ${typeof thing}`);
+            console.error(`${this.name} cant attach a ${typeof thing}`);
             return;
         }
         if(this.attachmentList.includes(thing.name)){

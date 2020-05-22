@@ -539,13 +539,14 @@ class ImageLoader {
         })
     }
 
-    add(nameorarray) {
+    add(nameorarray, newPath) {
+        let path = newPath || this.path
         if (nameorarray instanceof Array) {
             nameorarray.forEach(name => {
-                this[name] = ImageLoader.createImg(this.path + '/' + name + '.png');
+                this[name] = ImageLoader.createImg(path + '/' + name + '.png');
             })
         } else if (typeof nameorarray === 'string') {
-            this[nameorarray] = ImageLoader.createImg(this.path + '/' + nameorarray + '.png');
+            this[nameorarray] = ImageLoader.createImg(path + '/' + nameorarray + '.png');
         }
         else {
             console.error('unexpected format to add to ImageLoader')

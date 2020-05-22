@@ -1,6 +1,8 @@
 words = Array.from(words); //just in case
 difficulty = 0;
 
+let IMAGE_PATH = '../../images/';
+
 function getAllLetters(arrayofwords) {
     let arrays = [];
     arrayofwords.forEach(word => {
@@ -211,8 +213,8 @@ function win() {
                         for (let i = 0; i < charnum; i++) {
                             let char = new Character(420, 400, 'treasure' + (Math.random() * 7 | 0));
                             char.bounds.y = 400;
-                            let img = new Img('../images/' + char.name + '.png', 420, 400, 50);
-                            img.shape.onload = () => {
+                            let img = new Img(IMAGE_PATH + char.name + '.png', 420, 400, 50);
+                            img.onLoad( () => {
                                 requestAnimationFrame(() => {
                                     char.addSprite(img);
 
@@ -235,7 +237,7 @@ function win() {
                                 })
 
 
-                            }
+                            })
                         }
                     });
                     prom.then(() => {
@@ -324,21 +326,21 @@ function setupkeypad() {
     let colors = ['darkred', 'darkgreen', 'darkgoldenrod', 'purple', 'darkblue', 'darkorange', 'darkcyan', 'darkslategray']
     colors = colors.splice(Math.random() * colors.length | 0, 1);
     let size = 70 - dim[0] * 4;
-    paper = new Img('../images/tornpaper.png', ind2xy(0)[0] - 90, ind2xy(0)[1] - 20, 600)
-    keypad = new Div(pos2xy(0, 0, 0)[0] - 12, pos2xy(0, 0, 0)[1] - 32, 'grey', dim[0] * (size + 20), dim[1] * (size + 20) + 50, true)
+    paper = new Img(IMAGE_PATH + 'tornpaper.png', ind2xy(0)[0] - 90, ind2xy(0)[1] - 20, 600)
+    keypad = new Rectangle(pos2xy(0, 0, 0)[0] - 12, pos2xy(0, 0, 0)[1] - 32, dim[0] * (size + 20), dim[1] * (size + 20) + 50)
     keypad.set('backgroundImage', 'linear-gradient(to bottom right, ' +
         '#eee 0%, #aaa 10%, #ddd 14%, #fff 30%, #999 44%, #ddd 55%, #999 60%, #eee 85%, #ccc 100%' +
         ')')
     keypad.set('borderRadius', '10px');
     keypad.set('border', 'darkgrey 4px solid')
     lights = new Array(3).fill('').map((x, i) => {
-        let l = new Div(pos2xy(0, 0, 0)[0] + dim[0] * (size + 20) / 2 - 30 + 20 * i, pos2xy(0, 0, 0)[1] - 15, 'none', 5);
+        let l = new Circle(pos2xy(0, 0, 0)[0] + dim[0] * (size + 20) / 2 - 30 + 20 * i, pos2xy(0, 0, 0)[1] - 15, 5);
         l.set('backgroundImage', 'radial-gradient(#0f0 0%, #0b0 100%)');
         l.set('boxShadow', 'rgba(0,255,0,0.3) 0px 0px 2px 2px')
         return l
     });
     wordlights = new Array(words.length).fill('').map((x, i) => {
-        let l = new Div(pos2xy(0, 0, 0)[0] + dim[0] * (size + 20) / 2 - (14 * words.length / 2) + i * 14, pos2xy(0, dim[1], size)[1] + 15, 'none', 5);
+        let l = new Circle(pos2xy(0, 0, 0)[0] + dim[0] * (size + 20) / 2 - (14 * words.length / 2) + i * 14, pos2xy(0, dim[1], size)[1] + 15, 5);
         l.set('backgroundImage', 'radial-gradient(#544 0%, #655 100%)');
         l.set('boxShadow', 'rgba(0,0,0,0.3) 0px 0px 2px 2px')
         return l
@@ -360,7 +362,7 @@ function setupkeypad() {
 
 let background = 'background12.jpg';
 document.body.style.backgroundColor = 'grey';
-document.body.style.backgroundImage = 'url(../images/' + background.toString() + ')';
+document.body.style.backgroundImage = 'url(' +IMAGE_PATH+ background.toString() + ')';
 document.body.style.backgroundRepeat = 'no-repeat';
 
 //words = ['singing','playing','barking','learning','watching','sleeping','drawing','doing','sitting','swimming','getting','running','stopping','putting','cutting','dancing','writing','coming','closing','riding','drixving'];
@@ -369,18 +371,24 @@ let allLetters = [];
 let dim = [];
 let lettersM = {};
 
-let extras = ['dynamiteball', 'fire', 'stars', 'brokenhole', 'safe'];
-LOADED_IMAGES = new ImageLoader('../images/', extras);
+let extras = [ 'fire', 'stars', 'brokenhole', 'safe'];
+LOADED_IMAGES = new ImageLoader(IMAGE_PATH, extras);
+LOADED_IMAGES.add('dynamite_projectile',IMAGE_PATH + 'projectiles')
+
 
 function introMovie() {
-    let bank = new Img('../images/bank.png',width*.1, height-370, 500 );
+    let bank = new Img(IMAGE_PATH +'/bank.png',width*.1, height-370, 500 );
     let burglars = [];
     for (let i = 0; i < 5; i++) {
         let burglar = new Character(width*.8 + (25 + (Math.random() * 10 | 0)) * i,height - 50, 'burglar');
-        burglar.bounds.y = height - 50;
-        burglar.bounds.x = width;
-        burglar.max_v = 10;
-        burglar.powertype = 'dynamite';
+        burglar.maxbounds.y = height - 50;
+        burglar.maxbounds.x = width;
+        burglar.MAX_V= 10;
+        burglar.powerType = 'dynamite';
+        burglar.addForce(VECTORS.gravity)
+        burglar.landing_emitter.subscribe('land',()=>{
+            burglar.v.clear()
+        })
         burglars.push(burglar);
     }
     let bsloaded = 0;
@@ -390,28 +398,28 @@ function introMovie() {
 
     bank.shape.onload = function () {
         burglars.forEach(b => {
-            let sprite = new Img('../images/' + b.name + '.png', 100, 100, 90);
-            sprite.shape.onload = function () {
+            let sprite = new Img(IMAGE_PATH + b.name + '.png', 100, 100, 90);
+            sprite.onLoad(() => {
                 bsloaded++;
                 if (bsloaded === burglars.length) {
                     playbtn.innerText = 'Start'
                     requestAnimationFrame(() => {
                         burglars.forEach(burglar => {
-                            burglar.faceleft();
+                            burglar.faceLeft();
                             burglar.update();
                         })
                     })
 
                 }
-            };
+            });
             b.addSprite(sprite)
         })
         playbtn = document.createElement('button');
         let text = document.createTextNode('loading');
         playbtn.append(text)
         playbtn.setAttribute('class', 'bluebtn');
-        playbtn.style.top = '160px';
-        playbtn.style.left = '750px';
+        playbtn.style.top = height*0.2 + 'px';
+        playbtn.style.left =  width*0.8 + 'px';
         document.body.appendChild(playbtn);
         playbtn.onclick = () => {
             playmovie = true;
@@ -436,8 +444,8 @@ function introMovie() {
         let text2 = document.createTextNode('Tiny');
         diffbtn.append(text2);
         diffbtn.setAttribute('class', 'bluebtn');
-        diffbtn.style.top = '110px';
-        diffbtn.style.left = '750px';
+        diffbtn.style.top = height*0.3 + 'px';
+        diffbtn.style.left = width*0.8 + 'px';
         document.body.appendChild(diffbtn);
     };
 
@@ -459,21 +467,21 @@ function introMovie() {
             if (now - time < 3000 && Math.random() < 0.01) {
                 burglar.hop();
             }
-            if (now - time > 3000 && burglar.p.x > 670 && now - time < 5000) {
-                burglar.jumpfwd(0.2)
+            if (now - time > 3000 && burglar.x > 670 && now - time < 5000) {
+                burglar.jumpFwd(0.6)
             }
-            if (now - time < 10000 && burglar.p.x < 670 && now - time > 5000 && (!burglar.extras.attack ? !burglar.extras.attack : burglar.extras.attack.dead)) {
+            if (now - time < 10000 && burglar.x < 670 && now - time > 5000 && !burglar.isPoweringUp) {
                 if (now - time < 7000) {
-                    burglar.powerup();
+                    burglar.powerUp();
                 } else if (Math.random() < 0.01) {
-                    burglar.powerup();
+                    burglar.powerUp();
                 }
 
             }
-            if (burglar.extras.attack) {
-                burglar.extras.attack.minbounds.x = 500;
+            if (burglar.attachmentList.length>0) {
+                burglar.attachments[burglar.attachmentList[0]].minbounds.x = 500;
             }
-            if (burglar.extras.attack && now - time > 7000) {
+            if (burglar.isPoweringUp && now - time > 7000) {
                 if (Math.random() < 0.5) {
                     burglar.shoot();
                 }
@@ -484,8 +492,8 @@ function introMovie() {
             empty.kill();
             burglars.forEach(burglar => {
                 if (Math.random() < 0.6) {
-                    burglar.jumpbkwd(5);
-                    burglar.spin();
+                    burglar.jumpFwd(-5);
+                    burglar.doSpin(720,10);
                 }
             })
             movieending = true;
@@ -500,7 +508,7 @@ function introMovie() {
             burglars.forEach(burglar => {
                 if (!burglar.dead) {
                     if (burglar.p.x > 450) {
-                        burglar.jumpfwd(0.2);
+                        burglar.jumpFwd(0.2);
                     }
                     if (burglar.p.x < 450) {
                         burglar.fragile = true;
@@ -536,10 +544,12 @@ function introMovie() {
         document.body.style.animationDuration = '3s';
         setTimeout(() => {
                 safe = new Character(150, 200, 'safe');
-                let safeimg = new Img(LOADED_IMAGES.safe, 150, 200, 200);
-                safe.addSprite(safeimg);
+                let safeimg = new Img(LOADED_IMAGES.safe, 150, 200, 200).onLoad(()=>{
+                    safe.addSprite(safeimg);
+                });
+                
 
-                safe.bounds.y = 380
+                safe.maxbounds.y = 380
                 safeimg.shape.setAttribute("id", 'safeimg')
 
 
@@ -581,10 +591,10 @@ function introMovie() {
 
     function animateSafe() {
 
-        if (!safe.spinning) {
-            safe.spin(360);
+        if (!safe.isDoingSpin) {
+            safe.doSpin(360,10);
         }
-        safe.jumpfwd(5);
+        safe.jumpFwd(5);
         safe.update();
         if (animatingSafe) {
             requestAnimationFrame(animateSafe)

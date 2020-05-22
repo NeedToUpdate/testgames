@@ -1,7 +1,9 @@
 function getImage(name){
     //used primarily for testgames
     if(LOADED_IMAGES !== undefined){
-        return LOADED_IMAGES[name];
+        let img = LOADED_IMAGES[name];
+         if(!img) console.log('cant find ' + name)
+        return img
     }
     else{
         return name;
@@ -158,10 +160,11 @@ class Character extends Blank{
                     attack.faceLeft();
                 }
                 attack.doHover();
+                let offsetHeight = this.projectileOffsetHeight || this.height/5 +  this.height/-2;
+                this.addAttachment(attack, this.isFacingRight? new Vector(this.width/3,offsetHeight) : new Vector(this.width/-3,offsetHeight));
+                
             });
-            let offsetHeight = this.projectileOffsetHeight || this.height/5 +  this.height/-2;
-            this.addAttachment(attack, this.isFacingRight? new Vector(this.width/3,offsetHeight) : new Vector(this.width/-3,offsetHeight));
-            this.isPoweringUp = true;
+         this.isPoweringUp = true;
         } else {
             if (!this.attachments[power]) {
                 this.isPoweringUp = false;
