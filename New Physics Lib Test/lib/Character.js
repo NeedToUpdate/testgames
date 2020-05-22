@@ -190,18 +190,16 @@ class Character extends Blank{
     kill() {
         if (this.dead) return;
         function explode() {
-            let w = this.width;
-            let h = this.height;
-            let explosion = new Img(this.deathImage, this.p.x, this.p.y).fromCenter();
+            let explosion = new Img(this.deathImage, this.p.x, this.p.y, this.width).fromCenter();
             let loop = setInterval(() => {
-                explosion.mod("width", 6);
-                explosion.mod("left", -3);
-                explosion.mod("top", -3);
+                explosion.mod("width", this.width/30 |0);
+                explosion.mod("left", this.width/-60 |0);
+                explosion.mod("top", this.width/-60 |0);
             }, 25);
             setTimeout(() => {
                 clearInterval(loop);
                 explosion.remove();
-            }, 1500)
+            }, 800)
         }
         this.health = 0;
         this.dead = true;
@@ -322,160 +320,4 @@ class Flyer extends Character{
         this.forces.push(steer);
     }
 
-}
-
-class GameButton extends Character {
-    constructor(string, pos, color) {
-        super(string,0,0);
-        this.pDiv = new P(string, 0, 0);
-        this.div = new Square(0, 0, 70);
-        this.div.attach(this.pDiv);
-        this.pos = pos;
-        this.string = string;
-        this.color = color;
-        this.generate();
-    }
-
-    generate() {
-        Object.assign(this.div.shape.style, {
-            background: "rgba(215,215,255, 0.3)",
-            "text-align": "center",
-            border: "5px solid " + this.color,
-            borderRadius: "10px",
-        });
-        let colors = ['darkred', 'darkgreen', 'darkgoldenrod', 'purple', 'darkblue', 'darkorange', 'darkcyan', 'darkslategray'];
-        Object.assign(this.pDiv.shape.style, {
-            color: getRandom(colors),
-            textShadow: "white 0px 0px 5px",
-            fontSize: "4em",
-            fontWeight: "bold",
-            margin: 0,
-            position: "relative",
-            top: "-5px",
-        });
-        let fonts = ['arial', 'sans-serif', 'italic', 'times new roman', 'cursive', 'impact'];
-        this.pDiv.set('fontFamily', getRandom(fonts));
-        this.addSprite(this.div)
-    }
-
-    set(attr, val) {
-        if (attr === 'top') {
-            this.p.y = parseInt(val);
-            this.bounds.y = this.p.y + 40
-        }
-        if (attr === 'left') {
-            this.p.x = parseInt(val);
-        }
-        this.div.set(attr, val);
-    }
-
-    kill() {
-        if (this.dead) return;
-        this.dead = true;
-        this.unsub_landing_emmitter();
-
-        function explode() {
-            let w = 20;
-            let h = 20;
-            let explosion = {};
-            if (typeof LOADED_IMAGES !== 'undefined') {
-                explosion = new Img(LOADED_IMAGES.fire.cloneNode(), this.p.x + (w + 25) / 2, this.p.y + (h + 25) / 2, 1);
-                let loop = setInterval(() => {
-                    explosion.mod("width", 4);
-                    explosion.mod("left", -2);
-                    explosion.mod("top", -2);
-                }, 15);
-                setTimeout(() => {
-                    clearInterval(loop);
-                    explosion.destroy();
-                }, 500)
-            }
-        }
-
-        explode.apply(this);
-        this.pDiv.remove();
-        this.div.remove();
-        this.health = 0;
-    }
-
-    correctkill() {
-        if (this.dead) return;
-        this.dead = true;
-        this.unsub_landing_emmitter();
-
-        function explode() {
-            let w = 20;
-            let h = 20;
-            let explosion = {};
-            if (typeof LOADED_IMAGES !== 'undefined') {
-                explosion = new Img(LOADED_IMAGES.stars.cloneNode(), this.p.x + (w + 25) / 2, this.p.y + (h + 25) / 2, 20);
-
-                let loop = setInterval(() => {
-                    explosion.mod("width", 4);
-                    explosion.mod("left", -2);
-                    explosion.mod("top", -2);
-                }, 15);
-                setTimeout(() => {
-                    clearInterval(loop);
-                    explosion.destroy();
-                }, 500)
-            }
-        }
-
-        explode.apply(this);
-        this.pDiv.remove();
-        this.div.remove();
-        this.health = 0;
-    }
-}
-
-class StaticGameButton extends GameButton {
-    constructor(string, x, y) {
-        super(string, [x, y]);
-        this.p.x = x;
-        this.p.y = y;
-    }
-
-    generate() {
-        Object.assign(this.div.shape.style, {
-            position: 'absolute',
-            background: "white",
-            "text-align": "center",
-            border: "5px solid darkgrey",
-            borderRadius: "10px",
-            boxShadow: "blue 1px 2px 2px",
-            top: this.pos[1] + 'px',
-            left: this.pos[0] + 'px'
-        });
-
-        Object.assign(this.pDiv.shape.style, {
-            color: 'transparent',
-            textShadow: "rgba(255,255,255,0.5) 2px 2px 3px",
-            fontSize: "4em",
-            fontWeight: "bold",
-            margin: 0,
-            position: "relative",
-            top: "-5px",
-            "background-clip": "text",
-            "-moz-background-clip": "text",
-            "-webkit-background-clip": "text",
-            backgroundColor: "blue"
-        });
-        let [string, pos] = [this.string, this.pos];
-        this.div.shape.addEventListener('click', () => {
-            // this.div.set('border', '5px solid blue');
-            this.div.set('top', pos[1] + 2 + 'px');
-            this.div.set('left', pos[0] + 2 + 'px');
-            this.div.set('boxShadow', 'blue 0 0 0');
-            setTimeout(() => {
-                    //this.div.set('border', '5px solid black')
-                    this.div.set('top', pos[1] + 'px');
-                    this.div.set('left', pos[0] + 'px');
-                    this.div.set('boxShadow', "blue 1px 2px 2px")
-                }, 200
-            );
-            clickHandler(string, pos);
-        });
-        this.addSprite(this.div)
-    }
 }

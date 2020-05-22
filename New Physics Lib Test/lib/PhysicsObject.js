@@ -69,6 +69,7 @@ class Blank {
     set x(val) {
         if (typeof val !== 'number') return;
         this.p.x = val;
+        if(this.hasSprite) this.sprite.x = val;
     }
 
     get y() {
@@ -78,6 +79,7 @@ class Blank {
     set y(val) {
         if (typeof  val !== 'number') return;
         this.p.y = val;
+        if(this.hasSprite) this.sprite.y = val;
     }
 
     get height(){

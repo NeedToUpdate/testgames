@@ -20,6 +20,7 @@ class DomObject {
         this.DEFAULT_COLOR = 'black';
         this.attachments = {};
         this.isfromCenter = false;
+        this.USING_NEW_TRANSFORM = false;
     }
 
     init(){
@@ -30,21 +31,39 @@ class DomObject {
     }
 
     get x() {
+        if(this.USING_NEW_TRANSFORM) return parseInt(this.shape.style.transform.match(/translateX\(-?\d+.*d*px\)/)[0].match(/-?\d+.*\d*/)[0]) || this.p.x;
         return (parseInt(this.shape.style.left) || this.p.x) + (this.isfromCenter? this.width/2 : 0);
     }
 
     set x(val) {
         this.p.x = val;
-        this.set('left', val - (this.isfromCenter? this.width/2 : 0) + 'px')
+        if(this.USING_NEW_TRANSFORM){
+            let value =  this.shape.style.transform;
+            value.match(/translateX\(-?\d+\.?\d*px\)/gu) !== null ?
+                (this.shape.style.transform = value.replace(/translateX\(-?\d+\.?\d*px\)/gu, 'translateX(' + val + 'px)') ):
+                (this.shape.style.transform += ' translateX(' + val + 'px)');
+            console.log(this.shape.style.transform)
+        }else{
+            this.set('left', val - ((this.isRectangle&&!this.isfromCenter) ? 0 : this.width/2) + 'px')
+        }
     }
 
     get y() {
+        if(this.USING_NEW_TRANSFORM) return parseInt(this.shape.style.transform.match(/translateY\(-?\d+.*d*px\)/gu)[0].match(/-?\d+.*\d*/)[0]) ||this.p.y;
         return (parseInt(this.shape.style.top) || this.p.y) + (this.isfromCenter? this.height/2 : 0);
     }
 
     set y(val) {
         this.p.y = val;
-        this.set('top', val - (this.isfromCenter? -this.height/2 : 0) + 'px')
+        if(this.USING_NEW_TRANSFORM){
+            let value =  this.shape.style.transform;
+            value.match(/translateY\(-?\d+\.?\d*px\)/gu) !== null ?
+                this.shape.style.transform = value.replace(/translateY\(-?\d+\.?\d*px\)/gu, 'translateY(' + val + 'px)') :
+                this.shape.style.transform += ' translateY(' + val + 'px)'
+            console.log(this.shape.style.transform)
+        }else{
+            this.set('top', val - ((this.isRectangle&&!this.isfromCenter) ? 0 : this.height/2) + 'px');
+        }
     }
 
     set color(string){
@@ -111,19 +130,20 @@ class DomObject {
 
     moveTo(p) {
         if(arguments.length === 2){
-            this.set('top', arguments[1] - ((this.isRectangle&&!this.isfromCenter) ? 0 : this.height/2) + 'px');
-            this.set('left', arguments[0] - ((this.isRectangle&&!this.isfromCenter) ? 0 : this.width/2) + 'px');
+            this.y = arguments[1];
+            this.x = arguments[0];
+        }else{
+            this.y = p.y;
+            this.x = p.x;
         }
-        this.set('top', p.y - ((this.isRectangle&&!this.isfromCenter) ? 0 : this.height/2) + 'px');
-        this.set('left', p.x - ((this.isRectangle&&!this.isfromCenter) ? 0 : this.width/2) + 'px');
     }
 
 
 
     rotateTo(num) {
         let tran =  this.shape.style.transform;
-        this.shape.style.transform.match(/rotate\(-?\d+.*\d*deg\)/) !== null ?
-            this.shape.style.transform = tran.replace(/rotate\(-?\d+.*\d*deg\)/, 'rotate(' + num + 'deg)') :
+        this.shape.style.transform.match(/rotate\(-?\d+\.*\d*deg\)/gu) !== null ?
+            this.shape.style.transform = tran.replace(/rotate\(-?\d+\.*\d*deg\)/gu, 'rotate(' + num + 'deg)') :
             this.shape.style.transform += ' rotate(' + num + 'deg)'
     }
 
@@ -159,6 +179,16 @@ class DomObject {
     }
     setColor(color){
         this.color = color;
+        return this;
+    }
+
+    usingNewTransform(){
+        let [x,y] = [this.x,this.y];
+        this.x = 0;
+        this.y = 0;
+        this.USING_NEW_TRANSFORM = true;
+        this.x = x;
+        this.y = y;
         return this;
     }
 
@@ -229,14 +259,13 @@ class Div extends DomObject {
         Object.assign(this.shape.style, {
             height: (this.isRectangle ? this.h : this.radius * 2) + 'px',
             width: (this.isRectangle ? this.w : this.radius * 2) + 'px',
-            top: this.p.y - (this.isRectangle ? 0 : this.radius)+ 'px',
-            left: this.p.x - (this.isRectangle ? 0 : this.radius) + 'px',
             transformOrigin: (this.isLine ? '0% 50%' : 'center center'),
-            //backgroundColor: 'white',
             borderRadius: this.isRectangle ? '' : '50%',
             position: 'absolute',
             transform: this.theta ? 'rotate(' + this.theta + 'deg)' : ''
         });
+        this.y = this.p.y - (this.isRectangle ? 0 : this.radius);
+        this.x = this.p.x - (this.isRectangle ? 0 : this.radius);
         this.color = this.DEFAULT_COLOR;
         document.body.appendChild(this.shape);
     }
@@ -369,12 +398,12 @@ class Img extends DomObject{
         Object.assign(this.shape.style, {
             height: this.h >1 ? this.h + 'px' : '',
             width: (this.w) + 'px',
-            top: this.p.y +'px',
-            left: this.p.x +  'px',
             transformOrigin: 'center center',
             position: 'absolute',
             transform: this.theta ? 'rotate(' + this.theta + 'deg)' : ''
         });
+        this.y = this.p.y;
+        this.x = this.p.x;
         this.shape.onload= ()=>{
             this.h = parseInt(this.shape.offsetHeight);
             this.loaded = true;
