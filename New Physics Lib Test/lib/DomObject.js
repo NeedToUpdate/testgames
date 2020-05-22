@@ -351,7 +351,7 @@ class P extends DomObject {
         this.type = 'text';
         this.shape = document.createElement('p');
         this.text = {};
-        this.removed = false;
+        this.isRectangle = true;
         this.init()
     }
 
@@ -373,12 +373,12 @@ class P extends DomObject {
     init() {
         Object.assign(this.shape.style, {
             position: 'absolute',
-            top: this.p.y + 'px',
-            left: this.p.x + 'px',
             color: 'white',
             margin: '0',
             padding: '0'
         });
+        this.y = this.p.y;
+        this.x = this.p.x;
         this.text = document.createTextNode(this.stringVal);
         this.shape.appendChild(this.text);
         document.body.appendChild(this.shape)

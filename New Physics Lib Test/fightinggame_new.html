@@ -169,7 +169,7 @@
             img.shape.addEventListener('click', () => {
                 start_the_game(num);
             });
-            let name = new P(characters[num], screenx + (screenw / chosen_nums.length) * (i + .1) + 10, screeny + screenh / 1.5 - 10);
+            let name = new P(characters[num], screenx + (screenw / chosen_nums.length) * (i + .1) + 10, screeny + screenh / 1.5);
             if (name.shape.clientWidth > screenw / chosen_nums.length) {
                 name.string = characters[num].slice(0, 7) + '..'
             }
@@ -343,7 +343,7 @@
         //monster's movements
         if (PLAYING && !monster.dead) {
             if (Math.random() * 1000 < (HARDMODE ? 30 : 10)) {
-                if (!monsterisshooting) {
+                if (!monsterisshooting && !monster.isJumping) {
                     monster.powerUp(null, 2);
                 }
             }

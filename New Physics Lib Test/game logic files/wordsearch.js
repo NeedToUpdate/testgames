@@ -124,13 +124,11 @@ class WordSearch extends Matrix {
 
     init() {
         this.divsM.map((x, i, j) => {
-            let p = new P(this.cover_letters[i][j], this.startx + this.width * 0.025 + j * this.col_size, this.starty + i * this.row_size);
+            let p = new P(this.cover_letters[i][j], this.startx + this.width * 0.025 + j * this.col_size, this.starty + i * this.row_size).usingNewTransform();
             let fontsize = this.row_size < this.col_size ? this.row_size * 0.8 : this.col_size * 0.8;
             p.set('fontSize', fontsize + 'px');
-            p.set('color', 'white');
+            p.color = 'white';
             p.set('textShadow', 'white 1px 1px 1px 1px');
-            p.set('margin', 0);
-            p.set('padding', 0);
             p.set('zIndex', '100');
             p.set('display', 'none');
             return p;
@@ -276,13 +274,13 @@ function winLoop() {
         if(div.t>0){
             let [x,y] = [getSpiralX(div.t),getSpiralY(div.t)];
             let target = smoothPoints(div.x,div.y,x,y);
-            div.set('left', target.x);
-            div.set('top',target.y);
+            div.x = target.x;
+            div.y = target.y;
             div.t -= 0.15*Math.random();
             if(div.t<=0) div.t = 0;
         }else{
-            div.set('left', div.x + div.shootDir.x*10);
-            div.set('top', div.y + div.shootDir.y*10);
+            div.x = div.x + div.shootDir.x*10;
+            div.y = div.y + div.shootDir.y*10;
         }
         return div
     });
