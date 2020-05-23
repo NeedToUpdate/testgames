@@ -94,21 +94,7 @@ body{
     top: 0%;
     height: 25px;
 }
-#playerhp{
-    color: red;
-    position: absolute;
-    top: 50px;
-    font-size: 2em;
-    font-weight: bolder;
-}
-#enemyhp{
-    position: absolute;
-    color: red;
-    left: 500px;
-    font-size: 2em;
-    font-weight: bolder;
-    z-index: 10000;
-}
+
 .at_top{
     top: 0px;
 }

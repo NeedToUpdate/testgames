@@ -491,7 +491,7 @@ class LoadingBar extends DomObject{
     set value(val){
         this.currVal = val;
         let percent = (this.currVal-this.startVal)/(this.stopVal===0?1:this.stopVal);
-        this.setBar('width', this.w*percent + 'px');
+        this.setBar('width', (this.w-4)*percent + 'px');
 
         if(this.type === 'health') {
             if (percent > .5) {

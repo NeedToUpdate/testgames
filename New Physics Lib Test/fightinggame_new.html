@@ -14,8 +14,8 @@
 </head>
 
 <body>
-<p id="playerhp">10</p>
-<p id="enemyhp">10</p>
+<p style="position: absolute; font-size: 1em; top: 70px; left: 40px; color: deepskyblue; text-shadow: black 0 0 2px; font-weight: bolder" id="playerhp"></p>
+<p style="position: absolute;  font-size: 1em; top: 55px; left: 520px; color: deepskyblue; text-shadow: black 0 0 2px; font-weight: bolder" id="enemyhp"></p>
 <button id="jmpleft" class="bluebtn"><--</button>
 <!--<button id="hover" class="bluebtn">hover</button>-->
 <button id="jump" class="bluebtn">jump</button>
@@ -29,7 +29,7 @@
 
 
     let HARDMODE = false;
-    let NUM_OF_MONSTERS = 30;
+    let NUM_OF_MONSTERS = 46;
     let IMAGE_PATH = '../images/';
 
     let characters = [
@@ -40,7 +40,8 @@
         'elsa', 'ariel', 'deadfish', 'mrkrabs', 'thanos', 'pikachu', 'drstrange',
         'superman', 'genie', 'simba', 'captainmarvel', 'mewtwo', 'sailormoon', 'venom', 'thor',
         'ultraman2', 'ultraman3', 'olaf', 'hulk', 'gundam', 'optimus', 'snowwhite', 'deadpool',
-        'goku', 'ash', 'charizard', 'captainamerica', 'nakoruru'
+        'goku', 'ash', 'charizard', 'captainamerica', 'nakoruru', 'mario', 'emmet', 'wyldstyle',
+        'tree','link', 'isabelle', 'hellokitty', 'doraemon'
     ];
     let powers = [
         'blueenergy',
@@ -50,7 +51,8 @@
         'ice', 'water', 'nuke', 'water', 'blackenergy', 'electric', 'magic',
         'fire', 'magic', 'magic', 'electric', 'magic', 'pinkenergy', 'blackenergy', 'electric',
         'magic', 'electric', 'ice', 'rock', 'bluebeam', 'bullet', 'bluebeam', 'bullet',
-        'bluebeam', 'fire', 'fire', 'fire', 'fire'
+        'bluebeam', 'fire', 'fire', 'fire', 'fire', 'fire', 'legored', 'blackenergy',
+        'apple','blueenergy','water', 'pinkenergy', 'blueenergy'
     ];
 
 
@@ -81,6 +83,12 @@
         }
         if (char_name === 'nakoruru') {
             powr_name = 'mamahaha'
+        }
+        if (char_name === 'wyldstyle') {
+            powr_name = 'blacklego'
+        }
+        if (char_name === 'link') {
+            powr_name = 'zeldabomb'
         }
         return {num: chosennum, name: char_name, power: powr_name};
     }
@@ -138,7 +146,7 @@
 
         let images = [];
         let lines = [];
-        let text = new P('Choose Your Fighter', screenx + screenw / 4, screeny - 20);
+        let text = new P('Choose Your Fighter', screenx + screenw / 2.5, screeny +10).fromCenter();
         let names = [];
         text.shape.style.fontSize = '2em';
 
@@ -169,10 +177,12 @@
             img.shape.addEventListener('click', () => {
                 start_the_game(num);
             });
-            let name = new P(characters[num], screenx + (screenw / chosen_nums.length) * (i + .1) + 10, screeny + screenh / 1.5);
-            if (name.shape.clientWidth > screenw / chosen_nums.length) {
+            let name = new P(characters[num], screenx + (screenw / chosen_nums.length) * (i + .1) + 10, 5+ screeny + screenh / 1.5);
+            name.set('fontSize','1.5em');
+            if (name.width +20 > screenw / chosen_nums.length) {
                 name.string = characters[num].slice(0, 7) + '..'
             }
+            name.string = name.string.replace(name.string.charAt(0), name.string.charAt(0).toUpperCase());
             names.push(name);
             images.push(img);
         });
@@ -185,11 +195,17 @@
     let player;// = new Character(25, 100, player_char.name);
     let monster;// = new Character(width - 300, 100, monster_char.name);
     let projectiles = [];
-
+    let playerHP = {};
+    let monsterHP = {};
     function setup() {
+        id('playerhp').innerText = " player: "
+        id('enemyhp').innerText = "monster: "
         LOADED_IMAGES = new ImageLoader(IMAGE_PATH + 'projectiles/', ['fire', 'shield', monster_char.power + '_projectile', player_char.power + '_projectile']);
         player = new Character(100, 100, player_char.name);
         monster = new Character(width - 200, 100, monster_char.name);
+
+        playerHP = new LoadingBar(100,100,120,20,0,100,100).fromCenter();
+        monsterHP = new LoadingBar(width-400,100,120,20,0,100,100).fromCenter();
 
         player.powerType = player_char.power;
         player.hasNoSkyBox = true;
@@ -197,6 +213,8 @@
             player.addSprite(player_sprite);
             player.addDeathImage(LOADED_IMAGES['fire'].cloneNode());
             player.addShieldImage(LOADED_IMAGES['shield'].cloneNode());
+            player.maxbounds.y = (height+100)/2+ player.height/2;
+            monster.projectileOffsetHeight = -player.height/3;
         });
         player.landing_emitter.subscribe('land', () => {
             player.faceRight();
@@ -208,8 +226,8 @@
             monster.projectileOffsetHeight = 1;
             monster.addDeathImage(LOADED_IMAGES['fire'].cloneNode());
             monster.addShieldImage(LOADED_IMAGES['shield'].cloneNode());
-            monster.maxbounds.y = monster.height>height/1.9 ? height: height-100;
             if(monster.height>height) monster.width *=0.8;
+            monster.maxbounds.y = (height+100)/2+ monster.height/2;
         });
         monster.jumpMult = 20;
         monster.isJumping = true;
@@ -389,18 +407,25 @@
             }
         }
 
-        id('playerhp').innerText = " player: " + (player.health | 0 || 0);
-        id('enemyhp').innerText = "monster: " + (monster.health | 0 || 0);
 
-        if (player.dead) id('playerhp').innerText = " player: dead";
-        if (monster.dead) id('enemyhp').innerText = "monster: dead";
+        if(!monster.dead) playerHP.value = (player.health | 0 || 0);
+        if(!monster.dead) monsterHP.value = (monster.health | 0 || 0);
+
 
         if (monster.dead && HARDMODE) {
             monster_char = create_monster();
-            setTimeout(()=>{
+            monsterHP.value = 0;
+            setTimeout(()=> {
                 id('enemyhp').innerText = "DANGER";
+                let interval = setInterval(() => {
+                    monsterHP.value++;
+                    if (monsterHP.value >= 100) clearInterval(interval)
+                }, 20);
+            },1000);
+            setTimeout(()=>{
                 let sprite = new Img(IMAGE_PATH + monster_char.name + ".png", 0,0, 400).fromCenter().onLoad(()=>{
                     monster = new Character(width - 100, -1000, monster_char.name);
+                    id('enemyhp').innerText = "monster: ";
                     LOADED_IMAGES.add(monster_char.power + '_projectile');
                     monster.powerType = monster_char.power;
                     monster.hasNoSkyBox = true;
@@ -410,18 +435,17 @@
                     let g= new Vector(0,1);
                     g.constant = true;
                     monster.addForce(g);
-                    monster.maxbounds.y = monster.height>height/1.9 ? height: height-100;
                     if(monster.height>height) monster.width *=0.8;
+                    monster.maxbounds.y = (height+100)/2+ monster.height/2;
                     monster.addDeathImage(LOADED_IMAGES.fire.cloneNode());
                     monster.addShieldImage(LOADED_IMAGES.shield.cloneNode());
-                    monster.projectileOffsetHeight= 1;
+                    monster.projectileOffsetHeight= -10;
                     monster.landing_emitter.subscribe('land', () => {
                         monster.faceLeft();
                     });
-                    id('enemyhp').innerText = "monster: " + (monster.health | 0 || 0);
 
                 });
-            },2000);
+            },3000);
             HARDMODE = false;
 
 

@@ -159,10 +159,10 @@ class Character extends Blank{
                 } else {
                     attack.faceLeft();
                 }
-                attack.doHover();
                 let offsetHeight = this.projectileOffsetHeight || this.height/5 +  this.height/-2;
                 this.addAttachment(attack, this.isFacingRight? new Vector(this.width/3,offsetHeight) : new Vector(this.width/-3,offsetHeight));
-                
+                attack.doHover();
+
             });
          this.isPoweringUp = true;
         } else {
