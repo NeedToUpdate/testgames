@@ -54,7 +54,7 @@ function pos2xy(xpos, ypos, size) {
 
 function ind2xy(index) {
     let stack = 7;
-    let top = 0;//height * 0;
+    let top = height * 0.1;
     let left = width * (0.30 + dim[0] * 0.055);
     let y = index % stack;
     let x = index / stack | 0;
@@ -62,14 +62,14 @@ function ind2xy(index) {
     for (let i = x; i > 0; i--) { //get the longest word in the previous coloums and get the offsetLeft
         let last4 = wordarchive.slice((i - 1) * stack);
         let word = last4.reduce((a, b) => {
-            if (a.shape.offsetWidth > b.shape.offsetWidth) {
+            if (a.width > b.width) {
                 return a;
             } else {
                 return b;
             }
         });
         // let word = wordarchive[(i-1)*stack+y] //just get the word to the left
-        longest += word.shape.offsetWidth + 10;
+        longest += word.width + 10;
     }
     return [left + longest, top + y * 50]
 }
@@ -149,7 +149,7 @@ function clickHandler(string) {
             wordarchive[wordarchive.length - 1].shape.innerText = typedword;
             if (typedword.length > 7 && !wordarchive[wordarchive.length - 1].smaller) {
                 wordarchive[wordarchive.length - 1].set('font-size', '2.5em');
-                wordarchive[wordarchive.length - 1].mod('top', 10);
+                wordarchive[wordarchive.length - 1].y +=10;
                 wordarchive[wordarchive.length - 1].smaller = true;
             }
             if (currentWords.filter(x => typedword.match(x)).length > 0) {
@@ -213,12 +213,12 @@ function win() {
                     let prom = new Promise(resolve => {
                         for (let i = 0; i < charnum; i++) {
                             let char = new Character(420, 400, 'treasure' + (Math.random() * 7 | 0));
-                            char.bounds.y = 400;
+                            char.maxbounds.y = 400;
                             let img = new Img(IMAGE_PATH + char.name + '.png', 420, 400, 50);
                             img.onLoad(() => {
                                 requestAnimationFrame(() => {
                                     char.addSprite(img);
-
+                                    char.addForce(VECTORS.gravity)
                                     requestAnimationFrame(() => {
 
                                         chars.push(char);
@@ -226,7 +226,7 @@ function win() {
 
                                             chars.forEach(char => {
                                                 setTimeout(() => {
-                                                    char.a.add(new Vector(Math.random() * 40 - 20, Math.random() * 10 - 30));
+                                                    char.addForce(new Vector(Math.random() * 40 - 20, Math.random() * 10 - 30));
                                                 }, (3500 + 3000 * difficulty) * Math.random())
                                             });
                                             shotout = true;
@@ -255,11 +255,11 @@ async function cleanupkeypad() {
     //keypad lights wordarchive word lights lettersM
     return new Promise(resolve => {
         lettersM.map(x => {
-            x.correctkill();
+            x.kill();
             return x;
         });
         setTimeout(() => {
-            paper.destroy();
+            paper.remove();
             keypad.remove();
             lights.forEach(l => {
                 l.remove();
@@ -327,7 +327,7 @@ function setupkeypad() {
     let colors = ['darkred', 'darkgreen', 'darkgoldenrod', 'purple', 'darkblue', 'darkorange', 'darkcyan', 'darkslategray'];
     colors = colors.splice(Math.random() * colors.length | 0, 1);
     let size = 70 - dim[0] * 4;
-    paper = new Img(IMAGE_PATH + 'tornpaper.png', ind2xy(0)[0] - 90, ind2xy(0)[1] - 20, 600);
+    paper = new Img(IMAGE_PATH + 'tornpaper.png', ind2xy(0)[0] - 90, ind2xy(0)[1] - 60, 600);
     keypad = new Rectangle(pos2xy(0, 0, 0)[0] - 12, pos2xy(0, 0, 0)[1] - 32, dim[0] * (size + 20), dim[1] * (size + 20) + 50);
     keypad.set('backgroundImage', 'linear-gradient(to bottom right, ' +
         '#eee 0%, #aaa 10%, #ddd 14%, #fff 30%, #999 44%, #ddd 55%, #999 60%, #eee 85%, #ccc 100%' +
