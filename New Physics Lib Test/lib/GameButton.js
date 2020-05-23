@@ -67,7 +67,6 @@ class StaticGameButton extends GameButton {
         Object.assign(this.pDiv.shape.style, {
             color: 'transparent',
             textShadow: "rgba(255,255,255,0.5) 2px 2px 3px",
-            fontSize: "4em",
             fontWeight: "bold",
             margin: 0,
             position: "relative",
@@ -77,21 +76,7 @@ class StaticGameButton extends GameButton {
             "-webkit-background-clip": "text",
             backgroundColor: "blue"
         });
-        let [string, pos] = [this.string, this.pos];
-        this.div.shape.addEventListener('click', () => {
-            // this.div.set('border', '5px solid blue');
-            this.div.set('top', pos[1] + 2 + 'px');
-            this.div.set('left', pos[0] + 2 + 'px');
-            this.div.set('boxShadow', 'blue 0 0 0');
-            setTimeout(() => {
-                    //this.div.set('border', '5px solid black')
-                    this.div.set('top', pos[1] + 'px');
-                    this.div.set('left', pos[0] + 'px');
-                    this.div.set('boxShadow', "blue 1px 2px 2px")
-                }, 200
-            );
-            clickHandler(string, pos);
-        });
+
         this.addSprite(this.div)
     }
 }

@@ -182,7 +182,7 @@ class Character extends Blank{
 
     shoot(power) {
         power = power || this.powerType;
-        if (this.isPoweringUp) {
+        if (this.isPoweringUp && this.attachments[power]) {
             let atk = this.detachAttachment(power);
             atk.forces.push(new Vector(this.isFacingRight?10:-10,0));
             this.isPoweringUp = false;
@@ -226,7 +226,7 @@ class Character extends Blank{
     }
 
     doLand(){
-        if (this.isJumping && this.p.y + this.h/2 >= this.maxbounds.y) {
+        if (this.isJumping && this.p.y + this.height/2 >= this.maxbounds.y) {
             this.landing_emitter.emit('land')
         }
     }

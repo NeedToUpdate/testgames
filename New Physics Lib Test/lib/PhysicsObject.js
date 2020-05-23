@@ -117,8 +117,8 @@ class Blank {
     }
 
     set angle(val) {
-        this.theta = parseInt(val)
-        if(this.hasSprite) this.sprite.rotateTo(val)
+        this.theta = parseInt(val);
+        //if(this.hasSprite) this.sprite.rotateTo(val)
     }
 
     get hasSprite() {
@@ -176,10 +176,12 @@ class Blank {
         if(!offset) offset = new Vector(0,0);
         thing.p = this.p.copy().add(offset);
         thing.attachment_offset = offset.copy();
-        if(this.hasSprite && thing.hasSprite){
+        if(this.hasSprite && thing.hasSprite && this.sprite.type !== 'img'){
             thing.sprite.moveTo(offset.copy().add(new Vector(this.w/2,this.h/2)));
             this.sprite.attach(thing.sprite);
             thing.isDrawn = false;
+        }else if(this.hasSprite && thing.hasSprite && this.sprite.type === 'img'){
+            thing.sprite.moveTo(offset.copy().add(new Vector(this.w/2,this.h/2)));
         }
         this.attachments[thing.name] = thing;
         return thing;
@@ -201,14 +203,15 @@ class Blank {
         if(this.attachmentList.includes(name)){
             let thing = this.attachments[name];
             thing.isDrawn = this.isDrawn;
-            thing.p = this.p.copy()
+            thing.p = this.p.copy();
             thing.attachment_offset = null;
             let sprite = thing.sprite.detachSelf();
-            this.sprite.detach(thing.sprite);
+            if(this.sprite.type !== 'img') this.sprite.detach(thing.sprite);
             DomObject.attach(sprite);
             delete this.attachments[name];
             return thing;
         }else{
+            console.error(this.name + ' can\'t detach a ' + name)
             return undefined;
         }
     }
@@ -262,6 +265,7 @@ class Blank {
             this.attachmentList.forEach(name=>{
                 let thing = this.attachments[name];
                 thing.p.add(this.p.copy().sub(this.old_p));
+                thing.angle = this.angle;
                 thing.update();
             })
         }
@@ -270,8 +274,7 @@ class Blank {
     draw() {
         if (!this.hasSprite) return;
         this.sprite.moveTo(this.p);
-        //no need to do this, DOM will handle it
-        //this.sprite.rotateTo(this.theta);
+        this.sprite.rotateTo(this.theta);
     }
 
     dynamicFrictionCheck() {
