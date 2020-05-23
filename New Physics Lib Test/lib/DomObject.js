@@ -186,12 +186,12 @@ class DomObject {
         switch(this.type){
             case 'line':
                 //this.b.sub(new Vector(-thickness,-thickness));
-                this.mod('width', -thickness*2);
+                this.width -= thickness*2;
                 break;
             case 'rectangle':
             case 'circle':
-                this.mod('width', -thickness*2);
-                this.mod('height', -thickness*2);
+                this.width -= thickness*2;
+                this.height -= thickness*2;
                 break;
         }
         return this;

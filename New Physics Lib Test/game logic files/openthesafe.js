@@ -45,23 +45,23 @@ function findClosestSquare(num) {
     return [w, h, h * w - num];
 }
 
-function pos2xy(xpos, ypos, size) {
-    console.log(size)
-    let top = height * 0.1;
-    let left = width * 0.1;
-    return [left + (size/1.5) + xpos * (size + 15), top + 30 + (size/1.5) + ypos  * (size + 15)]
+function pos2xy(xpos, ypos, size,padding) {
+    let top = height * 0.2;
+    let left = width * 0.05;
+    padding = padding || 15;
+    return [left + xpos * (size + padding), top + ypos  * (size + padding)]
 }
 
 function ind2xy(index) {
-    let stack = 7;
-    let top = height * 0.1;
-    let left = width * (0.30 + dim[0] * 0.055);
+    let stack = 8;
+    let top = paper.y  + paper.height*0.15;
+    let left = paper.x + paper.width*0.1;
     let y = index % stack;
     let x = index / stack | 0;
     let longest = 0;
     for (let i = x; i > 0; i--) { //get the longest word in the previous coloums and get the offsetLeft
-        let last4 = wordarchive.slice((i - 1) * stack);
-        let word = last4.reduce((a, b) => {
+        let lastCol = wordarchive.slice((i - 1) * stack,(i) * stack );
+        let word = lastCol.reduce((a, b) => {
             if (a.width > b.width) {
                 return a;
             } else {
@@ -69,9 +69,11 @@ function ind2xy(index) {
             }
         });
         // let word = wordarchive[(i-1)*stack+y] //just get the word to the left
-        longest += word.width + 10;
+        longest += word.width + 5;
     }
-    return [left + longest, top + y * 50]
+    let yOffset = top;
+    yOffset = y===0? top: wordarchive[(index-1)].height + wordarchive[index-1].y +5;
+    return [left + longest,yOffset]
 }
 
 let currentWords = [];
@@ -92,7 +94,7 @@ function clickHandler(string) {
             typedword += string;
             let xy = ind2xy(wordarchive.length);
             let newword = new P(string, xy[0], xy[1]);
-            newword.set('font-size', '3em');
+            newword.set('font-size', '2em');
             newword.set('textShadow', 'blue 1px 1px 2px');
             newword.set('fontFamily', 'quikhand');
             newword.set('color', 'darkblue');
@@ -148,9 +150,12 @@ function clickHandler(string) {
             currentWords = tempwords;
             wordarchive[wordarchive.length - 1].shape.innerText = typedword;
             if (typedword.length > 7 && !wordarchive[wordarchive.length - 1].smaller) {
-                wordarchive[wordarchive.length - 1].set('font-size', '2.5em');
-                wordarchive[wordarchive.length - 1].y +=10;
+                wordarchive[wordarchive.length - 1].set('font-size', '1.5em');
                 wordarchive[wordarchive.length - 1].smaller = true;
+            }
+            if (typedword.length > 15 && !wordarchive[wordarchive.length - 1].supersmall) {
+                wordarchive[wordarchive.length - 1].set('font-size', '1em');
+                wordarchive[wordarchive.length - 1].supersmall = true;
             }
             if (currentWords.filter(x => typedword.match(x)).length > 0) {
                 //winner
@@ -209,28 +214,28 @@ function win() {
                     id('safeimg').style.animationDirection = 'reverse';
                     id('safeimg').style.animationDuration = '4s';
                     id('safeimg').style.zIndex = '10000';
-                    let charnum = 5 + difficulty * 65;
+                    let charnum = 25 + difficulty * 50;
+                    safe.x = 420;
+                    safe.y = 390;
                     let prom = new Promise(resolve => {
                         for (let i = 0; i < charnum; i++) {
                             let char = new Character(420, 400, 'treasure' + (Math.random() * 7 | 0));
                             char.maxbounds.y = 400;
-                            let img = new Img(IMAGE_PATH + char.name + '.png', 420, 400, 50);
+                            char.hasBounce = true;
+                            char.bounce_coeff = 1;
+                            let img = new Img(IMAGE_PATH + char.name + '.png', 420, 400, 50).fromCenter().usingNewTransform();
                             img.onLoad(() => {
                                 requestAnimationFrame(() => {
                                     char.addSprite(img);
-                                    char.addForce(VECTORS.gravity)
+                                    char.addForce(VECTORS.gravity);
                                     requestAnimationFrame(() => {
-
                                         chars.push(char);
                                         if (charnum === chars.length) {
-
                                             chars.forEach(char => {
                                                 setTimeout(() => {
                                                     char.addForce(new Vector(Math.random() * 40 - 20, Math.random() * 10 - 30));
                                                 }, (3500 + 3000 * difficulty) * Math.random())
                                             });
-                                            shotout = true;
-
                                             resolve()
 
                                         }
@@ -290,7 +295,7 @@ let keypad = {};
 let lights = [];
 let wordlights = [];
 let paper = {};
-
+let safe = {};
 function setupkeypad() {
     letterCount = getLetterCount(words);
     allLetters = shuffle(getAllLetters(words));
@@ -326,36 +331,42 @@ function setupkeypad() {
     }
     let colors = ['darkred', 'darkgreen', 'darkgoldenrod', 'purple', 'darkblue', 'darkorange', 'darkcyan', 'darkslategray'];
     colors = colors.splice(Math.random() * colors.length | 0, 1);
-    let size = 70 - dim[0] * 4;
-    paper = new Img(IMAGE_PATH + 'tornpaper.png', ind2xy(0)[0] - 90, ind2xy(0)[1] - 60, 600);
-    keypad = new Rectangle(pos2xy(0, 0, 0)[0] - 12, pos2xy(0, 0, 0)[1] - 32, dim[0] * (size + 20), dim[1] * (size + 20) + 50);
+    let size = 70 - dim[0] * 4 +8;
+    let padding = 8;
+
+
+    keypad = new Rectangle(pos2xy(0, 0, size,padding)[0] -padding, pos2xy(0, 0, size,padding)[1] - 25, dim[0] * (size + padding) + padding*2, dim[1] * (size + padding) +65)//.asOutline('darkgrey',4);
+    keypad.border = 'darkgrey solid 4px ';
     keypad.set('backgroundImage', 'linear-gradient(to bottom right, ' +
         '#eee 0%, #aaa 10%, #ddd 14%, #fff 30%, #999 44%, #ddd 55%, #999 60%, #eee 85%, #ccc 100%' +
         ')');
     keypad.set('borderRadius', '10px');
-    keypad.set('border', 'darkgrey 4px solid');
+    paper = new Img(IMAGE_PATH + 'tornpaper.png', keypad.x+ keypad.width + padding*2, -16, 600);
     lights = new Array(3).fill('').map((x, i) => {
-        let l = new Circle(pos2xy(0, 0, 0)[0] + dim[0] * (size + 20) / 2 - 30 + 20 * i, pos2xy(0, 0, 0)[1] - 15, 5);
+        let l = new Circle(pos2xy(0, 0, 0)[0] + dim[0] * (size + padding) / 2 +padding - 20 + 20*i, pos2xy(0, 0, 0)[1] - 8, 5);
         l.set('backgroundImage', 'radial-gradient(#0f0 0%, #0b0 100%)');
         l.set('boxShadow', 'rgba(0,255,0,0.3) 0px 0px 2px 2px');
         return l
     });
     wordlights = new Array(words.length).fill('').map((x, i) => {
-        let l = new Circle(pos2xy(0, 0, 0)[0] + dim[0] * (size + 20) / 2 - (14 * words.length / 2) + i * 14, pos2xy(0, dim[1], size)[1] - 15, 5);
+        let l = new Circle(pos2xy(0, 0, 0)[0] + dim[0] * (size + padding) / 2 +padding - (14 * words.length / 2)+7 + i * 14, pos2xy(0, dim[1], size)[1], 5);
         l.set('backgroundImage', 'radial-gradient(#544 0%, #655 100%)');
         l.set('boxShadow', 'rgba(0,0,0,0.3) 0px 0px 2px 2px');
         return l
     });
     lettersM.map((x, i, j) => {
-        let [xx, yy] = pos2xy(i, j, size);
-        let p = new StaticGameButton(allLetters[i * dim[1] + j], xx, yy);
-        p.sprite.width = size;
-        p.sprite.height = size;
+        let [xx, yy] = pos2xy(i,j, size,padding);
+        let p = new StaticGameButton(allLetters[i * dim[1] + j], 0,0);
+        //p.sprite.asOutline('lightgrey',4)
+        p.sprite.width = size-8;
+        p.sprite.height = size-8;
+        p.x = xx +size/2 + padding;
+        p.y = yy +size/2 + padding;
         p.pDiv.set('fontSize', (size*0.8 | 0 )+ 'px');
         p.sprite.set('backgroundImage', 'linear-gradient(to bottom right, ' +
             '#eee 0%, #e1e1e1 10%, #ddd 14%, #fff 30%, #ddd 60%, #eee 85%, #ccc 100%' +
             ')');
-        p.sprite.set('font-size', '3em');
+        //p.sprite.set('font-size', '3em');
         p.sprite.set('backgroundColor', getRandom(colors));
 
         let [string, pos] = [p.string, p.pos];
@@ -371,7 +382,6 @@ function setupkeypad() {
                     p.div.set('boxShadow', "blue 1px 2px 2px")
                 }, 200
             );
-            console.log(string,pos)
             clickHandler(string, pos);
         });
 
@@ -428,7 +438,6 @@ function introMovie() {
                             burglar.faceLeft();
                             burglar.update();
                         })
-                        console.log(burglars)
                     })
                 }
             });
@@ -479,7 +488,6 @@ function introMovie() {
     empty.addDeathImage(LOADED_IMAGES.fire.cloneNode());
     let movieending = false;
     let hole = {};
-    let safe = {};
     let playending = false;
     let things_to_update = [];
     function movieloop(now) {
@@ -520,7 +528,8 @@ function introMovie() {
             empty.kill();
             burglars.forEach(burglar => {
                 if (Math.random() < 0.6) {
-                    burglar.jumpFwd(-2);
+                    burglar.addForce(Vector.fromAngle(getRandom(30,70)).set(40));
+                    burglar.isJumping = true;
                     burglar.doSpin(720, 30);
                 }
             });
@@ -569,15 +578,14 @@ function introMovie() {
         document.body.style.animationName = 'zoombg';
         document.body.style.animationDuration = '3s';
         setTimeout(() => {
-                safe = new Character(150, 200, 'safe');
-                let safeimg = new Img(LOADED_IMAGES.safe.cloneNode(), 150, 200, 200).fromCenter().onLoad(() => {
+                safe = new Character(200, 200, 'safe');
+                let safeimg = new Img(LOADED_IMAGES.safe.cloneNode(),0,0, 200).fromCenter().onLoad(() => {
                     safe.addSprite(safeimg);
                     safe.maxbounds.y = 380;
                     safe.addForce(VECTORS.gravity);
                     safe.jumpFwd(3);
                     safeimg.shape.setAttribute("id", 'safeimg');
                     animateSafe();
-                    console.log(safe);
                     safe.landing_emitter.subscribe('land', () => {
                         hole.shape.style.animationName = 'fadeOut';
                         bank.shape.style.animationName = 'fadeOut';

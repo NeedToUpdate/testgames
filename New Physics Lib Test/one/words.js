@@ -25,10 +25,10 @@
 //let words = ['stones','bones','sticks','quill','ink','brush','pencil','pen','marker','crayon'];
 //words = words.concat(['hat','cap','sunglasses','tie','bowtie','scarf','belt','socks','jacket','coat','vest','suit','sweater','sweatshirt','shirt','jeans','shorts','sweatpants','skirt','sandals','sneakers','flats','heels','slippers','boots'])
 
-let words = ['mirror','lamp','laptop','wardrobe','chair','rug','football','alarm clock','picture','bed'];
+//let words = ['mirror','lamp','laptop','wardrobe','chair','rug','football','alarm clock','picture','bed'];
 
 //===========ESL1=================
-//let words = ['car','robot','doll','bike','teddy bear'];
+let words = ['car','robot','doll','bike','teddy bear'];
 //let words = ['freshwater','people','animal','ocean','salt','melting','insect','river','lake','mountain',]
 //let words = ['festival','harvest','leaves','crops','mooncake','dragon','meal','celebrate']
 //let words = ['fresh','fruit','vegetables','snack','meal','sports','wash','prepare','sick','important','exercise','hygiene','sleep']

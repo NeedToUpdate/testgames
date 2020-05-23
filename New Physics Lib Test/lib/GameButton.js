@@ -60,9 +60,9 @@ class StaticGameButton extends GameButton {
             border: "5px solid darkgrey",
             borderRadius: "10px",
             boxShadow: "blue 1px 2px 2px",
-            top: this.pos[1] + 'px',
-            left: this.pos[0] + 'px'
         });
+        this.x = this.pos[0];
+        this.y = this.pos[1];
 
         Object.assign(this.pDiv.shape.style, {
             color: 'transparent',
