@@ -146,8 +146,28 @@ function shoot() {
 let rescuedletters = '';
 let rescued_num = 0;
 
+function countHoveringAliens(){
+    return aliens.reduce((a,b)=>a+(b.isDoingHover?1:0),0);
+}
+
 function loop() {
     selectedgun.update();
+    if(Math.random()<0.01 && countHoveringAliens() === aliens.length && aliens.length>2){
+        let randoms = shuffle(aliens).slice(0,3);
+        let randomBlds = [];
+        randoms.forEach((alien,i)=>{
+            randomBlds.push(alien.bld);
+            alien.stopHover();
+            alien.doFlyTo(Vector.random(width,height*0.5)).then(()=>{
+                alien.bld = randomBlds[(i+1)%3];
+                alien.doFlyTo(alien.bld.p.copy().add(new Vector(alien.bld.width/2,alien.bld.height/-2))).then(()=>{
+                    alien.doHover();
+                });
+
+
+            })
+        })
+    }
     for (let i = things_to_update.length - 1; i >= 0; i--) {
         things_to_update[i].update();
         if (things_to_update[i].dead) {
@@ -166,8 +186,11 @@ function loop() {
             aliens.splice(i, 1);
             continue;
         }
+
+
+
         for (let j = bullets.length - 1; j >= 0; j--) {
-            if (!bullets[j].dead && aliens[i].hitbox.contains(bullets[j].hitbox)) {
+            if (!bullets[j].dead && aliens[i].hasHitbox && bullets[j].hasHitbox && aliens[i].hitbox.contains(bullets[j].hitbox)) {
                 if (aliens[i].attachmentList.length > 1) {
                     //if the alien is holding something, then kill it and deal with the letter
                     let letter = aliens[i].detachAttachment(aliens[i].attachmentList[1]);//is the actual letter Character object
@@ -209,7 +232,10 @@ function loop() {
         }
 
     }
-    if (chosenletters + (GRAMMAR_MODE ? ' ' : '') === rescuedletters) {
+    if (chosenletters === rescuedletters) {
+        allletters.forEach(x => {
+            x.sprite.color = 'limegreen'
+        })
         win();
     }
     if (LOOPING) requestAnimationFrame(loop)
@@ -217,26 +243,31 @@ function loop() {
 };
 
 function win() {
-    allletters.forEach(x => {
-        x.color = 'limegreen'
+    buildings.forEach(bld=>{
+        bld.y-=Math.random()*5;
     })
 }
 
 function lose() {
     let promises = [];
     aliens.forEach(alien => {
-        alien.stopHover();
-        promises.push(
-            new Promise((resolve) => {
-                alien.doFlyTo(new Vector(selectedgun.p)).then(() => {
-                    alien.kill();
-                    resolve();
+        if(alien.isDoingHover){
+            alien.stopHover();
+            promises.push(
+                new Promise((resolve) => {
+                    alien.doFlyTo(new Vector(selectedgun.p)).then(() => {
+                        alien.kill();
+                        resolve();
+                    })
                 })
-            })
-        )
+            )
+        }
     });
     Promise.all(promises).then(() => {
         selectedgun.kill();
+        allletters.forEach(x=>{
+            x.sprite.color = 'red';
+        })
     })
 }
 
@@ -244,6 +275,7 @@ let allletters = [];
 let chosenletters = '';
 let splitletters = [];
 let things_to_update = [];
+
 
 function createAlien(target) {
     let alien = new Flyer(10, 100, 'invader' + getRandom(invadercolors));

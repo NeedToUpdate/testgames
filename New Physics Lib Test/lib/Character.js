@@ -62,17 +62,18 @@ class Character extends Blank{
         }
     }
 
-    async sparHop() {
+    async sparHop(val) {
         if (this.dead) return;
+        val = val || 1;
         return new Promise(resolve => {
             if (!this.isJumping) {
-                this.jumpFwd(.5);
+                this.jumpFwd(.5*val);
                 let unsub = this.landing_emitter.subscribe('land', () => {
                     let unsub2 = this.landing_emitter.subscribe('land', () => {
                         unsub2();
                     });
                     unsub();
-                    this.jumpFwd(-.5);
+                    this.jumpFwd(-.5*val);
                     resolve();
                 })
             }

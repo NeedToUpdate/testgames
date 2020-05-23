@@ -199,8 +199,8 @@ function clickHandler(string, pos) {
     let currentLine = lines[final_word.length];
     let temp_p = new P(string, currentLine.x, currentLine.y).setColor('white');
     temp_p.set('fontSize', '4em');
-    temp_p.x += 25
-    temp_p.y -= (temp_p.height) / 3;
+    temp_p.x += temp_p.width/3;
+    temp_p.y -= (temp_p.height)-14;
     let temp = final_word + string;
     if (chosen.startsWith(temp)) {
         //CORRECT
