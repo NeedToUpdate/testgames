@@ -27,7 +27,7 @@ let promises = letters.map((letter, i) => {
         setTimeout(() => {
             let par = {};
             if (letter !== " ") {
-                par = new P(letter, Math.random() * (width - 100), Math.random() * 100);
+                par = new P(letter, Math.random() * (width - 200) + 100, Math.random() * 100);
                 par.set('color', 'white');
                 par.set('text-shadow', 'black 2px 2px 2px');
                 par.set('font-size', (GRAMMAR_MODE ? (width < 400 ? 2 : 3) : (width < 400 ? 3 : 5) )+ 'em');
@@ -278,7 +278,7 @@ function reset(letter) {
             letter.locked = false;
             setTimeout(() => {
                 letter.y = Math.random() * 100;
-                letter.x = Math.random() * (width - 100) +100;
+                letter.x = Math.random() * (width - 200) +100;
                 letter.set('color', 'white');
                 letter.resetting = false;
             }, 400)

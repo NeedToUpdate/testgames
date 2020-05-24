@@ -145,7 +145,7 @@ class Blank {
     createHitbox(){
         if(!this.hasSprite) return;
         if (this.sprite.isRectangle) {
-            this.hitbox = new Hitbox(this.p.x, this.p.y, this.sprite.width, this.sprite.height, true).fromCenter();
+            this.hitbox = new Hitbox(this.p.x, this.p.y, this.sprite.width, this.sprite.height).fromCenter();
         } else {
             this.hitbox = new Hitbox(this.p.x, this.p.y, this.sprite.width / 2,true);
         }
@@ -256,7 +256,7 @@ class Blank {
         });
 
 
-        if (this.hasHitbox) {
+        if (this.hasHitbox) { //TODO maybe move to x and y setters?
             this.hitbox.moveTo(this.p.copy());
             this.hitbox.angle = this.angle;
         }
