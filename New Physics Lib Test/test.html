@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
-    <script language="javascript" type="text/javascript" src="../lib/drawbase.js"></script>
-    <script language="javascript" type="text/javascript" src="../lib/vector.js"></script>
-    <script language="javascript" type="text/javascript" src="../lib/eventemitter.js"></script>
-    <script language="javascript" type="text/javascript" src="../lib/collisioncontainer.js"></script>
+    <script language="javascript" type="text/javascript" src="lib/vector.js"></script>
+    <script language="javascript" type="text/javascript" src="lib/drawbase.js"></script>
+    <script language="javascript" type="text/javascript" src="lib/eventemitter.js"></script>
+    <script language="javascript" type="text/javascript" src="lib/collisioncontainer.js"></script>
     <script language="javascript" type="text/javascript" src="lib/DomObject.js"></script>
     <script language="javascript" type="text/javascript" src="lib/PhysicsObject.js"></script>
     <script language="javascript" type="text/javascript" src="lib/Character.js"></script>
@@ -16,15 +16,28 @@
 <script>
     LOOPING = true;
     let player;
-    function setup() {
-        // setBackground('black')
+   for(let i=0; i<10;i++){
+       for(let j=0; j<5;j++){
+           new Div(i*100,j*100).asOutline('blue')
+       }
+   }
+    let a = new Flyer(100,100,'tester');
+    let sprite = new Img('../images/deadpool.png', 100, 100, 50).usingNewTransform().fromCenter().onLoad(x=>{
+        a.addSprite(sprite);
+    });
+    THINGS_TO_UPDATE = [];
 
-        player = new Character(25, 100, 'spiderman');
+   function gimme() {
+       console.log(a.get('transformOrigin'),a.get('transform'))
+   }
 
-        THINGS_TO_UPDATE.push();
+    function cos(val){
+        return Math.cos(val * (Math.PI / 180));
+    }
+    function sin(val){
+        return Math.sin(val * (Math.PI / 180));
     }
 
-    THINGS_TO_UPDATE = [];
 
     function loop() {
         for (let i = THINGS_TO_UPDATE.length - 1; i >= 0; i--) {
@@ -47,9 +60,6 @@
         if (LOOPING) requestAnimationFrame(loop)
     }
 
-    setup().then(() => {
-        loop()
-    })
 </script>
 <script>
 

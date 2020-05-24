@@ -14,7 +14,7 @@ class Hitbox {
         this.b = new Vector(x, this.y2);
         this.c = new Vector(this.x2, this.y2);
         this.d = new Vector(this.x2, y);
-        this.angle = this.getAngle();
+        this.theta = 0;
         this.config = {
             rotation: 'custom'
             //can be bottom, left, right, xy, center
@@ -58,8 +58,12 @@ class Hitbox {
         }
     }
 
-    getAngle(rads) {
-        return this.a.copy().sub(this.b).getAngle(rads)
+    get angle() {
+        return this.theta;
+    }
+    set angle(val){
+        this.rotateTo(val)
+        this.theta = val;
     }
 
     modHeight(val) {
@@ -79,10 +83,28 @@ class Hitbox {
     contains(target) {
         if(this.isRectangle){//if this is a rectangle
             if (target instanceof Hitbox) {//and the target is a Hitbox class, deal with the target being a cicrle or a rectabgle
-                if(target.isRectangle) return this.a.x < target.d.x && this.d.x > target.a.x && this.a.y < target.b.y && this.b.y > target.a.y;
-                return (this.a.y - target.radius < target.a.y) || (this.a.x - target.radius < target.a.x) || (this.c.y + target.radius > target.a.y) || (this.c.x + target.radius > target.a.x)
-            } else {
-                let p = new Vector(target.x, target.y);
+                //if both are at 0 rotation
+                if(this.angle === 0 && target.angle === 0){
+                    if(target.isRectangle) {
+                        console.log(this.a.x>target.d.x , this.d.x<target.a.x , this.b.y < target.a.y , this.a.y>target.b.y);
+                        return !(this.a.x>target.d.x || this.d.x<target.a.x || this.b.y < target.a.y || this.a.y>target.b.y);
+                    }
+                    return (this.a.y - target.radius <= target.a.y) || (this.a.x - target.radius <= target.a.x) || (this.c.y + target.radius >= target.a.y) || (this.c.x + target.radius >= target.a.x)
+                }else{
+                    //TODO probably can be optimized
+                    let labels = 'abcd'.split('');
+                    //check if any of the target's points are inside of this hitbox
+                    for(let i =0; i<4; i++){
+                        if(this.contains(target[labels[i]])) return true;
+                    }//check if any of this hitbox's points are inside target's hitbox
+                    for(let i =0; i<4; i++){
+                        if(target.contains(this[labels[i]])) return true;
+                    }
+                    return false
+                }
+            } else { //if target is a point or object with an x.y
+                let p = target;
+                if(!(p instanceof Vector)) p = new Vector(target.x, target.y);
                 let AB = this.b.copy().sub(this.a);
                 let AP = p.copy().sub(this.a);
                 let BC = this.c.copy().sub(this.b);
@@ -109,14 +131,13 @@ class Hitbox {
     rotateTo(r, rx, ry) {
         let nr = r - this.angle;
         return this.rotate(nr, rx, ry)
-
     }
 
     rotate(r, rx, ry) {
+        if(r === 0) return this;
         let cx = 0;
         let cy = 0;
         //deal with rads
-        this.angle += r;
         switch (this.config.rotation) {
             case 'center':
                 cx = (this.x + this.x2) / 2;

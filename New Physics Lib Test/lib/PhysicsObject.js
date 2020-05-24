@@ -134,11 +134,7 @@ class Blank {
         if (image instanceof DomObject) {
             this.sprite = image;
             this.sprite.moveTo(this.p);
-            if (this.sprite.isRectangle) {
-                this.hitbox = new Hitbox(this.p.x, this.p.y, this.sprite.width, this.sprite.height).fromCenter();
-            } else {
-                this.hitbox = new Hitbox(this.p.x, this.p.y, this.sprite.width / 2,true);
-            }
+            this.createHitbox();
             this.h = this.sprite.height;
             this.w = this.sprite.width;
         } else {
@@ -147,7 +143,13 @@ class Blank {
         return this;
     }
     createHitbox(){
-
+        if(!this.hasSprite) return;
+        if (this.sprite.isRectangle) {
+            this.hitbox = new Hitbox(this.p.x, this.p.y, this.sprite.width, this.sprite.height, true).fromCenter();
+        } else {
+            this.hitbox = new Hitbox(this.p.x, this.p.y, this.sprite.width / 2,true);
+        }
+        return this.hitbox
     }
 
 
@@ -256,7 +258,7 @@ class Blank {
 
         if (this.hasHitbox) {
             this.hitbox.moveTo(this.p.copy());
-            this.hitbox.rotateTo(this.theta)
+            this.hitbox.angle = this.angle;
         }
         this.handleBounds();
         if (this.isDrawn) this.draw();

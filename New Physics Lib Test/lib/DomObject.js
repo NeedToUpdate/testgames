@@ -21,6 +21,7 @@ class DomObject {
         this.attachments = {};
         this.isfromCenter = false;
         this.USING_NEW_TRANSFORM = false;
+        this.isFlipped = false;
     }
 
     init(){
@@ -40,7 +41,10 @@ class DomObject {
         }else{
             val = this.shape.style.left || this.p.x;
         }
-        return val !== null? parseInt(val)  + (this.isfromCenter? this.width/2 : 0) : this.p.x
+        if(this.isFlipped  && this.USING_NEW_TRANSFORM && val !== null){
+            val = parseInt(val)*3 + this.width;
+        }
+        return (val !== null? parseInt(val)  + (this.isfromCenter? this.width/2 : 0) : this.p.x) //* (this.isFlipped && this.USING_NEW_TRANSFORM? 2 :1)
     }
 
     set x(val) {
@@ -48,10 +52,11 @@ class DomObject {
         val = val - ((this.isRectangle&&!this.isfromCenter) ? 0 : this.width/2);
         if(this.USING_NEW_TRANSFORM){
             let value =  this.shape.style.transform;
+            if(this.isFlipped) val = (val + this.width)/3;
             value.match(/translateX\(-?\d+\.?\d*px\)/g) !== null ?
                 (this.shape.style.transform = value.replace(/translateX\(-?\d+\.?\d*px\)/g, 'translateX(' + val + 'px)') ):
                 (this.shape.style.transform += ' translateX(' + val + 'px)');
-            this.shape.style.transformOrigin = this.x + 'px ' + this.y + 'px'
+            this.shape.style.transformOrigin = val + 'px ' + this.y + 'px'
         }else{
             this.set('left', val  + 'px')
         }
@@ -78,7 +83,7 @@ class DomObject {
             value.match(/translateY\(-?\d+\.?\d*px\)/g) !== null ?
                 this.shape.style.transform = value.replace(/translateY\(-?\d+\.?\d*px\)/g, 'translateY(' + val + 'px)') :
                 this.shape.style.transform += ' translateY(' + val + 'px)';
-            this.shape.style.transformOrigin = this.x + 'px ' + this.y + 'px'
+            this.shape.style.transformOrigin = this.x + 'px ' + val + 'px'
         }else{
             this.set('top', val + 'px');
         }
@@ -250,13 +255,23 @@ class DomObject {
     flip(dir){
         let current_dir = '';
         let flipped = this.get('transform');
-        if(flipped.includes('scaleX(-1)')){
+        let x = this.p.x;
+        if(this.isFlipped || flipped.includes('scaleX(-1)')){
             current_dir = 'left';
+            this.isFlipped = true;
         }else{
             current_dir = 'right';
+            this.isFlipped = false;
         }
         if(dir === current_dir) return;
-        current_dir === 'right'? this.shape.style.transform += ' scaleX(-1)' : this.shape.style.transform = this.shape.style.transform.replace('scaleX(-1)', '');
+        if(current_dir === 'right'){
+            this.isFlipped = true;
+            this.shape.style.transform += ' scaleX(-1)';
+        }else{
+            this.isFlipped = false;
+            this.shape.style.transform = this.shape.style.transform.replace('scaleX(-1)', '');
+        }
+        this.x =x
     }
 }
 

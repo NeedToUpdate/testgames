@@ -32,8 +32,6 @@ let promises = letters.map((letter, i) => {
                 par.set('text-shadow', 'black 2px 2px 2px');
                 par.set('font-size', (GRAMMAR_MODE ? (width < 400 ? 2 : 3) : (width < 400 ? 3 : 5) )+ 'em');
                 par.set('z-index', 5);
-                par.set('padding', 0);
-                par.set('margin', 0);
                 par.shape.addEventListener('mousedown', (ev) => {
                     if (!par.locked) {
                         dropAll();
@@ -114,8 +112,8 @@ let dragging_offset = new Vector(0, 0);
 function drag(ev) {
     ps.forEach(x => {
         if (x.dragging) {
-            x.set('top', (ev.clientY - x.shape.offsetHeight / 2) + 'px');
-            x.set('left', (ev.clientX - x.shape.offsetWidth / 2) + 'px');
+            x.y = (ev.clientY - x.shape.offsetHeight / 2);
+            x.x = (ev.clientX - x.shape.offsetWidth / 2);
         }
     })
 }
@@ -123,8 +121,8 @@ function drag(ev) {
 function pickup(letter, ev) {
     if (!letter.locked && !letter.resetting) {
         letter.set('color', 'blue');
-        letter.set('top', (ev.clientY - letter.shape.offsetHeight / 2) + 'px');
-        letter.set('left', (ev.clientX - letter.shape.offsetWidth / 2) + 'px');
+        letter.y = (ev.clientY - letter.shape.offsetHeight / 2);
+        letter.x = (ev.clientX - letter.shape.offsetWidth / 2);
         letter.dragging = true;
     }
 }
@@ -212,9 +210,7 @@ function generateObstacles(mode) {
                 });
                 mon.maxbounds.x = width;
                 mon.maxbounds.y = height - 100;
-                let g = new Vector(0, 1);
-                g.constant = true;
-                mon.forces.push(g);
+                mon.forces.push(VECTORS.gravity);
                 monsters.push(mon)
             }
             break;
@@ -281,8 +277,8 @@ function reset(letter) {
             letter.resetting = true;
             letter.locked = false;
             setTimeout(() => {
-                letter.set('top', Math.random() * 100 + 'px');
-                letter.set('left', Math.random() * (width - 100) + 'px');
+                letter.y = Math.random() * 100;
+                letter.x = Math.random() * (width - 100) +100;
                 letter.set('color', 'white');
                 letter.resetting = false;
             }, 400)
@@ -360,8 +356,8 @@ loop = function (now) {
                             letter.locked = true;
                             letter.set('color', 'green');
                             letter.set('z-index', 0);
-                            letter.set('top', line.a.y - sh.offsetHeight * 0.8 + 'px');
-                            letter.set('left', line.a.x + line.length / 2 - sh.offsetWidth / 2 + 'px');
+                            letter.y = line.a.y - sh.offsetHeight * 0.8;
+                            letter.x = line.a.x + line.length / 2 - sh.offsetWidth / 2;
                             letter.dragging = false;
                             line.target += 'done';
                         }

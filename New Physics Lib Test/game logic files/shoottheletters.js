@@ -56,7 +56,7 @@ function drag(ev) {
         if (n + ev.clientX - startpos.x < 0) {
             return
         }
-        if (n + ev.clientX - startpos.x > width - 100) {
+        if (n + ev.clientX - startpos.x > width - selectedgun.width/2) {
             return
         }
         selectedgun.p.x += ev.clientX - startpos.x;
@@ -121,12 +121,12 @@ function shoot() {
     let angle = selectedgun.angle;
     let cos = Math.cos(angle * (Math.PI / 180));
     let sin = Math.sin(angle * (Math.PI / 180));
-    let w = selectedgun.sprite.shape.offsetWidth;
-    let h = selectedgun.sprite.shape.offsetHeight;
-    let x = selectedgun.sprite.shape.offsetLeft + w / 2 - 20 + cos * 50;
-    let y = selectedgun.sprite.shape.offsetTop + h / 2 - 25 + sin * 50;
+    let w = selectedgun.width;
+    let h = selectedgun.height;
+    let x = selectedgun.x + cos * 50;
+    let y = selectedgun.y + sin * 50;
     let bullet = new Flyer(x, y, 'bullet');
-    let bulletimg = new Img(LOADED_IMAGES.bullet.cloneNode(), x, y, 30, null, angle).usingNewTransform().onLoad(() => {
+    let bulletimg = new Img(LOADED_IMAGES.bullet.cloneNode(), x, y, 30, null, angle).fromCenter().usingNewTransform().onLoad(() => {
         bulletimg.set('zIndex', '1000');
         bullet.addSprite(bulletimg);
         bullet.angle = angle
@@ -191,9 +191,10 @@ function loop() {
 
         for (let j = bullets.length - 1; j >= 0; j--) {
             if (!bullets[j].dead && aliens[i].hasHitbox && bullets[j].hasHitbox && aliens[i].hitbox.contains(bullets[j].hitbox)) {
-                if (aliens[i].attachmentList.length > 1) {
+                aliens[i].bld.occupied = false;
+                if (aliens[i].attachmentList.length > 0) {
                     //if the alien is holding something, then kill it and deal with the letter
-                    let letter = aliens[i].detachAttachment(aliens[i].attachmentList[1]);//is the actual letter Character object
+                    let letter = aliens[i].detachAttachment(aliens[i].attachmentList[0]);//is the actual letter Character object
                     letter.sprite.set('zIndex', '999999')
                     //find the letter
                     let remainder = chosenletters.replace(rescuedletters, '');
@@ -203,7 +204,7 @@ function loop() {
                         rescuedletters += letter.name + (GRAMMAR_MODE ? ' ' : '');
                         rescued_num++; //add it to rescued letters, now we know the next letter
                         letter.MAX_V = 5;
-                        letter.doMoveTo(letter.cache.origXY.copy()).then(() => {
+                        letter.doMoveTo(letterThatsNeeded.cache.origXY.copy()).then(() => {
                             letter.angle = 0;
                             letter.sprite.set('textShadow', 'green 0 0 2px')
                         });
@@ -218,7 +219,7 @@ function loop() {
                         letter.doSpin(360, 10);
                         things_to_update.push(letter);
                     }
-                    aliens[i].bld.occupied = false;
+
                 } else {
                     //uh oh alien didnt have a pickup, meaning he died before picking it up. need to do mose hacky shit here;
                     //create a new alien but add old aliens targetting
@@ -232,11 +233,24 @@ function loop() {
         }
 
     }
-    if (chosenletters === rescuedletters) {
+    if (rescuedletters === (chosenletters + (GRAMMAR_MODE? ' ': '')) && allletters.filter(l=>l.isDoingMoveTo).length<1) {
+        LOOPING = false;
         allletters.forEach(x => {
             x.sprite.color = 'limegreen'
+        });
+        LOADED_IMAGES.add('fire_projectile', IMAGE_PATH + 'projectiles');
+        let promises = buildings.map(bld=>{
+            return new Promise(resolve => {
+                let img = new Img(LOADED_IMAGES.fire_projectile.cloneNode(),bld.x,bld.y+bld.height/2 - bld.width/2,bld.width,null,270).fromCenter().onLoad(()=>{
+                    img.set('zIndex', '9');
+                    bld.fire = img;
+                    resolve()
+                });
+            })
+        });
+        Promise.all(promises).then(()=>{
+            win();
         })
-        win();
     }
     if (LOOPING) requestAnimationFrame(loop)
 
@@ -244,8 +258,11 @@ function loop() {
 
 function win() {
     buildings.forEach(bld=>{
-        bld.y-=Math.random()*5;
+        let val = Math.random()*5;
+        bld.y-= val;
+        bld.fire.y -= val;
     })
+    requestAnimationFrame(win)
 }
 
 function lose() {
@@ -279,14 +296,10 @@ let things_to_update = [];
 
 function createAlien(target) {
     let alien = new Flyer(10, 100, 'invader' + getRandom(invadercolors));
-    let divSprite = new Rectangle(0, 0, 60, 50).setColor('transparent').fromCenter();
-    let divSpriteCharObj = new Character(0, 0, 'sprite');
     let sprite = new Img(invaders[alien.name].cloneNode(), 10, 100, 50).fromCenter().onLoad(() => {
         sprite.set('zIndex', '1');
-        alien.addSprite(divSprite);
+        alien.addSprite(sprite);
         alien.addDeathImage(aliendeathimg.electric_projectile.cloneNode());
-        divSpriteCharObj.addSprite(sprite)
-        alien.addAttachment(divSpriteCharObj)
     });
 
     alien.hasNoBounds = true;
@@ -337,7 +350,7 @@ function setup() {
         letter.addSprite(p);
         letter.x = leftOffset + p.width / 2;
         letter.y = y_calc - p.height / 3;
-
+        letter.hasNoBounds = true;
         p.set('zIndex', '3');
         p.set('textShadow', 'black 0 0 1px');
         letter.cache.origXY = new Vector(letter.x, letter.y);
@@ -364,7 +377,7 @@ function setup() {
 
     });
     buildings = shuffle(Array(splitletters.length).fill('').map((x, i) => i)).map((x, i) => {
-        let img = new Img(IMAGE_PATH + 'buildings/skyscraper' + getRandom(6) + '.png', 100 + (width / (splitletters.length + 1)) * i + getRandom(-40, 40), 0, 50,).fromCenter().onLoad(() => {
+        let img = new Img(IMAGE_PATH + 'buildings/skyscraper' + getRandom(6) + '.png', 100 + ((width-100) / (splitletters.length + 1)) * i + getRandom(-40, 40), 0, 50,).fromCenter().onLoad(() => {
             img.y = height - img.height / 2;
         });
         img.set('zIndex', '10');
