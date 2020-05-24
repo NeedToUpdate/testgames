@@ -127,4 +127,4 @@
 let difficulty = 1
 
 
-let words = ['rememeber','to','uncomment','needed','words','after','sync'];
+let words = ['remember','uncomment','needed','words','after','sync'];

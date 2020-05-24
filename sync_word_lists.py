@@ -45,7 +45,7 @@ def organize_lines(string, index):
             if line not in random:
                 random.append(line)
         
-for file in glob.iglob(dir + '**/words.txt' ,recursive = True):
+for file in glob.iglob(dir + '**/words.js' ,recursive = True):
     f = open(file,"r")
     text = f.read()
     sections = re.split(title_regex,text)
@@ -54,7 +54,7 @@ for file in glob.iglob(dir + '**/words.txt' ,recursive = True):
         organize_lines(part,index)
     f.close()
 
-list = glob.glob(dir + '**/words.txt' ,recursive = True)
+list = glob.glob(dir + '**/words.js' ,recursive = True)
 
 def make_doc(name):
     new_file = open(name,"w+")
@@ -94,6 +94,7 @@ def make_doc(name):
 list.append(dir + 'allwords.txt')
 
 for filename in list:
+    print(filename + ' changed')
     try:
         os.remove(filename)
     except OSError:
