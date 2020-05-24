@@ -2,13 +2,10 @@
 
 <head>
     <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
-    <script language="javascript" src="./lib/two.js"></script>
     <script language="javascript" src="./lib/vector.js"></script>
     <script language="javascript" src="./lib/matrix.js"></script>
     <script language="javascript" src="./lib/drawbase.js"></script>
-    <script language="javascript" src="./lib/character.js"></script>
-    <script language="javascript" src="./lib/div.js"></script>
-    <script language="javascript" src="./lib/rect.js"></script>
+    <script language="javascript" src="./lib/DomObject.js"></script>
     <link rel="stylesheet" href="global_styles.css">
 </head>
 
@@ -26,189 +23,184 @@
 <button id="jmpleft" class="bluebtn at_top">block</button>
 <button id="jmpright" class="bluebtn at_top">change</button>
 <script>
-    let pics = ["fishcartoon.png","lobstercartoon.png","crabcartoon.png"];
-    let points = [2,3,4];
-    let points2 = [2,3,4];
-    let xs = [5,124,284];
-    let ys = [60,300];
-    let fish = new Img('./images/' + pics[0], xs[0], ys[1],100);
-    let lobster = new Img('./images/' + pics[1],xs[1], ys[1], 100);
+    let pics = ["fishcartoon.png", "lobstercartoon.png", "crabcartoon.png"];
+    let points = [2, 3, 4];
+    let points2 = [2, 3, 4];
+    let xs = [5, 124, 284];
+    let ys = [60, 300];
+    let fish = new Img('./images/' + pics[0], xs[0], ys[1], 100);
+    let lobster = new Img('./images/' + pics[1], xs[1], ys[1], 100);
     let crab = new Img('./images/' + pics[2], xs[2], ys[1], 100);
 
-    start = function(){
-        MAINLOOP = setInterval(loop,1000/FPS);
+    start = function () {
+        MAINLOOP = setInterval(loop, 1000 / FPS);
         LOOPING = true;
-    }
+    };
 
     loop = function () {
-        id('point1').innerText = Math.random()*10|0;
-        id('point2').innerText = Math.random()*10|0;
-        id('point3').innerText = Math.random()*10|0;
+        id('point1').innerText = Math.random() * 10 | 0;
+        id('point2').innerText = Math.random() * 10 | 0;
+        id('point3').innerText = Math.random() * 10 | 0;
 
-        id('point21').innerText = Math.random()*10|0;
-        id('point22').innerText = Math.random()*10|0;
-        id('point23').innerText = Math.random()*10|0;
+        id('point21').innerText = Math.random() * 10 | 0;
+        id('point22').innerText = Math.random() * 10 | 0;
+        id('point23').innerText = Math.random() * 10 | 0;
     };
     let blocks = [];
 
     let mode = 0;
-    id('jmpright').addEventListener('click',()=>{
+    id('jmpright').addEventListener('click', () => {
         mode++;
-        mode%=3;
-        console.log(mode)
-       if(mode === 0){
-           let search = document.getElementsByClassName('colourblock');
-           for(let i = 0; i<search.length; i++){
-               search[i].style.display = "";
-           }
-           id('point1').style.display = "";
-           id('point2').style.display = "";
-           id('point3').style.display = "";
-           id('point21').style.display = "";
-           id('point22').style.display = "";
-           id('point23').style.display = "";
-           fish.shape.style.display = "";
-           lobster.shape.style.display = "";
-           crab.shape.style.display = "";
-       } else if(mode === 1){
-           let search = document.getElementsByClassName('colourblock');
-           for(let i = 0; i<search.length; i++){
-               search[i].style.display = "none";
-           }
-            id('point1').style.display = "none"
-            id('point2').style.display = "none"
-            id('point3').style.display = "none"
-           id('point21').style.display = "";
-           id('point22').style.display = "";
-           id('point23').style.display = "";
-           fish.shape.style.display = "";
-           lobster.shape.style.display = "";
-           crab.shape.style.display = "";
-       }else{
-           let search = document.getElementsByClassName('colourblock');
-           for(let i = 0; i<search.length; i++){
-               search[i].style.display = "";
-           }
-           fish.shape.style.display = "none";
-           lobster.shape.style.display = "none";
-           crab.shape.style.display = "none";
-           id('point1').style.display = "";
-           id('point2').style.display = "";
-           id('point3').style.display = "";
-           id('point21').style.display = "none"
-           id('point22').style.display = "none"
-           id('point23').style.display = "none"
-       }
+        mode %= 3;
+        console.log(mode);
+        if (mode === 0) {
+            let search = document.getElementsByClassName('colourblock');
+            for (let i = 0; i < search.length; i++) {
+                search[i].style.display = "";
+            }
+            id('point1').style.display = "";
+            id('point2').style.display = "";
+            id('point3').style.display = "";
+            id('point21').style.display = "";
+            id('point22').style.display = "";
+            id('point23').style.display = "";
+            fish.shape.style.display = "";
+            lobster.shape.style.display = "";
+            crab.shape.style.display = "";
+        } else if (mode === 1) {
+            let search = document.getElementsByClassName('colourblock');
+            for (let i = 0; i < search.length; i++) {
+                search[i].style.display = "none";
+            }
+            id('point1').style.display = "none";
+            id('point2').style.display = "none";
+            id('point3').style.display = "none";
+            id('point21').style.display = "";
+            id('point22').style.display = "";
+            id('point23').style.display = "";
+            fish.shape.style.display = "";
+            lobster.shape.style.display = "";
+            crab.shape.style.display = "";
+        } else {
+            let search = document.getElementsByClassName('colourblock');
+            for (let i = 0; i < search.length; i++) {
+                search[i].style.display = "";
+            }
+            fish.shape.style.display = "none";
+            lobster.shape.style.display = "none";
+            crab.shape.style.display = "none";
+            id('point1').style.display = "";
+            id('point2').style.display = "";
+            id('point3').style.display = "";
+            id('point21').style.display = "none";
+            id('point22').style.display = "none";
+            id('point23').style.display = "none"
+        }
 
     });
 
 
-    function genBlocks(){
+    function genBlocks() {
         blocks = [
-            new Img('./images/questionmarkcloud.png', xs[0]-30, ys[0], 120),
-            new Img('./images/questionmarkcloud.png', xs[1]-5, ys[0], 120),
-            new Img('./images/questionmarkcloud.png', xs[2]-10, ys[0], 120),
-            new Img('./images/questionmarkcloud.png', xs[0]-30, ys[1] - 80, 120),
-            new Img('./images/questionmarkcloud.png', xs[1]-5, ys[1] - 80, 120),
-            new Img('./images/questionmarkcloud.png', xs[2]-10, ys[1] - 80, 120),
+            new Img('./images/questionmarkcloud.png', xs[0] - 30, ys[0], 120),
+            new Img('./images/questionmarkcloud.png', xs[1] - 5, ys[0], 120),
+            new Img('./images/questionmarkcloud.png', xs[2] - 10, ys[0], 120),
+            new Img('./images/questionmarkcloud.png', xs[0] - 30, ys[1] - 80, 120),
+            new Img('./images/questionmarkcloud.png', xs[1] - 5, ys[1] - 80, 120),
+            new Img('./images/questionmarkcloud.png', xs[2] - 10, ys[1] - 80, 120),
         ];
-        blocks.forEach(x=>{
-            x.set('z-index', 10000);
-        })
-        if(mode === 0){
-            blocks.forEach(x=>{
+        blocks.forEach(x => {
+            x.set('z-index', '10000');
+        });
+        if (mode === 0) {
+            blocks.forEach(x => {
                 x.set('display', "")
             })
-        }else if(mode === 1){
-            blocks[0].set('display', 'none')
-            blocks[1].set('display', 'none')
-            blocks[2].set('display', 'none')
-            blocks[3].set('display', '')
-            blocks[4].set('display', '')
+        } else if (mode === 1) {
+            blocks[0].set('display', 'none');
+            blocks[1].set('display', 'none');
+            blocks[2].set('display', 'none');
+            blocks[3].set('display', '');
+            blocks[4].set('display', '');
             blocks[5].set('display', '')
-        }else{
-            blocks[0].set('display', '')
-            blocks[1].set('display', '')
-            blocks[2].set('display', '')
-            blocks[3].set('display', 'none')
-            blocks[4].set('display', 'none')
+        } else {
+            blocks[0].set('display', '');
+            blocks[1].set('display', '');
+            blocks[2].set('display', '');
+            blocks[3].set('display', 'none');
+            blocks[4].set('display', 'none');
             blocks[5].set('display', 'none')
         }
 
     }
-    stop = function(){
+
+    stop = function () {
         clearInterval(MAINLOOP);
-        let n = Math.random()*3 |0;
-        let n3 = Math.random()*3 |0;
-        let n2 = Math.random()*2 +1 |0;
-        let n4 = Math.random()*2 +1 |0;
+        let n = Math.random() * 3 | 0;
+        let n3 = Math.random() * 3 | 0;
+        let n2 = Math.random() * 2 + 1 | 0;
+        let n4 = Math.random() * 2 + 1 | 0;
         id('point1').innerText = points[n3] + "";
-        id('point2').innerText = points[(n3 + n4)%3]+ "";
-        id('point3').innerText = points[(n3 + (n4===1? 2: 1))%3]+ ""
+        id('point2').innerText = points[(n3 + n4) % 3] + "";
+        id('point3').innerText = points[(n3 + (n4 === 1 ? 2 : 1)) % 3] + "";
         id('point21').innerText = points[n] + "";
-        id('point22').innerText = points[(n + n2)%3]+ "";
-        id('point23').innerText = points[(n + (n2===1? 2: 1))%3]+ ""
-        if(Math.random()<.1){
-            id('point3').innerText = parseInt(id('point3').innerText,10) + 2;
+        id('point22').innerText = points[(n + n2) % 3] + "";
+        id('point23').innerText = points[(n + (n2 === 1 ? 2 : 1)) % 3] + "";
+        if (Math.random() < .1) {
+            id('point3').innerText = parseInt(id('point3').innerText, 10) + 2;
         }
         LOOPING = false;
 
     };
     FPS = 10;
 
-  let playing = false;
+    let playing = false;
 
-  let blocked = false;
-  id('jmpleft').addEventListener('click',()=>{
-
-
-      if(blocked){
-          id('jmpleft').innerText = 'block'
-          if(blocks.length > 0){
-              console.log(blocks)
-              blocks.forEach(x=>{
-                  x.destroy();
-
-              })
-              blocks = [];
-
-          }
-
-      }else{
-          id('jmpleft').innerText = 'unblock'
-        genBlocks();
-
-      }
-      blocked = !blocked;
-
-  })
+    let blocked = false;
+    id('jmpleft').addEventListener('click', () => {
 
 
-   id('jump').addEventListener('click', ()=>{
-       if(playing){
-           stop();
-       }else{
-           start()
-           setTimeout(()=>{
-               stop();
+        if (blocked) {
+            id('jmpleft').innerText = 'block';
+            if (blocks.length > 0) {
+                blocks.forEach(x => {
+                    x.remove();
+                });
+                blocks = [];
 
-                       setTimeout(()=>{
-                            genBlocks()
-                           blocked = true;
-                           id('jmpleft').innerText = 'unblock'
-                           playing = false;
-                       },1000)
+            }
+
+        } else {
+            id('jmpleft').innerText = 'unblock';
+            genBlocks();
+
+        }
+        blocked = !blocked;
+
+    });
 
 
+    id('jump').addEventListener('click', () => {
+        if (playing) {
+            stop();
+        } else {
+            start();
+            setTimeout(() => {
+                stop();
+                setTimeout(() => {
+                    genBlocks();
+                    blocked = true;
+                    id('jmpleft').innerText = 'unblock';
+                    playing = false;
+                }, 1000)
 
-           }, 5000)
-       }
-       playing = !playing;
+
+            }, 5000)
+        }
+        playing = !playing;
     })
 
 
-
-
-    </script>
+</script>
 </body>
 </html>

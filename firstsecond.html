@@ -2,14 +2,14 @@
 
 <head>
     <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
-    <script language="javascript" src="./lib/two.js"></script>
     <script language="javascript" src="./lib/vector.js"></script>
     <script language="javascript" src="./lib/matrix.js"></script>
-    <script language="javascript" src="./lib/drawbase.js"></script>
-    <script language="javascript" src="./lib/character.js"></script>
-    <script language="javascript" src="./lib/div.js"></script>
-    <script language="javascript" src="./lib/rect.js"></script>
     <script language="javascript" src="./lib/eventemitter.js"></script>
+    <script language="javascript" src="./lib/drawbase.js"></script>
+    <script language="javascript" src="./lib/collisioncontainer.js"></script>
+    <script language="javascript" src="./lib/PhysicsObject.js"></script>
+    <script language="javascript" src="./lib/DomObject.js"></script>
+    <script language="javascript" src="./lib/Character.js"></script>
     <title>Artem's Testing</title>
     <link rel="stylesheet" href="global_styles.css">
 </head>
@@ -19,61 +19,67 @@
 <button class="bluebtn" id="jump">numbers</button>
 <script>
     let background = 'background12.jpg';
-    document.body.style.backgroundColor = 'grey'
+    document.body.style.backgroundColor = 'grey';
     document.body.style.backgroundImage = 'url(./images/' + background.toString() + ')';
     document.body.style.backgroundSize = width + 'px auto';
-    document.body.style.backgroundRepeat = 'no-repeat'
+    document.body.style.backgroundRepeat = 'no-repeat';
     let allnames = [
-        'cat', 'dog', 'rabbit',
+        'cat',
         'spiderman', 'ultraman', 'ironman',
         'peppapig', 'spongebob', 'monkey',
         'tiger', 'shark', 'cinderella',
-        'elsa', 'ariel', 'deadfish', 'mrkrabs', 'thanos', 'drstrange', 'sailormoon',
-        'genie', 'captainmarvel', 'simba', 'pikachu', 'spider','monster22','venom','thor','banana','olaf','hulk','snowwhite','ash',
-        'krabbypattyball','zebra','whale','jellyfish','starfish'
+        'elsa', 'ariel', 'deadfish', 'mrkrabs', 'thanos', 'pikachu', 'drstrange',
+        'superman', 'genie', 'simba', 'captainmarvel', 'mewtwo', 'sailormoon', 'venom', 'thor',
+        'ultraman2', 'ultraman3', 'olaf', 'hulk', 'gundam', 'optimus', 'snowwhite', 'deadpool',
+        'goku', 'ash', 'charizard', 'captainamerica', 'nakoruru', 'mario', 'emmet', 'wyldstyle',
+        'tree', 'link', 'isabelle', 'hellokitty', 'doraemon', 'monster22'
     ];
 
-    allnames = shuffle(allnames).slice(0,19)
-    let chars = allnames.map(name=>{
-        let char = new Flyer(0,0,name);
-        let charimg = new Img('./images/' + char.name + '.png', 0,0,50);
-        char.addSprite(charimg);
+    let num = 20;
+    allnames = shuffle(allnames).slice(0, num);
+    let chars = allnames.map(name => {
+        let char = new Flyer(width/2, 0, name);
+        let charimg = new Img('./images/' + char.name + '.png', 0, 0, width/num).fromCenter().onLoad(() => {
+            char.addSprite(charimg);
+            char.MAX_V = 5;
+        });
         return char;
     });
 
-    id('jmpleft').addEventListener('click', ()=>{
-        chars.forEach((char,i)=>{
-            char.flyto(new Vector(10+ 50*i, 200));
+    id('jmpleft').addEventListener('click', () => {
+        chars.forEach((char, i) => {
+            char.doFlyTo(new Vector(10 + ((width)/num) * i, 200));
         })
-    })
+    });
     let ps = [];
     let shownumbers = false;
-    id('jump').addEventListener('click', ()=>{
+    id('jump').addEventListener('click', () => {
         shownumbers = !shownumbers;
-        if(shownumbers) {
+        if (shownumbers) {
             chars.forEach((char, i) => {
-                let p = new P(i+1, 15 + 50 * i, 100);
+                let p = new P(i + 1, 10 + ((width)/num) * i, 100).fromCenter();
                 p.set('fontSize', '2.5em');
                 p.set('color', 'black');
+                p.x = 10 + ((width)/num) * i;
                 ps.push(p);
             })
-        }else{
-            ps.forEach(x=>{
+        } else {
+            ps.forEach(x => {
                 x.remove()
-            })
+            });
             ps = [];
         }
 
-    })
+    });
 
-    loop = function(){
-        chars.forEach(char=>{
+    loop = function () {
+        chars.forEach(char => {
             char.update();
-        })
+        });
         requestAnimationFrame(loop)
-    }
+    };
     loop()
 
-    </script>
+</script>
 </body>
 </html>

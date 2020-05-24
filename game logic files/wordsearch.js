@@ -124,14 +124,12 @@ class WordSearch extends Matrix {
 
     init() {
         this.divsM.map((x, i, j) => {
-            let p = new P(this.cover_letters[i][j], this.startx + this.width * 0.025 + j * this.col_size, this.starty + i * this.row_size);
+            let p = new P(this.cover_letters[i][j], this.startx + this.width * 0.025 + j * this.col_size, this.starty + i * this.row_size).usingNewTransform();
             let fontsize = this.row_size < this.col_size ? this.row_size * 0.8 : this.col_size * 0.8;
             p.set('fontSize', fontsize + 'px');
-            p.set('color', 'white');
+            p.color = 'white';
             p.set('textShadow', 'white 1px 1px 1px 1px');
-            p.set('margin', 0);
-            p.set('padding', 0);
-            p.set('zIndex', 10);
+            p.set('zIndex', '100');
             p.set('display', 'none');
             return p;
         })
@@ -266,7 +264,7 @@ function findSpiralT(x,y){
 function smoothPoints(x,y, targetx,targety){
     let currVec = new Vector(x,y);
     let targetVec = new Vector(targetx,targety);
-    targetVec.sub(currVec).set(targetVec.mag()/4);
+    targetVec.sub(currVec).set(targetVec.mag/4);
     return currVec.add(targetVec);
 }
 
@@ -276,13 +274,13 @@ function winLoop() {
         if(div.t>0){
             let [x,y] = [getSpiralX(div.t),getSpiralY(div.t)];
             let target = smoothPoints(div.x,div.y,x,y);
-            div.set('left', target.x);
-            div.set('top',target.y);
+            div.x = target.x;
+            div.y = target.y;
             div.t -= 0.15*Math.random();
             if(div.t<=0) div.t = 0;
         }else{
-            div.set('left', div.x + div.shootDir.x*10);
-            div.set('top', div.y + div.shootDir.y*10);
+            div.x = div.x + div.shootDir.x*10;
+            div.y = div.y + div.shootDir.y*10;
         }
         return div
     });
@@ -291,7 +289,7 @@ function winLoop() {
 
 function setupBoard() {
     if (!logicSetUp) setupLogic(7 + 3 * difficulty, 7 + 3 * difficulty);
-    background = new Div(wordM.startx, wordM.starty, 'black', wordM.width, wordM.height, true);
+    background = new Rectangle(wordM.startx, wordM.starty, wordM.width, wordM.height);
     background.set('backgroundImage', 'linear-gradient(to top left, #59c173, #a17fe0, #5d26c1)');
     background.set('borderRadius', '20px');
     background.set('border', 'solid 3px white');
@@ -371,9 +369,9 @@ function startdrag(ev, i, j) {
             x: wordM.divsM.values[i][j].x - wordM.col_size/4,
             y: wordM.divsM.values[i][j].y + wordM.row_size/8,
         };
-        dragger = new Div(startcoords.x , startcoords.y, 'lightblue', r / 1.5, r / 1.5, true);
+        dragger = new Rectangle(startcoords.x , startcoords.y, r / 1.5, r / 1.5).asOutline('blue');
         //minus 4 for the border size
-        overlayDragger = new Div(startcoords.x -4, startcoords.y -4, 'red', r / 1.5, r / 1.5, true);
+        overlayDragger = new Rectangle(startcoords.x -4, startcoords.y -4, r / 1.5, r / 1.5).asOutline('blue');
         dragger.set('borderRadius', r / 2 + 'px');
         dragger.set('transformOrigin', r / 2 + 'px 50%');
         dragger.set('zIndex', 0);
@@ -401,7 +399,7 @@ function stopdrag() {
         dragger.set('border', 'lightgreen solid 4px');
        // dragger.mod('left', 0);
         //due to border width it needs to be adjusted;
-        dragger.mod('top' -4);
+        dragger.mod('top', -4);
         //dragger.mod('left' -4);
         circles.push(dragger);
         overlayDragger.remove();
@@ -409,7 +407,8 @@ function stopdrag() {
         overlayDragger = fakeDragger;
         //deal with words;
         let found = newwordsP.filter(x => x.string === word)[0];
-        let line = new DivLine(found.x, found.y + found.shape.offsetHeight / 2, found.shape.offsetWidth, 0, 'red', 4);
+        let line = Line.fromAngle(found.x, found.y + found.shape.offsetHeight / 2, found.shape.offsetWidth,0,4);
+        line.color = 'red'
         redLines.push(line)
         newwords.splice(newwords.indexOf(word), 1);
         wordM.words = wordM.words.filter(each => each.word !== word);
@@ -469,9 +468,8 @@ function drag(ev, i, j) {
         let coordWidth = Math.sqrt(coord_dx ** 2 + coord_dy ** 2);
         dragger.set('width', width + r + 'px');
         overlayDragger.set('width', coordWidth + r + 'px');
-        let angle = Math.atan2(dy, dx) * 180 / Math.PI;
-        dragger.rotateTo(angle);
-        overlayDragger.rotateTo(Math.atan2(coord_dy, coord_dx) * 180 / Math.PI);
+        dragger.angle = Math.atan2(dy, dx) * 180 / Math.PI;
+        overlayDragger.angle = Math.atan2(coord_dy, coord_dx) * 180 / Math.PI;
         endpos = {i: i, j: j};
     }
 }
@@ -537,7 +535,7 @@ function setupScreen() {
     let starty = height * 0.2;
     boardWidth = width * 0.4;
     boardHeight = height * 0.5;
-    setupbg = new Div(startx, starty, 'white', boardWidth, boardHeight, true);
+    setupbg = new Rectangle(startx, starty, boardWidth, boardHeight);
     setupbg.set('border', 'solid blue 3px');
     setupbg.set('borderRadius', '10px');
     setupbg.set('backgroundColor', 'lightblue');

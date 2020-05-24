@@ -1,10 +1,3 @@
-if('addEventListener' in document){
-    document.addEventListener('DOMContentLoaded', ()=>{
-        FastClick.attach(document.body)
-    }, false);
-}
-
-
 let guntype = {
     name: 'handgun',
     delay: 2000,
@@ -16,33 +9,36 @@ let guntype = {
 let ammoP = {};
 
 let gun = {};
-let selectedgun = new Character(0,0,guntype.name);
-selectedgun.nobounds = true;
-selectedgun.forces = [];
-document.body.style.backgroundImage = 'url(../images/bg3.jpg)';
+let selectedgun = new Character(0, 0, guntype.name);
 
-let city = new Img('../images/city.png', 0, 0, width);
+let IMAGE_PATH = '../../images/';
+selectedgun.hasNoBounds = true;
+document.body.style.backgroundImage = 'url(' + IMAGE_PATH + 'bg3.jpg)';
+document.body.style.pointerEvents = 'none';
+
+let city = new Img(IMAGE_PATH + 'city.png', 0, 0, width);
 //creates empty array, maps it to 0-n, shuffles it, maps again to have x be a random int from 0 to n
 let buildings = [];
 let invadercolors = ['red', 'green', 'purple', 'blue', 'pink', 'white', 'yellow', 'orange'];
-let invaders = new ImageLoader('../images/invaders/', invadercolors.map(x => 'invader' + x));
+let invaders = new ImageLoader(IMAGE_PATH + 'invaders/', invadercolors.map(x => 'invader' + x));
 let aliens = [];
 
-let aliendeathimg = new ImageLoader('../images/', ['electricball']);
+let aliendeathimg = new ImageLoader(IMAGE_PATH + 'projectiles/', ['electric_projectile']);
 
 
-let extras = ['bullet','fire'];
-let LOADED_IMAGES = new ImageLoader('../images/projectiles/', extras);
+let extras = ['bullet', 'fire'];
+let LOADED_IMAGES = new ImageLoader(IMAGE_PATH + 'projectiles/', extras);
 
 let dragging_disabled = false;
 let dragging = false;
 let startpos = {x: 0, y: 0};
 
-function disableDragging(){
+function disableDragging() {
     dragging_disabled = true;
 }
+
 function dragStart(ev) {
-    if(!dragging_disabled){
+    if (!dragging_disabled) {
         dragging = true;
         startpos.x = ev.clientX;
         startpos.y = ev.clientY;
@@ -56,19 +52,14 @@ function dragStop() {
 
 function drag(ev) {
     if (dragging && !dragging_disabled) {
-        let n = selectedgun.sprite.getVal('left');
+        let n = selectedgun.x;
         if (n + ev.clientX - startpos.x < 0) {
-            //gun.set('left', 50)
             return
         }
-        if (n + ev.clientX - startpos.x > width - 100) {
-            // selectedgun.sprite.set('left', width-50 )
+        if (n + ev.clientX - startpos.x > width - selectedgun.width/2) {
             return
         }
         selectedgun.p.x += ev.clientX - startpos.x;
-        if(selectedgun.extras.reloadbar){
-            selectedgun.extras.reloadbar.p.x += ev.clientX - startpos.x;
-        }
         startpos.x = ev.clientX;
     }
 
@@ -87,32 +78,31 @@ document.addEventListener('touchstart', (ev) => {
     dragStart(ev.touches[0]);
 });
 
+
 let bullets = [];
 
 function reload() {
-    if(guntype.backupammo>0) {
+    if (guntype.backupammo > 0) {
         guntype.backupammo -= guntype.ammocap;
         guntype.ammo = guntype.ammocap;
         ammoP.string = guntype.ammo + ' : ' + guntype.backupammo;
-
-        let loading = new PowerBall(selectedgun.p.x - 30, selectedgun.p.y - 50, 'health');
-        loading.nobounds = true;
-        let health = new LoadingBar(selectedgun.p.x - 30, selectedgun.p.y - 50, 60, 10, 0, 100, 1);
-        loading.addSprite(health);
-        health.set('zIndex', 10000);
-        health.setBar('zIndex', 10001);
-        selectedgun.extras.reloadbar = loading;
+        let attachment = new Flyer(0, 0, 'loadingbar');
+        let health = new LoadingBar(0, 0, 60, 10, 0, 100, 1);
+        health.set('zIndex', '100000');
+        health.setBar('zIndex', '100001');
+        attachment.addSprite(health);
+        selectedgun.addAttachment(attachment, new Vector(-20, -20));
         gun.reloading = true;
         let interval = setInterval(() => {
             health.value++;
             if (health.value >= 100) {
-                health.remove();
-                delete selectedgun.extras.reloadbar;
+                let attachment = selectedgun.detachAttachment('loadingbar');
+                attachment.kill();
                 gun.reloading = false;
                 clearInterval(interval);
             }
         }, guntype.delay / 100)
-    }else{
+    } else {
         disableDragging();
         lose();
     }
@@ -121,42 +111,63 @@ function reload() {
 }
 
 
-
-
 function shoot() {
-    if(guntype.ammo<= 0){
+    if(!started) return
+    if (guntype.ammo <= 0) {
         reload();
         return;
     }
-    if(gun.reloading) return;
-    let angle = selectedgun.sprite.angle;
+    if (gun.reloading) return;
+    let angle = selectedgun.angle;
     let cos = Math.cos(angle * (Math.PI / 180));
     let sin = Math.sin(angle * (Math.PI / 180));
-    let w = selectedgun.sprite.shape.offsetWidth;
-    let h = selectedgun.sprite.shape.offsetHeight;
-    let x = selectedgun.sprite.shape.offsetLeft + w / 2 - 20 +  cos* 50;
-    let y = selectedgun.sprite.shape.offsetTop + h / 2 - 25 +  sin* 50;
-    let bullet = new PowerBall(x, y, 'bullet');
-    let bulletimg = new Img(LOADED_IMAGES.bullet.cloneNode(), x, y, 30, false, angle)
-    bulletimg.set('zIndex', 1000)
-    bullet.addSprite(bulletimg);
+    let w = selectedgun.width;
+    let h = selectedgun.height;
+    let x = selectedgun.x + cos * 50;
+    let y = selectedgun.y + sin * 50;
+    let bullet = new Flyer(x, y, 'bullet');
+    let bulletimg = new Img(LOADED_IMAGES.bullet.cloneNode(), x, y, 30, null, angle).fromCenter().usingNewTransform().onLoad(() => {
+        bulletimg.set('zIndex', '1000');
+        bullet.addSprite(bulletimg);
+        bullet.angle = angle
         let vec = new Vector(cos, sin);
-        bullet.a.add(vec.set(30))
-        bullet.antigrav = true;
-        bullet.bounds = {x: width, y: height};
-        bullet.fragile = true;
-        bullets.push(bullet)
-    guntype.ammo--
-    ammoP.string = guntype.ammo + ' : ' + guntype.backupammo
-    if(guntype.ammo<= 0){
+        bullet.addForce(vec.set(30));
+        bullet.maxbounds = {x: width, y: height};
+        bullet.isFragile = true;
+        bullets.push(bullet);
+    });
+    guntype.ammo--;
+    ammoP.string = guntype.ammo + ' : ' + guntype.backupammo;
+    if (guntype.ammo <= 0) {
         reload();
     }
 }
 
 let rescuedletters = '';
 let rescued_num = 0;
-loop = function () {
-    selectedgun.update()
+
+function countHoveringAliens(){
+    return aliens.reduce((a,b)=>a+(b.isDoingHover?1:0),0);
+}
+
+function loop() {
+    selectedgun.update();
+    if(Math.random()<0.01 && countHoveringAliens() === aliens.length && aliens.length>2){
+        let randoms = shuffle(aliens).slice(0,3);
+        let randomBlds = [];
+        randoms.forEach((alien,i)=>{
+            randomBlds.push(alien.bld);
+            alien.stopHover();
+            alien.doFlyTo(Vector.random(width,height*0.5)).then(()=>{
+                alien.bld = randomBlds[(i+1)%3];
+                alien.doFlyTo(alien.bld.p.copy().add(new Vector(alien.bld.width/2,alien.bld.height/-2))).then(()=>{
+                    alien.doHover();
+                });
+
+
+            })
+        })
+    }
     for (let i = things_to_update.length - 1; i >= 0; i--) {
         things_to_update[i].update();
         if (things_to_update[i].dead) {
@@ -172,165 +183,192 @@ loop = function () {
     for (let i = aliens.length - 1; i >= 0; i--) {
         aliens[i].update();
         if (aliens[i].dead) {
-            aliens.splice(i, 1)
+            aliens.splice(i, 1);
             continue;
         }
-        if (aliens[i].rect === undefined || Object.keys(aliens[i].rect).length < 2) continue;
 
-        if (!started) continue;
+
+
         for (let j = bullets.length - 1; j >= 0; j--) {
-            if (!bullets[j].dead && aliens[i].rect.contains(bullets[j].rect)) {
-                if (aliens[i].extras.pickup) {
+            if (!bullets[j].dead && aliens[i].hasHitbox && bullets[j].hasHitbox && aliens[i].hitbox.contains(bullets[j].hitbox)) {
+                aliens[i].bld.occupied = false;
+                if (aliens[i].attachmentList.length > 0) {
                     //if the alien is holding something, then kill it and deal with the letter
-                    let n = allletters.indexOf(aliens[i].extras.pickup.sprite);
-                    let letter = allletters[n];
+                    let letter = aliens[i].detachAttachment(aliens[i].attachmentList[0]);//is the actual letter Character object
+                    letter.sprite.set('zIndex', '999999')
                     //find the letter
                     let remainder = chosenletters.replace(rescuedletters, '');
-                    let actual_letter = allletters.slice(rescued_num).filter(x => x.string === splitletters[rescued_num])[0];
+                    let letterThatsNeeded = allletters.slice(rescued_num).filter(x => x.name === splitletters[rescued_num])[0];
                     //find the letter that is needed
-                    let obj = aliens[i].extras.pickup; //obj is the actual letter Character object
-                    obj.nobounds = true;
-                    obj.max_v = 5;
-                    if (remainder.startsWith(letter.string)) {//its the right letter
-                        rescuedletters += letter.string + (GRAMMAR_MODE ? ' ' : '');
+                    if (remainder.startsWith(letter.name)) {//its the right letter
+                        rescuedletters += letter.name + (GRAMMAR_MODE ? ' ' : '');
                         rescued_num++; //add it to rescued letters, now we know the next letter
-                        obj.moveto(new Vector(actual_letter.origp.x, actual_letter.origp.y)).done(() => {
-                            obj.dead = true; //dead things get kicked out of update loop
-                            obj.sprite.set('transform', '')
+                        letter.MAX_V = 5;
+                        letter.doMoveTo(letterThatsNeeded.cache.origXY.copy()).then(() => {
+                            letter.angle = 0;
+                            letter.sprite.set('textShadow', 'green 0 0 2px')
                         });
-                        obj.spin();
-                        things_to_update.push(obj); //add the obj to the main update loop
+                        letter.doSpin(360, 10);
+                        things_to_update.push(letter); //add the obj to the main update loop
                     } else { //its not the right letter
-                        obj.moveto(new Vector(actual_letter.origp)).done(location => {
-                            obj.dead = true; //do the same thing, but get a new alien on it
-                            obj.sprite.set('transform', '')
-                            createAlien(obj, location);
+                        letter.MAX_V = 5;
+                        letter.doMoveTo(letterThatsNeeded.cache.origXY.copy()).then(() => {
+                            letter.angle = 0;
+                            createAlien(letter);
                         });
-                        obj.spin();
-                        things_to_update.push(obj);
+                        letter.doSpin(360, 10);
+                        things_to_update.push(letter);
                     }
-                    aliens[i].bld.occupied = false;
+
                 } else {
                     //uh oh alien didnt have a pickup, meaning he died before picking it up. need to do mose hacky shit here;
                     //create a new alien but add old aliens targetting
-                    createAlien(aliens[i].target, aliens[i].flytovec.copy());
+                    createAlien(aliens[i].target);
 
                 }
                 aliens[i].kill();
                 bullets[j].kill();
-                delete aliens[i].extras.pickup;
             }
 
         }
 
     }
-    if (chosenletters + (GRAMMAR_MODE ? ' ' : '') === rescuedletters) {
-        win();
-        }
+    if (rescuedletters === (chosenletters + (GRAMMAR_MODE? ' ': '')) && allletters.filter(l=>l.isDoingMoveTo).length<1) {
+        LOOPING = false;
+        allletters.forEach(x => {
+            x.sprite.color = 'limegreen'
+        });
+        LOADED_IMAGES.add('fire_projectile', IMAGE_PATH + 'projectiles');
+        let promises = buildings.map(bld=>{
+            return new Promise(resolve => {
+                let img = new Img(LOADED_IMAGES.fire_projectile.cloneNode(),bld.x,bld.y+bld.height/2 - bld.width/2,bld.width,null,270).fromCenter().onLoad(()=>{
+                    img.set('zIndex', '9');
+                    bld.fire = img;
+                    resolve()
+                });
+            })
+        });
+        Promise.all(promises).then(()=>{
+            win();
+        })
+    }
+    if (LOOPING) requestAnimationFrame(loop)
 
 };
 
-function win(){
-    allletters.forEach(x => {
-        x.set('color', 'limegreen')
+function win() {
+    buildings.forEach(bld=>{
+        let val = Math.random()*5;
+        bld.y-= val;
+        bld.fire.y -= val;
     })
+    requestAnimationFrame(win)
 }
 
-function lose(){
+function lose() {
     let promises = [];
-    aliens.forEach(alien=>{
-        alien.stophover()
-        alien.doflyto = false;
-        alien.flytovec = null;
-        promises.push(
-            new Promise((resolve,reject)=> {
-                alien.flyto(new Vector(selectedgun.p)).done(() => {
-                    console.log('done1')
-                    alien.kill();
-                    resolve();
+    aliens.forEach(alien => {
+        if(alien.isDoingHover){
+            alien.stopHover();
+            promises.push(
+                new Promise((resolve) => {
+                    alien.doFlyTo(new Vector(selectedgun.p)).then(() => {
+                        alien.kill();
+                        resolve();
+                    })
                 })
-            })
-
-        )})
-    Promise.all(promises).then(()=>{
+            )
+        }
+    });
+    Promise.all(promises).then(() => {
         selectedgun.kill();
+        allletters.forEach(x=>{
+            x.sprite.color = 'red';
+        })
     })
 }
+
 let allletters = [];
 let chosenletters = '';
 let splitletters = [];
 let things_to_update = [];
 
-function createAlien(target, vector) {
+
+function createAlien(target) {
     let alien = new Flyer(10, 100, 'invader' + getRandom(invadercolors));
-    let sprite = new Img(invaders[alien.name].cloneNode(), 10, 100, 50);
-    sprite.set('zIndex', 1);
-    alien.addSprite(sprite);
-    alien.addDeathImage(aliendeathimg.electricball.cloneNode())
-    alien.nobounds = true;
-    alien.max_v = 5;
-    if (target && vector) {
+    let sprite = new Img(invaders[alien.name].cloneNode(), 10, 100, 50).fromCenter().onLoad(() => {
+        sprite.set('zIndex', '1');
+        alien.addSprite(sprite);
+        alien.addDeathImage(aliendeathimg.electric_projectile.cloneNode());
+    });
+
+    alien.hasNoBounds = true;
+    alien.MAX_V = 5;
+    if (target) {
         alien.target = target;
+
         function pickUpLetter() { //needs to be separate to have a bindable this;
-            this.extras.pickup = target;
-            target.dead = false;
+            this.addAttachment(target, new Vector(0, -10));
             let emptybuildings = buildings.filter(x => !x.occupied);
             let bld = getRandom(emptybuildings);
             this.bld = bld;
             bld.occupied = true;
-            console.log(this.name)
-            this.flyto(bld.vector.copy().add(new Vector(0, -30))).done(() => {
-                this.hover();
+            this.doFlyTo(bld.vector.copy().add(new Vector(0, bld.height / -2))).then(() => {
+                this.doHover();
             });
         }
 
-        alien.flyto(vector).done(pickUpLetter.bind(alien));
+        alien.doFlyTo(target.p).then(pickUpLetter.bind(alien));
     }
     aliens.push(alien)
 }
 
 function setup() {
-    let gunsprite = new Img('../images/gun.png', width / 2 - 50, height - 70, 75, true, 270);
-    selectedgun.p.x = width / 2 - 50;
-    selectedgun.p.y = height- 35;
+    let gunsprite = new Rectangle(width / 2 - 50, height - 70, 75, 76, 0).fromCenter();
+    gunsprite.set('backgroundImage', 'url("' + IMAGE_PATH + 'gun.png")');
+    gunsprite.set('backgroundSize', 'cover');
+    gunsprite.set('backgroundColor', 'transparent');
+    gunsprite.set('zIndex', '9999');
+    selectedgun.x = width / 2 - 50;
+    selectedgun.y = height - 35;
     selectedgun.addSprite(gunsprite);
-    selectedgun.sprite.set('zIndex', 10000);
-    selectedgun.sprite.shape.addEventListener('click', () => {
-        shoot();
-    });
+    gunsprite.shape.style.pointerEvents = 'all';
+    gunsprite.shape.addEventListener('click', shoot);
+    selectedgun.angle = 270;
+    selectedgun.update();
+
     let y_calc = height * 0.15;
     let space = 15;
     chosenletters = getRandom(GRAMMAR_MODE ? sentences : words);
-
-
-
+    if (!GRAMMAR_MODE) chosenletters = chosenletters.replace(' ', '');
     splitletters = chosenletters.split(GRAMMAR_MODE ? ' ' : '');
     splitletters.forEach((word, i) => {
-        let p = new P(word, 0, y_calc);
-        let leftoffset = allletters.reduce((tot, item) => tot += item.shape.offsetWidth + space, 0);
-        p.set('left', leftoffset + 'px');
-        p.set('top', y_calc - (16 * 4) + 'px');
-        p.set('margin', 0);
+        let letter = new Character(0, 0, word);
+        let p = new P(word, 0, y_calc).fromCenter();
         p.set('fontSize', '4em');
-        p.set('zIndex', 3);
-        p.rect = new Rect(p.x, p.y, p.shape.offsetWidth, p.shape.offsetHeight);
-        p.origp = new Vector(leftoffset, y_calc - (16 * 4));
-        allletters.push(p);
+        let leftOffset = allletters.reduce((tot, item) => tot + item.width + space, 0);
+        letter.addSprite(p);
+        letter.x = leftOffset + p.width / 2;
+        letter.y = y_calc - p.height / 3;
+        letter.hasNoBounds = true;
+        p.set('zIndex', '3');
+        p.set('textShadow', 'black 0 0 1px');
+        letter.cache.origXY = new Vector(letter.x, letter.y);
+        allletters.push(letter);
     });
-    let start_x = width / 2 - (allletters.reduce((tot, item) => tot += item.shape.offsetWidth + space, 0)) / 2;
+    let start_x = width / 2 - (allletters.reduce((tot, item) => tot + item.width + space, 0)) / 2;
     allletters.forEach(p => {
-        p.mod('left', start_x);
-        p.origp.add(new Vector(start_x, 0));
+        p.x += start_x;
+        p.cache.origXY.add(new Vector(start_x, 0));
     });
     lines = allletters.map((x, i) => {
         let w = 0;
         for (let j = i - 1; j >= 0; j--) {
-            w += space + allletters[j].shape.offsetWidth;
+            w += space + allletters[j].width;
         }
         if (Object.keys(x).length) {
-            let l = new Line(start_x + w, y_calc, start_x + w + allletters[i].shape.offsetWidth, y_calc, 'white');
-            l.line.set('height', 2)
-            l.line.set('box-shadow', 'black 2px 2px 2px')
+            let l = Line.fromAngle(start_x + w, y_calc, allletters[i].width, 0, 2).setColor('white');
+            l.set('box-shadow', 'black 2px 2px 2px');
             l.target = x.string;
             return l;
         } else {
@@ -339,42 +377,46 @@ function setup() {
 
     });
     buildings = shuffle(Array(splitletters.length).fill('').map((x, i) => i)).map((x, i) => {
-        let img = new Img('../images/buildings/skyscraper' + getRandom(6) + '.png', 10 + (width / (splitletters.length + 1)) * i + getRandom(-40, 40), 'bottom', 50,);
-        img.set('zIndex', 10)
+        let img = new Img(IMAGE_PATH + 'buildings/skyscraper' + getRandom(6) + '.png', 100 + ((width-100) / (splitletters.length + 1)) * i + getRandom(-40, 40), 0, 50,).fromCenter().onLoad(() => {
+            img.y = height - img.height / 2;
+        });
+        img.set('zIndex', '10');
         return img
     });
-    buildings = shuffle(buildings)
+    buildings = shuffle(buildings);
     for (let i = 0; i < splitletters.length; i++) {
         createAlien();
     }
-    ammoP = new P(guntype.ammo + ' : ' + guntype.backupammo, width*.9, height*0.01)
-    ammoP.set('fontSize','2em')
+    ammoP = new P(guntype.ammo + ' : ' + guntype.backupammo, width * .9, height * 0.01);
+    ammoP.set('fontSize', '2em')
 }
 
 let started = false;
 id('jmpleft').addEventListener('click', () => {
-    if(!started){
-        started = true;
+    if (!started) {
         aliens.forEach((alien, i) => {
-            let target = new PowerBall(allletters[i].x, allletters[i].y, 'word');
-            target.nobounds = true;
-            target.addSprite(allletters[i]);
-            alien.target = target;
-            alien.flyto(new Vector(allletters[i].x, allletters[i].y)).done(x => {
-                alien.extras.pickup = target;
+            alien.target = allletters[i];
+            alien.doFlyTo(allletters[i].p.copy()).then(() => {
+                alien.addAttachment(allletters[i], new Vector(0, -10));
                 let bld = buildings[i];
                 alien.bld = bld;
                 bld.occupied = true;
-                alien.flyto(bld.vector.copy().add(new Vector(0, -30))).done(x => {
-                    alien.hover()
+                alien.doFlyTo(bld.vector.copy().add(new Vector(0, bld.height / -2))).then(() => {
+                    alien.doHover()
                 });
             })
-        })
+        });
+        started = true;
+        play();
     }
-
 });
+id('jmpleft').style.pointerEvents = 'all';
+id('jmpleft').style.zIndex = '9999999';
 
-LOOPING = true;
+function play() {
+    LOOPING = true;
+    loop()
+}
+
 //
 setup();
-setInterval(()=>loop(), 1000/FPS);
