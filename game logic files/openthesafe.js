@@ -1,7 +1,7 @@
 words = Array.from(words); //just in case
 difficulty = 0;
 
-let IMAGE_PATH = '../../images/';
+let IMAGE_PATH = '../images/';
 
 function getAllLetters(arrayofwords) {
     let arrays = [];
@@ -406,8 +406,6 @@ LOADED_IMAGES = new ImageLoader(IMAGE_PATH, extras);
 LOADED_IMAGES.add('dynamite_projectile', IMAGE_PATH + 'projectiles');
 
 
-let p = new P('data', 300,10).setColor('black');
-
 function introMovie() {
     let bank = new Img(IMAGE_PATH + '/bank.png', width * .1, height - 370, 500);
     let burglars = [];
@@ -491,7 +489,6 @@ function introMovie() {
     let playending = false;
     let things_to_update = [];
     function movieloop(now) {
-        p.string = now-time |0;
         things_to_update.forEach(x=>{
             x.update();
         });

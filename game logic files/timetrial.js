@@ -1,6 +1,6 @@
 difficulty = 0;
 let chosen = words[Math.random() * words.length | 0];
-let IMAGE_PATH = '../../images/';
+let IMAGE_PATH = '../images/';
 let letters = chosen.split('');
 let colors = ['darkred', 'darkgreen', 'darkgoldenrod', 'purple', 'darkblue', 'darkorange', 'darkcyan', 'darkslategray'];
 let extras = ['fire', 'stars'];

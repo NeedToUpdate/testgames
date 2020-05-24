@@ -11,7 +11,7 @@ let ammoP = {};
 let gun = {};
 let selectedgun = new Character(0, 0, guntype.name);
 
-let IMAGE_PATH = '../../images/';
+let IMAGE_PATH = '../images/';
 selectedgun.hasNoBounds = true;
 document.body.style.backgroundImage = 'url(' + IMAGE_PATH + 'bg3.jpg)';
 document.body.style.pointerEvents = 'none';
