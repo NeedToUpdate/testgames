@@ -228,6 +228,7 @@
             monster.addShieldImage(LOADED_IMAGES['shield'].cloneNode());
             if(monster.height>height) monster.width *=0.8;
             monster.maxbounds.y = (height+100)/2+ monster.height/2;
+            monster.faceLeft();
         });
         monster.jumpMult = 20;
         monster.isJumping = true;
