@@ -118,13 +118,10 @@
 //let words = ['star','snake','snail','sun','telephone','tent','tiger','taxi', 'tennis','sausage','umbrella'];
 //let words = ['xenon','xerox','xylem']
 //let words = ['aaaaaaaaaa']
-//let words = ['star','snake','snail','sun','telephone','tent','tiger','taxi'];
+let words = ['star','snake','snail','sun','telephone','tent','tiger','taxi'];
 //let words = ['sore','throat','cough','backache','cold','fever','headache','stomach','ache','earache'];
 //let words = ['sweater','skirt','shirt','coat','hat','dress','jacket','scarf','pants','shorts','shoes','socks']
 //let words = ['fast','slow','happy','sad','tired','wet','open','heavy','dirty','tall','scared','hot','loud','bright','sticky','scary','beautiful','ugly','sweet','sharp'];
 
 
 let difficulty = 1
-
-
-let words = ['remember','uncomment','needed','words','after','sync'];
