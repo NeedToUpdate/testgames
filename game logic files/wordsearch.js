@@ -299,21 +299,23 @@ function setupBoard() {
     setTimeout(() => wordM.drawReal(), TIMEOUT1);
     setTimeout(() => wordM.draw(), TIMEOUT2);
     newwordsP = [];
+    let heightLimit = 0
     newwords.forEach((word, i) => {
         let x = leftofsearch + wordM.col_size * wordM.cols + 10 + 20;
         let y = topofsearch + i * 35;
         if (y > height * .9) {
+            if(!heightLimit) heightLimit = i
             x += 70;
-            y = height * 0.1 + (i - 11) * 35
+            y = topofsearch + (i%heightLimit) * 35
+            console.log(x,y)
         }
         let w = new P(word, x, y);
         w.set('fontSize', wordM.row_size / 2);
         w.set('color', 'white');
-        w.set('margin', 0);
         newwordsP.push(w)
     });
     document.body.addEventListener('mouseup', () => {
-        stopdrag();
+        stopdrag()
     });
     document.body.addEventListener('touchend', () => {
         stopdrag();
