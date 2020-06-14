@@ -209,7 +209,7 @@
 
         player.powerType = player_char.power;
         player.hasNoSkyBox = true;
-        let player_sprite = new Img(IMAGE_PATH + player_char.name + ".png", 0, 0, 150).fromCenter().onLoad(() => {
+        let player_sprite = new Img(IMAGE_PATH + player_char.name + ".png", 0, 0, 150).fromCenter().usingNewTransform().onLoad(() => {
             player.addSprite(player_sprite);
             player.addDeathImage(LOADED_IMAGES['fire'].cloneNode());
             player.addShieldImage(LOADED_IMAGES['shield'].cloneNode());
@@ -221,7 +221,7 @@
         });
         monster.powerType = monster_char.power;
         monster.hasNoSkyBox = true;
-        let monster_sprite = new Img(IMAGE_PATH + monster.name + ".png", 0, 0, 400).fromCenter().onLoad(() => {
+        let monster_sprite = new Img(IMAGE_PATH + monster.name + ".png", 0, 0, 400).fromCenter().usingNewTransform().onLoad(() => {
             monster.addSprite(monster_sprite);
             monster.projectileOffsetHeight = 1;
             monster.addDeathImage(LOADED_IMAGES['fire'].cloneNode());
@@ -430,7 +430,7 @@
                 }, 20);
             },1000);
             setTimeout(()=>{
-                let sprite = new Img(IMAGE_PATH + monster_char.name + ".png", 0,0, 400).fromCenter().onLoad(()=>{
+                let sprite = new Img(IMAGE_PATH + monster_char.name + ".png", 0,0, 400).fromCenter().usingNewTransform().onLoad(()=>{
                     monster = new Character(width - 100, -1000, monster_char.name);
                     id('enemyhp').innerText = "monster: ";
                     LOADED_IMAGES.add(monster_char.power + '_projectile');

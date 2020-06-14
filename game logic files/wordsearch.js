@@ -309,7 +309,7 @@ function setupBoard() {
             y = topofsearch + (i%heightLimit) * 35
             console.log(x,y)
         }
-        let w = new P(word, x, y);
+        let w = new P(word, x, y).usingNewTransform();
         w.set('fontSize', wordM.row_size / 2);
         w.set('color', 'white');
         newwordsP.push(w)
