@@ -198,8 +198,24 @@
     let playerHP = {};
     let monsterHP = {};
     function setup() {
-        id('playerhp').innerText = " player: "
-        id('enemyhp').innerText = "monster: "
+        //loading bar
+        let blur = new Rectangle(0,0,width,height);
+        blur.set('zIndex', '1000');
+        blur.set('backgroundColor', 'rgba(200,200,200,0.7)');
+        let loadingBar = new LoadingBar(width/2 - 100, height/2, 200, 40,0,100,0);
+        loadingBar.set('zIndex','1001');
+        let loadingText = new P('Loading...', width/2 - 100, height/2-50);
+        loadingText.set('zIndex','1001');
+        loadingText.set('fontSize','3em');
+
+        function clearLoad(){
+            blur.remove();
+            loadingBar.remove();
+            loadingText.remove();
+        }
+
+        id('playerhp').innerText = " player: ";
+        id('enemyhp').innerText = "monster: ";
         LOADED_IMAGES = new ImageLoader(IMAGE_PATH + 'projectiles/', ['fire', 'shield', monster_char.power + '_projectile', player_char.power + '_projectile']);
         player = new Character(100, 100, player_char.name);
         monster = new Character(width - 200, 100, monster_char.name);
@@ -209,12 +225,14 @@
 
         player.powerType = player_char.power;
         player.hasNoSkyBox = true;
+        loadingBar.value += 10;
         let player_sprite = new Img(IMAGE_PATH + player_char.name + ".png", 0, 0, 150).fromCenter().usingNewTransform().onLoad(() => {
             player.addSprite(player_sprite);
             player.addDeathImage(LOADED_IMAGES['fire'].cloneNode());
             player.addShieldImage(LOADED_IMAGES['shield'].cloneNode());
             player.maxbounds.y = (height+100)/2+ player.height/2;
             monster.projectileOffsetHeight = -player.height/3;
+            loadingBar.value+=30
         });
         player.landing_emitter.subscribe('land', () => {
             player.faceRight();
@@ -229,6 +247,7 @@
             if(monster.height>height) monster.width *=0.8;
             monster.maxbounds.y = (height+100)/2+ monster.height/2;
             monster.faceLeft();
+            loadingBar.value+=30
         });
         monster.jumpMult = 20;
         monster.isJumping = true;
@@ -239,7 +258,13 @@
         gravity.constant = true;
         player.addForce(gravity);
         monster.addForce(gravity);
-        start();
+        setInterval(()=>{
+            loadingBar.value+=1;
+        },5)
+        loadingBar.on(100,()=>{
+            clearLoad();
+            start();
+        })
     }
 
     let PLAYING = false;

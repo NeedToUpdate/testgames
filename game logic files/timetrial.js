@@ -171,6 +171,7 @@ let final_letters = [];
 function replaceButton(pos, correct) {
     if (correct) {
         grid[pos[1]][pos[0]].addDeathImage(LOADED_IMAGES.stars.cloneNode());
+        grid[pos[1]][pos[0]].deathImageTime = 400;
         grid[pos[1]][pos[0]].kill();
     } else {
         grid[pos[1]][pos[0]].kill();
@@ -197,7 +198,7 @@ function clickHandler(string, pos) {
         return
     }
     let currentLine = lines[final_word.length];
-    let temp_p = new P(string, currentLine.x, currentLine.y).setColor('white');
+    let temp_p = new P(string, currentLine.x, currentLine.y).usingNewTransform().setColor('white');
     temp_p.set('fontSize', '4em');
     temp_p.x += temp_p.width/3;
     temp_p.y -= (temp_p.height)-14;

@@ -166,6 +166,7 @@ function generateObstacles(mode) {
                 monsters.push(new Character(width * Math.random(), 300, 'monster' + (Math.random() * 30 | 0)));
                 monsters[0].maxbounds.y = height - 150;
                 monsters[0].maxbounds.x = width;
+				monsters[0].hasNoSkyBox = true;
                 let g = new Vector(0, 1);
                 g.constant = true;
                 monsters[0].forces.push(g);
@@ -210,6 +211,7 @@ function generateObstacles(mode) {
                 });
                 mon.maxbounds.x = width;
                 mon.maxbounds.y = height - 100;
+				mon.hasNoSkyBox = true;
                 mon.forces.push(VECTORS.gravity);
                 monsters.push(mon)
             }

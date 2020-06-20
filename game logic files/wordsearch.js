@@ -310,7 +310,7 @@ function setupBoard() {
             console.log(x,y)
         }
         let w = new P(word, x, y).usingNewTransform();
-        w.set('fontSize', wordM.row_size / 2);
+        w.set('fontSize', '2em');
         w.set('color', 'white');
         newwordsP.push(w)
     });
@@ -600,6 +600,7 @@ function setupScreen() {
     updateNum();
     let maxDiff = 2;
     hMinusP.shape.addEventListener('click', () => {
+		if(hVal<2) return
         hVal--;
         if(Math.abs(hVal-wVal)>maxDiff){
             wVal--;
@@ -618,6 +619,7 @@ function setupScreen() {
         updateNum();
     });
     wMinusP.shape.addEventListener('click', () => {
+		if(wVal<2) return
         wVal--;
         if(Math.abs(hVal-wVal)>maxDiff){
           hVal--;

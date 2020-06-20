@@ -296,7 +296,7 @@ let things_to_update = [];
 
 function createAlien(target) {
     let alien = new Flyer(10, 100, 'invader' + getRandom(invadercolors));
-    let sprite = new Img(invaders[alien.name].cloneNode(), 10, 100, 50).fromCenter().onLoad(() => {
+    let sprite = new Img(invaders[alien.name].cloneNode(), 10, 100, 50).fromCenter().usingNewTransform().onLoad(() => {
         sprite.set('zIndex', '1');
         alien.addSprite(sprite);
         alien.addDeathImage(aliendeathimg.electric_projectile.cloneNode());

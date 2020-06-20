@@ -32,13 +32,13 @@
 //    'fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth'];
 //let words = ['glue','scissors','notebook','ruler','white-out','eraser','sharpener','pencil','mechanical pencil','pencil case','highlighter'];
 //let words = ['stones','bones','sticks','quill','ink','brush','ancient','pencil','water']
-//let words = ['projector','whiteboard','marker pen','eraser','desk','light','teacher','floor','wall','door','student','table','window','curtain','computer','mouse','keyboard'];
 //let words = ['red','yellow','green','blue','purple','orange','violet','white','black','gray','light','dark','pink'];
 //let words = ['exercise','body','healthy','stronger','lungs','heart','energy','muscles','stretch'];
 //let words = ['hair','eyebrow','eye','nose','mouth','chest','stomach','leg','knee','foot','toe','head','neck','back','arm','elbow','finger','tongue','shoulder','hand','ankle','heel']
 //let words = ['bedroom','living room','dining room','kitchen','garage','bathroom','bathroom'];
 //let words = ['hat','cap','sunglasses','tie','bowtie','scarf','belt','socks','jacket','coat','vest','suit','sweater','sweatshirt','shirt','jeans','shorts','sweatpants','skirt','sandals','sneakers','flats','heels','slippers','boots']
 //let words = ['bag','cap','doll','frog','girl','apple','elephant','insect','orange','umbrella','airplane','parrot','baby','hat','egg','rabbit','mouse','armchair'];
+let words = ['projector','whiteboard','marker pen','eraser','desk','light','teacher','floor','wall','door','student','table','window','curtain','computer','mouse','keyboard'];
 
 //================ESL1=================
 
@@ -119,12 +119,15 @@
 //let words = ['xenon','xerox','xylem']
 //let words = ['aaaaaaaaaa']
 //let words = ['star','snake','snail','sun','telephone','tent','tiger','taxi'];
-//let words = ['sore','throat','cough','backache','cold','fever','headache','stomach','ache','earache'];
+//let words = ['air','virus','hands','clean','wash','safe','mask','alcohol','sterilize','circulation'];
 //let words = ['sweater','skirt','shirt','coat','hat','dress','jacket','scarf','pants','shorts','shoes','socks']
 //let words = ['fast','slow','happy','sad','tired','wet','open','heavy','dirty','tall','scared','hot','loud','bright','sticky','scary','beautiful','ugly','sweet','sharp'];
+//let words = ['sore','throat','cough','backache','cold','fever','headache','stomach','ache','earache'];
+//let words = ['coronavirus','mask','temperature','disinfection','alcohol','circulation','fever','cough','soap','sneeze'];
+//let words = ['remember','uncomment','needed','words','after','sync'];
 
 
 let difficulty = 1
 
 
-let words = ['remember','uncomment','needed','words','after','sync'];
+//let words = ['remember','uncomment','needed','words','after','sync'];
