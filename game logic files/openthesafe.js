@@ -1,7 +1,18 @@
 words = Array.from(words); //just in case
 difficulty = 0;
 
+let SKY_COLOR = '#01b7e9';
+
 let IMAGE_PATH = '../images/';
+
+id('black_square').src = '';
+id('black_square').style.backgroundColor = SKY_COLOR;
+id('black_square').style.height = '65px';
+id('black_square').style.border = '';
+id('black_square').style.zIndex = '10';
+
+
+
 
 function getAllLetters(arrayofwords) {
     let arrays = [];
@@ -46,7 +57,7 @@ function findClosestSquare(num) {
 }
 
 function pos2xy(xpos, ypos, size,padding) {
-    let top = height * 0.2;
+    let top = height * (0.2 - difficulty*0.05)  ;
     let left = width * 0.05;
     padding = padding || 15;
     return [left + xpos * (size + padding), top + ypos  * (size + padding)]
@@ -107,7 +118,7 @@ function clickHandler(string) {
         }
     } else {
         let spaced = undefined;
-        if (currentWords.filter(word => word.replace(typedword, '').startsWith(' ')).length === 1) {
+        if (currentWords.filter(word => word.replace(typedword, '').startsWith(' ')).length >= 1) {
             spaced = typedword + ' ';
         }
         let tempwords = currentWords.filter(word => {
@@ -341,17 +352,23 @@ function setupkeypad() {
         '#eee 0%, #aaa 10%, #ddd 14%, #fff 30%, #999 44%, #ddd 55%, #999 60%, #eee 85%, #ccc 100%' +
         ')');
     keypad.set('borderRadius', '10px');
+    keypad.set('zIndex', '100');
+    keypad.set('borderBottom', '#655 solid 4px ');
+    keypad.set('borderRight', '#766 solid 4px ');
     paper = new Img(IMAGE_PATH + 'tornpaper.png', keypad.x+ keypad.width + padding*2, -16, 600);
     lights = new Array(3).fill('').map((x, i) => {
         let l = new Circle(pos2xy(0, 0, 0)[0] + dim[0] * (size + padding) / 2 +padding - 20 + 20*i, pos2xy(0, 0, 0)[1] - 8, 5);
         l.set('backgroundImage', 'radial-gradient(#0f0 0%, #0b0 100%)');
         l.set('boxShadow', 'rgba(0,255,0,0.3) 0px 0px 2px 2px');
+        l.set('zIndex', '110');
         return l
     });
+    console.log(keypad.height+keypad.x, pos2xy(0,dim[1],size,padding))
     wordlights = new Array(words.length).fill('').map((x, i) => {
-        let l = new Circle(pos2xy(0, 0, 0)[0] + dim[0] * (size + padding) / 2 +padding - (14 * words.length / 2)+7 + i * 14, pos2xy(0, dim[1], size)[1], 5);
+        let l = new Circle(pos2xy(0, 0, 0)[0] + dim[0] * (size + padding) / 2 +padding - (14 * words.length / 2)+7 + i * 14,  pos2xy(0,dim[1],size,padding)[1] + size/2, 5);
         l.set('backgroundImage', 'radial-gradient(#544 0%, #655 100%)');
         l.set('boxShadow', 'rgba(0,0,0,0.3) 0px 0px 2px 2px');
+        l.set('zIndex', '110');
         return l
     });
     lettersM.map((x, i, j) => {
@@ -368,7 +385,7 @@ function setupkeypad() {
             ')');
         //p.sprite.set('font-size', '3em');
         p.sprite.set('backgroundColor', getRandom(colors));
-
+        p.sprite.set('zIndex', '110');
         let [string, pos] = [p.string, p.pos];
         p.div.shape.addEventListener('click', () => {
             // this.div.set('border', '5px solid blue');

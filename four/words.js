@@ -78,10 +78,6 @@
 //let words =['science','animals','pets','veterinarian','sick','diet','healthy','owners'];
 //let words = ['bananas','cabbages','potatoes','cucumbers','strawberries','carrots','peppers','grapes','oranges','pears','bread','turkey','tomatoes','mustard','eggs'];
 //let words = ['exercise','body','healthy','stronger','lungs','heart','energy','muscles','stretch'];
-//let words = ['sort clothes','watch tv','make the bed','take a bath','brush teeth','organize toys','cook food','organize toys','wash the dishes','eat','set the table','clean up the table','mow the lawn','wash the car','walk the dog'];
-let words = ['get up','make the bed','brush teeth','wash face','comb hair','have breakfast','go to school','watch TV','have dinner','do homework','go home','have lunch','have classes','take a shower','put on pyjamas','go to bed']
-
-
 
 //================ESL2=================
 
@@ -123,7 +119,7 @@ let words = ['get up','make the bed','brush teeth','wash face','comb hair','have
 //let words = ['xenon','xerox','xylem']
 //let words = ['aaaaaaaaaa']
 //let words = ['star','snake','snail','sun','telephone','tent','tiger','taxi'];
-//let words = ['air','virus','hands','clean','wash','safe','mask','alcohol','sterilize','circulation'];
+let words = ['air','virus','hands','clean','wash','safe','mask','alcohol','sterilize','circulation'];
 //let words = ['sweater','skirt','shirt','coat','hat','dress','jacket','scarf','pants','shorts','shoes','socks']
 //let words = ['fast','slow','happy','sad','tired','wet','open','heavy','dirty','tall','scared','hot','loud','bright','sticky','scary','beautiful','ugly','sweet','sharp'];
 //let words = ['sore','throat','cough','backache','cold','fever','headache','stomach','ache','earache'];
@@ -132,6 +128,3 @@ let words = ['get up','make the bed','brush teeth','wash face','comb hair','have
 
 
 let difficulty = 1
-
-
-//let words = ['remember','uncomment','needed','words','after','sync'];

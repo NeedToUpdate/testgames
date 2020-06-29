@@ -1,0 +1,5 @@
+//BUILD THE WORD
+
+- add fire death animation
+- add variable bound limit for monsters so they jump on the floor and on the letters. mayb add function into the bounds?
+
