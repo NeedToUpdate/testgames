@@ -216,7 +216,6 @@ function animatewin() {
     chars.forEach(x => {
         x.update()
     });
-    requestAnimationFrame(animatewin)
 }
 
 function win() {
@@ -226,20 +225,19 @@ function win() {
                     id('safeimg').style.animationDuration = '4s';
                     id('safeimg').style.zIndex = '10000';
                     let charnum = 25 + difficulty * 50;
-                    safe.x = 420;
-                    safe.y = 390;
+                    safe.x = width/2;
+                    safe.y = height - safe.height/2;
                     let prom = new Promise(resolve => {
                         for (let i = 0; i < charnum; i++) {
-                            let char = new Character(420, 400, 'treasure' + (Math.random() * 7 | 0));
+                            let char = new Character(width/2, height - safe.height/2, 'treasure' + (Math.random() * 7 | 0));
                             char.maxbounds.y = 400;
                             char.hasBounce = true;
                             char.bounce_coeff = 1;
                             let img = new Img(IMAGE_PATH + char.name + '.png', 420, 400, 50).fromCenter().usingNewTransform();
                             img.onLoad(() => {
-                                requestAnimationFrame(() => {
+                                img.set('zIndex', '110')
                                     char.addSprite(img);
                                     char.addForce(VECTORS.gravity);
-                                    requestAnimationFrame(() => {
                                         chars.push(char);
                                         if (charnum === chars.length) {
                                             chars.forEach(char => {
@@ -250,15 +248,12 @@ function win() {
                                             resolve()
 
                                         }
-                                    })
-                                })
-
-
                             })
                         }
                     });
                     prom.then(() => {
-                        requestAnimationFrame(animatewin)
+                        id('black_square').style.backgroundColor = '#d0f2fe';
+                        createFallbackLoopFunction(animatewin).start()
                     })
                     ;
                 }
@@ -363,7 +358,6 @@ function setupkeypad() {
         l.set('zIndex', '110');
         return l
     });
-    console.log(keypad.height+keypad.x, pos2xy(0,dim[1],size,padding))
     wordlights = new Array(words.length).fill('').map((x, i) => {
         let l = new Circle(pos2xy(0, 0, 0)[0] + dim[0] * (size + padding) / 2 +padding - (14 * words.length / 2)+7 + i * 14,  pos2xy(0,dim[1],size,padding)[1] + size/2, 5);
         l.set('backgroundImage', 'radial-gradient(#544 0%, #655 100%)');
@@ -495,7 +489,7 @@ function introMovie() {
 
     function startmovie() {
         time = window.performance.now();
-        requestAnimationFrame(movieloop)
+        createFallbackLoopFunction(movieloop).start()
     }
 
     let time = 0;
@@ -505,7 +499,8 @@ function introMovie() {
     let hole = {};
     let playending = false;
     let things_to_update = [];
-    function movieloop(now) {
+    function movieloop() {
+        let now = window.performance.now();
         things_to_update.forEach(x=>{
             x.update();
         });
@@ -515,12 +510,12 @@ function introMovie() {
                 burglar.hop();
             }
             if (now - time > 3000 && burglar.x > width*0.65 && now - time < 5000) {
-                burglar.jumpFwd(0.4)
+                burglar.jumpFwd(getRandom(0.3,0.4))
             }
             if (now - time < 10000 && burglar.x < width*0.65 && now - time > 5000 && !burglar.isPoweringUp) {
                 if (now - time < 7000) {
                     burglar.powerUp();
-                } else if (Math.random() < 0.01) {
+                } else if (Math.random() < 0.1) {
                     burglar.powerUp();
                 }
 
@@ -549,7 +544,7 @@ function introMovie() {
             });
             movieending = true;
             setTimeout(() => {
-                hole = new Img(LOADED_IMAGES.brokenhole, width * 0.1 + 350, height - 150, 100);
+                hole = new Img(LOADED_IMAGES.brokenhole.cloneNode(), width * 0.1 + 350, height - 150, 100);
 
                 playending = true;
             }, 2000);
@@ -570,13 +565,9 @@ function introMovie() {
             })
         }
         if (bsloaded === 0) {
-            playmovie = false;
+            stop(true);
             cleanup();
             //setupkeypad();
-        }
-
-        if (playmovie) {
-            requestAnimationFrame(movieloop);
         }
     }
 
@@ -591,11 +582,13 @@ function introMovie() {
         bank.shape.style.animationDuration = '3s';
         document.body.style.animationName = 'zoombg';
         document.body.style.animationDuration = '3s';
+
+        id('black_square').style.backgroundColor = '#1a343f';
         setTimeout(() => {
                 safe = new Character(200, 200, 'safe');
                 let safeimg = new Img(LOADED_IMAGES.safe.cloneNode(),0,0, 200).fromCenter().onLoad(() => {
                     safe.addSprite(safeimg);
-                    safe.maxbounds.y = 380;
+                    safe.maxbounds.y = height*0.9;
                     safe.addForce(VECTORS.gravity);
                     safe.jumpFwd(3);
                     safeimg.shape.setAttribute("id", 'safeimg');

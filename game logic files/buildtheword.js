@@ -175,6 +175,7 @@ function generateObstacles(mode) {
                     monsters[0].sprite.shape.addEventListener('click', () => {
                         monsters[0].forces.push(Vector.random().set(Math.random() * 10))
                     })
+                    monsters[0].addDeathImage(LOADED_IMAGES.fire.cloneNode());
                 });
             } else {
                 firenum += 2;
@@ -207,7 +208,8 @@ function generateObstacles(mode) {
                     mon.sprite.shape.addEventListener('click', () => {
                         let n = Math.random();
                         mon.forces.push(new Vector(n * 40 - 20, -30))
-                    })
+                    });
+                    mon.addDeathImage(LOADED_IMAGES.fire.cloneNode());
                 });
                 mon.maxbounds.x = width;
                 mon.maxbounds.y = height - 100;
@@ -229,6 +231,7 @@ function generateObstacles(mode) {
             fires.forEach(fire => {
                 let sprite = new Img(IMAGE_PATH + fire.name + '.png', 100, 100, 50).fromCenter().usingNewTransform().onLoad(() => {
                     fire.addSprite(sprite);
+                    fire.addDeathImage(LOADED_IMAGES.fire.cloneNode());
                 });
                 fire.maxbounds = {x: width, y: height};
                 fire.MAX_V = Math.random() * 7 + 9 * difficulty;

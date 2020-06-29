@@ -8,7 +8,7 @@
 //let words = ['hamburger','egg','carrot','hot dog','sausage','tomato','noodle','cookie','candy','dumpling','chip','sandwich','kiwifruit','pineapple','watermelon','grape','peach','strawberry'];
 //let words = ['trousers','truck','train','strawberry','trash','tree','draw','drink','dragon','driver','drum','drawer'];
 //let words = ['meat','sea','jeep','seat','green','feet','me','he','we','candy','happy','puppy'];
-let words = ['pie','tie','necktie','bite','nine','kite','hi','climb','blind','fly','cry','sky'];
+//let words = ['pie','tie','necktie','bite','nine','kite','hi','climb','blind','fly','cry','sky'];
 //let words = ['sword','storm','morning','corn','hard','jar','star','card','her','spider','runner','dancer','purse','purple','turn','fur'];
 
 //================ESLS=================
@@ -116,7 +116,7 @@ let words = ['pie','tie','necktie','bite','nine','kite','hi','climb','blind','fl
 //let words = ['go','meet','stay','play','listen','draw','dance','read','sleep','learn','write','eat','drink','have','see','watch','like','get','take'];
 //let words = ['coke','juice','meat','cheese','ice cream','chocolate'];
 //let words = ['star','snake','snail','sun','telephone','tent','tiger','taxi', 'tennis','sausage','umbrella'];
-//let words = ['xenon','xerox','xylem']
+let words = ['xenon','xerox','xylem']
 //let words = ['aaaaaaaaaa']
 //let words = ['star','snake','snail','sun','telephone','tent','tiger','taxi'];
 //let words = ['air','virus','hands','clean','wash','safe','mask','alcohol','sterilize','circulation'];

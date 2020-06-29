@@ -345,7 +345,7 @@
         }
     }
     let PLAYERJUMP = false;
-    loop = function (now) {
+    function loop(){
         player.update();
         monster.update();
         if(PLAYING && !PLAYERJUMP && !monster.dead) {
@@ -479,24 +479,10 @@
                 });
             },3000);
             HARDMODE = false;
-
-
-
-
-
-            //add loading;
         }
-
-
-        LAST_TIME = now;
-        if (LOOPING) {
-            requestAnimationFrame(loop);
-        }
-    };
-    start = function () {
-        LOOPING = true;
-        LAST_TIME = window.performance.now();
-        requestAnimationFrame(loop);
+    }
+    function start() {
+       createFallbackLoopFunction(loop).start()
     };
 
 
