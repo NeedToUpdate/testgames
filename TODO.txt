@@ -1,5 +1,22 @@
 //BUILD THE WORD
 
-- add fire death animation
+- [DONE] add fire death animation
 - add variable bound limit for monsters so they jump on the floor and on the letters. mayb add function into the bounds?
+
+//SHOOT THE LETTERS
+
+- add more guns
+
+//WORD SEARCH
+
+- add more ending animations
+
+//==== NEW GAMES ===
+
+//CROSSWORD GAME
+
+//HANGMAN (VS)
+
+//WORD TRAIN
+- add save function for players as a base64 string
 
