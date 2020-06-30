@@ -15,10 +15,10 @@ let chosen = GRAMMAR_MODE ? sentences[Math.random() * sentences.length | 0] : wo
 
 let letters = chosen.split(GRAMMAR_MODE ? ' ' : '');
 
-let modes = ['fires', 'monsters', 'ghosts'];
+let modes = ['flyers', 'monsters', 'ghosts', 'aliens'];
 let chosen_mode = Math.random() * 4 | 0;
 if (chosen_mode === 3) {
-    chosen_mode--;
+    //chosen_mode--;
     //to make the 3rd mode more popular
 }
 let ps = [];
@@ -97,7 +97,7 @@ Promise.all(promises).then(res => {
     setTimeout(() => {
         generateObstacles(modes[chosen_mode]);
         start()
-    }, 2000)
+    }, 1000)
 
 });
 
@@ -112,8 +112,14 @@ let dragging_offset = new Vector(0, 0);
 function drag(ev) {
     ps.forEach(x => {
         if (x.dragging) {
-            x.y = (ev.clientY - x.shape.offsetHeight / 2);
-            x.x = (ev.clientX - x.shape.offsetWidth / 2);
+            let newY = (ev.clientY - x.shape.offsetHeight / 2);
+            let newX = (ev.clientX - x.shape.offsetWidth / 2);
+            if(newY>(height-x.shape.offsetHeight / 2)) newY = (height-x.shape.offsetHeight / 2);
+            if(newY<x.shape.offsetHeight / -2) newY =x.shape.offsetHeight / -2;
+            if(newX>(width-x.shape.offsetWidth / 2)) newX = (width-x.shape.offsetWidth / 2);
+            if(newX<x.shape.offsetWidth / -2) newX = x.shape.offsetWidth / -2;
+            x.y = newY;
+            x.x = newX;
         }
     })
 }
@@ -121,8 +127,14 @@ function drag(ev) {
 function pickup(letter, ev) {
     if (!letter.locked && !letter.resetting) {
         letter.set('color', 'blue');
-        letter.y = (ev.clientY - letter.shape.offsetHeight / 2);
-        letter.x = (ev.clientX - letter.shape.offsetWidth / 2);
+        let newY = (ev.clientY - letter.shape.offsetHeight / 2);
+        let newX = (ev.clientX - letter.shape.offsetWidth / 2);
+        if(newY>height) newY = height;
+        if(newY<0) newY = 0;
+        if(newX>width) newX = width;
+        if(newX<0) newX = 0;
+        letter.y = newY;
+        letter.x = newX;
         letter.dragging = true;
     }
 }
@@ -153,14 +165,14 @@ document.addEventListener('touchmove', (ev) => {
 
     drag(ev)
 });
-let fires = [];
+let flyers = [];
 let monsters = [];
 let powers = ['ice_projectile', 'electric_projectile', 'magic_projectile', 'fire', 'water_projectile', 'blackenergy_projectile', 'blueenergy_projectile', 'tornado_projectile', 'pinkenergy_projectile'];
 
 function generateObstacles(mode) {
     switch (mode) {
         case modes[0]:
-            //fires
+            //flyers
             let firenum = (Math.random() * (difficulty * 2 + 1) | 0) + 5 + (difficulty > 2 ? 5 : 0);
             if (Math.random() < (0.4 + difficulty / 10)) {
                 monsters.push(new Character(width * Math.random(), 300, 'monster' + (Math.random() * 30 | 0)));
@@ -187,12 +199,12 @@ function generateObstacles(mode) {
                 if (xx > width * .3 && xx < width * .7 && yy > height * .7) {
                     yy -= height * .4;
                 }
-                fires.push(new Flyer(xx, yy, powers[Math.random() * powers.length | 0]));
+                flyers.push(new Flyer(xx, yy, powers[Math.random() * powers.length | 0]));
             }
-            fires.forEach(fire => {
+            flyers.forEach(fire => {
                 let sprite = new Img(IMAGE_PATH + 'projectiles/' + fire.name + '.png', 100, 100, 50).fromCenter().usingNewTransform().onLoad(() => {
                     fire.addSprite(sprite);
-                    fires.forEach(fire => {
+                    flyers.forEach(fire => {
                         fire.doOrbit(fire.p.copy().add(Vector.random(25)), getRandom(2, 5));
                     });
                 });
@@ -203,7 +215,7 @@ function generateObstacles(mode) {
             let num = (Math.random() * 2 | 0) + difficulty + 1 + (difficulty > 2 ? 1 : 0);
             for (let i = 0; i < num; i++) {
                 let mon = new Character(width * .1 + ((width * .8) / num) * i, 300, 'monster' + (Math.random() * 30 | 0));
-                let sprite = new Img(IMAGE_PATH + mon.name + '.png', mon.x, 300, 200).fromCenter().usingNewTransform().onLoad(() => {
+                let sprite = new Img(IMAGE_PATH + mon.name + '.png', mon.x, 300, 150).fromCenter().usingNewTransform().onLoad(() => {
                     mon.addSprite(sprite);
                     mon.sprite.shape.addEventListener('click', () => {
                         let n = Math.random();
@@ -226,9 +238,9 @@ function generateObstacles(mode) {
                 if (xx > width * .3 && xx < width * .7 && yy > height * .7) {
                     yy -= height * .4;
                 }
-                fires.push(new Flyer(xx, yy, 'ghost' + i % 11));
+                flyers.push(new Flyer(xx, yy, 'ghost' + i % 11));
             }
-            fires.forEach(fire => {
+            flyers.forEach(fire => {
                 let sprite = new Img(IMAGE_PATH + fire.name + '.png', 100, 100, 50).fromCenter().usingNewTransform().onLoad(() => {
                     fire.addSprite(sprite);
                     fire.addDeathImage(LOADED_IMAGES.fire.cloneNode());
@@ -237,6 +249,31 @@ function generateObstacles(mode) {
                 fire.MAX_V = Math.random() * 7 + 9 * difficulty;
                 fire.MAX_F = Math.random() * (difficulty * 1.1 + 1.6) / (9 - (difficulty));
             });
+            break;
+        case modes[3]:
+            let aliennum = chosen.length - (4-difficulty);
+            if(aliennum<1) aliennum = 1;
+            if(aliennum>chosen.length) aliennum = chosen.length-1;
+            let colors = ['red','blue','orange','white','pink','purple','yellow'];
+            max_held_positions = aliennum;
+            for(let i = 0; i<aliennum; i++){
+                let flyer = new Flyer(getRandom(100,width-100),getRandom(50,height-200),'alien'+i);
+                let sprite = new Img(IMAGE_PATH + 'invaders/invader' + getRandom(colors) + '.png',0,0,lines[0].width-5).fromCenter().usingNewTransform().onLoad(()=>{
+                    flyer.addSprite(sprite);
+                    flyer.addDeathImage(LOADED_IMAGES.fire.cloneNode());
+                    flyers.push(flyer);
+                    flyer.MAX_V = 15;
+                    flyer.MAX_F = 3;
+                    flyer.heldPosition = getAlienVal();
+                    let loc = lines[flyer.heldPosition].p.copy();
+                    loc.x += lines[flyer.heldPosition].width/2;
+                    loc.y -= flyer.height;
+                    flyer.doMoveTo(loc).then(()=>{
+                        flyer.doHover();
+                    })
+                })
+            }
+
     }
     id('jmpleft').innerText = diff2word(difficulty);
     id('jump').innerText = modes[chosen_mode];
@@ -246,8 +283,10 @@ function generateObstacles(mode) {
 function winningCleanup(mode) {
     switch (mode) {
         case modes[0]:
+        case modes[3]:
+            held_positions = []
         case modes[2]:
-            fires.forEach(f => {
+            flyers.forEach(f => {
                 f.kill();
             });
         case modes[1]:
@@ -261,13 +300,17 @@ function winningCleanup(mode) {
 function cleanup(mode) {
     switch (mode) {
         case modes[0]:
+        case modes[3]:
+            held_positions = []
         case modes[2]:
-            fires.forEach(f => {
+            flyers.forEach(f => {
+                f.deathImage = null;
                 f.kill()
             });
-            fires = [];
+            flyers = [];
         case modes[1]:
             monsters.forEach(m => {
+                m.deathImage = null;
                 m.kill()
             });
             monsters = []
@@ -292,22 +335,79 @@ function reset(letter) {
     })
 }
 
-loop = function (now) {
+let held_positions = [];
+let max_held_positions = 0;
+function getAlienVal(getEmpty){
+    function solvedVals(){
+        return lines.map((x,i)=>{
+            return x.target.endsWith('done')?i:null
+        }).filter(x=>x!==null);
+    }
+    if(getEmpty){
+        let allnums = Array(chosen.length).fill(0).map((x,i)=>i); //array of all the indicies
+        let free_nums = allnums.filter(x=>(!held_positions.includes(x) && !solvedVals().includes(x)));
+        return getRandom(free_nums)
+    }
+    let tot = max_held_positions;
+    if (held_positions.length>=tot) return null;
+    let value = held_positions.length>0?getRandom(chosen.length): 0; //always make sure first position is taken
+    while(held_positions.includes(value) || solvedVals().includes(value)){
+        value+=1;
+        value%=tot+1;
+    }
+    held_positions.push(value);
+    return value;
+}
+
+let letters_completed = 0;
+let last_check_for_letters = 0;
+function loop(now) {
     let dt = now - LAST_TIME;
-    fires.forEach(fire => {
-        fire.update(dt);
+    flyers.forEach(flyer => {
+        flyer.update(dt);
         if (chosen_mode === 2) {//if chasing
             ps.forEach(p => {
                 if (p.dragging) {
                     let x = parseInt(p.shape.offsetLeft + p.shape.offsetWidth / 2);
                     let y = parseInt(p.shape.offsetTop + p.shape.offsetHeight / 2);
-                    fire.steerTo(new Vector(x, y))
+                    flyer.steerTo(new Vector(x, y))
                 }
             })
-
         }
-
     });
+    if(chosen_mode === 3){
+        //if alien mode
+        let valid_flyers = flyers.filter(x=>x.isDoingHover);
+        if (letters_completed>last_check_for_letters && valid_flyers.length>0) {
+            last_check_for_letters = letters_completed;
+            let alien = getRandom(valid_flyers);
+            alien.stopHover();
+            held_positions.splice(held_positions.indexOf(alien.heldPosition),1);
+            alien.hasNoBounds = true;
+            alien.doFlyTo(new Vector(width/2,-100)).then(()=>{
+                alien.deathImage = null;
+                alien.kill()
+                flyers.splice(flyers.indexOf(alien),1)
+            })
+        }
+        if(Math.random()<(0.0005 + 0.0005*difficulty) && valid_flyers.length>0){
+            let alien = getRandom(valid_flyers);
+            let newpos = getAlienVal(true);
+            let oldpos = alien.heldPosition;
+            alien.stopHover();
+            held_positions.splice(held_positions.indexOf(oldpos),1);
+            held_positions.push(newpos);
+            alien.heldPosition = newpos;
+            alien.doFlyTo(alien.p.copy().add(new Vector(0,-100))).then(()=> {
+                let loc = lines[newpos].p.copy();
+                loc.x += lines[newpos].width / 2;
+                loc.y -= alien.height;
+                alien.doFlyTo(loc).then(()=>{
+                    alien.doHover()
+                })
+            })
+        }
+    }
     monsters.forEach(monster => {
         monster.update(dt);
 
@@ -338,7 +438,7 @@ loop = function (now) {
                 let y = parseInt(sh.offsetTop + sh.offsetHeight / 2);
                 let l_v = new Vector(x, y);
 
-                fires.forEach(fire => {
+                flyers.forEach(fire => {
                     let fire_y = fire.p.y;
                     let fire_x = fire.p.x;
                     let f_v = new Vector(fire_x, fire_y);
@@ -365,6 +465,7 @@ loop = function (now) {
                             letter.x = line.a.x + line.length / 2 - sh.offsetWidth / 2;
                             letter.dragging = false;
                             line.target += 'done';
+                            letters_completed++;
                         }
                     }
                 })
