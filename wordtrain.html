@@ -33,15 +33,26 @@ GAMEBOARD.shape.id = "gamearea";
 let player_num = 4;
 let players = {};
 
+for(let i = 0; i>-10;i--){
+   let n = 5 + i
+   console.log(n%5)
+
+}
+
+
 class Player{
     constructor(id){
         this.INTERNAL_ID = id;
         this.powers = []
+        this.INTERNAL_NAME = "no name"
     }
     get name(){
         return 'Player ' + (this.INTERNAL_ID + 1);
     }
-    get real_id(){
+    set name(string){
+        this.INTERNAL_NAME = string
+    }
+    get id(){
         return this.INTERNAL_ID;
     }
 }
@@ -49,13 +60,28 @@ class Player{
 class PlayerHandler{
     constructor(NumberOfPlayers){
         this.players = Array(NumberOfPlayers).fill(0).map((x,i)=>new Player(i))
+        this.active_players = this.players.map(x=>x.id)
+        this.inactive_players = []
     }
     getById(id){
-        let player = this.players.filter(x=>x.real_id === id);
+        let player = this.players.filter(x=>x.id === id);
         if(player.length === 1) return player[0];
     }
     remove(id){
-
+        this.active_players.splice(this.active_players.indexOf(id),1)
+        this.inactive_players.push(id)
+    }
+    getNext(id){
+       let index = this.active_players.indexOf(id)
+       index += 1
+       index %= this.active_players.length
+       return this.getById(this.active_players[index])
+    }
+    getPrev(id){
+       let index = this.active_players.indexOf(id)
+       index == 0? index = this.active_players.length-1 : index -=1
+       index %= this.active_players.length
+       return this.getById(this.active_players[Math.abs(index)])
     }
 }
 
@@ -64,18 +90,24 @@ function createPlayers(num){
    players = new PlayerHandler(num)
 }
 createPlayers(player_num);
-
+players.remove(1)
 let stats = {
     players: player_num,
-    current_turn: 0,
+    direction: -1,
     powers_on: true,
     timer_on: true,
     hard_timer: false,
+    current_turn:0,
 };
 function nextTurn(){
-    stats.current_turn += 1;
-    stats.current_turn %= player_num;
-    console.log(players.getById(stats.current_turn).name, '\'s turn!')
+     let plyr = {}
+     if(stats.direction>0){
+         plyr = players.getNext(stats.current_turn)
+     }else{
+         plyr = players.getPrev(stats.current_turn)
+     }
+     stats.current_turn = plyr.id
+     console.log(plyr.name + '\'s turn')
 }
 id('btn4').innerText = 'next turn';
 id('btn4').addEventListener('click',nextTurn);
