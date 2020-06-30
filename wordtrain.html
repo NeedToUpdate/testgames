@@ -28,25 +28,57 @@
 <button id="btn4">btn4</button>
 
 <script type="text/javascript">
-let GAMEBOARD = new Rectangle(width*.02,height*.1,width*.94,height*.8).asOutline("black")
-GAMEBOARD.shape.id = "gamearea"
+let GAMEBOARD = new Rectangle(width*.02,height*.1,width*.94,height*.8).asOutline("black");
+GAMEBOARD.shape.id = "gamearea";
+let player_num = 4;
+let players = {};
 
-let players = [];
+class Player{
+    constructor(id){
+        this.INTERNAL_ID = id;
+        this.powers = []
+    }
+    get name(){
+        return 'Player ' + (this.INTERNAL_ID + 1);
+    }
+    get real_id(){
+        return this.INTERNAL_ID;
+    }
+}
+
+class PlayerHandler{
+    constructor(NumberOfPlayers){
+        this.players = Array(NumberOfPlayers).fill(0).map((x,i)=>new Player(i))
+    }
+    getById(id){
+        let player = this.players.filter(x=>x.real_id === id);
+        if(player.length === 1) return player[0];
+    }
+    remove(id){
+
+    }
+}
+
+
 function createPlayers(num){
-
-
+   players = new PlayerHandler(num)
 }
+createPlayers(player_num);
 
-class player{
-   constructor(id){
-      this.INTERNAL_ID = id
-      this.powers = []
-   }
-   get id(){
-     return this.INTERNAL_ID
-   }
+let stats = {
+    players: player_num,
+    current_turn: 0,
+    powers_on: true,
+    timer_on: true,
+    hard_timer: false,
+};
+function nextTurn(){
+    stats.current_turn += 1;
+    stats.current_turn %= player_num;
+    console.log(players.getById(stats.current_turn).name, '\'s turn!')
 }
-
+id('btn4').innerText = 'next turn';
+id('btn4').addEventListener('click',nextTurn);
 
 
 

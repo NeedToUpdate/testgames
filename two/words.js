@@ -18,8 +18,7 @@
 //let words = ['first', 'second', 'third', 'fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth','thirteenth',    'fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth'];
 //let words = ['january','february','march','april','may','june','july','august','september','october','november','december']
 //let words = ['birthday','party','amazing','growth','interview','gift','meaningful','year','special'];
-//let words = ['skateboard','frisbee','football','robot','rubiks cube','basketball','guitar','puzzles','lego','hula hoop','doll',
-//    'board game','yoyo','car'];
+let words = ['skateboard','frisbee','football','robot','rubiks cube','basketball','guitar','puzzles','lego','hula hoop','doll','board game','yoyo','car'];
 //let words = ['dishwasher','lamp','candle','microwave','broom','kettle','washing','machine','vacuum','cleaner','candle'];
 //let words = ['parrot','shark','frog','owl','snake','stingray','seagull','elephant','whale','crocodile','crocodile','eel','jellyfish','spider','toad','frog'];
 //let words = ['nutrients','carbohydrates','protein','fat','water','minerals','vitamins','body','healthy','muscles','energy'];
@@ -79,7 +78,7 @@
 //let words = ['bananas','cabbages','potatoes','cucumbers','strawberries','carrots','peppers','grapes','oranges','pears','bread','turkey','tomatoes','mustard','eggs'];
 //let words = ['exercise','body','healthy','stronger','lungs','heart','energy','muscles','stretch'];
 //let words = ['sort clothes','watch tv','make the bed','take a bath','brush teeth','organize toys','cook food','organize toys','wash the dishes','eat','set the table','clean up the table','mow the lawn','wash the car','walk the dog'];
-let words = ['get up','make the bed','brush teeth','wash face','comb hair','have breakfast','go to school','watch TV','have dinner','do homework','go home','have lunch','have classes','take a shower','put on pyjamas','go to bed']
+//let words = ['get up','make the bed','brush teeth','wash face','comb hair','have breakfast','go to school','watch TV','have dinner','do homework','go home','have lunch','have classes','take a shower','put on pyjamas','go to bed']
 
 
 

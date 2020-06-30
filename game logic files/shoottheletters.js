@@ -154,12 +154,11 @@ function loop() {
     selectedgun.update();
     if(Math.random()<0.01 && countHoveringAliens() === aliens.length && aliens.length>2){
         let randoms = shuffle(aliens).slice(0,3);
-        let randomBlds = [];
+        let randomBlds = randoms.map(x=>x.bld);
         randoms.forEach((alien,i)=>{
-            randomBlds.push(alien.bld);
             alien.stopHover();
+            alien.bld = randomBlds[(i+1)%3];
             alien.doFlyTo(Vector.random(width,height*0.5)).then(()=>{
-                alien.bld = randomBlds[(i+1)%3];
                 alien.doFlyTo(alien.bld.p.copy().add(new Vector(alien.bld.width/2,alien.bld.height/-2))).then(()=>{
                     alien.doHover();
                 });
@@ -191,7 +190,7 @@ function loop() {
 
         for (let j = bullets.length - 1; j >= 0; j--) {
             if (!bullets[j].dead && aliens[i].hasHitbox && bullets[j].hasHitbox && aliens[i].hitbox.contains(bullets[j].hitbox)) {
-                aliens[i].bld.occupied = false;
+                buildingHandler.unOccupy(aliens[i].bld)
                 if (aliens[i].attachmentList.length > 0) {
                     //if the alien is holding something, then kill it and deal with the letter
                     let letter = aliens[i].detachAttachment(aliens[i].attachmentList[0]);//is the actual letter Character object
@@ -261,7 +260,11 @@ function win() {
         let val = Math.random()*5;
         bld.y-= val;
         bld.fire.y -= val;
-    })
+    });
+    bullets.forEach(x=>{
+        x.update();
+    });
+    selectedgun.update();
     requestAnimationFrame(win)
 }
 
@@ -270,6 +273,17 @@ function lose() {
     aliens.forEach(alien => {
         if(alien.isDoingHover){
             alien.stopHover();
+            promises.push(
+                new Promise((resolve) => {
+                    alien.doFlyTo(new Vector(selectedgun.p)).then(() => {
+                        alien.kill();
+                        resolve();
+                    })
+                })
+            )
+        }
+        if(alien.isDoingFlyTo){
+            alien.isDoingFlyTo = false;
             promises.push(
                 new Promise((resolve) => {
                     alien.doFlyTo(new Vector(selectedgun.p)).then(() => {
@@ -309,10 +323,8 @@ function createAlien(target) {
 
         function pickUpLetter() { //needs to be separate to have a bindable this;
             this.addAttachment(target, new Vector(0, -10));
-            let emptybuildings = buildings.filter(x => !x.occupied);
-            let bld = getRandom(emptybuildings);
+            let bld = buildingHandler.occupy()
             this.bld = bld;
-            bld.occupied = true;
             this.doFlyTo(bld.vector.copy().add(new Vector(0, bld.height / -2))).then(() => {
                 this.doHover();
             });
@@ -322,7 +334,7 @@ function createAlien(target) {
     }
     aliens.push(alien)
 }
-
+let buildingHandler = {};
 function setup() {
     let gunsprite = new Rectangle(width / 2 - 50, height - 70, 75, 76, 0).fromCenter();
     gunsprite.set('backgroundImage', 'url("' + IMAGE_PATH + 'gun.png")');
@@ -335,6 +347,7 @@ function setup() {
     gunsprite.shape.style.pointerEvents = 'all';
     gunsprite.shape.addEventListener('click', shoot);
     selectedgun.angle = 270;
+    selectedgun.addDeathImage(LOADED_IMAGES.fire);
     selectedgun.update();
 
     let y_calc = height * 0.15;
@@ -383,7 +396,7 @@ function setup() {
         img.set('zIndex', '10');
         return img
     });
-    buildings = shuffle(buildings);
+    buildingHandler = new BuildingHandler(buildings);
     for (let i = 0; i < splitletters.length; i++) {
         createAlien();
     }
@@ -398,7 +411,7 @@ id('jmpleft').addEventListener('click', () => {
             alien.target = allletters[i];
             alien.doFlyTo(allletters[i].p.copy()).then(() => {
                 alien.addAttachment(allletters[i], new Vector(0, -10));
-                let bld = buildings[i];
+                let bld = buildingHandler.occupy();
                 alien.bld = bld;
                 bld.occupied = true;
                 alien.doFlyTo(bld.vector.copy().add(new Vector(0, bld.height / -2))).then(() => {
@@ -412,6 +425,31 @@ id('jmpleft').addEventListener('click', () => {
 });
 id('jmpleft').style.pointerEvents = 'all';
 id('jmpleft').style.zIndex = '9999999';
+
+class BuildingHandler{
+    constructor(array){
+        this.blds = shuffle(array);
+        this.size = this.blds.length;
+        this.occupiedBlds = []
+    }
+    occupy(){
+        if(this.occupiedBlds.length>=this.size) return null;
+        let val = getRandom(this.size);
+        while(this.occupiedBlds.includes(val)){
+            val = getRandom(this.size);
+        }
+        this.occupiedBlds.push(val)
+        return this.blds[val]
+    }
+    unOccupy(bld){
+        let val = this.blds.indexOf(bld);
+        if(val === -1) return null;
+        this.occupiedBlds.splice(this.occupiedBlds.indexOf(val),1);
+        return val;
+    }
+
+}
+
 
 function play() {
     LOOPING = true;
