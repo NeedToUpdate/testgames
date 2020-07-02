@@ -14,6 +14,8 @@
 </head>
 <style type="text/css">
     #gamearea {
+        position: absolute;
+        top: 10vh;
         height: 85vh !important;
         width: 90vw;
         border: solid black 3px !important;
@@ -23,10 +25,18 @@
         flex-direction: row;
         align-content: baseline;
         justify-content: space-around;
-        z-index: 100;
+        z-index: 110;
         background-color: whitesmoke;
     }
-
+    #red_btn{
+        background-color: red;
+        border: solid 4px maroon;
+        border-radius: 50%;
+        height: 5vw;
+        width: 5vw;
+        color: maroon;
+        font-size: 2em;
+    }
     .expanded {
         width: 90vw;
     }
@@ -36,12 +46,26 @@
     }
 
     #sidebar {
+        position: absolute;
+        top: 10vh;
+        left: 62vw;
         z-index: 90;
-        padding: 10px;
         display: flex;
-        justify-content: space-around;
+        justify-content: space-evenly;
+        flex-flow: column;
+        width: 35vw;
+        height: 85vh;
+        border: solid black 3px;
+        border-radius: 5px;
+        background-color: #e8e8e8;
     }
-
+    #sidebar_title{
+        font-size: 2em;
+        color: blue;
+        font-weight: bolder;
+        margin: 0;
+        margin-left: 10px;
+    }
     .desk {
         border-radius: 5px;
         border: solid rgb(244, 150, 18) 3px;
@@ -49,17 +73,22 @@
         width: 16vw;
         height: 10vw;
         margin: 10px;
+        display: flex;
+        padding: 2px;
+        justify-content: space-evenly;
+        padding-top: 6px
     }
 
     .medium_desk {
-        width: 16vw;
-        height: 10vw;
+        width: 10vw;
+        height: 7vw;
+    }
+    .small_desk {
+        width: 5vw;
+        height: 3vw;
+
     }
 
-    .small_desk {
-        width: 10vw;
-        height: 6vw;
-    }
 
     .smoothed {
         transition: 1s ease-in-out;
@@ -85,7 +114,7 @@
 
     #gamemessage {
         position: absolute;
-        top: 10px;
+        top: 1px;
         right: 10px;
         font-size: 3em;
         color: blue;
@@ -94,7 +123,6 @@
     }
 
     .power_name {
-        display: inline;
         position: relative;
         left: 5vw;
         height: 2vw;
@@ -102,7 +130,7 @@
         font-weight: bold;
         color: blue;
         transition: 1s;
-        padding: 0;
+        padding: 5px;
         margin: 0;
         word-wrap: normal;
     }
@@ -110,16 +138,17 @@
     .power {
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: start;
         flex-direction: row-reverse;
         width: 5vw;
         height: 4vw;
         padding: 0;
+
     }
 
     .expanded_power {
-        width: 10vw;
-        transition: 1s;
+        margin-left: 10px;
+        width: 20vw;
     }
 
     .powercircle {
@@ -127,10 +156,55 @@
         border-radius: 50%;
         width: 4vw;
         height: 4vw;
-        background-color: transparent;
+        background-color: lightgreen;
+    }
+    .used_power{
+        border: solid grey 3px;
+        background-color: lightgray;
     }
     body{
         background-color: darkgray;
+    }
+    p{
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    @media (max-height: 500px) {
+        .medium_desk {
+            width: 11vw;
+            height: 6vw;
+        }
+        .small_desk {
+            width: 6vw;
+            height: 4vw;
+        }
+        .powercircle {
+            border: solid green 2px;
+            width: 3vw;
+            height: 3vw;
+        }
+        .medium_circle{
+            width: 2vw;
+            height: 2vw;
+        }
+        .small_circle{
+            width: 1vw;
+            height: 1vw;
+        }
+        .used_power{
+            border: solid grey 2px;
+        }
+        .power{
+            height: 3vh;
+        }
+        #gamemessage {
+            font-size: 2.4em;
+        }
     }
 </style>
 
@@ -144,46 +218,42 @@
 <button id="btn5">btn5</button>
 <h4 id="gamemessage"></h4>
 <script type="text/javascript">
-    let GAMEBOARD = new Rectangle(width * .02, height * .1, width * .90, height * .8).asOutline("black");
-    GAMEBOARD.shape.id = "gamearea";
-    GAMEBOARD.shape.style.width = "";
-    GAMEBOARD.shape.style.backgroundColor = "";
+    let GAMEBOARD = new Rectangle(width * .02, height * .1, width * .90, height * .8).withNoCss().withId('gamearea');
     GAMEBOARD.isExpanded = true;
     GAMEBOARD.toggleCollapse = function () {
         if (this.isExpanded) {
-            this.shape.classList.add('collapsed');
-            this.shape.classList.add('smoothed');
+            this.addClass('collapsed','smoothed');
             desks.setAll('smoothed');
+            desks.toggleTinyPowers()
             setTimeout(() => {
-                this.shape.classList.remove('smoothed');
+                this.removeClass('smoothed');
                 desks.removeAll('smoothed')
             }, 1000);
-            this.shape.classList.remove('expanded');
+            this.removeClass('expanded');
             desks.setAll('small_desk');
             desks.removeAll('medium_desk')
 
         } else {
-            this.shape.classList.remove('collapsed');
-            this.shape.classList.add('expanded');
-            this.shape.classList.add('smoothed');
+            this.removeClass('collapsed');
+            this.addClass('expanded','smoothed');
             desks.removeAll('small_desk');
             desks.setAll('medium_desk');
             desks.setAll('smoothed');
+            desks.toggleTinyPowers()
             setTimeout(() => {
-                this.shape.classList.remove('smoothed');
+                this.removeClass('smoothed');
                 desks.removeAll('smoothed')
             }, 1000)
         }
         this.isExpanded = !this.isExpanded
     };
-    let SIDEBAR = new Rectangle(width * .64, height * .1, width * 0.35, height * 0.8).asOutline('black');
-    SIDEBAR.shape.id = "sidebar";
+    let SIDEBAR = new Rectangle(width * .64, height * .1, width * 0.35, height * 0.8).withNoCss().withId('sidebar');
     SIDEBAR.clear = function () {
         this.shape.innerHTML = '';
         this.attachments = {}
     };
     let player_num = 5;
-    let desks_num = 14;
+    let desks_num = 24;
     let players = {};
     let desks = {};
     let stats = {
@@ -205,7 +275,11 @@
             id('gamemessage').innerText = text;
             messages.shift()
         }, time)
+    }
 
+    function smoothed(obj){
+        obj.addClass('smoothed');
+        setTimeout(()=>obj.removeClass('smoothed'),1000)
     }
 
     class Player {
@@ -269,18 +343,14 @@
             this.selected = false;
             this.init();
             this.mode = 0;
+            this.powers = [];
         }
 
         init() {
-            let outside = new Rectangle(200, 200, 10, 10);
+            let outside = new Rectangle(200, 200, 10, 10).withNoCss().addClass('desk','medium_desk');
             this.div = outside;
             // let selector = new Rectangle(0,0,50,50).asOutline('blue');
             // outside.attach(selector);
-            outside.shape.setAttribute('class', 'desk');
-            outside.set('position', '');
-            outside.set('backgroundColor', '');
-            outside.set('width', '');
-            outside.set('height', '');
             GAMEBOARD.attach(outside);
             outside.shape.addEventListener('click', () => {
                 if (!desks.initialized) this.toggleMode()
@@ -323,6 +393,25 @@
                 this.div.shape.classList.remove('selected')
             }
             this.selected = !this.selected
+        }
+        addPower(power){
+            if(power instanceof Power){
+                this.powers.push(power);
+                power.div.attachments.circles[0].addClass('medium_circle');
+                this.div.attach(power.div);
+            }
+        }
+        updatePowers(){
+            let plyr = players.getById(this.INTERNAL_ID);
+            this.powers.forEach(p=>{
+                p.div.remove();
+            });
+            this.powers = [];
+            plyr.powers.forEach(p=>{
+                let new_p = new Power(p.type);
+                if(p.isUsed) new_p.use(true);
+                this.addPower(new_p);
+            })
         }
     }
 
@@ -382,6 +471,14 @@
             });
             return arr;
         }
+
+        toggleTinyPowers(){
+            this.desks.forEach(desk=>{
+                desk.powers.forEach(power=>{
+                    power.toggleTiny()
+                })
+            })
+        }
     }
 
     let power_type_dictionary = {
@@ -405,9 +502,8 @@
             return power_type_dictionary[this.type];
         }
 
-        use() {
+        use(gfxOnly) {
             this.isUsed = true;
-
         }
     }
 
@@ -416,39 +512,27 @@
             super(type);
             this.div = {};
             this.isExpanded = false;
+            this.isTiny = false;
             this.text = {};
             this.init();
         }
 
         init() {
-            let circle = new Circle(0, 0, 10);
+            let circle = new Circle(0, 0, 10).withNoCss();
             let icon = id(power_type_dictionary[this.type].replaceAll(' ', '').toLowerCase()).content.cloneNode(true);
             circle.attach(icon);
-            circle.set('width', '');
-            circle.set('position', '');
-            circle.set('height', '');
-            circle.set('border', '');
-            circle.set('borderRadius', '');
-            circle.set('backgroundColor', '');
             circle.shape.classList.add('powercircle');
-            let fulldiv = new Rectangle(0, 0, 10, 10).asOutline('black');
-            fulldiv.set('width', '');
-            fulldiv.set('position', '');
-            fulldiv.set('height', '');
-            fulldiv.set('border', '');
-            fulldiv.set('borderRadius', '');
-            fulldiv.set('backgroundColor', '');
-            fulldiv.shape.classList.add('power');
-            let text = new P(power_type_dictionary[this.type]);
-            text.shape.classList.add('none');
-            text.shape.classList.add('power_name');
-            text.set('position', '');
+            let fulldiv = new Rectangle(0, 0, 10, 10).withNoCss().addClass('power');
+            let text = new P(power_type_dictionary[this.type]).withNoCss().addClass('none','power_name');
             fulldiv.attach(text);
             fulldiv.attach(circle);
             this.text = text;
             this.div = fulldiv;
-            circle.shape.addEventListener('click', () => {
-                if (!this.isUsed) this.use()
+            circle.shape.addEventListener('click', e => {
+                if(!this.isExpanded){
+                    if (!this.isUsed) this.use()
+                    e.stopPropagation();
+                }
             })
         }
 
@@ -462,13 +546,41 @@
             }
             this.isExpanded = !this.isExpanded
         }
+        toggleTiny(){
+            smoothed(this.div.attachments.circles[0]);
+            if (this.isTiny) {
+                this.div.attachments.circles[0].removeClass('small_circle');
+                this.div.attachments.circles[0].addClass('medium_circle');
+            } else {
+                this.div.attachments.circles[0].removeClass('medium_circle');
+                this.div.attachments.circles[0].addClass('small_circle');
+            }
+            this.isTiny = !this.isTiny
+        }
+        use(gfxOnly) {
+            this.isUsed = true;
+            this.div.attachments.circles[0].addClass('used_power')
+        }
     }
 
     async function selectPower() {
         return new Promise(resolve => {
             if (GAMEBOARD.isExpanded) GAMEBOARD.toggleCollapse();
             SIDEBAR.clear();
-
+            let p = new P('Choose a power!').withNoCss().withId('sidebar_title');
+            SIDEBAR.attach(p);
+            let red_btn = id('backbutton').content.cloneNode(true);
+            SIDEBAR.attach(red_btn);
+            red_btn = SIDEBAR.shape.childNodes[2];
+            red_btn.id = 'red_btn'
+            red_btn.style.position = 'absolute';
+            red_btn.style.top = '70vh';
+            red_btn.style.left = '25vw';
+            red_btn.addEventListener('click',()=>{
+                SIDEBAR.clear();
+                GAMEBOARD.toggleCollapse();
+                resolve(null);
+            })
             for (let i = 0; i < 8; i++) {
                 let power = new Power(i);
                 SIDEBAR.attach(power.div);
@@ -540,11 +652,17 @@
     id('btn5').innerText = 'add power';
     id('btn5').addEventListener('click', () => {
         selectPower().then(x => {
-            players.getById(stats.current_turn).powers.push(new PowerData(x));
+            if(x !== null){
+                players.getById(stats.current_turn).powers.push(new PowerData(x));
+                desks.getById(stats.current_turn).updatePowers();
+            }   
         })
     })
 
 </script>
+<template id="backbutton">
+    <button>X</button>
+</template>
 <template id="heart">
     <svg viewBox="-2 -6 50 50" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
         <g height="100%" width="100%">
@@ -637,7 +755,7 @@
                   fill-opacity="null" stroke-opacity="null" stroke-width="3" stroke="#ffbbff" fill="#ffbbff"/>
             <path stroke="#ffffff" id="svg_20"
                   d="m23.12849,5.11979c-11.44844,0 -20.7291,7.13465 -20.7291,15.93689c0,3.0074 1.09718,5.81796 2.98497,8.21739l-2.98497,6.70967l8.31085,-2.18637c3.46322,1.9976 7.75421,3.19731 12.41825,3.19731c11.44847,0 20.72911,-7.13581 20.72911,-15.93801s-9.28064,-15.93689 -20.72911,-15.93689zm1.45414,24.94869l-2.91563,0l0,-2.86727l2.91563,0l0,2.86727zm0,-5.92912l0,0.94843l-2.91563,0l0,-1.1673c0,-3.52274 3.91058,-4.0809 3.91058,-6.58226c0,-1.14184 -0.99496,-2.01731 -2.29941,-2.01731c-1.3505,0 -2.53635,1.02025 -2.53635,1.02025l-1.65861,-2.11459c0,0 1.63489,-1.74978 4.45535,-1.74978c2.68009,0 5.16758,1.70115 5.16758,4.56729c0.00142,4.01144 -4.12351,4.47233 -4.12351,7.09528l0,0z"
-                  stroke-width="0" fill="#bbbbff"/>
+                  stroke-width="0" fill="#2222bb"/>
         </g>
     </svg>
 </template>
