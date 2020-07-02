@@ -199,6 +199,7 @@
         .powercircle {
             border: solid green 2px;
             width: 3vw;
+            min-width: 3vw;
             height: 3vw;
         }
         .medium_circle{
@@ -635,12 +636,40 @@
     }
     let GLOBAL_ARROW = {};
     let GLOBAL_ARROW2 = {};
+
+    function optimizePoints(x1,y1,x2,y2){
+        let a = new Vector(x1,y1);
+        let b = new Vector(x2,y2);
+
+        let c = b.copy().sub(a);
+        let d = c.mult(-1).normalize().mult(40);
+        b.sub(d.copy().mult(-1.2));
+        a.add(d.mult(-0.9));
+
+        return [a.x,a.y,b.x,b.y];
+
+    }
+
     function nextTurn() {
-        if(Object.keys(GLOBAL_ARROW).length>0) GLOBAL_ARROW.remove();
+        if(Object.keys(GLOBAL_ARROW).length>0) {
+            let temp = GLOBAL_ARROW;
+            smoothed(GLOBAL_ARROW)
+            smoothed(GLOBAL_ARROW.leftSide);
+            smoothed(GLOBAL_ARROW.rightSide);
+            smoothed(GLOBAL_ARROW.point);
+            GLOBAL_ARROW.color = 'rgba(30,30,150,0)';
+            setTimeout(()=>{
+                temp.remove();
+            },1000)
+        }
+        if(Object.keys(GLOBAL_ARROW2).length>0) {
+            GLOBAL_ARROW = GLOBAL_ARROW2;
+        }
+
         let plyr = {};
         let desk = desks.getById(stats.current_turn).div;
         let x1 = desk.realX + desk.width/2;
-        let y1 = desk.realY + desk.height;
+        let y1 = desk.realY + desk.height*1.5;
         if (stats.direction > 0) {
             plyr = players.getNext(stats.current_turn)
         } else {
@@ -651,16 +680,40 @@
         message(plyr.name + '\'s turn!');
         desk = desks.getById(stats.current_turn).div;
         let x2 = desk.realX + desk.width/2;
-        let y2 = desk.realY + desk.height;
-        GLOBAL_ARROW = new Arrow(x2,y2,x1,y1,5)
-        GLOBAL_ARROW.set('zIndex', '200')
-    }
+        let y2 = desk.realY + desk.height*1.5;
+        // GLOBAL_ARROW = new Arrow(...optimizePoints(x2,y2,x1,y1),5);
+        // GLOBAL_ARROW.set('zIndex', '200');
+        if (stats.direction > 0) {
+            plyr = players.getNext(stats.current_turn)
+        } else {
+            plyr = players.getPrev(stats.current_turn)
+        }
+        desk = desks.getById(plyr.id).div;
+        let x3 = desk.realX + desk.width/2;
+        let y3 = desk.realY + desk.height*1.5;
+        GLOBAL_ARROW2 = new Arrow(...optimizePoints(x3,y3,x2,y2),5);
+        GLOBAL_ARROW2.set('zIndex', '200')
+        // GLOBAL_ARROW.color = 'rgba(30,30,150,0)';
+        GLOBAL_ARROW2.color = 'rgba(30,30,150,0)';
+        setTimeout(()=>{
+            // smoothed(GLOBAL_ARROW)
+            // smoothed(GLOBAL_ARROW.leftSide);
+            // smoothed(GLOBAL_ARROW.rightSide);
+            // smoothed(GLOBAL_ARROW.point);
+            smoothed(GLOBAL_ARROW2)
+            smoothed(GLOBAL_ARROW2.leftSide);
+            smoothed(GLOBAL_ARROW2.rightSide);
+            smoothed(GLOBAL_ARROW2.point);
+            // GLOBAL_ARROW.color = 'rgba(30,30,150,0.5)';
+            GLOBAL_ARROW2.color = 'rgba(30,30,150,0.5)';
+        })
+        }
 
     function killCurrentPlayer() {
-        let deadPLyr = stats.current_turn;
-        message(players.getById(deadPLyr).name + ' is out!');
+        let deadPlyr = stats.current_turn;
+        message(players.getById(deadPlyr).name + ' is out!');
         nextTurn();
-        players.remove(deadPLyr);
+        players.remove(deadPlyr);
     }
 
     id('btn4').innerText = 'next turn';
