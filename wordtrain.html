@@ -231,10 +231,6 @@
 <button id="btn5">btn5</button>
 <h4 id="gamemessage"></h4>
 <script type="text/javascript">
-
-    let a = new Arrow(10,10,100,100,3)
-
-
     let GAMEBOARD = new Rectangle(width * .02, height * .1, width * .90, height * .8).withNoCss().withId('gamearea');
     GAMEBOARD.isExpanded = true;
     GAMEBOARD.toggleCollapse = function () {
@@ -269,6 +265,7 @@
         this.shape.innerHTML = '';
         this.attachments = {}
     };
+    let GAME_RUNNING = false;
     let player_num = 5;
     let desks_num = 24;
     let players = {};
@@ -624,6 +621,7 @@
         id('btn1').setAttribute('disabled', 'true');
         id('btn1').innerText = 'running';
         createPlayers();
+        GAME_RUNNING = true;
     });
 
     function createPlayers() {
@@ -635,9 +633,14 @@
         desks.initialize(players.players);
         desks.setSelected(stats.current_turn);
     }
-
+    let GLOBAL_ARROW = {};
+    let GLOBAL_ARROW2 = {};
     function nextTurn() {
+        if(Object.keys(GLOBAL_ARROW).length>0) GLOBAL_ARROW.remove();
         let plyr = {};
+        let desk = desks.getById(stats.current_turn).div;
+        let x1 = desk.realX + desk.width/2;
+        let y1 = desk.realY + desk.height;
         if (stats.direction > 0) {
             plyr = players.getNext(stats.current_turn)
         } else {
@@ -646,6 +649,11 @@
         desks.setSelected(plyr.id);
         stats.current_turn = plyr.id;
         message(plyr.name + '\'s turn!');
+        desk = desks.getById(stats.current_turn).div;
+        let x2 = desk.realX + desk.width/2;
+        let y2 = desk.realY + desk.height;
+        GLOBAL_ARROW = new Arrow(x2,y2,x1,y1,5)
+        GLOBAL_ARROW.set('zIndex', '200')
     }
 
     function killCurrentPlayer() {

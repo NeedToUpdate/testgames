@@ -38,6 +38,8 @@
 //let words = ['hat','cap','sunglasses','tie','bowtie','scarf','belt','socks','jacket','coat','vest','suit','sweater','sweatshirt','shirt','jeans','shorts','sweatpants','skirt','sandals','sneakers','flats','heels','slippers','boots']
 //let words = ['bag','cap','doll','frog','girl','apple','elephant','insect','orange','umbrella','airplane','parrot','baby','hat','egg','rabbit','mouse','armchair'];
 //let words = ['projector','whiteboard','marker pen','eraser','desk','light','teacher','floor','wall','door','student','table','window','curtain','computer','mouse','keyboard'];
+let words = ['grandma','grandpa','dad','mom','uncle','aunt','sister','brother','cousin','puppy'];
+
 
 //================ESL1=================
 
@@ -115,7 +117,7 @@
 //let words = ['go','meet','stay','play','listen','draw','dance','read','sleep','learn','write','eat','drink','have','see','watch','like','get','take'];
 //let words = ['coke','juice','meat','cheese','ice cream','chocolate'];
 //let words = ['star','snake','snail','sun','telephone','tent','tiger','taxi', 'tennis','sausage','umbrella'];
-let words = ['xenon','xerox','xylem','xylophone','x-ray','xbox','x-men']
+//let words = ['xenon','xerox','xylem','xylophone','x-ray','xbox','x-men']
 //let words = ['aaaaaaaaaa']
 //let words = ['star','snake','snail','sun','telephone','tent','tiger','taxi'];
 //let words = ['air','virus','hands','clean','wash','safe','mask','alcohol','sterilize','circulation'];
