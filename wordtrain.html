@@ -459,7 +459,7 @@
         }
 
         makeEmpty() {
-            this.div.shape.classList.add('empty')
+            this.div.shape.classList.add('empty');
             this.mode = 1;
         }
 
@@ -526,12 +526,12 @@
         toggleTinyAvatar(){
             if(Object.keys(this.avatar).length===0) return;
             if (!this.isTinyAvatar) {
-                smoothed(this.avatar)
-                this.avatar.addClass('tiny_avatar')
+                smoothed(this.avatar);
+                this.avatar.addClass('tiny_avatar');
                 this.avatar.set('top',this.div.shape.offsetHeight/4);
             } else {
-                smoothed(this.avatar)
-                this.avatar.removeClass('tiny_avatar')
+                smoothed(this.avatar);
+                this.avatar.removeClass('tiny_avatar');
                 this.avatar.set('top',this.div.shape.offsetHeight);
             }
             this.isTinyAvatar = !this.isTinyAvatar
@@ -927,7 +927,7 @@
                 },1100)
                 resolve(null);
             });
-            for (let i = 0; i < 8; i++) {
+            for (let i = 0; i < 6; i++) {
                 let power = new Power(i);
                 SIDEBAR.attach(power.div);
                 power.toggleExpand();
@@ -1127,30 +1127,103 @@
     });
 
     function saveGame(){
-        let text = '';
-        text += players.players.length + ',';
-        players.players.forEach(player=>{
-            let section = '';
-            section += player.name + '|' + player.id + '|' +player.dead + '|' + player.desk_position + '|' + player.powers.length + '|';
-            player.powers.forEach(power=>{
-                section += power.type + ':' + (power.isUsed?1:0);
-            });
-            section += '|';
-            text += section + ',';
-        });
-        Object.keys(stats).forEach(key=>{
-            text+= stats[key] + '_';
-        });
-        text += ',';
-        text+= desks.desks.length + ',';
-        desks.desks.forEach(desk=>{
-           let section = '';
-            section+= desk.mode += '|';
-            text+= section
-        });
-        console.log(text)
+        // let text = '';
+        // text += players.players.length + ',';
+        // players.players.forEach(player=>{
+        //     let section = '';
+        //     section += player.name + '|' + player.id + '|' +player.dead + '|' + player.desk_position + '|' + player.powers.length + '|';
+        //     player.powers.forEach(power=>{
+        //         section += power.type + ':' + (power.isUsed?1:0);
+        //     });
+        //     section += '|';
+        //     text += section + ',';
+        // });
+        // Object.keys(stats).forEach(key=>{
+        //     text+= stats[key] + '_';
+        // });
+        // text += ',';
+        // text+= desks.desks.length + ',';
+        // desks.desks.forEach(desk=>{
+        //    let section = '';
+        //     section+= desk.mode += '|';
+        //     text+= section
+        // });
+        // console.log(text)
 
+        let bin = '';
+        function add(bool){
+            bin += bool?'1':0;
+        }
+
+        add(stats.timer_on);
+        add(stats.hard_timer);
+        add(!stats.powers_on);
+        add(stats.direction === 1);
+        bin += stats.current_turn.toString(2);
+        desks.desks.forEach(x=>{
+            let tinybin = ''
+            if(x.INTERNAL_ID===null){
+                tinybin += '0';
+                tinybin += x.mode===1?'1':'0'
+            }else{
+                tinybin += '1';
+                tinybin += players.getById(x.INTERNAL_ID).dead? '0':'1'
+            }
+            bin += tinybin;
+        });
+        players.players.forEach(p=>{
+            let tinybin = '';
+            if(p.name === 'no name'){
+                tinybin += '0000'
+            }else{
+                let n = p.name.split('_');
+                let a = (valid_colors.indexOf(n[0]) +1).toString(2);
+                let b = (valid_tokens.indexOf(n[1]) +1).toString(2);
+                tinybin += a+b;
+            }
+            tinybin += p.powers.length.toString(2);
+            p.powers.forEach(po=>{
+                let a = po.type.toString(2);
+                let b = po.isUsed?'1':'0';
+                tinybin += a + b;
+            });
+            bin += tinybin;
+        })
+        console.log(bin)
     }
+    function toColorVal(index){
+        let digit = superlongalpha[index/6 |0]
+        //let color = valid_colors[index%6].toUpperCase()
+        return digit;
+    }
+    let testsave = Array(512).fill('').map(x=>Math.random()<0.5?'1':'0').join('')
+    function binCompress(string){
+        string = string.split('');
+        let val = string[0];
+        let count = 0
+        let type = string[0]
+        string.forEach(x=>{
+            if(x===type){
+                count++
+            }else{
+                val += ''+ toColorVal(count)
+                count = 1
+                type = x;
+            }
+        });
+       /* let val = ''
+        for(let i = 0;i<512;i+=9){
+            let vals = string.slice(i,9)
+            let digit = parseInt(vals,2)
+            let colored = toColorVal(digit)
+            val += colored
+        }
+        */
+        return val
+    }
+    console.log(superlongalpha.length)
+    console.log(testsave)
+    console.log(binCompress(testsave))
     function loadGame(string){
         let values = string.split(',');
         let playerNum = parseInt(values[0]);
