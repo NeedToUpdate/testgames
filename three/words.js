@@ -21,7 +21,7 @@
 //let words = ['skateboard','frisbee','football','robot','rubiks cube','basketball','guitar','puzzles','lego','hula hoop','doll',
 //    'board game','yoyo','car'];
 //let words = ['dishwasher','lamp','candle','microwave','broom','kettle','washing','machine','vacuum','cleaner','candle'];
-//let words = ['parrot','shark','frog','owl','snake','stingray','seagull','elephant','whale','crocodile','crocodile','eel','jellyfish','spider','toad','frog'];
+let words = ['parrot','shark','frog','owl','snake','stingray','seagull','elephant','whale','crocodile','crocodile','eel','jellyfish','spider','toad','frog'];
 //let words = ['nutrients','carbohydrates','protein','fat','water','minerals','vitamins','body','healthy','muscles','energy'];
 //let words = ['beak','feathers','fins','pouch','fur','tail','teeth','wings'];
 //let words = ['t-shirt','skirt','tank top','pants','flip flops','dress','swimsuit','sunglasses','trunks','sandals']
@@ -116,7 +116,7 @@
 //let words = ['go','meet','stay','play','listen','draw','dance','read','sleep','learn','write','eat','drink','have','see','watch','like','get','take'];
 //let words = ['coke','juice','meat','cheese','ice cream','chocolate'];
 //let words = ['star','snake','snail','sun','telephone','tent','tiger','taxi', 'tennis','sausage','umbrella'];
-let words = ['xenon','xerox','xylem']
+//let words = ['xenon','xerox','xylem']
 //let words = ['aaaaaaaaaa']
 //let words = ['star','snake','snail','sun','telephone','tent','tiger','taxi'];
 //let words = ['air','virus','hands','clean','wash','safe','mask','alcohol','sterilize','circulation'];

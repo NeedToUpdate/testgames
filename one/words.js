@@ -15,12 +15,13 @@
 
 //let words = ['living room','dining room','bedroom','garage','kitchen','terrace','bathroom','yard']
 //let words = ['happy','sad','nervous','relaxed','excited','energetic','tired','confused','scared','curious','bored','hungry','sleepy','angry','surprised','confident'];
-//let words = ['first', 'second', 'third', 'fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth','thirteenth','fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth'];
+//let words = ['first', 'second', 'third', 'fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth','thirteenth',    'fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth'];
 //let words = ['january','february','march','april','may','june','july','august','september','october','november','december']
 //let words = ['birthday','party','amazing','growth','interview','gift','meaningful','year','special'];
-//let words = ['skateboard','frisbee','football','robot','rubiks cube','basketball','guitar','puzzles','lego','hula hoop','doll','board game','yoyo','car'];
+//let words = ['skateboard','frisbee','football','robot','rubiks cube','basketball','guitar','puzzles','lego','hula hoop','doll',
+//    'board game','yoyo','car'];
 //let words = ['dishwasher','lamp','candle','microwave','broom','kettle','washing','machine','vacuum','cleaner','candle'];
-//let words = ['parrot','shark','frog','owl','snake','stingray','seagull','elephant','whale','crocodile','crocodile','eel','jellyfish','spider','toad','frog'];
+let words = ['parrot','shark','frog','owl','snake','stingray','seagull','elephant','whale','crocodile','crocodile','eel','jellyfish','spider','toad','frog'];
 //let words = ['nutrients','carbohydrates','protein','fat','water','minerals','vitamins','body','healthy','muscles','energy'];
 //let words = ['beak','feathers','fins','pouch','fur','tail','teeth','wings'];
 //let words = ['t-shirt','skirt','tank top','pants','flip flops','dress','swimsuit','sunglasses','trunks','sandals']
@@ -28,7 +29,7 @@
 //let words = ['stones','bones','sticks','quill','ink','brush','pencil','pen','marker','crayon'];
 //let words = ['mirror','lamp','laptop','wardrobe','chair','rug','football','alarm clock','picture','bed'];
 //let words = ['first', 'second', 'third', 'fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth','thirteenth',
-//    'fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth'];
+   // 'fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth'];
 //let words = ['glue','scissors','notebook','ruler','white-out','eraser','sharpener','pencil','mechanical pencil','pencil case','highlighter'];
 //let words = ['stones','bones','sticks','quill','ink','brush','ancient','pencil','water']
 //let words = ['red','yellow','green','blue','purple','orange','violet','white','black','gray','light','dark','pink'];
@@ -38,8 +39,6 @@
 //let words = ['hat','cap','sunglasses','tie','bowtie','scarf','belt','socks','jacket','coat','vest','suit','sweater','sweatshirt','shirt','jeans','shorts','sweatpants','skirt','sandals','sneakers','flats','heels','slippers','boots']
 //let words = ['bag','cap','doll','frog','girl','apple','elephant','insect','orange','umbrella','airplane','parrot','baby','hat','egg','rabbit','mouse','armchair'];
 //let words = ['projector','whiteboard','marker pen','eraser','desk','light','teacher','floor','wall','door','student','table','window','curtain','computer','mouse','keyboard'];
-let words = ['grandma','grandpa','dad','mom','uncle','aunt','sister','brother','cousin','puppy'];
-
 
 //================ESL1=================
 
@@ -56,7 +55,7 @@ let words = ['grandma','grandpa','dad','mom','uncle','aunt','sister','brother','
 //let words = ['history','study','place','people','question','answer','internet','object','museum','past','present','future']
 //let words = ['awake','asleep','dark','light','rich','poor','up','down','day','night','long','short','big','small','old','young']
 //let words = ['president','leader','law','founder','government','nation','country','sign','grow','safe','happy'];
-//let words = ['bird','mammal','reptile','fish','amphibian','warm-blooded','cold-blooded','wings','feathers','egg','scales','fur'];
+//let words = ['bird','mammal','reptile','fish','amphibian','warm-blooded','cold-blooded','wings','feathers','egg','scales'];
 //let words = ['movie theater','zoo','swimming pool','cafe','hospital','mall','hotel','library','park'];
 //let words = ['technology','travel','place','walk','bicycle','car','wheel','motor','jet','engine','airplane'];
 //let words = ['bread','turkey','green pepper','cucumber','tomato','mustard','egg'];
@@ -117,7 +116,7 @@ let words = ['grandma','grandpa','dad','mom','uncle','aunt','sister','brother','
 //let words = ['go','meet','stay','play','listen','draw','dance','read','sleep','learn','write','eat','drink','have','see','watch','like','get','take'];
 //let words = ['coke','juice','meat','cheese','ice cream','chocolate'];
 //let words = ['star','snake','snail','sun','telephone','tent','tiger','taxi', 'tennis','sausage','umbrella'];
-//let words = ['xenon','xerox','xylem','xylophone','x-ray','xbox','x-men']
+//let words = ['xenon','xerox','xylem']
 //let words = ['aaaaaaaaaa']
 //let words = ['star','snake','snail','sun','telephone','tent','tiger','taxi'];
 //let words = ['air','virus','hands','clean','wash','safe','mask','alcohol','sterilize','circulation'];
