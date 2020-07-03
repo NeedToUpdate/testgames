@@ -28,15 +28,26 @@
         z-index: 110;
         background-color: whitesmoke;
     }
-    #red_btn{
+
+    #red_btn {
         background-color: red;
         border: solid 4px maroon;
         border-radius: 50%;
-        height: 5vw;
-        width: 5vw;
+        height: 4vw;
+        width: 4vw;
         color: maroon;
         font-size: 2vw;
     }
+    #green_btn{
+        background-color: lime;
+        border: solid 4px green;
+        border-radius: 50%;
+        height: 4vw;
+        width: 4vw;
+        color: green;
+        font-size: 2vw;
+    }
+
     .expanded {
         width: 90vw;
     }
@@ -60,14 +71,19 @@
         border-radius: 5px;
         background-color: #e8e8e8;
     }
-    #sidebar_title{
+
+    #sidebar_title {
         font-size: 2em;
         color: blue;
         font-weight: bolder;
         margin: 0;
         margin-left: 10px;
+        top: 1em;
+        align-self: center;
     }
+
     .desk {
+        position: relative;
         border-radius: 5px;
         border: solid rgb(244, 150, 18) 3px;
         background-color: rgb(186, 116, 15);
@@ -84,12 +100,12 @@
         width: 10vw;
         height: 7vw;
     }
+
     .small_desk {
         width: 5vw;
         height: 3vw;
-        padding:0;
+        padding: 0;
     }
-
 
     .smoothed {
         transition: 1s ease-in-out;
@@ -160,28 +176,62 @@
         height: 4vw;
         background-color: lightgreen;
     }
-    
-    .medium_circle{
+
+    .medium_circle {
         min-width: 3vw;
-        width:3vw;
+        width: 3vw;
         height: 3vw;
     }
-    .small_circle{
+
+    .small_circle {
         min-width: 2vw;
         width: 2vw;
         height: 2vw;
     }
-    .used_power{
+
+    .used_power {
         border: solid grey 3px;
         background-color: lightgray;
     }
-    body{
+
+    .avatar {
+        position: relative;
+        width: 2em;
+        height: 2em;
+        border-radius: 10%;
+        border: solid black 3px;
+        background-color: white;
+        z-index: 1500;
+    }
+    .big_avatar{
+        width:3em;
+        height: 3em;
+        border: solid black 4px;
+    }
+    .tiny_avatar{
+        width: 2em;
+        height: 2em;
+        border: solid black 2px;
+    }
+
+    .avatar_chooser{
+        position: relative;
+        width: 10em;
+        height: 12em;
+        border-radius: 5% 5% 45% 45%;
+        border: solid black 3px;
+        background-color: white;
+        z-index: 1500;
+        align-self: center;
+    }
+
+    body {
         background-color: darkgray;
     }
-    p{
+
+    p {
         -webkit-touch-callout: none;
         -webkit-user-select: none;
-        -khtml-user-select: none;
         -moz-user-select: none;
         -ms-user-select: none;
         user-select: none;
@@ -192,30 +242,39 @@
             width: 11vw;
             height: 6vw;
         }
+
         .small_desk {
             width: 6vw;
             height: 4vw;
         }
+
         .powercircle {
             border: solid green 2px;
             width: 3vw;
             min-width: 3vw;
             height: 3vw;
         }
-        .medium_circle{
+
+        .medium_circle {
             min-width: 2vw;
+            width: 2vw;
             height: 2vw;
         }
-        .small_circle{
+
+        .small_circle {
             min-width: 1vw;
+            width: 1vw;
             height: 1vw;
         }
-        .used_power{
+
+        .used_power {
             border: solid grey 2px;
         }
-        .power{
+
+        .power {
             height: 3vh;
         }
+
         #gamemessage {
             font-size: 2.4em;
         }
@@ -230,13 +289,15 @@
 <button id="btn3">btn3</button>
 <button id="btn4">btn4</button>
 <button id="btn5">btn5</button>
+<button id="btn6">btn6</button>
+<button id="btn7">btn7</button>
 <h4 id="gamemessage"></h4>
 <script type="text/javascript">
     let GAMEBOARD = new Rectangle(width * .02, height * .1, width * .90, height * .8).withNoCss().withId('gamearea');
     GAMEBOARD.isExpanded = true;
     GAMEBOARD.toggleCollapse = function () {
         if (this.isExpanded) {
-            this.addClass('collapsed','smoothed');
+            this.addClass('collapsed', 'smoothed');
             desks.setAll('smoothed');
             desks.toggleTinyPowers()
             setTimeout(() => {
@@ -249,7 +310,7 @@
 
         } else {
             this.removeClass('collapsed');
-            this.addClass('expanded','smoothed');
+            this.addClass('expanded', 'smoothed');
             desks.removeAll('small_desk');
             desks.setAll('medium_desk');
             desks.setAll('smoothed');
@@ -266,9 +327,9 @@
         this.shape.innerHTML = '';
         this.attachments = {}
     };
-    let GAME_RUNNING = false;
     let player_num = 5;
     let desks_num = 24;
+    let valid_tokens = ['cat','shark','eagle','bat','unicorn','rabbit'];
     let players = {};
     let desks = {};
     let stats = {
@@ -278,6 +339,10 @@
         timer_on: true,
         hard_timer: false,
         current_turn: 0,
+        mode: 'none',
+        target_turn: -1,
+        lastUsedPower: {player_id:-1,type:-1,ref:{}},
+        game_running: false,
     };
 
 
@@ -292,9 +357,9 @@
         }, time)
     }
 
-    function smoothed(obj){
+    function smoothed(obj) {
         obj.addClass('smoothed');
-        setTimeout(()=>obj.removeClass('smoothed'),1000)
+        setTimeout(() => obj.removeClass('smoothed'), 1000)
     }
 
     class Player {
@@ -303,14 +368,16 @@
             this.powers = [];
             this.INTERNAL_NAME = "no name";
             this.desk_position = desk_position;
+            this.dead = false;
         }
 
         get name() {
-            return 'Player ' + (this.INTERNAL_ID + 1);
+            return this.INTERNAL_NAME;
         }
 
         set name(string) {
-            this.INTERNAL_NAME = string
+            this.INTERNAL_NAME = string;
+            desks.getById(this.id).setAvatar(string);
         }
 
         get id() {
@@ -331,6 +398,15 @@
         }
 
         remove(id) {
+            let hearts = this.getById(id).powers.filter(power=>{
+                return power.type === 0 && !power.isUsed
+            });
+            if(hearts.length>0) {
+                hearts[0].use();
+                desks.getById(id).updatePowers();
+                return
+            }
+            this.getById(id).dead = true;
             this.active_players.splice(this.active_players.indexOf(id), 1);
             this.inactive_players.push(id);
             desks.getById(id).makeEmpty()
@@ -359,10 +435,12 @@
             this.init();
             this.mode = 0;
             this.powers = [];
+            this.avatar = {};
+            this.isTinyAvatar = false;
         }
 
         init() {
-            let outside = new Rectangle(200, 200, 10, 10).withNoCss().addClass('desk','medium_desk');
+            let outside = new Rectangle(200, 200, 10, 10).withNoCss().addClass('desk', 'medium_desk');
             this.div = outside;
             // let selector = new Rectangle(0,0,50,50).asOutline('blue');
             // outside.attach(selector);
@@ -382,6 +460,7 @@
 
         makeEmpty() {
             this.div.shape.classList.add('empty')
+            this.mode = 1;
         }
 
         toggleMode() {
@@ -409,24 +488,53 @@
             }
             this.selected = !this.selected
         }
-        addPower(power){
-            if(power instanceof Power){
+
+        addPower(power) {
+            if (power instanceof Power) {
                 this.powers.push(power);
                 power.div.attachments.circles[0].addClass('medium_circle');
                 this.div.attach(power.div);
             }
         }
-        updatePowers(){
+
+        updatePowers() {
             let plyr = players.getById(this.INTERNAL_ID);
-            this.powers.forEach(p=>{
+            this.powers.forEach(p => {
                 p.div.remove();
             });
             this.powers = [];
-            plyr.powers.forEach(p=>{
+            plyr.powers.forEach(p => {
                 let new_p = new Power(p.type);
-                if(p.isUsed) new_p.use(true);
+                if (p.isUsed) new_p.use(true);
                 this.addPower(new_p);
             })
+        }
+        setAvatar(string){
+            if(Object.keys(this.avatar).length>0) this.avatar.remove();
+            let token = makeToken(string);
+            this.div.attach(token);
+            token.set('position','absolute');
+            token.set('top',this.div.shape.offsetHeight);
+            token.set('opacity','0');
+            setTimeout(()=>{
+                smoothed(token)
+                token.set('opacity','1')
+            },1000);
+            //token.set('left',this.div.shape.offsetWidth - token.shape.offsetWidth/2 -3);
+            this.avatar = token;
+        }
+        toggleTinyAvatar(){
+            if(Object.keys(this.avatar).length===0) return;
+            if (!this.isTinyAvatar) {
+                smoothed(this.avatar)
+                this.avatar.addClass('tiny_avatar')
+                this.avatar.set('top',this.div.shape.offsetHeight/4);
+            } else {
+                smoothed(this.avatar)
+                this.avatar.removeClass('tiny_avatar')
+                this.avatar.set('top',this.div.shape.offsetHeight);
+            }
+            this.isTinyAvatar = !this.isTinyAvatar
         }
     }
 
@@ -440,13 +548,28 @@
             arrayOfPlayers.forEach((plyr) => {
                 this.desks[plyr.desk_position].id = plyr.id;
                 this.desks[plyr.desk_position].div.shape.addEventListener('click', () => {
-                    this.desks[plyr.desk_position].toggleSelect();
-                    desks.desks.forEach(desk => {
-                        if (desk.selected && this.desks[plyr.desk_position] !== desk) desk.toggleSelect()
-                    });
-                    stats.current_turn = plyr.id;
-                    message(plyr.name + '\'s turn!')
-                })
+                    let temp_turn = stats.current_turn;
+                    if(stats.mode === 'none' || stats.mode === 'powerSetup'){
+                        this.desks[plyr.desk_position].toggleSelect();
+                        desks.desks.forEach(desk => {
+                            if (desk.selected && this.desks[plyr.desk_position] !== desk) desk.toggleSelect()
+                        });
+                        stats.current_turn = plyr.id;
+                        drawArrows()
+                        drawCustomArrow(stats.current_turn,temp_turn)
+                        message(plyr.name + '\'s turn!')
+                    }else if(stats.mode === 'choosingChangePeople'){
+                        this.desks[plyr.desk_position].toggleSelect();
+                        desks.desks.forEach(desk => {
+                            if (desk.selected && this.desks[plyr.desk_position] !== desk && desks.getById(stats.current_turn)!== desk) desk.toggleSelect()
+                        });
+                        removeArrows();
+                        drawCustomArrow(plyr.id,temp_turn);
+                        stats.target_turn = plyr.id;
+                        message('Change to ' + plyr.name + '?')
+                    }
+
+                });
             });
             this.initialized = true;
         }
@@ -487,11 +610,12 @@
             return arr;
         }
 
-        toggleTinyPowers(){
-            this.desks.forEach(desk=>{
-                desk.powers.forEach(power=>{
+        toggleTinyPowers() {
+            this.desks.forEach(desk => {
+                desk.powers.forEach(power => {
                     power.toggleTiny()
                 })
+                desk.toggleTinyAvatar()
             })
         }
     }
@@ -538,14 +662,14 @@
             circle.attach(icon);
             circle.shape.classList.add('powercircle');
             let fulldiv = new Rectangle(0, 0, 10, 10).withNoCss().addClass('power');
-            let text = new P(power_type_dictionary[this.type]).withNoCss().addClass('none','power_name');
+            let text = new P(power_type_dictionary[this.type]).withNoCss().addClass('none', 'power_name');
             fulldiv.attach(text);
             fulldiv.attach(circle);
             this.text = text;
             this.div = fulldiv;
             circle.shape.addEventListener('click', e => {
-                if(!this.isExpanded){
-                    if (!this.isUsed) this.use()
+                if (!this.isExpanded) {
+                    if (!this.isUsed) this.use();
                     e.stopPropagation();
                 }
             })
@@ -561,7 +685,8 @@
             }
             this.isExpanded = !this.isExpanded
         }
-        toggleTiny(){
+
+        toggleTiny() {
             smoothed(this.div.attachments.circles[0]);
             if (this.isTiny) {
                 this.div.attachments.circles[0].removeClass('small_circle');
@@ -572,10 +697,215 @@
             }
             this.isTiny = !this.isTiny
         }
+
         use(gfxOnly) {
+            if(this.type === 0 && !gfxOnly) return;
             this.isUsed = true;
-            this.div.attachments.circles[0].addClass('used_power')
+            this.div.attachments.circles[0].addClass('used_power');
+            if(gfxOnly) return;
+            stats.lastUsedPower = {
+                player_id: stats.current_turn,
+                type: this.type,
+                ref: this
+            };
+            switch(this.type){
+                case 0:
+                    break;
+            case 1:
+                //not me
+                nextTurn();
+                    break;
+            case 2:
+                //change word
+                getYesNo().then(result=>{
+                    if(result) {
+                        nextTurn();
+                    }else{
+                        this.isUsed = false;
+                        this.div.attachments.circles[0].removeClass('used_power')
+                    }
+                });
+                    break;
+            case 3:
+                //other way
+                otherWay();
+                    break;
+            case 4:
+                //change people
+                stats.mode = 'choosingChangePeople';
+                getYesNo().then(result=>{
+                    stats.mode = 'none';
+                    if(result){
+                        if(stats.target_turn!== -1){
+                            stats.current_turn = stats.target_turn;
+                            stats.target_turn = -1;
+                        }
+                        desks.desks.forEach(desk=>{
+                            if(desk.selected && desk!==desks.getById(stats.current_turn)) desk.toggleSelect()
+                        })
+                    }else{
+                        this.isUsed = false;
+                        this.div.attachments.circles[0].removeClass('used_power')
+                    }
+                    drawArrows();
+                    message(players.getById(stats.current_turn).name + '\'s turn!')
+                });
+                    break;
+            case 5:
+                //new letter
+                getYesNo().then(result=>{
+                    if(result) {
+                        nextTurn();
+                    }else{
+                        this.isUsed = false;
+                        this.div.attachments.circles[0].removeClass('used_power')
+                    }
+                });
+                    break;
+             case 6:
+                    break;
+             case 7:
+                    break
+            }
+
         }
+    }
+
+    function makeToken(name){
+        //provide a color and valid token name, and optional number separated by spaces. eg blue_dolphin_3
+        name = name.toLowerCase().split(' ');
+        let color = name[0];
+        if(color === 'pink') color = 'deeppink'
+        let token = name[1];
+        if(!valid_tokens.includes(token) && token !== 'empty'){
+            console.error('no svgs with that name');
+            return;
+        }
+        let number = 1;
+        if(name.length>2){
+            number = name[2];
+        }
+        let avatar = new Square(0,0,0,0).withNoCss().addClass('avatar');
+        let animal = {};
+        if(token === 'empty'){
+            animal = new Circle(16,16,16);
+            animal.color = color;
+        }else{
+            animal = id(token).content.cloneNode(true).childNodes[1];
+            animal.childNodes[1].childNodes[1].setAttribute('fill',color);
+            animal.classList.add('avatar_svg');
+        }
+        avatar.attach(animal);
+        return avatar;
+    }
+
+    let valid_colors = ['red','green','blue','yellow','orange','pink'];
+    async function chooseAvatar(){
+        GAMEBOARD.toggleCollapse();
+        return new Promise(resolve => {
+            let board = new Rectangle(0, 0, 0, 0).withNoCss().addClass('avatar_chooser');
+            let col = 'black';
+            let ani = '';
+            let middleToken = {};
+            SIDEBAR.attach(board);
+            let p = new P('Choose a name!').withNoCss().withId('sidebar_title');
+            SIDEBAR.attach(p);
+            let red_btn = id('backbutton').content.cloneNode(true).childNodes[1];
+            SIDEBAR.attach(red_btn);
+            red_btn.id = 'red_btn';
+            red_btn.style.position = 'absolute';
+            red_btn.style.bottom = '2vh';
+            red_btn.style.right = '0.5vw';
+            red_btn.addEventListener('click', () => {
+                setTimeout(()=>{
+                    SIDEBAR.clear();
+                },1100)
+                GAMEBOARD.toggleCollapse();
+                resolve(null);
+            });
+            function updateMiddle() {
+                if (Object.keys(middleToken).length > 0) middleToken.remove();
+                if (col !== '' && ani !== '') {
+                    middleToken = makeToken(col + ' ' + ani).addClass('big_avatar');
+                    middleToken.set('position', 'absolute');
+                    middleToken.set('left', board.shape.offsetWidth / 2 - middleToken.shape.offsetWidth / 2 - 3);
+                    middleToken.set('bottom', 0);
+                    board.attach(middleToken)
+                } else {
+                    middleToken = makeToken('white empty').addClass('big_avatar');
+                    middleToken.set('position', 'absolute');
+                    middleToken.set('left', board.shape.offsetWidth / 2 - middleToken.shape.offsetWidth / 2 - 3);
+                    middleToken.set('bottom', 0);
+                    board.attach(middleToken)
+                }
+                middleToken.shape.addEventListener('click',()=>{
+                    setTimeout(()=>{
+                        SIDEBAR.clear();
+                    },1100)
+                    GAMEBOARD.toggleCollapse();
+                    resolve(col+ ' '+ ani);
+                })
+            }
+
+            let colors = valid_colors.map(color => {
+                let token = makeToken(color + ' empty');
+                token.name = color;
+                return token
+            });
+            colors.forEach((x, i) => {
+                x.shape.addEventListener('click', () => {
+                    col = x.name;
+                    updateMiddle()
+                });
+                x.set('position', 'absolute');
+                x.set('top', 38 * (i % 3));
+                x.set('left', 38 * Math.floor(i / 3));
+                board.attach(x);
+            });
+            let animals = valid_tokens.map(animal => {
+                let token = makeToken('black ' + animal);
+                token.name = animal;
+                return token;
+            });
+            animals.forEach((x, i) => {
+                x.shape.addEventListener('click', () => {
+                    ani = x.name;
+                    updateMiddle()
+                });
+                x.set('position', 'absolute');
+                x.set('top', 38 * (i % 3));
+                x.set('right', 38 * Math.floor(i / 3));
+                board.attach(x)
+            })
+            updateMiddle()
+        })
+    }
+
+    async function getYesNo(){
+        return new Promise(resolve => {
+            let red_btn = id('backbutton').content.cloneNode(true).childNodes[1];
+            SIDEBAR.attach(red_btn);
+            red_btn.id = 'red_btn';
+            red_btn.style.position = 'absolute';
+            red_btn.style.bottom = '2vh';
+            red_btn.style.right = '0.5vw';
+            red_btn.addEventListener('click', () => {
+                resolve(false);
+                red_btn.remove();
+                green_btn.remove();
+            });
+            let green_btn = id('checkmark').content.cloneNode(true).childNodes[1];
+            SIDEBAR.attach(green_btn);
+            green_btn.id = 'green_btn';
+            green_btn.style.position = 'absolute';
+            green_btn.style.bottom = '14vh';
+            green_btn.style.right = '0.5vw';
+            green_btn.addEventListener('click', () => {
+                resolve(true);
+                red_btn.remove();
+                green_btn.remove();
+            });
+        })
     }
 
     async function selectPower() {
@@ -584,24 +914,27 @@
             SIDEBAR.clear();
             let p = new P('Choose a power!').withNoCss().withId('sidebar_title');
             SIDEBAR.attach(p);
-            let red_btn = id('backbutton').content.cloneNode(true);
+            let red_btn = id('backbutton').content.cloneNode(true).childNodes[1];
             SIDEBAR.attach(red_btn);
-            red_btn = SIDEBAR.shape.childNodes[2];
-            red_btn.id = 'red_btn'
+            red_btn.id = 'red_btn';
             red_btn.style.position = 'absolute';
             red_btn.style.bottom = '2vh';
-            red_btn.style.right = '2vw';
-            red_btn.addEventListener('click',()=>{
-                SIDEBAR.clear();
+            red_btn.style.right = '0.5vw';
+            red_btn.addEventListener('click', () => {
                 GAMEBOARD.toggleCollapse();
+                setTimeout(()=>{
+                    SIDEBAR.clear();
+                },1100)
                 resolve(null);
-            })
+            });
             for (let i = 0; i < 8; i++) {
                 let power = new Power(i);
                 SIDEBAR.attach(power.div);
                 power.toggleExpand();
                 power.div.shape.addEventListener('click', () => {
-                    SIDEBAR.clear();
+                    setTimeout(()=>{
+                        SIDEBAR.clear();
+                    },1100)
                     GAMEBOARD.toggleCollapse();
                     resolve(i);
                 })
@@ -613,16 +946,29 @@
 
     function createDesks() {
         desks = new DeskHandler(desks_num);
+        message('Desk Setup')
+        stats.mode = 'deskSetup'
     }
 
-    createDesks();
 
-    id('btn1').innerText = 'start';
+    id('btn1').innerText = 'desks done';
     id('btn1').addEventListener('click', () => {
-        id('btn1').setAttribute('disabled', 'true');
-        id('btn1').innerText = 'running';
-        createPlayers();
-        GAME_RUNNING = true;
+        if(stats.mode === 'deskSetup'){
+            createPlayers();
+            message('Power Setup');
+            id('btn1').innerText = 'power done';
+            stats.mode = 'powerSetup'
+        }else if(stats.mode === 'powerSetup'){
+            removeArrows()
+            stats.current_turn = -1;
+            nextTurn()
+            id('btn1').innerText = 'Next Turn';
+            stats.game_running = true;
+            stats.mode='none';
+        }else{
+            nextTurn()
+        }
+
     });
 
     function createPlayers() {
@@ -634,42 +980,87 @@
         desks.initialize(players.players);
         desks.setSelected(stats.current_turn);
     }
+
     let GLOBAL_ARROW = {};
     let GLOBAL_ARROW2 = {};
 
-    function optimizePoints(x1,y1,x2,y2){
-        let a = new Vector(x1,y1);
-        let b = new Vector(x2,y2);
-
+    function optimizePoints(x1, y1, x2, y2) {
+        let a = new Vector(x1, y1);
+        let b = new Vector(x2, y2);
         let c = b.copy().sub(a);
-        let d = c.mult(-1).normalize().mult(40);
-        b.sub(d.copy().mult(-1.2));
-        a.add(d.mult(-0.9));
-
-        return [a.x,a.y,b.x,b.y];
-
+        let d = c.copy().mult(-1).normalize().mult(40);
+        if(c.copy().mag>100){
+            b.sub(d.copy().mult(-1.2));
+            a.add(d.mult(-0.9));
+        }else{
+            b.sub(d.copy().mult(-0.6));
+            a.add(d.mult(-0.6));
+        }
+        return [a.x, a.y, b.x, b.y];
     }
 
-    function nextTurn() {
-        if(Object.keys(GLOBAL_ARROW).length>0) {
+    function removeArrows(){
+        if (Object.keys(GLOBAL_ARROW).length > 0) {
             let temp = GLOBAL_ARROW;
-            smoothed(GLOBAL_ARROW)
+            smoothed(GLOBAL_ARROW);
             smoothed(GLOBAL_ARROW.leftSide);
             smoothed(GLOBAL_ARROW.rightSide);
             smoothed(GLOBAL_ARROW.point);
             GLOBAL_ARROW.color = 'rgba(30,30,150,0)';
-            setTimeout(()=>{
+            setTimeout(() => {
                 temp.remove();
-            },1000)
+            }, 1000)
         }
-        if(Object.keys(GLOBAL_ARROW2).length>0) {
+        if (Object.keys(GLOBAL_ARROW2).length > 0) {
             GLOBAL_ARROW = GLOBAL_ARROW2;
         }
-
-        let plyr = {};
+    }
+    function drawArrows(){
+        removeArrows();
         let desk = desks.getById(stats.current_turn).div;
-        let x1 = desk.realX + desk.width/2;
-        let y1 = desk.realY + desk.height*1.5;
+        let x1 = desk.realX + desk.width / 1.8;
+        let y1 = desk.realY + desk.height * 1.2;
+        let plyr = {};
+        if (stats.direction > 0) {
+            plyr = players.getNext(stats.current_turn)
+        } else {
+            plyr = players.getPrev(stats.current_turn)
+        }
+        desk = desks.getById(plyr.id).div;
+        let x2 = desk.realX + desk.width / 1.8;
+        let y2 = desk.realY + desk.height * 1.2;
+        GLOBAL_ARROW2 = new Arrow(...optimizePoints(x2, y2, x1, y1), 5);
+        GLOBAL_ARROW2.set('zIndex', '200');
+        GLOBAL_ARROW2.color = 'rgba(30,30,150,0)';
+        setTimeout(() => {
+            smoothed(GLOBAL_ARROW2);
+            smoothed(GLOBAL_ARROW2.leftSide);
+            smoothed(GLOBAL_ARROW2.rightSide);
+            smoothed(GLOBAL_ARROW2.point);
+            GLOBAL_ARROW2.color = 'rgba(30,30,150,0.5)';
+        })
+    }
+    function drawCustomArrow(fromWho,toWho){
+        if (Object.keys(GLOBAL_ARROW).length > 0) GLOBAL_ARROW.remove();
+        let desk = desks.getById(toWho).div;
+        let x1 = desk.realX + desk.width / 1.8;
+        let y1 = desk.realY + desk.height * 1.2;
+        desk = desks.getById(fromWho).div;
+        let x2 = desk.realX + desk.width / 1.8;
+        let y2 = desk.realY + desk.height * 1.2;
+        GLOBAL_ARROW = new Arrow(...optimizePoints(x2, y2, x1, y1), 5);
+        GLOBAL_ARROW.set('zIndex', '200');
+        GLOBAL_ARROW.color = 'rgba(30,30,150,0)';
+        setTimeout(() => {
+            smoothed(GLOBAL_ARROW);
+            smoothed(GLOBAL_ARROW.leftSide);
+            smoothed(GLOBAL_ARROW.rightSide);
+            smoothed(GLOBAL_ARROW.point);
+            GLOBAL_ARROW.color = 'rgba(30,30,150,0.5)';
+        })
+    }
+    function nextTurn() {
+        let plyr = {};
         if (stats.direction > 0) {
             plyr = players.getNext(stats.current_turn)
         } else {
@@ -678,36 +1069,8 @@
         desks.setSelected(plyr.id);
         stats.current_turn = plyr.id;
         message(plyr.name + '\'s turn!');
-        desk = desks.getById(stats.current_turn).div;
-        let x2 = desk.realX + desk.width/2;
-        let y2 = desk.realY + desk.height*1.5;
-        // GLOBAL_ARROW = new Arrow(...optimizePoints(x2,y2,x1,y1),5);
-        // GLOBAL_ARROW.set('zIndex', '200');
-        if (stats.direction > 0) {
-            plyr = players.getNext(stats.current_turn)
-        } else {
-            plyr = players.getPrev(stats.current_turn)
-        }
-        desk = desks.getById(plyr.id).div;
-        let x3 = desk.realX + desk.width/2;
-        let y3 = desk.realY + desk.height*1.5;
-        GLOBAL_ARROW2 = new Arrow(...optimizePoints(x3,y3,x2,y2),5);
-        GLOBAL_ARROW2.set('zIndex', '200')
-        // GLOBAL_ARROW.color = 'rgba(30,30,150,0)';
-        GLOBAL_ARROW2.color = 'rgba(30,30,150,0)';
-        setTimeout(()=>{
-            // smoothed(GLOBAL_ARROW)
-            // smoothed(GLOBAL_ARROW.leftSide);
-            // smoothed(GLOBAL_ARROW.rightSide);
-            // smoothed(GLOBAL_ARROW.point);
-            smoothed(GLOBAL_ARROW2)
-            smoothed(GLOBAL_ARROW2.leftSide);
-            smoothed(GLOBAL_ARROW2.rightSide);
-            smoothed(GLOBAL_ARROW2.point);
-            // GLOBAL_ARROW.color = 'rgba(30,30,150,0.5)';
-            GLOBAL_ARROW2.color = 'rgba(30,30,150,0.5)';
-        })
-        }
+        drawArrows();
+    }
 
     function killCurrentPlayer() {
         let deadPlyr = stats.current_turn;
@@ -716,30 +1079,149 @@
         players.remove(deadPlyr);
     }
 
-    id('btn4').innerText = 'next turn';
-    id('btn4').addEventListener('click', nextTurn);
+    function otherWay(){
+        stats.direction *= -1;
+        removeArrows();
+        nextTurn();
+        let plyr = {};
+        if (stats.direction > 0) {
+            plyr = players.getPrev(stats.current_turn);
+        } else {
+            plyr = players.getNext(stats.current_turn);
+        }
+        drawCustomArrow(stats.current_turn,plyr.id)
+    }
 
-    id('btn3').innerText = 'kill player';
+    id('btn3').innerText = 'Kill Player';
     id('btn3').addEventListener('click', killCurrentPlayer);
 
-    id('btn2').innerText = 'other way';
-    id('btn2').addEventListener('click', () => {
-        stats.direction *= -1;
-    });
+    id('btn2').innerText = 'Other Way';
+    id('btn2').addEventListener('click',otherWay);
 
-    id('btn5').innerText = 'add power';
-    id('btn5').addEventListener('click', () => {
-        selectPower().then(x => {
-            if(x !== null){
-                players.getById(stats.current_turn).powers.push(new PowerData(x));
-                desks.getById(stats.current_turn).updatePowers();
-            }   
+    id('btn4').innerText = 'Choose Name';
+    id('btn4').addEventListener('click',()=>{
+        removeArrows();
+        if(Object.keys(GLOBAL_ARROW).length>0) GLOBAL_ARROW.remove()
+        chooseAvatar().then(result=>{
+            if(result){
+                //TODO check for duplicates
+                players.getById(stats.current_turn).name = result;
+            }
         })
     })
 
+    id('btn5').innerText = 'Add Power';
+    id('btn5').addEventListener('click', () => {
+        if (Object.keys(GLOBAL_ARROW).length > 0) GLOBAL_ARROW.addClass('none');
+        if (Object.keys(GLOBAL_ARROW2).length > 0) GLOBAL_ARROW2.addClass('none');
+        selectPower().then(x => {
+            if (x !== null) {
+                players.getById(stats.current_turn).powers.push(new PowerData(x));
+                desks.getById(stats.current_turn).updatePowers();
+            }
+            setTimeout(() => {
+                if (Object.keys(GLOBAL_ARROW).length > 0) GLOBAL_ARROW.removeClass('none');
+                if (Object.keys(GLOBAL_ARROW2).length > 0) GLOBAL_ARROW2.removeClass('none');
+            }, 1000);
+        })
+    });
+
+    function saveGame(){
+        let text = '';
+        text += players.players.length + ',';
+        players.players.forEach(player=>{
+            let section = '';
+            section += player.name + '|' + player.id + '|' +player.dead + '|' + player.desk_position + '|' + player.powers.length + '|';
+            player.powers.forEach(power=>{
+                section += power.type + ':' + (power.isUsed?1:0);
+            });
+            section += '|';
+            text += section + ',';
+        });
+        Object.keys(stats).forEach(key=>{
+            text+= stats[key] + '_';
+        });
+        text += ',';
+        text+= desks.desks.length + ',';
+        desks.desks.forEach(desk=>{
+           let section = '';
+            section+= desk.mode += '|';
+            text+= section
+        });
+        console.log(text)
+
+    }
+    function loadGame(string){
+        let values = string.split(',');
+        let playerNum = parseInt(values[0]);
+        let savedPlayers = [];
+        for(let i =0; i<playerNum; i++){
+            let unparsed = values[1+i].split('|');
+            let parsed = {};
+            parsed.name = unparsed[0];
+            parsed.id = unparsed[1];
+            parsed.dead = unparsed[2];
+            parsed.desk_position = unparsed[3];
+            parsed.powers = [];
+            for(let i = 0; i<unparsed[4]; i++){
+                let temp = unparsed[4+i].split(':');
+                let p = new PowerData(temp[0]);
+                p.isUsed = !!temp[1];
+                parsed.powers.push(p)
+            }
+            savedPlayers.push(parsed);
+        }
+        let newStats = {};
+        let unparsedStats = values[playerNum+1].split('_');
+        console.log(values[playerNum+1])
+        Object.keys(stats).forEach((key,i)=>{
+            newStats[key] = unparsedStats[i];
+        });
+        let deskNum = parseInt(values[playerNum+2]);
+        let deskVals = values[playerNum+3].split('|');
+        let savedDesks = [];
+        for(let i = 0; i<deskNum; i++){
+            let desk = {};
+            desk.mode = deskVals[i];
+            savedDesks.push(desk);
+        }
+        console.log(playerNum,savedPlayers,newStats,deskNum,savedDesks)
+    }
+
+    id('btn6').innerText = 'Load Game';
+    id('btn6').addEventListener('click',loadGame)
+    id('btn7').innerText = 'Save Game';
+    id('btn7').addEventListener('click',saveGame)
+
+
+
+//23,no name|0|1|0:0|1,no name|1|0||2,no name|2|0||3,no name|3|0||4,no name|4|0||5,no name|5|0||6,no name|6|0||7,no name|7|0||8,no name|8|0||9,no name|9|0||10,no name|10|0||11,no name|11|0||12,no name|12|0||13,no name|13|0||14,no name|14|0||15,no name|15|0||16,no name|16|0||17,no name|17|0||18,no name|18|0||19,no name|19|0||20,no name|20|0||21,no name|21|0||22,no name|22|0||23,,5_1_true_true_false_0_powerSetup_-1_[object Object]_false_,24,2|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0| wo
+
+    createDesks();
+
+
+
 </script>
 <template id="backbutton">
-    <button>X</button>
+    <div>
+        <svg viewBox="0 0 210 210" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <g>
+                <path id="svg_1"
+                      d="m29.75,67.3296l36.36735,-37.5796l38.63248,39.9199l38.63248,-39.9199l36.3677,37.5796l-38.63249,39.92022l38.63249,39.92022l-36.3677,37.57995l-38.63248,-39.92023l-38.63248,39.92023l-36.36735,-37.57995l38.63216,-39.92022l-38.63216,-39.92022z"
+                      stroke-width="7.5" stroke="#7f0000" fill="#ff0000"/>
+            </g>
+        </svg>
+    </div>
+</template>
+<template id="checkmark">
+    <div>
+        <svg viewBox="0 0 210 210" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <g>
+                <path id="svg_3" d="m205,215.48438" opacity="0.5" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" stroke="#000" fill="#fff"/>
+                <path stroke="#007f00" transform="rotate(44 105.4511489868164,85.55574798583983) " id="svg_4" d="m56.75836,167.31935l96.89123,0.32685l0.49434,-163.54702l-22.73978,-0.6339l-1.48303,136.92308l-72.66842,0l-0.49434,26.93098z" stroke-width="5.5" fill="#00ff00"/>
+            </g>
+        </svg>
+    </div>
 </template>
 <template id="heart">
     <svg viewBox="-2 -6 50 50" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
@@ -848,6 +1330,47 @@
             <path id="svg_22"
                   d="m22.11612,8.642c-6.84633,0 -12.39579,5.54979 -12.39579,12.3958c0,6.84636 5.54946,12.39579 12.39579,12.39579c6.84601,0 12.3958,-5.54943 12.3958,-12.39579c0,-6.84601 -5.54979,-12.3958 -12.3958,-12.3958zm1.13256,19.53527l-2.3087,0l0,-2.21399l2.3087,0l0,2.21399zm0,-4.57799l0,0.73171l-2.3087,0l0,-0.90156c0,-2.72056 3.09601,-3.15228 3.09601,-5.08588c0,-0.88168 -0.78831,-1.55707 -1.82033,-1.55707c-1.06942,0 -2.00739,0.78798 -2.00739,0.78798l-1.31441,-1.63326c0,0 1.29554,-1.35116 3.5284,-1.35116c2.12098,0 4.09031,1.31343 4.09031,3.52775c0.00099,3.09765 -3.26389,3.45488 -3.26389,5.4815l0,0z"
                   stroke-width="0" stroke="#ffffff" fill="#009137"/>
+        </g>
+    </svg>
+</template>
+<template id="cat">
+    <svg viewBox="0 0 210 210" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <g> <path id="svg_5" d="m30.87576,66.63846c1.00783,-0.20087 8.3279,7.99249 8.46597,9.64351c0.20157,2.41084 4.83771,2.41084 6.04711,2.41084c1.20946,0 9.87699,5.22355 15.72254,10.84896c5.84561,5.62535 22.9791,0.4018 24.1885,0c1.20946,-0.40186 56.4399,-11.04983 71.35611,-3.6163c7.16384,3.57008 21.28445,-9.04304 23.1303,-35.25903c-0.75589,-17.47877 -16.52628,-18.13474 -19.80436,-12.80773c-2.41886,2.36063 -6.55106,1.65747 -5.54316,-2.66199c0.91646,-2.89251 7.05494,-11.80321 18.39333,-7.88554c9.61225,3.32125 15.17196,11.30955 17.23431,23.0539c1.36059,25.31416 -17.68788,43.99839 -17.68788,43.99839c0,0 1.51178,6.62994 3.62832,10.84896c2.11648,4.21903 2.72117,18.68422 2.41879,20.49234c-0.30232,1.80818 9.07073,11.75305 12.09428,12.05435c2.62042,1.20545 9.97781,23.50604 10.28012,28.32773c2.72124,1.3561 -0.30232,8.13669 -3.62825,9.04078c-3.32594,0.90409 -4.23302,-5.42448 -4.23302,-8.43805c0,-3.01357 -3.32594,-17.17747 -12.69898,-18.68422c-9.37304,-1.50682 -17.53663,-6.62994 -17.53663,-6.62994c0,0 -0.60476,3.01364 -1.81416,4.21909c0,0 3.02355,5.12305 3.02355,12.65702c-0.30232,3.31494 -5.14003,13.56117 -8.46597,14.46526c0,0 -5.44241,8.43805 -7.86127,8.43805c-2.41886,0 -6.65187,3.01357 -13.30368,-0.60273c0,0 1.2094,-7.53396 7.25657,-5.42448c0,0 14.21076,-10.8489 7.25651,-15.67065c0,0 -4.23295,-6.02714 -6.65181,-8.43805c-2.41886,-2.41084 -4.83771,-6.32851 -5.44241,-10.8489c0,0 -20.25787,-1.20545 -25.39796,-2.41091c-5.14003,-1.20539 -14.51307,1.80818 -14.51307,3.6163c0,1.80818 1.51178,18.98565 4.23295,22.30059c0,0 0.90708,4.21903 0,5.42448c-0.90708,1.20539 3.32594,11.15026 -4.83771,10.24617c-7.71008,1.3561 -11.48952,-4.67104 -2.41879,-6.62987c0.45351,-6.47922 -11.48958,-33.90286 -19.35085,-30.13592c-10.28012,1.50682 -6.803,-7.38325 -16.93193,6.62994c-10.58251,12.35565 -28.7239,21.09507 -29.63091,26.51955c0,0 -5.44241,-1.20545 -6.65187,3.01357c0,0 -14.21076,1.80818 -13.30368,-0.60273c0.90708,-2.41084 1.66297,-7.38325 7.25657,-5.42442c0,0 12.69898,-4.97247 24.7932,-30.73864c0,0 -1.51178,-6.62987 0.6047,-12.05435c2.11654,-5.42442 -1.2094,-27.72501 -16.32723,-26.51955c0,0 -5.64398,2.00905 -9.07066,-7.2326c0,0 -1.41103,-1.80818 0,-3.6163c1.41096,-1.80818 4.83771,-4.62082 5.44241,-6.62987c0.6047,-2.00911 2.01572,-5.02268 9.67536,-7.83539c3.62832,-3.76695 -0.40307,-11.2507 0.60476,-11.45163z" stroke-width="0" fill="#000000"/>
+        </g>
+    </svg>
+</template>
+<template id="rabbit">
+    <svg viewBox="0 0 210 210" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <g>
+            <path stroke="null" id="svg_6" d="m67.30647,194.73098c-7.05555,-2.91236 2.1514,-8.73517 5.63709,-11.3109c2.34791,-1.98365 -13.45603,0.27826 -6.78374,-6.60779c7.32047,-5.62553 4.55518,-15.14267 -2.76212,-19.5666c-10.07013,-6.22385 -22.99076,-11.5506 -26.71104,-23.17223c-3.76175,-7.2386 5.15931,-14.86232 -0.57867,-21.39896c-4.61856,-8.48714 0.77723,-17.33745 4.1311,-25.19947c1.54236,-10.8755 -7.90587,-19.47596 -13.10181,-28.41079c-6.43376,-8.53832 -10.14247,-18.48744 -10.67541,-28.85559c-1.39917,-4.42557 0.14925,-11.29836 5.73641,-5.3318c11.70035,8.57566 24.54536,16.71293 32.73423,28.45094c1.55007,4.23986 7.75683,16.52821 8.10342,5.40041c0.16233,-15.29437 5.26561,-31.97518 18.34238,-42.22435c8.89459,-7.4186 13.6914,5.57107 14.10642,12.17193c2.3151,12.98772 -1.52245,25.86716 -5.79882,38.13583c-1.5699,5.70164 -5.65831,21.32623 6.0019,15.56518c26.86094,-9.49252 59.40497,0.47718 76.90103,20.86912c8.04278,9.87353 11.56501,22.55871 11.48549,34.73862c-4.14141,7.15564 11.24613,-0.13405 5.67044,8.12141c-3.28235,9.14508 -12.55629,14.1073 -19.05242,21.00996c-6.61034,5.53119 -1.70567,17.35711 -12.63725,19.09965c-15.95051,4.50088 -32.69985,6.47243 -49.30489,7.62c-9.29213,1.74254 -13.80165,-7.98326 -4.89547,-12.02652c4.26986,-6.02511 16.48583,-6.44734 20.11543,-7.40182c-8.67357,0.77681 -19.37024,-2.46366 -26.679,2.45328c-4.42628,6.5772 -7.97134,15.23423 -17.25328,17.11156c-4.17129,1.06043 -8.46012,1.91083 -12.7314,0.75893l-0.00001,0.00001z" stroke-width="0" fill="#000000"/>
+        </g>
+    </svg>
+</template>
+<template id="shark">
+    <svg viewBox="0 0 210 210" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <g>
+           <path stroke="null" transform="rotate(-18.292285919189453 103.91504669189462,102.25693511962893) " id="svg_7" d="m-12.34325,150.30611c-0.82088,-3.94937 12.45863,-13.3282 22.13492,-21.33643c7.68246,-6.33275 16.07101,-14.009 24.06068,-20.78183c6.67833,-5.66085 21.41595,-15.21654 23.07711,-21.40574c1.94074,-7.23081 5.41115,-20.5559 9.13871,-30.4995c2.83559,-7.59858 8.21631,-17.58932 11.14124,-17.76447c1.1343,-0.06792 2.10598,3.55568 2.10598,3.55568c0,0 3.0748,24.14425 9.88306,35.78315c2.71737,4.65652 10.5931,4.46959 13.48946,4.18152c19.33108,-1.92252 44.7187,1.93987 44.7187,1.93987c0,0 8.24969,-7.81851 9.62902,-8.64993c3.49719,-2.05782 -0.00357,2.88056 8.63071,11.8387c4.73394,4.91149 7.33404,3.48423 11.07037,1.89123c1.50631,-0.66044 2.40427,-2.81607 3.65072,-4.06314c1.59503,-1.58956 33.69001,-31.47212 36.9476,-32.81646c3.25767,-1.34435 3.11555,7.25502 2.57852,9.34669c-5.9183,23.05423 -21.98419,38.91525 -21.98419,38.91525c0,0 -1.24048,3.3741 -0.68233,6.93813c0.50513,3.2358 9.11582,27.01528 4.60184,25.57259c-1.87616,0.27789 -6.50097,-2.66116 -6.50097,-2.66116c0,0 -4.64026,-3.55986 -7.96018,-8.6089c-2.34823,-3.59071 -3.71576,-9.16789 -3.71576,-9.16789c0,0 -1.06724,-4.53376 -4.22377,-5.84361c-7.62495,-3.16423 -13.31816,0.45219 -15.27644,3.57389c-1.67769,2.6693 -0.64694,7.16449 -0.64694,7.16449c0,0 2.3719,3.5455 0.92163,3.7288c-6.29133,0.74775 -9.23022,-5.56904 -13.60465,-9.06558c-1.52409,-1.20808 -3.85602,-3.20944 -7.80362,0.90491c-1.98467,2.06853 -3.42602,12.66894 -6.51293,16.19526c-2.07944,2.37545 -5.40518,-0.36273 -5.40518,-0.36273c0,0 -5.0597,-2.41691 -8.63661,-2.55136c-16.31131,11.08259 -45.93558,21.26102 -45.93558,21.26102c0,0 3.949,6.44127 6.01959,10.88333c1.02781,2.21497 0.98651,4.12431 0.98651,4.12431c0,0 1.03083,3.03386 -1.11652,3.45573c-1.27308,0.24457 -13.65781,-2.5775 -20.27405,-6.14153c-5.57073,-3.00354 -9.97162,-7.40093 -9.97162,-7.40093c0,0 -20.27211,2.28954 -33.27422,3.02315c-7.57326,0.41169 -30.13336,0.26761 -31.26083,-5.15649z" fill-opacity="null" stroke-opacity="null" stroke-width="0" fill="#000000"/>
+        </g>
+    </svg>
+</template>
+<template id="eagle">
+    <svg viewBox="0 0 210 210" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <g>
+            <path id="svg_8" d="m157.72001,96.54716c0,0 17.88483,5.0671 22.13257,22.58458c0,0 3.80048,6.80437 2.68272,10.42369c-1.11776,3.61925 -2.90635,4.77745 -3.35341,5.21181c0,0 2.23565,-3.32983 -5.36544,-8.68643c0,0 -3.91236,-0.86863 -4.6948,-1.73727c-0.78245,-0.86863 -12.29583,-3.76411 -14.75505,3.47454c-2.45915,7.23873 -3.01804,19.39961 -2.68272,19.97867c0.33532,0.57906 11.73695,11.5819 12.74296,14.76687c1.00601,3.18497 6.37151,9.69969 8.71891,9.55498c2.34734,-0.14471 7.93641,-0.14471 9.38955,-2.6059c1.45308,-2.4612 5.70082,-2.75069 6.70683,0c1.00601,2.75061 0.6707,2.6059 0.6707,2.6059c0,0 3.57698,-1.01334 4.6948,2.6059c1.11776,3.61932 -1.67677,5.21181 -2.01209,5.21181c-0.33532,0 2.12384,-5.50138 -1.34139,-4.34317c0,0 -2.01202,0.10861 -2.01202,-0.86863c0,-0.97724 1.1737,5.10328 0,5.21181c0,0 -3.9403,-5.64609 -4.6948,-2.6059c0,0 -2.51503,0.6515 -3.35341,0.86863c-0.83832,0.21714 -0.6707,0.86863 -0.6707,0.86863c0,0 -2.17971,1.08577 -0.67063,4.34317c0,0 0,1.19438 -0.6707,1.73735c-0.6707,0.54289 0.41919,3.14879 3.35341,0.86863c0,0 0.75451,-0.86863 0.6707,0c-0.08388,0.86863 -3.0181,5.53756 -6.70683,-0.86863c0,0 -1.34139,-4.88614 0.6707,-6.08052c2.01202,-1.19438 -0.6707,-3.58315 -3.35341,-1.73727c0,0 -0.16769,3.47454 0.67063,4.34317c0.83838,0.86863 -1.4252,0.10861 -2.01202,-0.86863c-0.58682,-0.97716 -1.34139,2.06302 -1.34139,2.6059c0,0.54289 -0.75451,2.38876 -1.34133,1.73735c-0.58688,-0.6515 -6.12001,-1.4116 -6.03619,-0.86871c0.08388,0.54297 -2.59884,2.82312 -3.35341,1.73735c-0.75451,-1.08585 -4.94625,-6.62341 -5.36544,-6.08052c-0.41919,0.54289 2.85041,6.62341 4.6948,7.81779c1.84434,1.1943 9.55724,1.95441 12.07227,-0.86863c0,0 3.85642,-0.97724 4.02411,0c0,0 4.35943,2.28016 4.02411,3.47454c-0.33538,1.19438 -0.33538,0.54289 -0.6707,0c-0.33532,-0.54297 -3.10191,-2.49737 -3.35341,-1.73727c-0.2515,0.76003 0,0.86863 0,0.86863c0,0 3.5211,1.30291 3.35341,1.73727c0,0 4.10792,2.17155 3.35341,6.94908c0,0 -1.25752,1.19438 -1.34139,0c-0.08381,-1.19438 0.50301,-4.45178 -2.01202,-4.34317c0,0 -0.41919,1.73727 -2.01202,0.86863c-1.59289,-0.86863 0.92214,-2.71451 -7.37752,-1.73727c0,0 0.33532,2.06302 1.34133,2.6059c1.00601,0.54289 2.68278,0.54289 2.68278,2.6059c0,0 1.08983,1.73727 0,3.47454c0,0 -0.6707,0.54289 -0.6707,0c0,-0.54289 0.6707,-3.14879 -2.68272,-4.34317c-3.35348,-1.19438 -2.68278,-0.86863 -2.68278,-0.86863c0,0 0.58688,5.21181 -0.6707,5.21181c-1.25752,0 0.83838,3.2574 3.35348,1.73727c0,0 0.25144,-1.30291 0.67063,-0.86863c0.41919,0.43436 -2.09584,6.73194 -6.70683,-0.86863c0,0 -1.50902,-4.01743 0,-5.21181c0,0 1.00601,-4.01743 -4.02411,-2.6059c0,0 -2.09584,0.43428 -2.01202,0c0.08381,-0.43436 -0.33532,2.06302 0,2.6059c0.33532,0.54289 -3.9403,-1.19438 -4.02411,-1.73727l-1.34133,0c0,0 0.78245,5.0671 1.34133,5.21181c0.55888,0.14471 -2.57091,-2.4612 -3.35341,-4.34317c0,0 0,3.61925 0.6707,4.34317c0.6707,0.72393 -3.0181,-3.9089 -2.68272,-4.34317c0,0 0.11175,4.63274 1.34133,6.94908c1.22958,2.31633 -2.68272,-2.17155 -3.35341,-3.47454c0,0 -0.67063,0.57906 0,1.73727c0.6707,1.15821 -2.23559,-1.15821 -2.68272,-4.34317c0,0 -1.90027,-2.02684 -2.68272,-2.6059c0,0 0.11175,4.92224 0.6707,5.21181c0,0 -1.56496,-1.59256 -2.01209,-3.47454c0,0 -0.8942,1.73727 -0.6707,2.6059c0,0 -2.57091,-3.76411 -3.35341,-6.94908c-0.78245,-3.18497 -0.67063,0.86863 -0.67063,0.86863c0,0 -1.56496,-0.28965 -2.68278,-6.08044c0,0 -6.48326,8.83105 -8.71885,9.55498c-2.23559,0.72385 2.68272,-3.47454 2.68272,-3.47454c0,0 -3.68873,1.4477 -4.02411,2.6059c0,0 0.33538,-1.59256 2.01209,-3.47454c1.67671,-1.88205 -2.01209,-0.86863 -2.01209,-0.86863c0,0 -0.78245,-0.28965 -0.67063,-9.55506c0,0 -5.03018,6.94916 -8.04822,6.94916c-3.0181,0 2.79453,-2.89555 3.35341,-5.21189c0.55888,-2.31633 -1.22958,-1.59248 -2.01209,-0.86863c-0.78245,0.72393 -6.59502,5.0671 -6.70683,6.08052c-0.11175,1.01334 -0.67063,-1.73727 -0.67063,-1.73727c0,0 -1.34139,0.86863 -2.68278,0.86863c-1.34133,0 3.9123,-3.18497 4.6948,-5.21189c0.78251,-2.02684 -7.26571,3.61932 -10.06024,6.08052c0,0 -2.3474,1.01334 -2.68272,0c-0.33538,-1.01342 4.02411,-4.92224 4.02411,-5.21189c0,-0.28957 1.56489,-2.75061 -1.34139,-0.86863c-2.90628,1.88205 -6.70683,0.43436 -9.38955,1.73727c-2.68278,1.30299 -5.589,5.35659 -9.38961,5.21189c-3.80054,-0.14479 -3.79963,6.08044 -10.73088,6.08044c-4.02411,0 -2.3474,2.02684 -4.02411,1.73727c-1.67671,-0.28957 2.01202,-2.6059 2.01202,-2.6059c0,0 -4.02411,1.73727 -4.69474,1.73727c-0.6707,0 -3.68879,0.14471 3.35335,-3.47454c0,0 -5.14187,0 -3.35335,-0.86863c1.78846,-0.86863 6.2597,-2.6059 6.03613,-3.47454c-0.22363,-0.86863 -4.80656,-0.72393 -3.35341,-1.73727c1.45308,-1.01342 9.38955,-4.77753 7.37752,-5.21189c-2.01209,-0.43428 -4.91837,-0.57906 -3.35341,-1.73727c1.56496,-1.15821 20.79112,-3.90882 23.4739,-6.94908c2.68272,-3.04026 9.61311,-11.87131 11.40157,-12.16088c1.78852,-0.28965 0,-2.4612 -1.34133,-1.73735c-1.34139,0.72393 -2.57097,-0.43428 -2.01209,-5.21181c0.55894,-4.77745 -5.75254,10.47646 -9.38955,5.21181c-1.90027,-2.75061 -0.44713,-4.77745 -2.68272,-4.34317c-2.23559,0.43436 -2.12384,-3.18497 -2.68272,-1.73727c-0.55888,1.4477 -5.25369,10.42369 -7.37752,9.55506c-2.12384,-0.86863 -0.55888,-1.4477 -2.01209,-1.73727c-1.45314,-0.28965 -2.45915,-0.86863 -2.68272,-2.60598c-0.22357,-1.73727 -1.56489,1.15828 -2.01202,-1.73727c-0.44713,-2.89548 -0.78245,-6.51472 -2.68272,-3.47454c-1.90033,3.04026 -2.57103,1.01342 -2.68278,0c-0.11175,-1.01334 -4.13586,0.57906 -4.02405,-2.6059c0.11169,-3.18497 -3.91236,1.01342 -3.35348,-2.6059c0.55894,-3.61925 -3.39947,-0.49052 -2.68272,-3.47454c1.56496,-6.5148 -5.36544,-0.57906 -4.69474,-3.47454c0.67063,-2.89548 -3.24166,-0.57906 -2.68278,-3.47454c0.55894,-2.89548 -3.72173,-1.8898 -3.35341,-4.34317c0.78245,-5.21189 -4.02405,-1.59256 -3.35341,-6.08052c0.6707,-4.48788 -3.05214,-0.03009 -2.68272,-3.47454c0.55894,-5.21181 -4.7907,-3.31917 -3.35341,-6.94908c2.23565,-5.64616 -2.29879,-3.21901 -1.34139,-6.08044c1.45314,-4.34317 -9.33648,0.48183 -6.70683,-6.94916c1.22964,-3.47454 -7.30268,-5.78787 -3.35341,-8.68635c6.70683,-4.92224 -10.28375,-2.4612 -2.01202,-10.42362c7.71284,-4.63274 8.18547,-5.06908 -1.34139,-4.34317c-3.80054,0.28957 -9.50136,-6.5148 -4.02405,-6.94916c5.47725,-0.43428 16.65526,-3.90882 4.02405,-5.21181c-12.63115,-1.30291 -13.07828,-7.23865 -8.04816,-6.94908c5.03012,0.28957 24.70348,0.28957 19.44979,-1.73727c-5.25369,-2.02684 -29.29708,-6.9802 -20.12048,-12.16088c4.35943,-2.4612 35.07775,10.62488 26.15662,1.73727c-1.45308,-1.4477 -15.64925,-6.65958 -20.79118,-13.89823c-5.14187,-7.23865 -4.13586,-8.25207 -1.34133,-6.94908c2.79453,1.30291 35.21066,20.41295 30.18073,13.89815c-0.89426,-1.15821 -19.44979,-12.59524 -22.13257,-22.5845c-2.68272,-9.98934 -0.11175,-7.38343 2.01209,-4.34325c2.12378,3.04026 32.62603,32.07266 27.49801,22.58458c-1.56496,-2.89548 -15.20212,-14.47722 -18.10846,-26.05912c-2.90635,-11.58182 -0.6707,-8.39677 1.34139,-5.21181c2.01202,3.18497 33.09311,46.57799 28.16864,31.27092c-1.11776,-3.47454 -10.9545,-14.33251 -12.07227,-24.32185c-1.11776,-9.98934 1.78846,-6.22515 3.35341,-2.6059c1.56496,3.61932 23.58571,48.6437 24.14459,40.82598c0,0 0.11181,0.14471 0.6707,0c0.55888,-0.14479 -0.44713,-4.19847 0.6707,-3.47454c0,0 0.44713,-3.18497 1.34133,-2.60598c0.89426,0.57906 1.78852,0.14479 2.01209,-3.47454c0.2235,-3.61925 6.81858,0.57906 8.71885,19.11004c0,0 1.34139,1.87969 1.34139,6.08044c0,2.17163 8.04816,12.74003 12.74296,12.16096c4.6948,-0.57906 11.40163,12.16088 13.41366,13.02952c2.01202,0.86863 6.48326,6.08044 13.41366,0.86863c6.93039,-5.21181 13.74903,-6.94908 8.04822,-7.81771c-5.70082,-0.86863 -4.58299,-3.76411 -2.01202,-4.34317c2.57091,-0.57906 13.74897,-0.86863 10.06024,-3.47454c-3.68879,-2.60598 -6.87525,-16.5287 -2.01209,-13.0296c2.01209,1.4477 9.15763,14.31213 8.04822,5.21181c-0.33538,-2.75061 -4.6948,-6.08044 -3.35341,-15.63542c1.34133,-9.55506 3.2011,-1.95338 3.35341,-0.86863c0.22357,1.59248 5.64634,21.36429 6.70683,11.29225c0.33532,-3.18497 -2.45915,-7.38343 -1.34139,-19.11004c1.11776,-11.72653 2.68272,0 2.68272,0c0,0 3.18932,12.00883 2.68278,18.24141c-0.22363,2.75069 2.90628,1.73727 2.68272,-3.47454c-0.22363,-5.21181 -1.90027,-16.64884 -0.6707,-16.50414c1.22964,0.14479 4.91373,7.75334 4.02411,13.89823c-0.33538,2.31633 4.80656,4.63274 -0.6707,9.55498c-5.47719,4.92224 -11.40163,14.76687 -11.40163,14.76687c0,0 1.32516,6.36235 -5.36544,9.55498c-4.24767,2.02684 -0.6707,6.08044 -0.6707,6.08044z" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="null" fill="#000000"/>
+        </g>
+    </svg>
+</template>
+<template id="unicorn">
+    <svg viewBox="0 0 210 210" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <g>
+            <path stroke="null" id="svg_9" d="m132.252,200.81346c-4.91352,-5.2309 -12.55426,-5.82741 -14.39154,-13.27291c-1.44006,-4.04975 -15.01586,-9.48126 -6.98105,-2.21252c6.2043,4.38008 13.57538,20.53591 -1.6885,15.43146c-11.60932,-3.31627 -12.10714,-13.55661 -15.21899,-21.22318c-10.11952,-5.46474 2.61633,-17.01954 -8.27952,-24.02131c-9.24749,-7.30902 -2.80719,-20.99773 -16.02108,-26.18023c-6.63249,-2.09527 -9.50334,12.37164 -10.62008,1.78814c-3.63366,-10.70414 -16.46676,5.20338 -25.02424,3.51693c-6.90539,-0.46725 11.55093,-4.20386 2.74348,-5.20942c-5.17811,2.20635 -9.96911,6.02127 -10.78833,-0.29355c-6.22896,-2.87947 -19.29121,-7.47786 -18.95189,-12.05216c5.40921,-1.32262 23.67009,2.50445 20.50555,-2.81317c-5.43016,-1.60401 -6.41657,-5.98868 0.2343,-3.04599c13.10701,0.32003 28.47215,-3.75229 39.37801,4.03647c5.68854,2.72436 11.28171,12.49527 14.32706,2.99977c9.81679,-9.21589 29.62547,-9.99651 35.67707,-21.92878c1.46441,-5.77298 -4.49757,-9.06664 -9.56245,-10.23599c-0.98538,-1.89721 -2.6628,-9.95205 -6.85112,-5.88732c0.1909,-3.5576 4.11975,-12.06507 -4.58281,-8.29881c-0.88268,-7.57746 7.4396,-15.13727 -3.56966,-20.65527c10.31509,1.4894 8.281,-7.66378 6.03427,-9.11544c6.11469,-0.67582 13.29057,-4.95868 9.91914,-10.26443c6.64039,9.38325 6.87064,-11.38362 12.33765,-2.43247c10.06205,1.28396 -3.12591,-6.99711 6.12871,-5.14875c5.28449,0.14074 4.11083,-4.50683 8.85811,-0.99915c6.28295,-2.66835 -4.8165,-10.73253 5.32799,-5.12944c3.41022,2.30598 14.26738,8.34567 12.31935,0.37576c9.63954,8.0036 17.22535,-7.43399 25.23543,-10.63096c3.17722,-2.95861 10.08635,-6.08973 3.71432,-0.44207c-4.2302,7.19902 -18.58184,14.98683 -14.72081,22.14011c-3.49484,2.4765 7.05137,5.58902 -1.34385,4.65145c-4.97357,4.17876 6.66794,11.99697 7.59699,18.57369c-2.66662,4.50622 -12.82048,9.62198 -16.92797,9.46029c1.50125,-5.80177 -1.75325,-13.36372 -11.25904,-10.08431c5.32496,7.5837 12.52422,14.82853 17.03482,23.07568c4.40878,8.10733 11.55686,17.46966 20.96116,7.03552c5.99403,-6.65029 23.11748,-6.55402 18.41381,4.24607c-2.40453,10.60537 4.03313,24.60233 -8.33669,31.90768c-7.46215,11.19215 -15.73495,-4.16148 -9.87236,-9.96989c-1.49385,-1.65986 -2.6495,-2.83157 1.72188,-5.10048c-0.90262,-1.70193 12.58011,-8.10503 5.78486,-12.03407c-7.72848,6.82126 -19.03703,14.71689 -15.89425,24.85659c2.55071,6.79483 -18.4863,18.44394 -16.80406,7.16729c0.37681,-4.38249 8.41555,-12.87624 6.56514,-13.97049c-5.86901,8.57134 -14.21796,16.80593 -26.83407,19.35078c-10.49413,0.48404 -15.99138,7.06076 -11.00792,14.35769c0.95238,10.34008 -6.06004,19.69837 -7.67447,29.76589c3.00103,10.67793 21.27214,12.83568 23.75218,23.72799c4.26147,7.31528 -6.39813,6.2342 -11.36457,4.18729l0.00003,0.00001zm-25.98306,-31.85573c-1.53822,-4.82675 -4.70376,12.54718 -0.80166,3.3258l0.58415,-1.62916l0.2175,-1.69665l0,0.00001z" fill-opacity="null" stroke-opacity="null" stroke-width="0" fill="#000000"/>
+        </g>
+    </svg>
+</template>
+<template id="bat">
+    <svg viewBox="0 0 210 210" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <g>
+            <path stroke="null" id="svg_10" d="m111.82996,88.03117c0,0 4.01383,1.69132 4.41522,2.95979c0.40132,1.2684 18.86506,-3.80534 22.87889,-6.76513c4.01383,-2.95979 13.24567,-2.63183 13.24567,-8.03367c0,-1.69132 -1.83127,-6.07811 1.60556,-4.65111c0.66837,0.27763 0.80285,2.53701 0.80285,2.53701c0,0 -0.7024,-2.08776 -1.73102,-1.50638c-0.50225,0.28396 0.72837,3.78377 1.32956,4.88894c0,0 33.60183,-5.49118 40.94124,-3.38257c2.94353,0.84555 12.84441,2.11409 12.57675,6.62418c0,0 -13.64644,4.92809 -15.7878,22.9735c-0.26753,2.25497 -17.50482,-2.87088 -28.89967,19.87262c-2.54214,5.07381 -3.21112,3.24155 -4.0139,2.95979c-0.80278,-0.2819 -16.85818,-10.85259 -30.10384,9.302c0,0 0.66898,-0.14088 0.80278,0.42285c0.1338,0.5638 6.55597,-1.5503 6.82356,2.11424c0,0 -2.99239,-1.42971 -2.3234,-0.02015c0.66892,1.40935 0.32964,3.02535 -0.08487,2.1341c-0.0794,-0.17071 -1.73936,-1.69125 -1.20424,-0.42271c0.53519,1.2684 -2.57111,4.17879 -2.73538,3.75195c-0.65375,-1.69879 1.53128,-3.61107 -2.48255,-5.4432c-4.0139,-1.83227 -15.11889,2.53687 -20.87201,16.06721c0,0 -0.40139,0.70467 -1.20417,-0.42285c-0.80278,-1.12752 -6.42217,-16.20823 -18.06235,-16.9129c0,0 -0.53519,2.11409 -2.40827,2.53694c-1.87315,0.42285 -1.4717,6.90601 -2.40834,4.65104c-0.93658,-2.25504 -0.74306,0.43595 -0.80278,0c-0.21703,-1.58596 0.68641,-4.06154 -2.00695,-2.95979c-0.35281,0.14429 -0.53519,2.39606 -1.2041,1.26854c-0.66898,-1.12752 0.82554,-3.14665 1.76204,-3.99228c0.93658,-0.84562 -3.12099,-0.93902 -1.36065,-1.9273c1.78179,-1.00031 6.82349,2.25512 4.81661,-1.2684c-2.00695,-3.52359 -13.5436,-19.98054 -30.10384,-8.8793c-2.94353,1.97315 -2.00695,-0.42292 -3.61251,-2.53708c-1.60549,-2.11402 -12.85589,-22.25117 -28.09689,-19.87262c-3.61251,0.56387 -2.00695,-2.95972 -3.21105,-4.22819c-1.20424,-1.26847 -8.47381,-23.45494 -15.65401,-21.56394c-1.60556,0.42271 -0.4538,-7.2445 13.24567,-6.34236c2.14075,0.14088 0.80278,-1.69132 3.21112,-1.26854c2.40827,0.42292 32.11073,4.79206 35.32178,5.91958c3.21112,1.12752 6.82356,2.19959 6.82356,-4.65104c0,-0.13219 -0.52685,-0.47567 -1.60556,0.42278c-0.47663,-0.44926 3.47871,-2.81884 2.80973,1.69132c-0.66898,4.51009 -2.13125,3.29778 0.40139,4.65097c3.58613,1.91605 6.42743,5.23961 12.0415,5.4968c3.07732,0.14095 18.59528,8.16573 22.07618,7.18798c2.00695,-0.5638 4.68282,-1.83227 3.61244,-2.53701c-1.07031,-0.7046 -4.68282,-5.21476 -4.41522,-7.61076c0.26759,-2.39599 1.07037,-4.22819 0,-5.07388c-1.07037,-0.84562 1.20417,-3.24162 3.21112,-0.42285c2.00688,2.81884 2.00688,4.93294 3.61244,5.07388c1.60556,0.14102 4.54909,-0.7046 5.61939,0c0,0 4.68288,-7.04696 7.22488,-5.91958c2.54214,1.12759 0.53519,2.67789 0.80278,3.80541c0.26759,1.12752 -2.67587,9.58412 -5.61932,9.30215z" fill-opacity="null" stroke-opacity="null" stroke-width="0" fill="#000000"/>
         </g>
     </svg>
 </template>
