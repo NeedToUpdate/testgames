@@ -12,35 +12,122 @@
     <title>Artem's Timer</title>
     <link rel="stylesheet" href="global_styles.css">
 </head>
-
+<button id="start">start</button>
+<button id="stop">stop</button>
+<button id="reset">reset</button>
+<button id="save">save</button>
+<style>
+    button{
+        width: 5em;
+        height: 2em;
+        border-radius: 30px;
+        font-weight: bold;
+        font-size: 2em;
+        z-index: 100;
+        position: absolute;
+        top: 60%;
+    }
+    #start{
+        background-color: #17ff00;
+        border: #009915 solid 3px;
+        color: #185000;
+        left: 15%
+    }
+    #stop{
+        background-color: #ff0001;
+        border: #800200 solid 3px;
+        color: #5a0000;
+        left: 33%;
+    }
+    #reset{
+        background-color: #0015ff;
+        border: #001880 solid 3px;
+        color: #080066;
+        left: 51%;
+    }
+    #save{
+        background-color: #c100ff;
+        border: #6f0080 solid 3px;
+        color: #5a0066;
+        left: 69%;
+    }
+</style>
 <body>
 <script type="text/javascript">
-let MAINTIMER = new Rectangle(width*.1,height*.1,width*.8,height*.8).asOutline('blue')
-MAINTIMER.set("backgroundColor","yellow")
-MAINTIMER.set("borderRadius",10)
+    FPS = 60
+    let MAINTIMER = new Rectangle(width * .1, height * .1, width * .8, height * .8).asOutline('blue');
+    MAINTIMER.set("backgroundColor", "yellow");
+    MAINTIMER.set("borderRadius", 10);
+    MAINTIMER.border = "blue solid 3px";
 
-let numberfield = new Rectangle(30,30,width*0.8 -60,height*.3).asOutline("blue")
-MAINTIMER.attach(numberfield)
-numberfield.border = "blue solid 3px"
-
-
-let TIME = new P("00:00.00",20,20)
-TIME.set("fontSize", "3em")
-TIME.set("forWeight","bolder")
-TIME.color = "blue"
-numberfield.attach(TIME)
+    let numberfield = new Rectangle(30, 30, width * 0.8 - 60, height * .3).asOutline("blue");
+    MAINTIMER.attach(numberfield);
+    numberfield.border = "blue solid 3px";
+    numberfield.set("borderRadius", 10);
+    numberfield.set('backgroundColor','darkyellow')
 
 
-function millis2time(millis){
-    let seconds = (millis/1000).toPrecision(4)
-    let min = seconds/60 | 0
-    seconds = seconds % 60
-    
-    let time = min + ":" + seconds
-    return time
-}
+    let TIME = new P("00:00.000", 0, 20);
+    TIME.set("fontSize", "5em");
+    TIME.set("forWeight", "bolder");
+    TIME.x = numberfield.width/2 - TIME.width/2;
+    TIME.color = "blue";
+    numberfield.attach(TIME);
 
-TIME.string = millis2time(12482)
+
+    function millis2time(millis) {
+        CURRENT_TIME = millis;
+        let number = (millis / 1000);
+        let min = number / 60 | 0;
+        while(min.toString().length<2){
+            min = '0' + min;
+        }
+        let seconds = (number % 60) |0;
+        while(seconds.toString().length<2){
+            seconds = '0' + seconds;
+        }
+        let mils = (number%1).toPrecision(3).toString().slice(1);
+        if(mils === '.00') mils = '.000'
+        if(mils.length>4){
+            mils = mils.slice(0,4)
+        }
+        while(mils.toString().length<3){
+            mils = '0' + mils;
+        }
+        return min + ":" + seconds + mils
+    }
+
+    function displayTime(val){
+        TIME.string = millis2time(val)
+    }
+    let LOOP_ID = 0;
+    let START_TIME = 0;
+    let CURRENT_TIME = 0;
+    let SAVED_TIME = 0;
+    id('start').addEventListener('click',()=>{
+        LOOPING = true;
+        START_TIME = window.performance.now();
+        LOOP_ID = setInterval(()=>{
+            displayTime(window.performance.now()-START_TIME + SAVED_TIME)
+        },1000/FPS)
+    });
+    id('stop').addEventListener('click',()=>{
+        clearInterval(LOOP_ID)
+        SAVED_TIME = CURRENT_TIME;
+        LOOPING = false;
+    })
+    id('reset').addEventListener('click',()=>{
+        SAVED_TIME = 0;
+        displayTime(0)
+    })
+    let saved_times = []
+    id('save').addEventListener('click',()=>{
+        let new_time = new P(millis2time(CURRENT_TIME),width*0.02,height*0.1 + saved_times.length*20);
+        new_time.color = 'blue';
+        new_time.set('fontWeight','bolder')
+        saved_times.push(new_time)
+    })
+
 
 </script>
 </body>
