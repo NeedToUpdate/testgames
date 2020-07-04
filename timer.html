@@ -13,19 +13,21 @@
     <link rel="stylesheet" href="global_styles.css">
 </head>
 <button id="start">start</button>
+<button id="smallstart"> </button>
+<button id="smallstop"> </button>
 <button id="stop">stop</button>
 <button id="reset">reset</button>
 <button id="save">save</button>
 <style>
     button{
-        width: 5em;
+        width: 4em;
         height: 2em;
         border-radius: 30px;
         font-weight: bold;
-        font-size: 2em;
+        font-size: 1.5em;
         z-index: 100;
         position: absolute;
-        top: 60%;
+        top: 70%;
     }
     #start{
         background-color: #17ff00;
@@ -37,38 +39,55 @@
         background-color: #ff0001;
         border: #800200 solid 3px;
         color: #5a0000;
-        left: 33%;
+        left: 27%;
     }
     #reset{
         background-color: #0015ff;
         border: #001880 solid 3px;
         color: #080066;
-        left: 51%;
+        left: 39%;
     }
     #save{
         background-color: #c100ff;
         border: #6f0080 solid 3px;
         color: #5a0066;
-        left: 69%;
+        left: 51%;
+    }
+    #smallstart{
+        top: 50%;
+        width: 2em;
+        background-color: #17ff00;
+        border: #009915 solid 3px;
+        color: #185000;
+    }
+    #smallstop{
+        width: 2em;
+        background-color: #ff0001;
+        border: #800200 solid 3px;
+        color: #5a0000;
     }
 </style>
 <body>
 <script type="text/javascript">
     FPS = 60
-    let MAINTIMER = new Rectangle(width * .1, height * .1, width * .8, height * .8).asOutline('blue');
+    let LEFT = width*0.07
+    let MAINTIMER = new Rectangle(LEFT, height * .1, width * .6, height * .8).asOutline('blue');
     MAINTIMER.set("backgroundColor", "yellow");
     MAINTIMER.set("borderRadius", 10);
     MAINTIMER.border = "blue solid 3px";
 
-    let numberfield = new Rectangle(30, 30, width * 0.8 - 60, height * .3).asOutline("blue");
+    let numberfield = new Rectangle(30, 30, MAINTIMER.width - 60, height * .3).asOutline("blue");
     MAINTIMER.attach(numberfield);
     numberfield.border = "blue solid 3px";
     numberfield.set("borderRadius", 10);
-    numberfield.set('backgroundColor','darkyellow')
+    numberfield.set('backgroundColor','yellow');
+    let SIDEBAR = new Rectangle(LEFT + MAINTIMER.width + 20, height*.1, width*.9-MAINTIMER.width -40, height*.8).asOutline('blue');
+    SIDEBAR.border = "blue solid 3px"
+    SIDEBAR.set("borderRadius", 10);
+    SIDEBAR.set('backgroundColor','yellow');
 
-
-    let TIME = new P("00:00.000", 0, 20);
-    TIME.set("fontSize", "5em");
+    let TIME = new P("00:00.000", 0, 0);
+    TIME.set("fontSize", "7em");
     TIME.set("forWeight", "bolder");
     TIME.x = numberfield.width/2 - TIME.width/2;
     TIME.color = "blue";
@@ -104,30 +123,57 @@
     let START_TIME = 0;
     let CURRENT_TIME = 0;
     let SAVED_TIME = 0;
-    id('start').addEventListener('click',()=>{
+    function start(){
         LOOPING = true;
         START_TIME = window.performance.now();
         LOOP_ID = setInterval(()=>{
             displayTime(window.performance.now()-START_TIME + SAVED_TIME)
         },1000/FPS)
-    });
-    id('stop').addEventListener('click',()=>{
+    }
+    function stop(){
         clearInterval(LOOP_ID)
         SAVED_TIME = CURRENT_TIME;
         LOOPING = false;
-    })
+    }
+    id('start').addEventListener('click',start);
+    id('smallstart').addEventListener('click',start);
+    id('stop').addEventListener('click',stop);
+    id('smallstop').addEventListener('click',stop);
     id('reset').addEventListener('click',()=>{
         SAVED_TIME = 0;
         displayTime(0)
     })
     let saved_times = []
     id('save').addEventListener('click',()=>{
-        let new_time = new P(millis2time(CURRENT_TIME),width*0.02,height*0.1 + saved_times.length*20);
-        new_time.color = 'blue';
-        new_time.set('fontWeight','bolder')
+        if(height*0.1 + saved_times.length*24 > height*.85){
+            saved_times[0].remove()
+            saved_times.shift()
+            saved_times.forEach(x=>{
+                x.mod('top', -24)
+            })
+        }
+        let new_time = new P(millis2time(CURRENT_TIME),LEFT + MAINTIMER.width + 40,height*0.1 + saved_times.length*24);
+        new_time.color = selected_color;
+        new_time.set('fontWeight','bolder');
+        new_time.set('fontSize','2em');
+        new_time.set('textShadow', '#0058ff 0px 0px 1px')
         saved_times.push(new_time)
     })
-
+    let color_btns = []
+    let colors = ['blue','red','orange','deeppink','limegreen','purple','white'];
+    let selected_color = 'blue'
+    for(let i = 0; i<colors.length; i++){
+        let circle = new Circle(LEFT + MAINTIMER.width/2 - ((colors.length/2 |0)*30) + 30*(i), height*0.6, 10).asOutline('black',2);
+        circle.set('backgroundColor', colors[i]);
+        circle.shape.addEventListener('click',()=>{
+            color_btns.forEach(x=>{
+                x.border = 'solid black 2px'
+            });
+            circle.border = 'solid white 2px'
+            selected_color = colors[i];
+        });
+        color_btns.push(circle)
+    }
 
 </script>
 </body>
