@@ -18,7 +18,11 @@
         top: 10vh;
         height: 85vh !important;
         width: 90vw;
-        border: solid black 3px !important;
+        border: solid grey 1px;
+        box-shadow: 0 1px 1px rgba(0,0,0,0.15),
+        0 2px 2px rgba(0,0,0,0.15),
+        0 4px 4px rgba(0,0,0,0.15),
+        0 8px 8px rgba(0,0,0,0.15);
         border-radius: 3px;
         display: flex;
         flex-flow: wrap;
@@ -26,7 +30,8 @@
         align-content: baseline;
         justify-content: space-around;
         z-index: 110;
-        background-color: whitesmoke;
+        background: whitesmoke url('./images/forWordtrain/whitetile.jpg');
+        background-size: contain;
     }
 
     #red_btn {
@@ -68,9 +73,14 @@
         flex-flow: column;
         width: 35vw;
         height: 85vh;
-        border: solid black 3px;
+        border: solid grey 1px;
+        box-shadow: 0 1px 1px rgba(0,0,0,0.15),
+        0 2px 2px rgba(0,0,0,0.15),
+        0 4px 4px rgba(0,0,0,0.15),
+        0 8px 8px rgba(0,0,0,0.15);
         border-radius: 5px;
-        background-color: #e8e8e8;
+        background: whitesmoke url('./images/forWordtrain/whitetile.jpg');
+        background-size: contain;
     }
 
     #sidebar_title {
@@ -86,8 +96,15 @@
     .desk {
         position: relative;
         border-radius: 5px;
-        border: solid rgb(244, 150, 18) 3px;
-        background-color: rgb(186, 116, 15);
+        border-top: solid #9c845f 2px;
+        border-left: solid #947c5a 2px;
+        border-bottom: solid #7a6549 2px;
+        border-right: solid #6f5b40 2px;
+        box-shadow: 0 1px 1px rgba(0,0,0,0.25),
+        0 2px 2px rgba(0,0,0,0.25),
+        0 4px 4px rgba(0,0,0,0.25),
+        0 16px 16px rgba(0,0,0,0.15);
+        background-color: #ecb050;
         width: 16vw;
         height: 10vw;
         margin: 10px;
@@ -107,14 +124,33 @@
         height: 3vw;
         padding: 0;
     }
-
+    .teachers_desk{
+        border-radius: 50%;
+        flex: 2;
+        margin: 0 50%;
+        height: 3vw !important;
+        width: 3vw !important;
+        min-width: 3vw !important;
+        top: -14px;
+        position: absolute;
+        z-index: 300;
+        background-color: #dcca09;
+        border: solid #b4ab05 1px;
+    }
     .smoothed {
         transition: 1s ease-in-out;
     }
 
     .empty {
-        border: solid rgba(244, 150, 18, 0.3) 3px;
-        background-color: rgba(186, 116, 15, 0.3);
+        border-top: solid rgba(156, 132, 95, 0.3) 2px;
+        border-left: solid rgba(148, 124, 90, 0.31) 2px;
+        border-bottom: solid rgba(122, 101, 73, 0.3) 2px;
+        border-right: solid rgba(111, 91, 64, 0.31) 2px;
+        box-shadow: 0 1px 1px rgba(0,0,0,0.25),
+        0 2px 2px rgba(0,0,0,0.25),
+        0 4px 4px rgba(0,0,0,0.25),
+        0 16px 16px rgba(0,0,0,0.15);
+        background-color: rgba(236, 176, 80, 0.3);
     }
 
     .none {
@@ -122,12 +158,15 @@
     }
 
     .hidden {
-        border: solid transparent 3px;
+        border: solid transparent 1px;
         background-color: transparent;
+        box-shadow: none;
     }
 
     .selected {
-        box-shadow: #00B7FF 0px 0px 3px 3px;
+        box-shadow: #00B7FF 0px 0px 2px 2px,
+        #00B7FF 0px 0px 4px 4px,
+       #00B7FF 0px 0px 8px 8px;
     }
 
     #gamemessage {
@@ -135,9 +174,11 @@
         top: 1px;
         right: 10px;
         font-size: 3em;
-        color: blue;
+        color: #fffafe;
         padding: 0;
         margin: 0;
+
+        text-shadow: #004765 3px 3px 2px;
     }
 
     .power_name {
@@ -170,7 +211,7 @@
     }
 
     .powercircle {
-        border: solid green 3px;
+        border: solid green 1px;
         border-radius: 50%;
         min-width: 4vw;
         width: 4vw;
@@ -200,7 +241,10 @@
         width: 2em;
         height: 2em;
         border-radius: 10%;
-        border: solid black 3px;
+        border: solid grey 1px;
+        box-shadow: 0 1px 1px rgba(0,0,0,0.15),
+        0 2px 2px rgba(0,0,0,0.15),
+        0 4px 4px rgba(0,0,0,0.15);
         background-color: white;
         z-index: 1500;
     }
@@ -208,13 +252,13 @@
     .big_avatar {
         width: 3em;
         height: 3em;
-        border: solid black 4px;
+        border: solid grey 2px;
     }
 
     .tiny_avatar {
         width: 2em;
         height: 2em;
-        border: solid black 2px;
+        border: solid grey 1px;
     }
 
     .avatar_chooser {
@@ -229,7 +273,7 @@
     }
 
     body {
-        background-color: darkgray;
+        background-color: #73addf;
     }
 
     * {
@@ -238,6 +282,17 @@
         -moz-user-select: none;
         -ms-user-select: none;
         user-select: none;
+    }
+    button{
+        border-radius: 50%;
+        width: 3em;
+        height: 3em;
+        top: -5px;
+        position: relative;
+    }
+
+    #btn6,#btn7{
+        display: none;
     }
 
     @media (max-height: 500px) {
@@ -252,7 +307,10 @@
         }
 
         .powercircle {
-            border: solid green 2px;
+            border: solid green 1px;
+            box-shadow: 0 2px 2px rgba(21, 84, 10, 0.53),
+            0 4px 4px rgba(21, 84, 10, 0.53),
+            0 8px 8px rgba(21, 84, 10, 0.53);
             width: 3vw;
             min-width: 3vw;
             height: 3vw;
@@ -272,6 +330,7 @@
 
         .used_power {
             border: solid grey 2px;
+            box-shadow: none;
         }
 
         .power {
@@ -331,7 +390,7 @@
         this.attachments = {}
     };
     let player_num = 5;
-    let desks_num = 24;
+    let desks_num = 25;
     let valid_tokens = ['cat', 'shark', 'eagle', 'bat', 'unicorn', 'rabbit'];
     let players = {};
     let desks = {};
@@ -375,7 +434,14 @@
         }
 
         get name() {
-            return this.INTERNAL_NAME;
+            if(this.INTERNAL_ID === 0){
+                return 'Teacher'
+            }
+            if(this.INTERNAL_NAME !== 'no name'){
+                return this.INTERNAL_NAME;
+            }else{
+                return 'Player ' + (this.INTERNAL_ID +1);
+            }
         }
 
         set name(string) {
@@ -546,6 +612,7 @@
     class DeskHandler {
         constructor(NumberOfDesks) {
             this.desks = Array(NumberOfDesks).fill('').map(x => new Desk(null));
+            this.desks[0].div.addClass('teachers_desk');
             this.initialized = false;
         }
 
@@ -573,7 +640,6 @@
                         stats.target_turn = plyr.id;
                         message('Change to ' + plyr.name + '?')
                     }
-
                 });
             });
             this.initialized = true;
@@ -958,25 +1024,7 @@
     }
 
 
-    id('btn1').innerText = 'desks done';
-    id('btn1').addEventListener('click', () => {
-        if (stats.mode === 'deskSetup') {
-            createPlayers();
-            message('Power Setup');
-            id('btn1').innerText = 'power done';
-            stats.mode = 'powerSetup'
-        } else if (stats.mode === 'powerSetup') {
-            removeArrows();
-            stats.current_turn = -1;
-            nextTurn();
-            id('btn1').innerText = 'Next Turn';
-            stats.game_running = true;
-            stats.mode = 'none';
-        } else {
-            nextTurn()
-        }
 
-    });
 
     function createPlayers() {
         let arr = desks.createPositionArray();
@@ -1102,40 +1150,14 @@
         drawCustomArrow(stats.current_turn, plyr.id)
     }
 
-    id('btn3').innerText = 'Kill Player';
-    id('btn3').addEventListener('click', killCurrentPlayer);
 
-    id('btn2').innerText = 'Other Way';
-    id('btn2').addEventListener('click', otherWay);
 
-    id('btn4').innerText = 'Choose Name';
-    id('btn4').addEventListener('click', () => {
-        removeArrows();
-        if (Object.keys(GLOBAL_ARROW).length > 0) GLOBAL_ARROW.remove();
-        chooseAvatar().then(result => {
-            if (result) {
-                //TODO check for duplicates
-                players.getById(stats.current_turn).name = result;
-            }
-        })
-    });
 
-    id('btn5').innerText = 'Add Power';
-    id('btn5').addEventListener('click', () => {
-        if (Object.keys(GLOBAL_ARROW).length > 0) GLOBAL_ARROW.addClass('none');
-        if (Object.keys(GLOBAL_ARROW2).length > 0) GLOBAL_ARROW2.addClass('none');
-        selectPower().then(x => {
-            if (x !== null) {
-                players.getById(stats.current_turn).powers.push(new PowerData(x));
-                desks.getById(stats.current_turn).updatePowers();
-            }
-            setTimeout(() => {
-                if (Object.keys(GLOBAL_ARROW).length > 0) GLOBAL_ARROW.removeClass('none');
-                if (Object.keys(GLOBAL_ARROW2).length > 0) GLOBAL_ARROW2.removeClass('none');
-            }, 1000);
-        })
-    });
-    let testsave= '00111111110000111111110000011111110000000000000001110010000100101101011001101100101001100010010110010010101011101101101001010010011101101000010001001110000011000011011001101000001011101010010001111010010010001101001001101010'
+
+
+
+
+
     function saveGame() {
         function toBin(num,dig){
             num = num.toString(2);
@@ -1154,19 +1176,17 @@
                 tinybin += '1';
                 tinybin += players.getById(x.INTERNAL_ID).dead||players.getById(x.INTERNAL_ID).name === 'no name' ? '0' : '1'
             }
-            while(tinybin.slice(tinybin.length-3,tinybin.length-1) === '00'){
-                tinybin.splice(tinybin.length-3,2)
-            }
-            
             bin +=  tinybin
         });
-        
+        while(bin.slice(bin.length-3,bin.length-1) === '00'){
+            bin = bin.slice(0,bin.length-3)
+        }
         let num = toBin(bin.length/2,5)
-        console.log(num)
-        
         bin = num+ bin
         let powernum = players.players.map(x=>x.powers.length).reduce((a,b)=>Math.max(a,b))
-        bin += toBin(powernum,2)
+        bin += toBin(powernum,2);
+        let playerdata = '';
+        let usagedata = '';
         players.players.forEach(p => {
             let tinybin = '';
             if (p.name === 'no name') {
@@ -1179,191 +1199,243 @@
             p.powers.forEach(po => {
                 let a = toBin(po.type.toString(2),3);
                 let b = po.isUsed ? '1' : '0';
-                tinybin += a + b;
+                usagedata += b;
+                tinybin += a;
             });
-            bin += tinybin;
+            playerdata += tinybin;
         });
-        console.log(bin)
-    }
 
-    function toColorVal(index) {
-        let digit = superlongalpha[index / 6 | 0];
-        //let color = valid_colors[index%6].toUpperCase()
-        return digit;
-    }
+        while(usagedata[usagedata.length-1]==='0'){
+            usagedata = usagedata.slice(0,usagedata.length-2)
+        }
 
-    function binCompress(string) {
-        let newString = '';
-        
-        let q = 15;
-        for(let i = 0; i<string.length/q; i++){
-            let x = string.slice(i*q,i*q +q);
-            while(x.length<q){
-                x += '0'
+        //rotate playerdata
+        let rotatedplayerdata = '';
+        for(let i = 0; i<playerdata.length; i++){
+            let index = (i%players.players.length)*12 + Math.floor(i/players.players.length)
+            rotatedplayerdata += playerdata[index];
+        }
+
+        let compresses = [
+            binCompress(bin + playerdata + usagedata),
+            binCompress(bin + playerdata + usagedata,true),
+            binCompress(bin + rotatedplayerdata + usagedata),
+            binCompress(bin + rotatedplayerdata +usagedata,true),
+        ];
+
+        let smallest = compresses.reduce((a,b)=>{
+            if(Math.min(a.length,b.length)===a.length){
+                return a
+            }else{
+                return b
             }
-            console.log(parseInt(x,2))
-            val += typedic[x]
-        };
-        /* let val = ''
-         for(let i = 0;i<512;i+=9){
-             let vals = string.slice(i,9)
-             let digit = parseInt(vals,2)
-             let colored = toColorVal(digit)
-             val += colored
-         }
-         */
-        return val
+        });
+
+        console.log(smallest,smallest.length, compresses.indexOf(smallest))
+    }
+    function binCompress(string,doXor) {
+        let newString = '';
+        if(doXor){
+            let val = string[0];
+            for(let i = 0;i<string.length; i++){
+                if(string[i]===val){
+                    newString += '0';
+                }else{
+                    newString += '1';
+                    val = string[i]
+                }
+            }
+        }else{
+            newString = string;
+        }
+        let count = 0;
+        let newnewstring = '';
+        for(let i=0; i<newString.length; i++){
+            if(newString[i] === '1'){
+                newnewstring += count;
+                count = 0;
+            }else{
+                count++
+            }
+        }
+        return newnewstring
     }
 
     function loadGame(string) {
+        //TODO
         let values = string.split('');
         let new_desks = [];
         let playerCount = 0
         let new_players = [];
-        for(let i = 0; i<desks_num;i++){
-            let a = values[i*2]
-            let b = values[i*2 +1]
-            if(a === '0'){
-                new_desks.push({mode:b==='1'?1:2});
-            }else{
+        for(let i = 0; i<desks_num;i++) {
+            let a = values[i * 2]
+            let b = values[i * 2 + 1]
+            if (a === '0') {
+                new_desks.push({mode: b === '1' ? 1 : 2});
+            } else {
                 playerCount++
-                new_players.push({dead: b !== '1',
-                desk_position: i/2,
+                new_players.push({
+                    dead: b !== '1',
+                    desk_position: i / 2,
                 })
-                new_desks.push({mode: b==='1'? '0':'1'})
+                new_desks.push({mode: b === '1' ? '0' : '1'})
             }
         }
-        // let playerNum = parseInt(values[0]);
-        // let savedPlayers = [];
-        // for (let i = 0; i < playerNum; i++) {
-        //     let unparsed = values[1 + i].split('|');
-        //     let parsed = {};
-        //     parsed.name = unparsed[0];
-        //     parsed.id = unparsed[1];
-        //     parsed.dead = unparsed[2];
-        //     parsed.desk_position = unparsed[3];
-        //     parsed.powers = [];
-        //     for (let i = 0; i < unparsed[4]; i++) {
-        //         let temp = unparsed[4 + i].split(':');
-        //         let p = new PowerData(temp[0]);
-        //         p.isUsed = !!temp[1];
-        //         parsed.powers.push(p)
-        //     }
-        //     savedPlayers.push(parsed);
-        // }
-        // let newStats = {};
-        // let unparsedStats = values[playerNum + 1].split('_');
-        // console.log(values[playerNum + 1]);
-        // Object.keys(stats).forEach((key, i) => {
-        //     newStats[key] = unparsedStats[i];
-        // });
-        // let deskNum = parseInt(values[playerNum + 2]);
-        // let deskVals = values[playerNum + 3].split('|');
-        // let savedDesks = [];
-        // for (let i = 0; i < deskNum; i++) {
-        //     let desk = {};
-        //     desk.mode = deskVals[i];
-        //     savedDesks.push(desk);
-        // }
-        console.log(playerNum, savedPlayers, newStats, deskNum, savedDesks)
     }
 
-    id('btn6').innerText = 'Load Game';
-    id('btn6').addEventListener('click', loadGame);
-    id('btn7').innerText = 'Save Game';
-    id('btn7').addEventListener('click', saveGame);
+    function setupButtons(){
+        id('btn1').innerHTML = '';
+        id('btn1').innerText = '';
+        id('btn1').appendChild(id('checkmark').content.cloneNode(true));
+        id('btn1').addEventListener('click', () => {
+            if (stats.mode === 'deskSetup') {
+                createPlayers();
+                message('Power Setup');
+                stats.mode = 'powerSetup'
+            } else if (stats.mode === 'powerSetup') {
+                removeArrows();
+                stats.current_turn = -1;
+                nextTurn();
+                id('btn1').innerHTML = '';
+                id('btn1').appendChild(id('arrow').content.cloneNode(true))
+                stats.game_running = true;
+                stats.mode = 'none';
+            } else {
+                nextTurn()
+            }
+
+        });
+        id('btn2').innerText = '';
+        id('btn2').appendChild(id('otherway').content.cloneNode(true))
+        id('btn2').addEventListener('click', otherWay);
+
+        id('btn3').innerText = '';
+        id('btn3').appendChild(id('skull').content.cloneNode(true))
+        id('btn3').addEventListener('click', killCurrentPlayer);
+
+        id('btn4').innerText = '';
+        id('btn4').appendChild(id('getahint').content.cloneNode(true));
+
+        id('btn4').addEventListener('click', () => {
+            removeArrows();
+            if (Object.keys(GLOBAL_ARROW).length > 0) GLOBAL_ARROW.remove();
+            chooseAvatar().then(result => {
+                if (result) {
+                    //TODO check for duplicates
+                    players.getById(stats.current_turn).name = result;
+                }
+            })
+        });
+
+        id('btn5').innerText = '';
+        id('btn5').appendChild(id('random').content.cloneNode(true))
+        id('btn5').addEventListener('click', () => {
+            if (Object.keys(GLOBAL_ARROW).length > 0) GLOBAL_ARROW.addClass('none');
+            if (Object.keys(GLOBAL_ARROW2).length > 0) GLOBAL_ARROW2.addClass('none');
+            selectPower().then(x => {
+                if (x !== null) {
+                    players.getById(stats.current_turn).powers.push(new PowerData(x));
+                    desks.getById(stats.current_turn).updatePowers();
+                }
+                setTimeout(() => {
+                    if (Object.keys(GLOBAL_ARROW).length > 0) GLOBAL_ARROW.removeClass('none');
+                    if (Object.keys(GLOBAL_ARROW2).length > 0) GLOBAL_ARROW2.removeClass('none');
+                }, 1000);
+            })
+        });
+
+        id('btn6').innerText = 'Load Game';
+        id('btn6').addEventListener('click', loadGame);
+        id('btn7').innerText = 'Save Game';
+        id('btn7').addEventListener('click', saveGame);
+
+    }
 
 
-    //23,no name|0|1|0:0|1,no name|1|0||2,no name|2|0||3,no name|3|0||4,no name|4|0||5,no name|5|0||6,no name|6|0||7,no name|7|0||8,no name|8|0||9,no name|9|0||10,no name|10|0||11,no name|11|0||12,no name|12|0||13,no name|13|0||14,no name|14|0||15,no name|15|0||16,no name|16|0||17,no name|17|0||18,no name|18|0||19,no name|19|0||20,no name|20|0||21,no name|21|0||22,no name|22|0||23,,5_1_true_true_false_0_powerSetup_-1_[object Object]_false_,24,2|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0| wo
 
     createDesks();
+    requestAnimationFrame(setupButtons)
+
+    function loadFakeData(){
+        requestAnimationFrame(()=>{
+            desks.desks[1].toggleMode()
+            desks.desks[1].toggleMode()
+            desks.desks[6].toggleMode()
+            desks.desks[6].toggleMode()
+            desks.desks[7].toggleMode()
+            desks.desks[7].toggleMode()
+            desks.desks[12].toggleMode()
+            desks.desks[12].toggleMode()
+            desks.desks[13].toggleMode()
+            desks.desks[13].toggleMode()
+            desks.desks[14].toggleMode()
+            desks.desks[18].toggleMode()
+            desks.desks[18].toggleMode()
+            desks.desks[19].toggleMode()
+            desks.desks[19].toggleMode()
+            desks.desks[20].toggleMode()
+            desks.desks[20].toggleMode()
+            desks.desks[21].toggleMode()
+            desks.desks[21].toggleMode()
+            desks.desks[23].toggleMode()
+            desks.desks[23].toggleMode()
+            desks.desks[24].toggleMode()
+            desks.desks[24].toggleMode()
+
+            createPlayers();
+            players.getById(0).name = 'blue bat';
+            players.getById(1).name = 'pink unicorn';
+            players.getById(2).name = 'orange cat';
+            players.getById(3).name = 'yellow bat';
+            players.getById(4).name = 'pink rabbit';
+            players.getById(5).name = 'blue unicorn';
+            players.getById(6).name = 'green eagle';
+            players.getById(7).name = 'red unicorn';
+            players.getById(8).name = 'red eagle';
+            players.getById(9).name = 'blue rabbit';
+            players.getById(10).name = 'pink bat';
 
 
-    //aaaaahhhhhhhh
-
-
-    requestAnimationFrame(()=>{
-        desks.desks[0].toggleMode()
-        desks.desks[0].toggleMode()
-        desks.desks[5].toggleMode()
-        desks.desks[5].toggleMode()
-        desks.desks[6].toggleMode()
-        desks.desks[6].toggleMode()
-        desks.desks[11].toggleMode()
-        desks.desks[11].toggleMode()
-        desks.desks[12].toggleMode()
-        desks.desks[12].toggleMode()
-        desks.desks[13].toggleMode()
-        desks.desks[17].toggleMode()
-        desks.desks[17].toggleMode()
-        desks.desks[18].toggleMode()
-        desks.desks[18].toggleMode()
-        desks.desks[19].toggleMode()
-        desks.desks[19].toggleMode()
-        desks.desks[20].toggleMode()
-        desks.desks[20].toggleMode()
-        desks.desks[21].toggleMode()
-        desks.desks[21].toggleMode()
-        desks.desks[22].toggleMode()
-        desks.desks[22].toggleMode()
-        desks.desks[23].toggleMode()
-        desks.desks[23].toggleMode()
-
-        createPlayers();
-        players.getById(0).name = 'blue bat';
-        players.getById(1).name = 'pink unicorn';
-        players.getById(2).name = 'orange cat';
-        players.getById(3).name = 'yellow bat';
-        players.getById(4).name = 'pink rabbit';
-        players.getById(5).name = 'blue unicorn';
-        players.getById(6).name = 'green eagle';
-        players.getById(7).name = 'red unicorn';
-        players.getById(8).name = 'red eagle';
-        players.getById(9).name = 'blue rabbit';
-        players.getById(10).name = 'pink bat';
-
-
-        players.getById(0).powers.push(new PowerData(0));
-        players.getById(0).powers[0].use()
-        players.getById(0).powers.push(new PowerData(1));
-        players.getById(1).powers.push(new PowerData(3));
-        players.getById(1).powers.push(new PowerData(6));
-        players.getById(2).powers.push(new PowerData(1));
-        players.getById(2).powers.push(new PowerData(2));
-        players.getById(2).powers[1].use()
-        players.getById(3).powers.push(new PowerData(5));
-        players.getById(3).powers.push(new PowerData(7));
-        players.getById(4).powers.push(new PowerData(2));
-        players.getById(4).powers.push(new PowerData(1));
-        players.getById(4).powers[0].use()
-        players.getById(5).powers.push(new PowerData(4));
-        players.getById(5).powers.push(new PowerData(2));
-        players.getById(6).powers.push(new PowerData(0));
-        players.getById(6).powers.push(new PowerData(6));
-        players.getById(7).powers.push(new PowerData(3));
-        players.getById(7).powers.push(new PowerData(4));
-        players.getById(8).powers.push(new PowerData(5));
-        players.getById(8).powers.push(new PowerData(2));
-        players.getById(9).powers.push(new PowerData(2));
-        players.getById(9).powers.push(new PowerData(4));
-        players.getById(10).powers.push(new PowerData(3));
-        players.getById(10).powers.push(new PowerData(5));
-        for(let i = 0; i<11; i++){
-            desks.getById(i).updatePowers()
-        }
-        id('btn1').innerText = 'Next Turn';
-        stats.game_running = true;
-        stats.mode = 'none';
-        saveGame()
-    })
-
-
+            players.getById(0).powers.push(new PowerData(0));
+            players.getById(0).powers[0].use()
+            players.getById(0).powers.push(new PowerData(1));
+            players.getById(1).powers.push(new PowerData(1));
+            players.getById(1).powers.push(new PowerData(6));
+            players.getById(2).powers.push(new PowerData(1));
+            players.getById(2).powers.push(new PowerData(2));
+            players.getById(2).powers[1].use()
+            players.getById(3).powers.push(new PowerData(1));
+            players.getById(3).powers.push(new PowerData(7));
+            players.getById(4).powers.push(new PowerData(1));
+            players.getById(4).powers.push(new PowerData(1));
+            players.getById(4).powers[0].use()
+            players.getById(5).powers.push(new PowerData(1));
+            players.getById(5).powers.push(new PowerData(2));
+            players.getById(6).powers.push(new PowerData(1));
+            players.getById(6).powers.push(new PowerData(6));
+            players.getById(7).powers.push(new PowerData(1));
+            players.getById(7).powers.push(new PowerData(4));
+            players.getById(8).powers.push(new PowerData(1));
+            players.getById(8).powers.push(new PowerData(2));
+            players.getById(9).powers.push(new PowerData(1));
+            players.getById(9).powers.push(new PowerData(4));
+            players.getById(10).powers.push(new PowerData(3));
+            players.getById(10).powers.push(new PowerData(5));
+            for(let i = 0; i<11; i++){
+                desks.getById(i).updatePowers()
+            }
+            stats.game_running = true;
+            stats.mode = 'none';
+            id('btn1').innerHTML = '';
+            id('btn1').appendChild(id('arrow').content.cloneNode(true))
+            saveGame()
+        })
+    }
 
 
 
 </script>
 <template id="backbutton">
-    <div>
         <svg viewBox="0 0 210 210" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
             <g>
                 <path id="svg_1"
@@ -1371,10 +1443,8 @@
                       stroke-width="7.5" stroke="#7f0000" fill="#ff0000"/>
             </g>
         </svg>
-    </div>
 </template>
 <template id="checkmark">
-    <div>
         <svg viewBox="0 0 210 210" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
             <g>
                 <path id="svg_3" d="m205,215.48438" opacity="0.5" fill-opacity="null" stroke-opacity="null"
@@ -1384,7 +1454,6 @@
                       stroke-width="5.5" fill="#00ff00"/>
             </g>
         </svg>
-    </div>
 </template>
 <template id="heart">
     <svg viewBox="-2 -6 50 50" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
@@ -1548,6 +1617,24 @@
             <path stroke="null" id="svg_10"
                   d="m111.82996,88.03117c0,0 4.01383,1.69132 4.41522,2.95979c0.40132,1.2684 18.86506,-3.80534 22.87889,-6.76513c4.01383,-2.95979 13.24567,-2.63183 13.24567,-8.03367c0,-1.69132 -1.83127,-6.07811 1.60556,-4.65111c0.66837,0.27763 0.80285,2.53701 0.80285,2.53701c0,0 -0.7024,-2.08776 -1.73102,-1.50638c-0.50225,0.28396 0.72837,3.78377 1.32956,4.88894c0,0 33.60183,-5.49118 40.94124,-3.38257c2.94353,0.84555 12.84441,2.11409 12.57675,6.62418c0,0 -13.64644,4.92809 -15.7878,22.9735c-0.26753,2.25497 -17.50482,-2.87088 -28.89967,19.87262c-2.54214,5.07381 -3.21112,3.24155 -4.0139,2.95979c-0.80278,-0.2819 -16.85818,-10.85259 -30.10384,9.302c0,0 0.66898,-0.14088 0.80278,0.42285c0.1338,0.5638 6.55597,-1.5503 6.82356,2.11424c0,0 -2.99239,-1.42971 -2.3234,-0.02015c0.66892,1.40935 0.32964,3.02535 -0.08487,2.1341c-0.0794,-0.17071 -1.73936,-1.69125 -1.20424,-0.42271c0.53519,1.2684 -2.57111,4.17879 -2.73538,3.75195c-0.65375,-1.69879 1.53128,-3.61107 -2.48255,-5.4432c-4.0139,-1.83227 -15.11889,2.53687 -20.87201,16.06721c0,0 -0.40139,0.70467 -1.20417,-0.42285c-0.80278,-1.12752 -6.42217,-16.20823 -18.06235,-16.9129c0,0 -0.53519,2.11409 -2.40827,2.53694c-1.87315,0.42285 -1.4717,6.90601 -2.40834,4.65104c-0.93658,-2.25504 -0.74306,0.43595 -0.80278,0c-0.21703,-1.58596 0.68641,-4.06154 -2.00695,-2.95979c-0.35281,0.14429 -0.53519,2.39606 -1.2041,1.26854c-0.66898,-1.12752 0.82554,-3.14665 1.76204,-3.99228c0.93658,-0.84562 -3.12099,-0.93902 -1.36065,-1.9273c1.78179,-1.00031 6.82349,2.25512 4.81661,-1.2684c-2.00695,-3.52359 -13.5436,-19.98054 -30.10384,-8.8793c-2.94353,1.97315 -2.00695,-0.42292 -3.61251,-2.53708c-1.60549,-2.11402 -12.85589,-22.25117 -28.09689,-19.87262c-3.61251,0.56387 -2.00695,-2.95972 -3.21105,-4.22819c-1.20424,-1.26847 -8.47381,-23.45494 -15.65401,-21.56394c-1.60556,0.42271 -0.4538,-7.2445 13.24567,-6.34236c2.14075,0.14088 0.80278,-1.69132 3.21112,-1.26854c2.40827,0.42292 32.11073,4.79206 35.32178,5.91958c3.21112,1.12752 6.82356,2.19959 6.82356,-4.65104c0,-0.13219 -0.52685,-0.47567 -1.60556,0.42278c-0.47663,-0.44926 3.47871,-2.81884 2.80973,1.69132c-0.66898,4.51009 -2.13125,3.29778 0.40139,4.65097c3.58613,1.91605 6.42743,5.23961 12.0415,5.4968c3.07732,0.14095 18.59528,8.16573 22.07618,7.18798c2.00695,-0.5638 4.68282,-1.83227 3.61244,-2.53701c-1.07031,-0.7046 -4.68282,-5.21476 -4.41522,-7.61076c0.26759,-2.39599 1.07037,-4.22819 0,-5.07388c-1.07037,-0.84562 1.20417,-3.24162 3.21112,-0.42285c2.00688,2.81884 2.00688,4.93294 3.61244,5.07388c1.60556,0.14102 4.54909,-0.7046 5.61939,0c0,0 4.68288,-7.04696 7.22488,-5.91958c2.54214,1.12759 0.53519,2.67789 0.80278,3.80541c0.26759,1.12752 -2.67587,9.58412 -5.61932,9.30215z"
                   fill-opacity="null" stroke-opacity="null" stroke-width="0" fill="#000000"/>
+        </g>
+    </svg>
+</template>
+<template id="skull">
+    <svg viewBox="0 0 210 210" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <g>
+            <path stroke="null" id="svg_11" d="m55.25969,61.62603c-1.99208,10.43575 -7.08055,20.4093 -7.4232,31.17057c0.45591,6.23076 -4.0622,9.57759 -10.24736,9.45976c-6.65233,6.37973 0.8211,16.4622 8.34805,19.03751c7.68168,4.77049 17.21135,-0.56003 24.82075,3.71929c10.10402,7.30751 14.32222,20.26389 10.83634,31.62253c-3.4659,9.37659 14.27582,5.96641 7.60256,-1.52903c-5.15401,-7.32621 9.71569,-4.90402 5.90896,2.05154c-0.71932,5.58338 4.45149,7.39058 2.15031,12.79986c5.99496,3.18035 -0.50254,4.96108 -4.15403,5.56157c-8.55096,3.94372 1.5467,-7.06454 -5.22736,-10.32058c-6.20334,1.24732 -1.99994,10.85809 -4.12921,9.74806c-4.38346,-3.17567 -4.38023,-15.04859 -11.73716,-7.30165c-2.44169,-9.5456 2.01339,-19.48696 -1.41855,-28.97714c1.40586,-7.08739 -10.6891,-9.53203 -9.15931,-1.31184c0.60985,12.54575 -3.50787,25.06651 -1.1446,37.55044c3.2549,7.69999 12.35835,11.16873 18.07193,17.1106c4.6924,4.58151 10.7757,9.47989 18.07916,8.03747c8.28366,-0.33221 16.58259,-1.04001 24.82887,0.17676c10.37214,0.30266 18.28999,-7.28252 27.14156,-11.17886c10.40572,-7.64442 8.76737,-21.29896 7.73005,-32.17546c-1.27195,-6.71505 1.51919,-13.43315 0.99904,-20.08534c-7.50196,-8.49234 -13.65697,6.43465 -11.51993,12.84778c-0.00052,8.06723 1.67398,18.4592 -6.64381,23.71427c-6.86442,-0.16014 -13.39736,2.14667 -20.31472,0.94053c-5.61305,3.08388 -14.7048,3.00469 -16.55755,-4.33658c-0.7397,-6.51953 2.45327,-13.3546 -1.88509,-19.43914c3.81177,3.03734 10.46212,-2.62325 6.75582,4.18627c-4.52062,5.54294 3.82789,14.08424 6.97072,5.90278c1.0427,-5.48929 -4.51027,-12.77476 4.61764,-11.59871c1.8615,1.93623 -6.35686,15.48016 4.87711,12.05746c8.00921,-1.62313 -1.4249,-13.24688 9.42113,-13.28727c5.24909,-5.71733 3.83578,-16.43373 11.865,-20.77107c8.95253,-5.60535 22.93046,-1.55851 29.32023,-11.05114c5.44639,-4.85773 2.88334,-18.32175 -6.50971,-13.86047c-11.73829,1.05869 -2.42232,-14.70905 -2.74984,-20.6174c2.76574,-5.14596 -3.35878,-15.9782 -1.24983,-17.12745c3.98492,5.64074 5.41216,12.2382 4.55515,18.83032c-0.07364,5.59034 -2.63614,20.7409 5.76427,11.40128c2.84377,-6.50889 2.01668,-13.88138 4.04272,-20.65313c3.9077,-14.62003 -3.08912,-29.24819 -10.88925,-41.63127c-6.64325,-6.6664 -15.07704,-11.98061 -22.99701,-17.21289c-13.32167,-4.63542 -28.03086,-5.46584 -42.10059,-4.30409c-12.44523,1.99578 -25.60603,4.0999 -35.52023,11.95044c-9.66225,5.26727 -18.91588,12.26301 -22.73576,22.38401c-3.32887,8.15348 -9.15814,16.4568 -6.50879,25.51414c2.53375,7.55031 1.1899,15.39157 1.60014,23.10875c4.31928,8.81998 8.39722,-4.51324 7.993,-8.92342c0.23912,-8.36313 5.00823,-15.76572 8.52238,-23.19005l-0.00001,-0.00001zm79.33355,17.94199c8.88231,0.58886 20.12867,5.16509 20.37106,14.70561c1.3506,9.57416 -7.0111,18.8546 -17.72684,17.9157c-9.73333,-0.73969 -15.95835,-8.51821 -15.31203,-17.26348c-3.25869,-6.27046 1.81241,-12.98619 8.61828,-14.42766c1.3198,-0.41059 2.6764,-0.71792 4.04952,-0.93017l0,0.00001zm-59.94066,0.81547c10.30414,-1.69542 22.02762,4.21854 22.06203,14.77097c0.96777,10.20141 -10.73884,12.20008 -18.72457,14.75568c-5.52576,3.30097 -11.26572,0.22752 -15.8572,-3.09832c-5.95721,-5.76887 -4.20625,-17.39402 2.08396,-22.66002c3.05024,-2.08854 6.82619,-2.90956 10.43578,-3.76832zm35.25924,26.91221c4.98836,6.34327 10.97691,16.01633 4.52589,23.2157c-5.72674,4.24916 -6.44873,-6.04398 -12.4595,-1.19634c-5.6388,-4.56896 -0.43808,-13.86635 3.51843,-18.50786c1.30404,-1.33658 2.79631,-2.51328 4.41518,-3.5115z" fill-opacity="null" stroke-opacity="null" stroke-width="0" fill="#000000"/>
+        </g>
+    </svg>
+</template>
+<template id="arrow">
+    <svg viewBox="0 0 210 210" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+
+        <g display="none" overflow="visible" y="0" x="0" height="100%" width="100%" id="canvasGrid">
+            <rect fill="url(#gridpattern)" stroke-width="0" y="0" x="0" height="100%" width="100%"/>
+        </g>
+        <g>
+            <path stroke="#00007f" transform="rotate(90.37248992919922 106.75,106.36019134521486) " id="svg_1" d="m28.46325,106.12908l78.28675,-96.05529l78.28675,96.05529l-39.14338,0l0,96.51749l-78.28674,0l0,-96.51749l-39.14338,0z" stroke-width="5.5" fill="#0fffff"/>
         </g>
     </svg>
 </template>
