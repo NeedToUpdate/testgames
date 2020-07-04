@@ -422,6 +422,7 @@
 
     function message(text) {
         messages.push(text);
+        if(messages.length>5) messages.pop()
         let time = (messages.length - 1) * 1000;
         setTimeout(() => {
             id('gamemessage').innerText = text;
@@ -464,8 +465,8 @@
         }
     }
     let turn_order = [0,1,2,3,4,5,6,12,11,10,9,8,7,13,14,15,16,17,18,24,23,22,21,20,19];
-    function getNextTurnVal(val){
-        let vals = turn_order;
+    function getNextTurnVal(val,reverse){
+        let vals = reverse? Array.from(turn_order).reverse() : turn_order;
         let index = vals.indexOf(val);
         return vals[(index+1)%turn_order.length];
     }
@@ -504,18 +505,15 @@
         }
 
         getNext(id) {
-
             let index = this.active_players.indexOf(id);
-            index += 1;
-            index %= this.active_players.length;
+            index = getNextTurnVal(index);
             return this.getById(this.active_players[index])
         }
 
         getPrev(id) {
             let index = this.active_players.indexOf(id);
-            index === 0 ? index = this.active_players.length - 1 : index -= 1;
-            index %= this.active_players.length;
-            return this.getById(this.active_players[Math.abs(index)])
+            index = getNextTurnVal(index,true);
+            return this.getById(this.active_players[index])
         }
     }
 
@@ -640,8 +638,10 @@
         }
 
         initialize(arrayOfPlayers) {
+            let new_turn_order = Array(desks_num).fill(-1);
             arrayOfPlayers.forEach((plyr) => {
                 this.desks[plyr.desk_position].id = plyr.id;
+                new_turn_order[turn_order.indexOf(plyr.desk_position)] = plyr.id;
                 this.desks[plyr.desk_position].div.shape.addEventListener('click', () => {
                     let temp_turn = stats.current_turn;
                     if (stats.mode === 'none' || stats.mode === 'powerSetup') {
@@ -665,6 +665,7 @@
                     }
                 });
             });
+            turn_order = new_turn_order.filter(x=>x!==-1);
             this.initialized = true;
         }
 
