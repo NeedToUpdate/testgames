@@ -14,14 +14,14 @@
 //================ESLS=================
 
 //let words = ['living room','dining room','bedroom','garage','kitchen','terrace','bathroom','yard']
-//let words = ['happy','sad','nervous','relaxed','excited','energetic','tired','confused','scared','curious','bored','hungry','sleepy','angry','surprised','confident'];
+let words = ['happy','sad','nervous','relaxed','excited','energetic','tired','confused','scared','curious','bored','hungry','sleepy','angry','surprised','confident'];
 //let words = ['first', 'second', 'third', 'fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth','thirteenth',    'fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth'];
 //let words = ['january','february','march','april','may','june','july','august','september','october','november','december']
 //let words = ['birthday','party','amazing','growth','interview','gift','meaningful','year','special'];
 //let words = ['skateboard','frisbee','football','robot','rubiks cube','basketball','guitar','puzzles','lego','hula hoop','doll',
 //    'board game','yoyo','car'];
 //let words = ['dishwasher','lamp','candle','microwave','broom','kettle','washing','machine','vacuum','cleaner','candle'];
-let words = ['parrot','shark','frog','owl','snake','stingray','seagull','elephant','whale','crocodile','crocodile','eel','jellyfish','spider','toad','frog'];
+//let words = ['parrot','shark','frog','owl','snake','stingray','seagull','elephant','whale','crocodile','crocodile','eel','jellyfish','spider','toad','frog'];
 //let words = ['nutrients','carbohydrates','protein','fat','water','minerals','vitamins','body','healthy','muscles','energy'];
 //let words = ['beak','feathers','fins','pouch','fur','tail','teeth','wings'];
 //let words = ['t-shirt','skirt','tank top','pants','flip flops','dress','swimsuit','sunglasses','trunks','sandals']
