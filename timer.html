@@ -1,0 +1,47 @@
+<html>
+
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
+    <script language="javascript" src="lib/vector.js"></script>
+    <script language="javascript" src="lib/drawbase.js"></script>
+    <script language="javascript" src="lib/PhysicsObject.js"></script>
+    <script language="javascript" src="lib/DomObject.js"></script>
+    <script language="javascript" src="lib/Character.js"></script>
+    <script language="javascript" src="lib/collisioncontainer.js"></script>
+    <script language="javascript" src="lib/eventemitter.js"></script>
+    <title>Artem's Timer</title>
+    <link rel="stylesheet" href="global_styles.css">
+</head>
+
+<body>
+<script type="text/javascript">
+let MAINTIMER = new Rectangle(width*.1,height*.1,width*.8,height*.8).asOutline('blue')
+MAINTIMER.set("backgroundColor","yellow")
+MAINTIMER.set("borderRadius",10)
+
+let numberfield = new Rectangle(30,30,width*0.8 -60,height*.3).asOutline("blue")
+MAINTIMER.attach(numberfield)
+numberfield.border = "blue solid 3px"
+
+
+let TIME = new P("00:00.00",20,20)
+TIME.set("fontSize", "3em")
+TIME.set("forWeight","bolder")
+TIME.color = "blue"
+numberfield.attach(TIME)
+
+
+function millis2time(millis){
+    let seconds = (millis/1000).toPrecision(4)
+    let min = seconds/60 | 0
+    seconds = seconds % 60
+    
+    let time = min + ":" + seconds
+    return time
+}
+
+TIME.string = millis2time(12482)
+
+</script>
+</body>
+</html>
