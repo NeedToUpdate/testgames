@@ -1,6 +1,6 @@
 let IMAGE_PATH = '../images/'
-
-let MAINARENA = new Rectangle(width*.2,0,width*.6,height*.8).asOutline('black');
+document.body.style.backgroundColor = 'lightgrey'
+let MAINARENA = new Rectangle(width*.2,height*.2,width*.6,height*.8).asOutline('black');
 let background = 'background' + getRandom(20).toString() + '.jpg';
 MAINARENA.set('backgroundColor',  'grey');
 MAINARENA.set('backgroundImage',  'url(' + IMAGE_PATH + background.toString() + ')');
@@ -66,6 +66,26 @@ class Puzzle extends Rectangle{
             })
         }
     }
-
-
+    createInputBox(x,y,w,h){
+         return new Promise(resolve=>{
+             let box = new Square(x,y,w,h)
+             
+             
+         })
+    }
 }
+
+
+
+function setUpWord(team,word){
+    if(team === 'A'){
+         let puz = new Puzzle(word,0,0,width*.3,height*.3,'A')
+    
+    }else{
+         let puz = new Puzzle(word,width*.7,0,width*.3,height*.3,"B")
+    
+    }
+}
+
+setUpWord("A","test")
+setUpWord("B", "test")
