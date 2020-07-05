@@ -172,11 +172,13 @@ let powers = ['ice_projectile', 'electric_projectile', 'magic_projectile', 'fire
 
 function generateObstacles(mode) {
     return new Promise(resolve=> {
+        let check = 0; //used to make sure everything is loaded before starting
         switch (mode) {
             case modes[0]:
                 //flyers
                 let firenum = (Math.random() * (difficulty * 2 + 1) | 0) + 5 + (difficulty > 2 ? 5 : 0);
-                if (Math.random() < (0.4 + difficulty / 10)) {
+                let hasMonster = Math.random() < (0.4 + difficulty / 10);
+                if (hasMonster) {
                     monsters.push(new Character(width * Math.random(), 300, 'monster' + (Math.random() * 30 | 0)));
                     monsters[0].maxbounds.y = height - 150;
                     monsters[0].maxbounds.x = width;
@@ -188,8 +190,9 @@ function generateObstacles(mode) {
                         monsters[0].addSprite(sprite);
                         monsters[0].sprite.shape.addEventListener('click', () => {
                             monsters[0].forces.push(Vector.random().set(Math.random() * 10))
-                        })
+                        });
                         monsters[0].addDeathImage(LOADED_IMAGES.fire.cloneNode());
+                        check++;
                     });
                 } else {
                     firenum += 2;
@@ -206,13 +209,16 @@ function generateObstacles(mode) {
                 flyers.forEach(fire => {
                     let sprite = new Img(IMAGE_PATH + 'projectiles/' + fire.name + '.png', 100, 100, 50).fromCenter().usingNewTransform().onLoad(() => {
                         fire.addSprite(sprite);
+                        fire.hasNoBounds = true;
+                        check++;
                         flyers.forEach(fire => {
                             fire.doOrbit(fire.p.copy().add(Vector.random(25)), getRandom(2, 5));
                         });
+                        if(check === firenum + hasMonster){
+                            resolve()
+                        }
                     });
-                    fire.hasNoBounds = true;
                 });
-                resolve()
                 break;
             case modes[1]:
                 let num = (Math.random() * 2 | 0) + difficulty + 1 + (difficulty > 2 ? 1 : 0);
@@ -230,9 +236,12 @@ function generateObstacles(mode) {
                     mon.maxbounds.y = height - 100;
                     mon.hasNoSkyBox = true;
                     mon.forces.push(VECTORS.gravity);
-                    monsters.push(mon)
+                    monsters.push(mon);
+                    check++;
+                    if(check === num){
+                        resolve()
+                    }
                 }
-                resolve()
                 break;
             case modes[2]:
                 let chasenum = (Math.random() * (difficulty * 3) | 0) + 4 + (difficulty > 2 ? 3 : 0);
@@ -244,24 +253,29 @@ function generateObstacles(mode) {
                     }
                     flyers.push(new Flyer(xx, yy, 'ghost' + i % 11));
                 }
-                flyers.forEach(fire => {
-                    let sprite = new Img(IMAGE_PATH + fire.name + '.png', 100, 100, 50).fromCenter().usingNewTransform().onLoad(() => {
-                        fire.addSprite(sprite);
-                        fire.addDeathImage(LOADED_IMAGES.fire.cloneNode());
+                flyers.forEach(chaser => {
+                    let sprite = new Img(IMAGE_PATH + chaser.name + '.png', 100, 100, 50).fromCenter().usingNewTransform().onLoad(() => {
+                        chaser.addSprite(sprite);
+                        chaser.addDeathImage(LOADED_IMAGES.fire.cloneNode());
+                        check++;
+                        chaser.maxbounds = {x: width, y: height};
+                        chaser.MAX_V = Math.random() * 7 + 9 * difficulty;
+                        chaser.MAX_F = Math.random() * (difficulty * 1.1 + 1.6) / (9 - (difficulty));
+                        if(check===chasenum){
+                            resolve();
+                        }
                     });
-                    fire.maxbounds = {x: width, y: height};
-                    fire.MAX_V = Math.random() * 7 + 9 * difficulty;
-                    fire.MAX_F = Math.random() * (difficulty * 1.1 + 1.6) / (9 - (difficulty));
+
                 });
-                resolve()
                 break;
             case modes[3]:
-                let aliennum = chosen.length - (4 - difficulty);
+                let length = GRAMMAR_MODE? chosen.split(' ').length : chosen.length;
+                let aliennum = length - (4 - difficulty);
                 if (aliennum < 1) aliennum = 1;
-                if (aliennum > chosen.length) aliennum = chosen.length - 1;
+                if (aliennum > length) aliennum = length - 1;
+                if(GRAMMAR_MODE) aliennum = length-1
                 let colors = ['red', 'blue', 'orange', 'white', 'pink', 'purple', 'yellow'];
                 max_held_positions = aliennum;
-                let check = 0
                 for (let i = 0; i < aliennum; i++) {
                     let flyer = new Flyer(getRandom(100, width - 100), getRandom(50, height - 200), 'alien' + i);
                     let sprite = new Img(IMAGE_PATH + 'invaders/invader' + getRandom(colors) + '.png', 0, 0, lines[0].width - 5).fromCenter().usingNewTransform().onLoad(() => {
@@ -271,17 +285,31 @@ function generateObstacles(mode) {
                         flyer.MAX_V = 15;
                         flyer.MAX_F = 3;
                         flyer.heldPosition = getAlienVal();
-                        let loc = lines[flyer.heldPosition].p.copy();
-                        loc.x += lines[flyer.heldPosition].width / 2;
-                        loc.y -= flyer.height;
+                        if(typeof flyer.heldPosition === 'number'){
+                            let loc = lines[flyer.heldPosition].p.copy();
+                            loc.x += lines[flyer.heldPosition].width / 2;
+                            loc.y -= flyer.height/1.5;
+                            flyer.doMoveTo(loc).then(() => {
+                                flyer.doHover();
+                            });
+                        }else{
+                            flyer.doFlyTo(Vector.random(width,height)).then(()=>{
+                                flyer.doFlyTo(Vector.random(width,height)).then(()=>{
+                                    flyer.doFlyTo(Vector.random(width,-100)).then(()=> {
+                                        flyer.hasNoBounds = true;
+                                        flyer.deathImage = null;
+                                        flyer.kill();
+                                        flyers.splice(flyers.indexOf(flyer), 1)
+                                    })
+                                })
+                                }
+                            )
+                        }
+
                         check++;
                         if(check === aliennum){
                             resolve();
                         }
-                        flyer.doMoveTo(loc).then(() => {
-                            flyer.doHover();
-
-                        })
                     })
                 }
 
@@ -296,7 +324,7 @@ function winningCleanup(mode) {
     switch (mode) {
         case modes[0]:
         case modes[3]:
-            held_positions = []
+            held_positions = [];
         case modes[2]:
             flyers.forEach(f => {
                 f.kill();
@@ -313,7 +341,7 @@ function cleanup(mode) {
     switch (mode) {
         case modes[0]:
         case modes[3]:
-            held_positions = []
+            held_positions = [];
         case modes[2]:
             flyers.forEach(f => {
                 f.deathImage = null;
@@ -355,14 +383,15 @@ function getAlienVal(getEmpty){
             return x.target.endsWith('done')?i:null
         }).filter(x=>x!==null);
     }
+    let length = GRAMMAR_MODE? chosen.split(' ').length : chosen.length;
     if(getEmpty){
-        let allnums = Array(chosen.length).fill(0).map((x,i)=>i); //array of all the indicies
+        let allnums = Array(length).fill(0).map((x,i)=>i); //array of all the indicies
         let free_nums = allnums.filter(x=>(!held_positions.includes(x) && !solvedVals().includes(x)));
         return getRandom(free_nums)
     }
     let tot = max_held_positions;
     if (held_positions.length>=tot) return null;
-    let value = held_positions.length>0?getRandom(chosen.length): 0; //always make sure first position is taken
+    let value = held_positions.length>0?getRandom(length): 0; //always make sure first position is taken
     while(held_positions.includes(value) || solvedVals().includes(value)){
         value+=1;
         value%=tot+1;
@@ -396,11 +425,12 @@ function loop(now) {
             alien.stopHover();
             held_positions.splice(held_positions.indexOf(alien.heldPosition),1);
             alien.hasNoBounds = true;
-            alien.doFlyTo(new Vector(width/2,-100)).then(()=>{
-                alien.deathImage = null;
-                alien.kill()
-                flyers.splice(flyers.indexOf(alien),1)
-            })
+            function zipAbout(){
+                alien.doFlyTo(new Vector(getRandom(0,width),height/3)).then(()=>{
+                    zipAbout()
+                })
+            }
+            zipAbout();
         }
         if(Math.random()<(0.0005 + 0.0005*difficulty) && valid_flyers.length>0){
             let alien = getRandom(valid_flyers);
@@ -482,7 +512,6 @@ function loop(now) {
                     }
                 })
             }
-
         }
     );
 
@@ -493,8 +522,7 @@ function loop(now) {
     if (LOOPING) {
         requestAnimationFrame(loop)
     }
-};
-
+}
 id('jmpleft').addEventListener('click', () => {
     if (loaded) {
         difficulty++;

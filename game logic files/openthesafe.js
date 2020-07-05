@@ -5,7 +5,6 @@ let SKY_COLOR = '#01b7e9';
 
 let IMAGE_PATH = '../images/';
 
-id('black_square').src = '';
 id('black_square').style.backgroundColor = SKY_COLOR;
 id('black_square').style.height = '65px';
 id('black_square').style.border = '';
@@ -65,7 +64,7 @@ function pos2xy(xpos, ypos, size,padding) {
 
 function ind2xy(index) {
     let stack = 8;
-    let top = paper.y  + paper.height*0.15;
+    let top = paper.y  + paper.height*0.10;
     let left = paper.x + paper.width*0.1;
     let y = index % stack;
     let x = index / stack | 0;
@@ -225,8 +224,16 @@ function win() {
                     id('safeimg').style.animationDuration = '4s';
                     id('safeimg').style.zIndex = '10000';
                     let charnum = 25 + difficulty * 50;
-                    safe.x = width/2;
-                    safe.y = height - safe.height/2;
+                    safe.sprite.set('left', width/2 - safe.width/2);
+                    safe.sprite.set('top', height - safe.height);
+                    setTimeout(()=>{
+                        safe.sprite.set('transform-origin','');
+                        safe.sprite.set('transform','');
+                        safe.sprite.set('animation-fill-mode','');
+                        safe.sprite.set('animation-name','');
+                        safe.sprite.set('animation-duration','');
+                        safe.sprite.set('animation-direction','');
+                    },100)
                     let prom = new Promise(resolve => {
                         for (let i = 0; i < charnum; i++) {
                             let char = new Character(width/2, height - safe.height/2, 'treasure' + (Math.random() * 7 | 0));
@@ -499,6 +506,7 @@ function introMovie() {
     let hole = {};
     let playending = false;
     let things_to_update = [];
+    FALLBACK_USE_SET_TIMEOUT_ON_SLOWDOWN = true;
     function movieloop() {
         let now = window.performance.now();
         things_to_update.forEach(x=>{
@@ -543,9 +551,8 @@ function introMovie() {
                 }
             });
             movieending = true;
+            hole = new Img(LOADED_IMAGES.brokenhole.cloneNode(), width * 0.1 + 350, height - 150, 100);
             setTimeout(() => {
-                hole = new Img(LOADED_IMAGES.brokenhole.cloneNode(), width * 0.1 + 350, height - 150, 100);
-
                 playending = true;
             }, 2000);
 

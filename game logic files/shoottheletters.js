@@ -251,8 +251,6 @@ function loop() {
             win();
         })
     }
-    if (LOOPING) requestAnimationFrame(loop)
-
 };
 
 function win() {
@@ -452,8 +450,7 @@ class BuildingHandler{
 
 
 function play() {
-    LOOPING = true;
-    loop()
+    createFallbackLoopFunction(loop).start()
 }
 
 //
