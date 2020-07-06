@@ -13,7 +13,9 @@
 // let sentences = ['carbohydrates provide energy','proteins help your muscles','water helps you move','minerals help your bones','vitamins help your brain',
 // 'fats give you','fats help your heart'];
 
-let sentences = ['open your book','listen to your teacher','raise your hand','take out your pen','don\'t talk loud','put away your toys','stand up','sit down','close your book','open your book'];
+//let sentences = ['open your book','listen to your teacher','raise your hand','take out your pen','don\'t talk loud','put away your toys','stand up','sit down','close your book','open your book'];
+
+let sentences = ['I go to bed at night','I go to school in March','I get up in the morning','I dance on Easter',"I eat dinner at five o'clock", 'I eat ice-cream in the summer','I fly on Monday','I play games on Sunday']
 
 //let sentences = ['sort clothes','watch tv','make the bed','take a bath','brush teeth','organize toys','cook food','organize toys','wash the dishes','eat','set the table','clean up the table','mow the lawn','wash the car','walk the dog'];
 //let nouns = ['shoe','chair','book','lamp','backpack','computer','desk','teddy bear','toy']
@@ -59,6 +61,6 @@ let sentences = ['open your book','listen to your teacher','raise your hand','ta
 //     return getRandom(ans);
 // });
 
-//let sentences = ['My name is Connor','What\'s your name','nice to meet you','how old are you','I\'m from China','I am siz years old'];
+//let sentences = ['My name is Connor','What\'s your name','nice to meet you','how old are you','I\'m from China','I am six years old'];
 
 //let sentences = words.map(x=>'the word is ' +x);

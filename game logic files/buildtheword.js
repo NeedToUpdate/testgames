@@ -276,9 +276,11 @@ function generateObstacles(mode) {
                 if(GRAMMAR_MODE) aliennum = length-1
                 let colors = ['red', 'blue', 'orange', 'white', 'pink', 'purple', 'yellow'];
                 max_held_positions = aliennum;
+                let average = lines.reduce((a,b)=>a+b.width,0)/lines.length;
+                console.log(average)
                 for (let i = 0; i < aliennum; i++) {
                     let flyer = new Flyer(getRandom(100, width - 100), getRandom(50, height - 200), 'alien' + i);
-                    let sprite = new Img(IMAGE_PATH + 'invaders/invader' + getRandom(colors) + '.png', 0, 0, lines[0].width - 5).fromCenter().usingNewTransform().onLoad(() => {
+                    let sprite = new Img(IMAGE_PATH + 'invaders/invader' + getRandom(colors) + '.png', 0, 0, average - 5).fromCenter().usingNewTransform().onLoad(() => {
                         flyer.addSprite(sprite);
                         flyer.addDeathImage(LOADED_IMAGES.fire.cloneNode());
                         flyers.push(flyer);
