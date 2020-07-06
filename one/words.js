@@ -40,7 +40,7 @@
 //let words = ['bag','cap','doll','frog','girl','apple','elephant','insect','orange','umbrella','airplane','parrot','baby','hat','egg','rabbit','mouse','armchair'];
 //let words = ['projector','whiteboard','marker pen','eraser','desk','light','teacher','floor','wall','door','student','table','window','curtain','computer','mouse','keyboard'];
 //let words = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
-let words = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday','noon','easter','summer','june','afternoon','may','birthday','spring','morning'];
+//let words = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday','noon','easter','summer','june','afternoon','may','birthday','spring','morning'];
 
 //================ESL1=================
 
@@ -126,10 +126,7 @@ let words = ['monday','tuesday','wednesday','thursday','friday','saturday','sund
 //let words = ['fast','slow','happy','sad','tired','wet','open','heavy','dirty','tall','scared','hot','loud','bright','sticky','scary','beautiful','ugly','sweet','sharp'];
 //let words = ['sore','throat','cough','backache','cold','fever','headache','stomach','ache','earache'];
 //let words = ['coronavirus','mask','temperature','disinfection','alcohol','circulation','fever','cough','soap','sneeze'];
-//let words = ['remember','uncomment','needed','words','after','sync'];
+let words = ['kangaroo','jacket','monster','monkey','octopus','lake','kite','piano','penguin','pig','lemon','queen']
 
+let difficulty = 0
 
-let difficulty = 1
-
-
-//let words = ['remember','uncomment','needed','words','after','sync'];

@@ -18,5 +18,6 @@
 //HANGMAN (VS)
 
 //WORD TRAIN
-- add save function for players as a base64 string
+- add save function for players as a base64 string <- haha lol idk
+- check how many desks per row and load turn order array dynamically
 
