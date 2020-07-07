@@ -301,7 +301,7 @@
         }
     });
     id('powerup').addEventListener('click', function () {
-        player.powerUp(null, 7);
+        player.powerUp(7);
     });
     id('shootright').addEventListener('click', function () {
         let projectile = player.shoot();
@@ -394,7 +394,7 @@
         if (PLAYING && !monster.dead) {
             if (Math.random() * 1000 < (HARDMODE ? 30 : 10)) {
                 if (!monsterisshooting && !monster.isJumping) {
-                    monster.powerUp(null, 2);
+                    monster.powerUp(2);
                 }
             }
             if (getRandom(10000) < (HARDMODE ? 2 : 1)) {
@@ -422,7 +422,7 @@
                 hopstop = true;
             }
             if (monsterrapidfire && !monsterisshooting) {
-                monster.powerUp(null, 1);
+                monster.powerUp(1);
                 monsterisshooting = true;
                 setTimeout(() => {
                     monsterShoot();

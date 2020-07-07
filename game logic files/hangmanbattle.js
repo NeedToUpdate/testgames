@@ -8,6 +8,8 @@ MAINARENA.set('backgroundSize', 'cover');
 MAINARENA.set('backgroundRepeat', 'no-repeat');
 MAINARENA.set('backgroundPosition', 'center');
 
+LOADED_IMAGES = new ImageLoader(IMAGE_PATH + 'projectiles/', ['web','lightning','fire'].map(x=>x+'_projectile'))
+
 let teamA = {
     wordPool: Array.from(words),
     word: '',
@@ -30,200 +32,6 @@ let teamB = {
 function setup() {
     teamA.word = teamA.wordPool.splice(getRandom(teamA.wordPool.length), 1)
     teamB.word = teamB.wordPool.splice(getRandom(teamA.wordPool.length), 1)
-}
-
-class Puzzle extends Rectangle {
-    constructor(word, x, y, w, h, team) {
-        super(x, y, w, h);
-        this.asOutline('black');
-        this.team = team;
-        this.word = word;
-        this.letters = word.split('');
-        this.solvedLetters = Array(word.length).fill(' ');
-        this.attemptedLetters = [];
-        this.lines = [];
-        this.letterDivs = [];
-        this.INTERNAL_TITLE_STRING = team === 'A' ? 'Team Blue' : 'Team Red';
-        this.INTERNAL_TITLE_DIV = {};
-        this.createLines();
-        this.createTitle();
-        this.styleUp(team);
-    }
-
-    get title() {
-        return this.INTERNAL_TITLE_STRING;
-    }
-
-    set title(string) {
-        this.INTERNAL_TITLE_STRING = string;
-        this.INTERNAL_TITLE_DIV.string = string
-    }
-
-    createLines() {
-        let x = this.width * .01;
-        let maxwidth = this.width * .98;
-        let y = this.height * .8;
-        let linewidth = (maxwidth * 0.9) / (this.word.length);
-        if (linewidth > width * .06) linewidth = width * .06;
-        for (let i = 0; i < this.word.length; i++) {
-            let x1 = x + maxwidth / 2 - (linewidth) * ((this.word.length - 1) / 2) + i * linewidth + linewidth * 0.05;
-            let x2 = x1 + linewidth * 0.9;
-            let l = new LineFromPoints(x1, y, x2, y, 3).fromCenter();
-            let p = new P(this.letters[i],(x1-linewidth/10), y);
-            this.attach(p);
-            p.size = linewidth*0.6
-            p.y -= p.height;
-            p.color = 'transparent';
-            this.letterDivs.push(p)
-            this.lines.push(l);
-            this.attach(l)
-        }
-    }
-
-    createTitle() {
-        let title = new P(this.INTERNAL_TITLE_STRING, this.width / 2, this.height * .1).fromCenter()
-        title.size = '3em';
-        title.width = this.width * .98;
-        title.x = this.width / 2
-        title.set('textAlign', 'center')
-        this.attach(title)
-        this.INTERNAL_TITLE_DIV = title
-    }
-
-    styleUp(team) {
-        if (team === 'A') {
-            this.set('backgroundColor', 'royalblue');
-            this.border = '3px solid blue';
-            this.set('borderRadius', '13px');
-            this.set('boxShadow', '2px 2px 2px 2px black');
-            this.lines.forEach(l => {
-                l.set('backgroundColor', 'cyan')
-                l.set('borderRadius', '3px')
-            })
-            this.INTERNAL_TITLE_DIV.color = 'white'
-        } else {
-            this.set('backgroundColor', 'indianred');
-            this.border = '3px solid red';
-            this.set('borderRadius', '13px');
-            this.set('boxShadow', '2px 2px 2px 2px black');
-            this.lines.forEach(l => {
-                l.set('backgroundColor', 'maroon')
-                l.set('borderRadius', '3px')
-            })
-            this.INTERNAL_TITLE_DIV.color = 'white'
-        }
-    }
-
-    createInputBox(x, y, w, h) {
-        let box = new Rectangle(x, y, w, h).asOutline(this.team === 'A' ? 'blue' : 'red', 4);
-        box.color = this.team === 'A' ? 'royalblue' : 'indianred';
-        box.set('borderRadius', '5px');
-        let input = document.createElement('input');
-        let width = w / 3;
-        let button = new Rectangle(box.width * 0.1, width * 1.8 + 20, box.width * .8 - 10, box.height * .1).asOutline('green', 3);
-        button.color = 'limegreen';
-        button.set('borderRadius', 5);
-        button.set('textAlign', 'center');
-        button.set('color', 'darkgreen');
-        button.set('fontWeight', 'bolder');
-        button.set('cursor', 'pointer');
-        button.shape.innerText = 'Ready!';
-        box.attach(input);
-        box.attach(button);
-        let style = {
-            width: width + 'px',
-            height: width * 1.5 + 'px',
-            top: box.height * 0.1 + 'px',
-            left: box.width / 2 - width / 2 - 4 + 'px',
-            position: 'absolute',
-            fontSize: w / 2 + 'px',
-            textAlign: 'center',
-            backgroundColor: this.team === 'A' ? 'lightblue' : 'salmon',
-            color: this.team === 'A' ? 'blue' : 'red'
-        };
-        Object.assign(input.style, style);
-        input.setAttribute('maxlength', '1');
-        input.addEventListener('keypress', () => {
-            input.blur()
-        });
-        let letter = '';
-        let display = {}
-
-        function cancel() {
-            if (Object.keys(display).length > 0) display.remove();
-            input.style.display = '';
-            letter = '';
-            input.value = '';
-        }
-
-        button.shape.addEventListener('click', () => {
-            console.log(input.value);
-            letter = input.value;
-            display = new P(letter, box.width / 2 - width / 2 + 10, 0);
-            input.style.display = 'none';
-            display.color = this.team === 'A' ? 'cyan' : 'orange';
-            display.size = w / 2;
-            display.set('textAlign', 'center');
-            box.attach(display);
-            display.shape.addEventListener('click', cancel)
-        });
-        return {
-            getLetter: function () {
-                return letter;
-            },
-            reset: function () {
-                cancel()
-            },
-            getDiv: function () {
-                return display;
-            },
-            remove: function () {
-                box.remove();
-            }
-        }
-    }
-
-    addNewWord(string) {
-        this.word = string;
-        this.lines.forEach(line => {
-            line.remove();
-        });
-        this.createLines();
-        this.styleUp(this.team)
-        this.flash();
-    }
-
-    flash() {
-        this.set('boxShadow', '0 0 8px 8px ' + (this.team === 'A' ? 'cyan' : 'orange'));
-        setTimeout(() => {
-            this.set('boxShadow', '2px 2px 2px 2px black');
-        }, 1000)
-    }
-
-    checkLetter(string) {
-        if (this.letters.includes(string)) {
-            return this.letters.reduce((a, b) => (b === string ? 1 : 0) + a, 0)
-        } else {
-            return 0;
-        }
-    }
-
-    confirmLetter(string) {
-        if (this.letters.includes(string)) {
-            this.letters.forEach((x,i)=>{
-                if(x===string){
-                    this.letters[i] = -1;
-                    this.solvedLetters = string;
-                    this.letterDivs[i].color = 'white'
-                }
-            });
-            console.log('team ' + this.team + ' submitted letter ' + string)
-        }else{
-            this.attemptedLetters.push(string);
-        }
-        //check if done
-        return this.letters.filter(x=>x!==-1).length===0;
-    }
 }
 
 
@@ -264,33 +72,240 @@ function submitLetters() {
     let letterB = teamB.input.getLetter();
     let numA = 0;
     let numB = 0;
-
+    let readyA = false;
+    let readyB = false;
     if (letterA !== '' && letterB !== '') {
         numA = A.checkLetter(letterA);
         numB = B.checkLetter(letterB);
     }else{
-        console.log('team not ready')
+        console.log('team not ready');
         return
     }
 
+    let finishedA = A.confirmLetter(letterA);
+    let finishedB = B.confirmLetter(letterB);
+
+    let divA = teamA.input.getDiv();
+    let divB = teamB.input.getDiv();
+    let charA = new Character(divA.x + divA.shape.parentElement.offsetLeft + divA.width/2,divA.y + divA.shape.parentElement.offsetTop + divA.height/2, letterA);
+    let charB = new Character(divB.x + divB.shape.parentElement.offsetLeft + divB.width/2,divB.y + divB.shape.parentElement.offsetTop + divB.height/2, letterB);
+
+    DomObject.attach(divA.fromCenter().detachSelf());
+    DomObject.attach(divB.fromCenter().detachSelf());
+    charA.addSprite(divA);
+    charB.addSprite(divB);
+    THINGS_TO_UPDATE.push(charA);
+    THINGS_TO_UPDATE.push(charB);
+    THINGS_TO_KILL.push(charA);
+    THINGS_TO_KILL.push(charB);
+
     if (numA) {
-        A.confirmLetter(letterA);
+        console.log('Team A got ' + numA + ' points');
+        let indices = A.solvedLetters.map((x,i)=>x===letterA? i:-1).filter(x=>x!==-1);
+        divA.color = 'limegreen';
+        for(let i = 0; i<numA; i++){
+            setTimeout(()=>{
+            let mover = {};
+            if(i!==0){
+                mover = new Character(charA.x,charA.y,charA.name + i);
+                let p = new P(charA.name,charA.x,charA.y);
+                p.shape.remove();
+                p.shape = DomObject.attach(divA.shape.cloneNode(true));
+                mover.addSprite(p);
+                THINGS_TO_UPDATE.push(mover);
+                THINGS_TO_KILL.push(mover);
+            }else{
+                mover = charA;
+            }
+                mover.doMoveTo(A.letterDivs[indices[i]].p,0.5).then(()=>{
+                    mover.kill();
+                    A.revealLetter(indices[i]);
+                    if(i === numA-1){
+                        readyA = true;
+                        doBattle()
+                        A.flash();
+                    }
+                });
+            },1000)
+        }
+    }else{
+        divA.color = 'red';
+        setTimeout(()=>{
+            charA.doSpin(360,5);
+            charA.hasNoBounds = true;
+            charA.doMoveTo(new Vector(charA.x,height+50),0.5).then(()=>{
+                charA.kill();
+                readyA = true;
+                doBattle()
+            })
+        },1000);
     }
     if (numB) {
-        B.confirmLetter(letterB);
+        console.log('Team B got ' + numB + ' points');
+        let indices = B.solvedLetters.map((x,i)=>x===letterB? i:-1).filter(x=>x!==-1);
+        divB.color = 'limegreen';
+        for(let i = 0; i<numB; i++) {
+            setTimeout(() => {
+                let mover = {};
+                if (i !== 0) {
+                    mover = new Character(charB.x, charB.y, charB.name + i);
+                    let p = new P(charB.name, charB.x, charB.y);
+                    p.shape.remove();
+                    p.shape = DomObject.attach(divB.shape.cloneNode(true));
+                    mover.addSprite(p);
+                    THINGS_TO_UPDATE.push(mover);
+                    THINGS_TO_KILL.push(mover);
+                } else {
+                    mover = charB;
+                }
+
+                mover.doMoveTo(B.letterDivs[indices[i]].p.copy().add(B.p), 0.5).then(() => {
+                    mover.kill();
+                    B.revealLetter(indices[i]);
+                    if(i === numB-1){
+                        readyB = true
+                        B.flash()
+                        doBattle()
+                    }
+                });
+            }, 1000)
+        }
+    }else{
+        divB.color = 'red';
+        setTimeout(()=>{
+            charB.doSpin(360*getRandom(-1),5);
+            charB.hasNoBounds = true;
+            charB.doMoveTo(new Vector(charB.x,height+50),0.5).then(()=>{
+                charB.kill();
+                readyB = true;
+                doBattle()
+            })
+        },1000);
+    }
+
+    function doBattle(){
+        console.log('Battle is called' + (readyA? '': ' but Team A is not Ready') +(readyB? '' : ' but team B is not Ready'))
+        if(!readyA || !readyB) return;
+        console.log('battle phase!')
+        if(finishedA){
+            A.letterDivs.forEach(x=>{
+                x.color = 'limegreen';
+            })
+        }
+        if(finishedB){
+            B.letterDivs.forEach(x=>{
+                x.color = 'limegreen';
+            })
+        }
+        battle(numA,numB,finishedA,finishedB);
     }
 }
 
 let goBtn = new Circle(width*0.02,height*0.37,14).asOutline('green',3);
 goBtn.shape.addEventListener('click',submitLetters);
 let resetBtn = new Circle(width*0.02,height*0.37 + 35,14).asOutline('red',3);
+let THINGS_TO_KILL = [];
 resetBtn.shape.addEventListener('click',()=>{
-    teamA.input.reset()
-    teamB.input.reset()
-})
-requestAnimationFrame(()=> {
-    requestAnimationFrame(() => {
-        goBtn.attach(id('checkmark').content.cloneNode(true));
-        resetBtn.attach(id('backbutton').content.cloneNode(true));
-    })
-})
+    teamA.input.reset();
+    teamB.input.reset();
+    THINGS_TO_KILL.forEach(x=>{
+        x.kill();
+    });
+    THINGS_TO_KILL =[];
+});
+window.addEventListener('DOMContentLoaded',()=>{
+    resetBtn.attach(id('backbutton').content.cloneNode(true));
+    goBtn.attach(id('checkmark').content.cloneNode(true));
+});
+
+
+let playerA = new Character(width*.28,height-100,'spiderman');
+let spriteA = new Img(IMAGE_PATH + '/' + playerA.name + '.png', 0,0, width/8).fromCenter().onLoad(()=>{
+    playerA.addSprite(spriteA);
+    playerA.addForce(VECTORS.gravity);
+    playerA.maxbounds.y = height-20;
+    THINGS_TO_UPDATE.push(playerA);
+});
+let playerB = new Character(width*.74, height-100, 'thor');
+let spriteB = new Img(IMAGE_PATH + '/' + playerB.name + '.png', 0,0, width/8).fromCenter().onLoad(()=>{
+    playerB.addSprite(spriteB);
+    playerB.addForce(VECTORS.gravity);
+    playerB.maxbounds.y = height-20;
+    THINGS_TO_UPDATE.push(playerB);
+    playerB.faceLeft();
+});
+
+function battle(team1points,team2points,isTeam1finishingblow,isTeam2finishingblow){
+    let pA = team1points;
+    let pB = team2points;
+    let fbA = isTeam1finishingblow;
+    let fbB = isTeam2finishingblow;
+    let hpA = teamA.hp;
+    let hpB = teamB.hp;
+
+
+    for(let i = 0;i<pA;i++){
+        setTimeout(()=>{
+            addAction(1,'powerUp',5);
+        },(i+1)*1000)
+    }
+    setTimeout(()=>{
+        THINGS_TO_UPDATE.push(playerA.shoot())
+    },(pA+1)*1000);
+    for(let i = 0;i<pB;i++){
+        setTimeout(()=>{
+            addAction(0,'powerUp',5);
+        },(i+1)*1000)
+    }
+    setTimeout(()=>{
+        THINGS_TO_UPDATE.push(playerB.shoot())
+    },(pB+1)*1000);
+    //TODO set back team hp
+}
+
+function addAction(isA,action,args,isPerm){
+    let act = {
+        target: isA? playerA : playerB,
+        action: action,
+        args: args,
+        permanent: isPerm
+    };
+    ACTION_QUEUE.push(act)
+}
+
+let playerAState = 'idle';
+let playerBState = 'idle';
+let timeSinceCheckA = 0;
+let timeSinceCheckB = 0;
+function subroutines(){
+    let time = window.performance.now();
+    if(playerAState==='idle' && time-timeSinceCheckA >810){
+        addAction(1,'sparHop',0.5);
+        timeSinceCheckA = time;
+    }
+    if(playerBState==='idle' && time-timeSinceCheckB >700){
+        addAction(0,'sparHop',0.5);
+        timeSinceCheckB = time;
+    }
+}
+
+
+
+let THINGS_TO_UPDATE = [];
+let ACTION_QUEUE = [];
+function loop() {
+    for (let i = THINGS_TO_UPDATE.length - 1; i >= 0; i--) {
+        THINGS_TO_UPDATE[i].update();
+        if (THINGS_TO_UPDATE[i].dead) {
+            THINGS_TO_UPDATE.splice(i, 1);
+        }
+    }
+    for (let i = ACTION_QUEUE.length - 1; i >= 0; i--) {
+        let act = ACTION_QUEUE[i];
+        act.target[act.action].call(act.target,act.args);
+        if(!act.permanent) ACTION_QUEUE.splice(i,1);
+    }
+    subroutines();
+}
+
+createFallbackLoopFunction(loop).start();
