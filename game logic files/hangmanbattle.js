@@ -8,7 +8,8 @@ MAINARENA.set('backgroundSize', 'cover');
 MAINARENA.set('backgroundRepeat', 'no-repeat');
 MAINARENA.set('backgroundPosition', 'center');
 
-LOADED_IMAGES = new ImageLoader(IMAGE_PATH + 'projectiles/', ['web', 'lightning', 'fire'].map(x => x + '_projectile'))
+LOADED_IMAGES = new ImageLoader(IMAGE_PATH + 'projectiles/', ['web', 'electric', 'fire', 'dynamite'].map(x => x + '_projectile'));
+LOADED_IMAGES.add('fire', IMAGE_PATH);
 
 let teamA = {
     wordPool: Array.from(words),
@@ -30,8 +31,8 @@ let teamB = {
 };
 
 function setup() {
-    teamA.word = teamA.wordPool.splice(getRandom(teamA.wordPool.length), 1)
-    teamB.word = teamB.wordPool.splice(getRandom(teamA.wordPool.length), 1)
+    teamA.word = teamA.wordPool.splice(getRandom(teamA.wordPool.length), 1);
+    teamB.word = teamB.wordPool.splice(getRandom(teamA.wordPool.length), 1);
 }
 
 
@@ -224,10 +225,11 @@ let spriteA = new Img(IMAGE_PATH + '/' + playerA.name + '.png', 0, 0, width / 8)
     playerA.addSprite(spriteA);
     playerA.team = 'A';
     playerA.addForce(VECTORS.gravity);
-    playerA.maxbounds.x = width*.79;
-    playerA.minbounds.x = width*.21;
+    playerA.maxbounds.x = width * .79;
+    playerA.minbounds.x = width * .21;
     playerA.maxbounds.y = height - 20;
-    playerA.minbounds.y = height*.2;
+    playerA.minbounds.y = height * .2;
+    playerA.powerType = 'web'
     THINGS_TO_UPDATE.push(playerA);
 });
 let playerB = new Character(width * .72, height - 100, 'thor');
@@ -235,49 +237,227 @@ let spriteB = new Img(IMAGE_PATH + '/' + playerB.name + '.png', 0, 0, width / 8)
     playerB.addSprite(spriteB);
     playerB.team = 'B';
     playerB.addForce(VECTORS.gravity);
-    playerB.maxbounds.x = width*.79;
-    playerB.minbounds.x = width*.21;
+    playerB.maxbounds.x = width * .79;
+    playerB.minbounds.x = width * .21;
     playerB.maxbounds.y = height - 20;
-    playerB.minbounds.y = height*.2;
+    playerB.minbounds.y = height * .2;
     THINGS_TO_UPDATE.push(playerB);
     playerB.faceLeft();
+    playerB.powerType = 'electric'
 });
 
-function unIdlePlayers(){
+function unIdlePlayers() {
     playerAState = '';
     playerBState = '';
-    return new Promise(resolve=>{
-        function tryResolve(){
-            if(!a || !b) return;
+    return new Promise(resolve => {
+        function tryResolve() {
+            if (!a || !b) return;
             resolve()
         }
+
         let a = false;
         let b = false;
-        if(playerA.isJumping){
+        if (playerA.isJumping) {
             playerA.interruptSperHop = true;
-            let unsub = playerA.landing_emitter.subscribe('land',()=>{
+            let unsub = playerA.landing_emitter.subscribe('land', () => {
                 a = true;
                 unsub();
                 tryResolve();
             })
-        }else{
+        } else {
             a = true;
             tryResolve();
         }
-        if(playerB.isJumping){
+        if (playerB.isJumping) {
             playerB.interruptSperHop = true;
-            let unsub = playerB.landing_emitter.subscribe('land',()=>{
+            let unsub = playerB.landing_emitter.subscribe('land', () => {
                 b = true;
                 unsub();
                 tryResolve();
             })
-        }else{
+        } else {
             b = true;
             tryResolve();
         }
     })
 }
 
+
+//===============FIGHTING FUNCTIONS============
+
+
+function regularShoot(isPlayerA, num) {
+    let fighter = isPlayerA ? playerA : playerB;
+    let target = isPlayerA ? playerB : playerA;
+    return new Promise(resolve => {
+        for (let i = 0; i < num; i++) {
+            setTimeout(() => {
+                fighter.powerUp(5);
+            }, (i + 1) * 1000)
+        }
+        setTimeout(() => {
+            let p = fighter.shoot();
+            p.target = target;
+            PROJECTILES.push(p)
+            resolve()
+        }, (num + 1) * 1000);
+    })
+}
+
+function jumpAndHit(isPlayerA, dmg) {
+    let fighter = isPlayerA ? playerA : playerB;
+    let target = isPlayerA ? playerB : playerA;
+    return new Promise(resolve => {
+        fighter.jumpWithAngle(isPlayerA ? 45 : -45, 20);
+        let unsub = fighter.landing_emitter.subscribe('land', () => {
+            handleDamage(target, dmg);
+            fighter.jumpWithAngle(isPlayerA ? -45 : 45, 20);
+            isPlayerA? fighter.faceRight() : fighter.faceLeft();
+            unsub();
+            resolve()
+        })
+    })
+}
+
+function jumpSpinHit(isPlayerA, dmg) {
+    let fighter = isPlayerA ? playerA : playerB;
+    let target = isPlayerA ? playerB : playerA;
+    return new Promise(resolve => {
+        fighter.jumpWithAngle(isPlayerA ? 45 : -45, 20);
+        fighter.doSpin(-360, 10);
+        let unsub = playerA.landing_emitter.subscribe('land', () => {
+            fighter.jumpWithAngle(isPlayerA ? -45 : 45, 20);
+            isPlayerA? fighter.faceRight() : fighter.faceLeft();
+            handleDamage(target, dmg);
+            unsub();
+        })
+    })
+}
+
+function spinShot(isPlayerA, dmg) {
+    let fighter = isPlayerA ? playerA : playerB;
+    let target = isPlayerA ? playerB : playerA;
+    return new Promise(resolve => {
+        fighter.jumpUp(2);
+        fighter.doSpin(-360, 10);
+        fighter.powerUp(dmg / 2);
+        setTimeout(() => {
+            fighter.powerUp(dmg / 2);
+        }, 500);
+        setTimeout(() => {
+            let p = fighter.shoot();
+            p.target = target;
+            PROJECTILES.push(p)
+        }, 800)
+    })
+}
+
+function rapidFire(isPlayerA, dmg) {
+    let fighter = isPlayerA ? playerA : playerB;
+    let target = isPlayerA ? playerB : playerA;
+    return new Promise(resolve => {
+        let shootloop = setInterval(() => {
+            fighter.powerUp(dmg / 8);
+            setTimeout(() => {
+                let p = fighter.shoot();
+                p.target = target;
+                PROJECTILES.push(p);
+            }, 300)
+        }, 600);
+        setTimeout(() => {
+            clearInterval(shootloop);
+            resolve();
+        }, 5000)
+    })
+}
+
+function pickUpandThrow(isPlayerA, dmg) {
+    let fighter = isPlayerA ? playerA : playerB;
+    let target = isPlayerA ? playerB : playerA;
+    return new Promise(resolve => {
+        fighter.jumpWithAngle(isPlayerA ? 45 : -45, 20);
+        let unsub = fighter.landing_emitter.subscribe('land', () => {
+            isPlayerA? fighter.faceLeft() : fighter.faceRight();
+            unsub();
+            target.forces = [];
+            target.doMoveTo(target.p.copy().sub(new Vector(isPlayerA ? 10 : -10, 50)), 0.5).then(() => {
+                setTimeout(() => {
+                    target.addForce(VECTORS.gravity);
+                    target.jumpWithAngle(isPlayerA ? -80 : 80, 50);
+                    setTimeout(() => {
+                        handleDamage(target, dmg / 1.5)
+                    }, 100);
+                    unsub = target.landing_emitter.subscribe('land', () => {
+                        fighter.powerUp(dmg / 3);
+                        setTimeout(() => {
+                            let p = fighter.shoot();
+                            p.target = target;
+                            PROJECTILES.push(p);
+                            setTimeout(() => {
+                                fighter.jumpWithAngle(isPlayerA ? -45 : 45, 20);
+                                isPlayerA? fighter.faceRight() : fighter.faceLeft();
+                                target.jumpWithAngle(isPlayerA ? 45 : -45, 20);
+                                unsub = target.landing_emitter.subscribe('land',()=>{
+                                    resolve();
+                                    unsub()
+                                });
+                                isPlayerA? target.faceLeft() : target.faceRight();
+                            }, 2000)
+                        }, 500);
+                        unsub();
+                    })
+                }, 1000);
+            })
+        })
+    })
+}
+
+function spinHitAndShoot(isPlayerA, dmg) {
+    let fighter = isPlayerA ? playerA : playerB;
+    let target = isPlayerA ? playerB : playerA;
+    return new Promise(resolve => {
+        fighter.jumpWithAngle(isPlayerA ? 45 : -45, 20);
+        fighter.doSpin(-360, 10);
+        let unsub = fighter.landing_emitter.subscribe('land', () => {
+            handleDamage(target, dmg / 3);
+            fighter.jumpWithAngle(isPlayerA ? -45 : 45, 10);
+            isPlayerA? fighter.faceRight() : fighter.faceLeft();
+            unsub();
+            fighter.powerUp(dmg / 3);
+            setTimeout(() => {
+                let p = fighter.shoot();
+                p.target = target;
+                PROJECTILES.push(p);
+                setTimeout(() => {
+                    fighter.jumpWithAngle(isPlayerA ? -45 : 45, 20);
+                    isPlayerA? fighter.faceRight() : fighter.faceLeft();
+                    fighter.powerUp(dmg / 3);
+                    setTimeout(() => {
+                        let p = fighter.shoot();
+                        p.target = target;
+                        PROJECTILES.push(p);
+                        resolve();
+                    }, 500)
+                }, 2000)
+            }, 500)
+        })
+    })
+}
+
+function throwBomb(isPlayerA, dmg) {
+    let fighter = isPlayerA ? playerA : playerB;
+    let target = isPlayerA ? playerB : playerA;
+    return new Promise(resolve => {
+        fighter.powerUp(dmg, 'dynamite');
+        setTimeout(() => {
+            let p = fighter.shoot('dynamite');
+            p.target = target;
+            p.addDeathImage(LOADED_IMAGES.fire.cloneNode());
+            PROJECTILES.push(p);
+            resolve();
+        }, 1000)
+    })
+}
 
 function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishingblow) {
     let pA = team1points;
@@ -287,161 +467,90 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
     let hpA = teamA.hp;
     let hpB = teamB.hp;
 
-    unIdlePlayers().then(()=>{
+    unIdlePlayers().then(() => {
         playerAState = 'fighting';
         playerBState = 'fighting';
-        function regularShoot(player,num) {
-            for (let i = 0; i < num; i++) {
-                setTimeout(() => {
-                    addAction(player, 'powerUp', 5);
-                }, (i + 1) * 1000)
-            }
-            setTimeout(() => {
-                let p = player? playerA.shoot() : playerB.shoot();
-                p.target = player? playerB : playerA;
-                PROJECTILES.push(p)
-            }, (num + 1) * 1000);
+
+        function doAttack(plyr, val) {
+            return new Promise(resolve => {
+                if (val) {
+                    if (val === 1) {
+                        if (getRandom(10) < 2) {
+                            jumpAndHit(plyr, 5).then(() => {
+                                resolve()
+                            })
+                        } else if (pB === 1 && getRandom(10) < 0) {
+                            // if 1 and pB is 1
+                            //projectiles hit eachother
+                        } else {
+                            regularShoot(plyr, val).then(() => {
+                                resolve()
+                            })
+                        }
+                    }
+                    if (pA === 2) {
+                        if (getRandom(10) < 3) {
+                            jumpSpinHit(plyr, 10).then(() => {
+                                resolve()
+                            })
+                        } else if (getRandom(10) < 3) {
+                            spinShot(plyr, 10).then(() => {
+                                resolve()
+                            })
+                        } else if (pB === 2 && getRandom(10) < 0) {
+                            // if 2 and pB is 2
+                            //projectiles hit eachother
+                        } else if (getRandom(10 < 3)) {
+                            throwBomb(plyr, 10).then(() => {
+                                resolve()
+                            })
+                        } else {
+                            regularShoot(plyr, val).then(() => {
+                                resolve()
+                            })
+                        }
+                    }
+                    if (pA === 3) {
+                        if (getRandom(10) < 0) {
+                            rapidFire(plyr, 15).then(() => {
+                                resolve()
+                            });
+                        } else if (getRandom(10) < 10) {
+                            //pick up and throw
+                            pickUpandThrow(plyr, 15).then(() => {
+                                resolve()
+                            })
+                        } else if (getRandom(10) < 3) {
+                            spinHitAndShoot(plyr, 15).then(() => {
+                                resolve()
+                            });
+                        } else {
+                            regularShoot(plyr, val).then(() => {
+                                resolve()
+                            })
+                        }
+                    }
+                    //is there gonna be a 4+?
+                    if (pA >= 4) {
+                        //idk
+                    }
+                }
+            })
         }
 
-        if (pA) {
-            if(pA === 1){
-                if(getRandom(10)<2){
-                    //jump and hit
-                    playerA.jumpWithAngle(45,20);
-                    let unsub = playerA.landing_emitter.subscribe('land',()=>{
-                        console.log('jumpback');
-                        playerA.jumpWithAngle(-45,20);
-                        playerA.faceRight();
-                        unsub();
-                    })
-                }else if (pB === 1 && getRandom(10) < 2) {
-                    // if 1 and pB is 1
-                    //projectiles hit eachother
-                }else{
-                    regularShoot(1,pA)
-                }
-            }
-            if (pA === 2) {
-                if(getRandom(10)<9){
-                    //jump spin hit
-                    playerA.jumpWithAngle(45,20);
-                    playerA.doSpin(-360,10);
-                    let unsub = playerA.landing_emitter.subscribe('land',()=>{
-                        playerA.jumpWithAngle(-45,20);
-                        playerA.faceRight();
-                        unsub();
-                    })
-                }else if(getRandom(10)<3) {
-                    playerA.jumpUp(2);
-                    playerA.doSpin(-360,10);
-                    playerA.powerUp(5);
-                    setTimeout(()=>{
-                        playerA.powerUp(5);
-                    },500);
-                    setTimeout(()=>{
-                        let p = playerA.shoot();
-                        p.target = playerB;
-                        PROJECTILES.push(p)
-                    },800)
-                }else if (pB === 2 && getRandom(10) < 2) {
-                    // if 2 and pB is 2
-                    //projectiles hit eachother
-                }else{
-                    regularShoot(1,pA)
-                }
-            }
-            if(pA === 3){
-                if(getRandom(10)<2){
-                    //rapid fire
-                    let shootloop = setInterval(()=>{
-                        playerA.powerUp(5);
-                        setTimeout(()=>{
-                            let p = playerA.shoot();
-                            p.target = playerB;
-                            PROJECTILES.push(p)
-                        },300)
-                    },600)
-                    setTimeout(()=>{
-                        clearInterval(shootloop)
-                    },5000)
-                }else if(getRandom(10)<3){
-                    //pick up and throw
-                    playerA.jumpWithAngle(45,20);
-                    let unsub = playerA.landing_emitter.subscribe('land',()=>{
-                        playerA.faceLeft();
-                        unsub();
-                        playerB.forces = [];
-                        playerB.doMoveTo(playerB.p.copy().sub(new Vector(10,50)),0.5).then(()=>{
-                            setTimeout(()=>{
-                                playerB.addForce(VECTORS.gravity);
-                                playerB.jumpWithAngle(-80,50);
-                                unsub = playerB.landing_emitter.subscribe('land',()=> {
-                                    playerA.powerUp(5);
-                                    setTimeout(()=>{
-                                        let p = playerA.shoot();
-                                        p.target = playerB;
-                                        PROJECTILES.push(p);
-                                        setTimeout(()=>{
-                                            playerA.jumpWithAngle(-45,20);
-                                            playerA.faceRight();
-                                            playerB.jumpWithAngle(45,20);
-                                            playerB.faceLeft();
-                                        },2000)
-                                    },500);
-                                    unsub();
-                                })
-                            },1000);
-                        })
-                    })
-                } else if(getRandom(10)<3){
-                    playerA.jumpWithAngle(45,20);
-                    playerA.doSpin(-360,10);
-                    let unsub = playerA.landing_emitter.subscribe('land',()=>{
-                        playerA.jumpWithAngle(-45,10);
-                        playerA.faceRight();
-                        unsub();
-                        playerA.powerUp(5)
-                        setTimeout(()=>{
-                            let p = playerA.shoot();
-                            p.target = playerB;
-                            PROJECTILES.push(p);
-                            setTimeout(()=>{
-                                playerA.jumpWithAngle(-45,20);
-                                playerA.faceRight();
-                            },2000)
-                        },500)
-                    })
-                }else if(getRandom(10<3)){
-                    playerA.powerUp(5,'dynamite')
-                    let p = playerA.shoot();
-                    p.target = playerB;
-                    p.addDeathImage(LOADED_IMAGES.fire.cloneNode())
-                    PROJECTILES.push(p);
-                }else{
-                    regularShoot(1,pA)
-                }
-            }
-            //is there gonna be a 4+?
-            if(pA >= 4){
-                //idk
-            }
+        let order = getRandom(2);
 
+        doAttack(order,order? pA :pB).then(()=>{
+            doAttack(!order,order? pB : pA).then(()=>{
+                console.log('done!')
+                playerAState = 'idle';
+                playerBState = 'idle';
+            })
+        })
+    //TODO set back team hp
+}
 
-        }
-        if (pB) {
-            for (let i = 0; i < pB; i++) {
-                setTimeout(() => {
-                    addAction(0, 'powerUp', 5);
-                }, (i + 1) * 1000)
-            }
-            setTimeout(() => {
-                let p = playerB.shoot();
-                p.target = playerA;
-                PROJECTILES.push(p)
-            }, (pB + 1) * 1000);
-        }
-        //TODO set back team hp
-    })
+)
 
 }
 
@@ -475,9 +584,11 @@ function subroutines() {
 function handleDamage(player, num) {
     if (player.team === 'A') {
         teamA.hp -= num;
+        console.log('Team A takes ' + num + ' damage');
         //TODO deal with healthbar
     } else {
-        teamB.ho -= num;
+        console.log('Team B takes ' + num + ' damage');
+        teamB.hp -= num;
     }
 }
 
@@ -501,9 +612,8 @@ function loop() {
     for (let i = PROJECTILES.length - 1; i >= 0; i--) {
         let p = PROJECTILES[i];
         p.update();
-        if (p.hasHitbox && p.target.hasHitbox && p.hitbox.contains(p.target.hitbox)) {
-            console.log("hit")
-            handleDamage(p.target, p.power)
+        if (p.hasHitbox && p.target.hasHitbox && p.hitbox.contains(p.target.hitbox.vMiddle)) {
+            handleDamage(p.target, p.power);
             p.kill()
         }
         if (p.dead) {
