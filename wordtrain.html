@@ -362,6 +362,13 @@
 <button id="btn7">btn7</button>
 <h4 id="gamemessage"></h4>
 <script type="text/javascript">
+    window.addEventListener('beforeunload',event=>{
+        event.preventDefault();
+        event.returnValue = '';
+        return '';
+    });
+
+
     let GAMEBOARD = new Rectangle(width * .02, height * .1, width * .90, height * .8).withNoCss().withId('gamearea');
     GAMEBOARD.isExpanded = true;
     GAMEBOARD.toggleCollapse = function () {
