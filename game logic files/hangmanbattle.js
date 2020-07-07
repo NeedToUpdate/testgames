@@ -364,7 +364,7 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                     setTimeout(()=>{
                         clearInterval(shootloop)
                     },5000)
-                }else if(getRandom(10)<0){
+                }else if(getRandom(10)<3){
                     //pick up and throw
                     playerA.jumpWithAngle(45,20);
                     let unsub = playerA.landing_emitter.subscribe('land',()=>{
@@ -393,7 +393,7 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                             },1000);
                         })
                     })
-                } else if(getRandom(10)<10){
+                } else if(getRandom(10)<3){
                     playerA.jumpWithAngle(45,20);
                     playerA.doSpin(-360,10);
                     let unsub = playerA.landing_emitter.subscribe('land',()=>{
@@ -411,6 +411,14 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                             },2000)
                         },500)
                     })
+                }else if(getRandom(10<3)){
+                    playerA.powerUp(5,'dynamite')
+                    let p = playerA.shoot();
+                    p.target = playerB;
+                    p.addDeathImage(LOADED_IMAGES.fire.cloneNode())
+                    PROJECTILES.push(p);
+                }else{
+                    regularShoot(1,pA)
                 }
             }
             //is there gonna be a 4+?
