@@ -184,7 +184,7 @@ function submitLetters() {
     }
 
     function doBattle(){
-        console.log('Battle is called' + (readyA? '': ' but Team A is not Ready') +(readyB? '' : ' but team B is not Ready'))
+        //console.log('Battle is called' + (readyA? '': ' but Team A is not Ready') +(readyB? '' : ' but team B is not Ready'))
         if(!readyA || !readyB) return;
         console.log('battle phase!')
         if(finishedA){
@@ -222,6 +222,7 @@ window.addEventListener('DOMContentLoaded',()=>{
 let playerA = new Character(width*.28,height-100,'spiderman');
 let spriteA = new Img(IMAGE_PATH + '/' + playerA.name + '.png', 0,0, width/8).fromCenter().onLoad(()=>{
     playerA.addSprite(spriteA);
+    playerA.team = 'A';
     playerA.addForce(VECTORS.gravity);
     playerA.maxbounds.y = height-20;
     THINGS_TO_UPDATE.push(playerA);
@@ -229,6 +230,7 @@ let spriteA = new Img(IMAGE_PATH + '/' + playerA.name + '.png', 0,0, width/8).fr
 let playerB = new Character(width*.74, height-100, 'thor');
 let spriteB = new Img(IMAGE_PATH + '/' + playerB.name + '.png', 0,0, width/8).fromCenter().onLoad(()=>{
     playerB.addSprite(spriteB);
+    playerB.team = 'B';
     playerB.addForce(VECTORS.gravity);
     playerB.maxbounds.y = height-20;
     THINGS_TO_UPDATE.push(playerB);
@@ -243,23 +245,40 @@ function battle(team1points,team2points,isTeam1finishingblow,isTeam2finishingblo
     let hpA = teamA.hp;
     let hpB = teamB.hp;
 
-
+    if(pA){
     for(let i = 0;i<pA;i++){
         setTimeout(()=>{
             addAction(1,'powerUp',5);
         },(i+1)*1000)
     }
     setTimeout(()=>{
-        THINGS_TO_UPDATE.push(playerA.shoot())
+        let p = playerA.shoot();
+        p.target = playerB;
+        PROJECTILES.push(p)
     },(pA+1)*1000);
+    // if 1 and pB is 1
+    if(pB ===1 && pA === 1 && getRandom(10)<1){
+       //projectiles hit eachother
+    }
+    if(pB === 2){
+       
+    }
+   
+    
+    
+    }
+    if(pB){
     for(let i = 0;i<pB;i++){
         setTimeout(()=>{
             addAction(0,'powerUp',5);
         },(i+1)*1000)
     }
     setTimeout(()=>{
-        THINGS_TO_UPDATE.push(playerB.shoot())
+        let p = playerB.shoot();
+        p.target = playerA;
+        PROJECTILES.push(p)
     },(pB+1)*1000);
+    }
     //TODO set back team hp
 }
 
@@ -289,10 +308,21 @@ function subroutines(){
     }
 }
 
+function handleDamage(player,num){
+    if(player.team === 'A'){
+        teamA.hp -= num;
+        //TODO deal with healthbar
+    }else{
+        teamB.ho -= num;
+    }
+}
+
 
 
 let THINGS_TO_UPDATE = [];
 let ACTION_QUEUE = [];
+let PROJECTILES = [];
+
 function loop() {
     for (let i = THINGS_TO_UPDATE.length - 1; i >= 0; i--) {
         THINGS_TO_UPDATE[i].update();
@@ -305,6 +335,21 @@ function loop() {
         act.target[act.action].call(act.target,act.args);
         if(!act.permanent) ACTION_QUEUE.splice(i,1);
     }
+    for (let i = PROJECTILES.length - 1; i >= 0; i--) {
+        let p = PROJECTILES[i];
+        p.update();
+        if(p.hasHitbox && p.target.hasHitbox && p.hitbox.contains(p.target.hitbox)){
+            console.log("hit")
+            handleDamage(p.target,p.power)
+            p.kill()
+        }else{
+           console.log(p.hasHitbox, p.target.hasHitbox)
+        }
+        if (p.dead) {
+            PROJECTILES.splice(i, 1);
+        }
+    }
+    
     subroutines();
 }
 
