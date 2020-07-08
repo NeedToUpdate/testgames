@@ -12,32 +12,50 @@ LOADED_IMAGES = new ImageLoader(IMAGE_PATH + 'projectiles/', ['web', 'electric',
 LOADED_IMAGES.add('fire', IMAGE_PATH);
 
 let teamA = {
-    wordPool: Array.from(words),
+    wordPool: [],
     word: '',
     solvedWords: [],
     puzzleDiv: {},
     hp: 100,
     hpDiv: {},
+    wordIndex: 0,
 };
 
 
 let teamB = {
-    wordPool: Array.from(words),
+    wordPool: [],
     word: '',
     solvedWords: [],
     puzzleDiv: {},
     hp: 100,
     hpDiv: {},
+    wordIndex: 0,
 };
 
 function setup() {
-    teamA.word = teamA.wordPool.splice(getRandom(teamA.wordPool.length), 1);
-    teamB.word = teamB.wordPool.splice(getRandom(teamA.wordPool.length), 1);
+    teamA.hpDiv = new LoadingBar(width*.21,height*.35,width/5,35,0,100,100)
+    teamB.hpDiv = new LoadingBar(width*.59,height*.35,width/5,35,0,100,100)
+
+    let [a,b] = get2DPSArrays(words);
+    teamA.wordPool = a;
+    teamB.wordPool = b;
+    nextWord(true);
+    nextWord(false);
+    teamA.input = createInputBox('A');
+    teamB.input = createInputBox('B');
+}
+
+function nextWord(isTeamA){
+    let team = isTeamA? teamA : teamB;
+    team.word = team.wordPool[team.wordIndex][0];
+    team.wordIndex++;
+    setUpWord(isTeamA,team.word);
 }
 
 
+
 function setUpWord(team, word) {
-    if (team === 'A') {
+    if (team) {
         if (Object.keys(teamA.puzzleDiv).length === 0) {
             teamA.puzzleDiv = new Puzzle(word, 0, 0, width * .3, height * .3, 'A')
         } else {
@@ -52,6 +70,40 @@ function setUpWord(team, word) {
     }
 }
 
+
+function get2DPSArrays(array){
+    function getCloseToAverageBy(val,exception) {
+        return wordDPS.filter(x=>x!==exception).reduce((a, b) => {
+            let del = Math.abs((b[1] - averageDPS) - val);
+            if (Math.abs((a[1] - averageDPS) - val) < del) {
+                return a
+            } else {
+                return b
+            }
+        }, ((wordDPS[0][1] - averageDPS) - val))
+    }
+    let wordDPS = [];
+    array.forEach(w => {
+        let l = w.length;
+        let uniq = Array.from(new Set(w.split(''))).length;
+        let eff = (l / uniq);
+        let dmg = Math.sqrt(eff) * (l - 1);
+        wordDPS.push([w, ((dmg + l))])
+    });
+    let averageDPS = wordDPS.reduce((a, b) => a + b[1], 0) / wordDPS.length;
+    let newWordOrder = [];
+    let newWordOrder2 = [];
+    let wordDpsTemp = Array.from(wordDPS);
+    for(let i = 0; i<(wordDPS.length); i++){
+        let ch = wordDpsTemp.splice(getRandom(wordDpsTemp.length),1)[0];
+        let cl = getCloseToAverageBy((ch[1] - averageDPS),ch);
+        newWordOrder.push(ch);
+        newWordOrder2.push(cl)
+    }
+    return [newWordOrder,newWordOrder2];
+}
+
+
 function createInputBox(team) {
     if (team === 'A') {
         return teamA.puzzleDiv.createInputBox(width * 0.005, height * 0.5, width * 0.18, height * 0.4)
@@ -60,11 +112,6 @@ function createInputBox(team) {
     }
 }
 
-setUpWord("A", "abccddeee");
-setUpWord("B", "abccddeee");
-
-teamA.input = createInputBox('A');
-teamB.input = createInputBox('B');
 
 function submitLetters() {
     let A = teamA.puzzleDiv;
@@ -348,6 +395,7 @@ function spinShot(isPlayerA, dmg) {
             let p = fighter.shoot();
             p.target = target;
             PROJECTILES.push(p)
+            resolve()
         }, 800)
     })
 }
@@ -467,13 +515,16 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
     let hpA = teamA.hp;
     let hpB = teamB.hp;
 
+    console.log(fbA,fbB)
+
     unIdlePlayers().then(() => {
         playerAState = 'fighting';
         playerBState = 'fighting';
 
-        function doAttack(plyr, val) {
+        function doAttack(plyr, val,isFB) {
+            console.log(plyr,isFB)
             return new Promise(resolve => {
-                if (val) {
+                if (val && !isFB) {
                     if (val === 1) {
                         if (getRandom(10) < 2) {
                             jumpAndHit(plyr, 5).then(() => {
@@ -534,17 +585,32 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                     if (pA >= 4) {
                         //idk
                     }
+                }else if(isFB){
+                    console.log((plyr? 'Team A' : 'Team B') + ' does a final smash' )
+                    resolve();
+                }else if(val===0 && !isFB){
+                    resolve();
+                }else{
+                    console.log('oh no');
                 }
             })
         }
 
         let order = getRandom(2);
+        //TODO finishing blow will be second if first survives, else FB goes first
 
-        doAttack(order,order? pA :pB).then(()=>{
-            doAttack(!order,order? pB : pA).then(()=>{
-                console.log('done!')
+        doAttack(order,order? pA :pB,order?fbA:fbB).then(()=>{
+            doAttack(!order,order? pB : pA,order?fbB:fbA).then(()=>{
+                console.log('done!');
                 playerAState = 'idle';
                 playerBState = 'idle';
+                if(fbA){
+                    nextWord(true)
+                }
+                if(fbB){
+                    nextWord(false)
+                }
+                resetBtn.shape.click()
             })
         })
     //TODO set back team hp
@@ -584,11 +650,21 @@ function subroutines() {
 function handleDamage(player, num) {
     if (player.team === 'A') {
         teamA.hp -= num;
-        console.log('Team A takes ' + num + ' damage');
+        if(teamA.hp<= 0){
+            teamA.hp = 0;
+            playerA.kill()
+        }
+            console.log('Team A takes ' + num + ' damage');
+        teamA.hpDiv.value = teamA.hp;
         //TODO deal with healthbar
     } else {
         console.log('Team B takes ' + num + ' damage');
         teamB.hp -= num;
+        teamB.hpDiv.value = teamB.hp;
+        if(teamB.hp<= 0){
+            teamB.hp = 0;
+            playerB.kill()
+        }
     }
 }
 
@@ -597,7 +673,7 @@ let THINGS_TO_UPDATE = [];
 let ACTION_QUEUE = [];
 let PROJECTILES = [];
 
-function loop() {
+function floop() {
     for (let i = THINGS_TO_UPDATE.length - 1; i >= 0; i--) {
         THINGS_TO_UPDATE[i].update();
         if (THINGS_TO_UPDATE[i].dead) {
@@ -624,4 +700,8 @@ function loop() {
     subroutines();
 }
 
-createFallbackLoopFunction(loop).start();
+setup()
+createFallbackLoopFunction(floop).start();
+
+console.log(teamA.wordPool.map(x=>x[0]))
+console.log(teamB.wordPool.map(x=>x[0]))

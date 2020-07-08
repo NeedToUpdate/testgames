@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
-    <script language="javascript" type="text/javascript"  src="./lib/vector.js"></script>
-    <script language="javascript" type="text/javascript"  src="./lib/drawbase.js"></script>
-    <script language="javascript"  type="text/javascript" src="./lib/matrix.js"></script>
-    <script language="javascript"  type="text/javascript" src="./lib/DomObject.js"></script>
+    <script language="javascript" type="text/javascript" src="./lib/vector.js"></script>
+    <script language="javascript" type="text/javascript" src="./lib/drawbase.js"></script>
+    <script language="javascript" type="text/javascript" src="./lib/matrix.js"></script>
+    <script language="javascript" type="text/javascript" src="./lib/DomObject.js"></script>
     <script src="./wordlist.js"></script>
-    <script language="javascript"  type="text/javascript" src="./lib/PhysicsObject.js"></script>
-    <script language="javascript"  type="text/javascript" src="./lib/Character.js"></script>
+    <script language="javascript" type="text/javascript" src="./lib/PhysicsObject.js"></script>
+    <script language="javascript" type="text/javascript" src="./lib/Character.js"></script>
     <script language="javascript" type="text/javascript" src="./lib/eventemitter.js"></script>
-    <script language="javascript" type="text/javascript"  src="./one/words.js"></script>
-    <script language="javascript" type="text/javascript"  src="./one/sentences.js"></script>
+    <script language="javascript" type="text/javascript" src="./one/words.js"></script>
+    <script language="javascript" type="text/javascript" src="./one/sentences.js"></script>
 </head>
 <body>
 <p id="test"></p>
@@ -21,92 +21,103 @@
 <p id="sentences"></p>
 
 <script>
-   id('words').innerText = 'width: ' + width  + 'px';
-   id('sentences').innerText = 'height: ' + height + 'px';
+    id('words').innerText = 'width: ' + width + 'px';
+    id('sentences').innerText = 'height: ' + height + 'px';
     let p = document.getElementById('test');
 
-    document.addEventListener('touchstart',ev=>{
+    document.addEventListener('touchstart', ev => {
         //ev.touches.length;
-        p.innerText =  'touched with '+ ev.touches.length + ' fingers at: ';
-        Array(ev.touches.length).fill('').forEach((bleh,i)=>{
+        p.innerText = 'touched with ' + ev.touches.length + ' fingers at: ';
+        Array(ev.touches.length).fill('').forEach((bleh, i) => {
             let x = ev.touches[i].clientX;
-            let y =  ev.touches[i].clientY;
-            p.innerText += '\nx: '+ x + '| y:   ' + (y);
-            let tmp = new P('X',x,y-25);
+            let y = ev.touches[i].clientY;
+            p.innerText += '\nx: ' + x + '| y:   ' + (y);
+            let tmp = new P('X', x, y - 25);
             tmp.shape.style.color = 'black'
             tmp.shape.style.fontsize = '2em';
-            setTimeout(()=>{
+            setTimeout(() => {
                 tmp.remove();
-            },1000)
+            }, 1000)
         })
     })
-    
-    
+
+
     let table = document.createElement('table')
     document.body.appendChild(table)
     table.style.border = 'solid black 1px'
     let r = addRow()
-    addCol(r,['Word','l','uniq','Dmg Eff.','FS Dmg.','Total Dmg','dps'])
-    function addRow(){
+    addCol(r, ['Word', 'l', 'uniq', 'Dmg Eff.', 'FS Dmg.', 'Total Dmg', 'dps'])
+
+    function addRow() {
         let row = document.createElement('tr')
         table.appendChild(row)
         return row
-        }
-    function addCol(row, data){
-        for(let i=0; i<data.length;i++){
-        let col = document.createElement('th')
-        col.innerText = data[i]
-        row.appendChild(col)
+    }
+
+    function addCol(row, data) {
+        for (let i = 0; i < data.length; i++) {
+            let col = document.createElement('th')
+            col.innerText = data[i]
+            row.appendChild(col)
         }
         //return col
     }
-    let rn = getRandom(1000)
-    let testw = MASTER_WORD_LIST.slice(rn,rn+25)
-    
-    let calcd = []
-   testw.forEach(w=>{
-      let l = w.length;
-      let temp = []
-      let uniq = w.split('').reduce((a,x)=>{
-          if(temp.includes(x)){
-              return a
-          }else{
-             temp.push(x)
-             return 1 +a
-          }
-      },0)
-      let eff = (l/uniq).toPrecision(3)
-      let dmg = Math.sqrt(eff)*(l-1)
-      let row = addRow()
-      calcd.push([w,((dmg+l)/l)])
-      addCol(row,[w,l,uniq,eff,dmg.toPrecision(3), (dmg+l).toPrecision(3), ((dmg+l)/l).toPrecision(3)])
-   })
-   calcd = calcd.sort((a,b)=>a[1]-b[1])
-   let avg = calcd.reduce((a,b)=>a+b[1],0)/calcd.length
-   
-   console.log(avg.toPrecision(2),calcd.map((x,i)=>(x[1]-avg).toPrecision(2)))
-   
-   function getClosest(val){
-   let index = 0
-   let closest = calcd.reduce((a,b,i)=>{
-       let del = Math.abs((b[1]-avg)-val)
-       if(Math.abs((a[1]-avg)-val)<del){
-          return a
-       }else{
-          index = i
-          return b
-       }
-   },((calcd[0][1]-avg)-val))
-   return closest
-   }
-   
-   let ch = getRandom(calcd)
-   let cl = getClosest((ch[1]-avg)*-1)
-   console.log(cl,cl[1]-avg,ch,ch[1]-avg)
-   
-   let r2 = addRow()
-    
 
+    let rn = getRandom(1000)
+    let words_ = MASTER_WORD_LIST.slice(rn, rn + 26);
+    let wordDPS = [];
+    words_.forEach(w => {
+        let l = w.length;
+        let uniq = Array.from(new Set(w.split(''))).length;
+        let eff = (l / uniq);
+        let dmg = Math.sqrt(1/eff) * (l - 1);
+        wordDPS.push([w, ((dmg + l))])
+        let row = addRow();
+        addCol(row,[w,l,uniq,eff.toPrecision(3), dmg.toPrecision(3), (dmg+l).toPrecision(3), ((dmg+l)/l).toPrecision(3)])
+    });
+
+    function get2DPSArrays(array){
+        function getCloseToAverageBy(val,exception) {
+            return wordDPS.filter(x=>x!==exception).reduce((a, b) => {
+                let del = Math.abs((b[1] - averageDPS) - val);
+                if (Math.abs((a[1] - averageDPS) - val) < del) {
+                    return a
+                } else {
+                    return b
+                }
+            }, ((wordDPS[0][1] - averageDPS) - val))
+        }
+        let wordDPS = [];
+        array.forEach(w => {
+            let l = w.length;
+            let uniq = Array.from(new Set(w.split(''))).length;
+            let eff = (l / uniq);
+            let dmg = Math.sqrt(eff) * (l - 1);
+            wordDPS.push([w, ((dmg + l))])
+        });
+        let averageDPS = wordDPS.reduce((a, b) => a + b[1], 0) / wordDPS.length;
+        let newWordOrder = [];
+        let newWordOrder2 = [];
+        let wordDpsTemp = Array.from(wordDPS);
+        for(let i = 0; i<(wordDPS.length)|0; i++){
+            let ch = wordDpsTemp.splice(getRandom(wordDpsTemp.length),1)[0];
+            let cl = getCloseToAverageBy((ch[1] - averageDPS),ch);
+            wordDPS.splice(wordDPS.indexOf(cl),1);
+            newWordOrder.push(ch);
+            newWordOrder2.push(cl)
+        }
+        return [newWordOrder,newWordOrder2];
+    }
+    let d = []
+    for(let i = 0;i<100; i++){
+        let [a,b] = get2DPSArrays(words_);
+        let c = [];
+        for(let i = 0;i<10;i++){
+            c.push(a[i][1]-b[i][1])
+        }
+        d.push(c.reduce((a,b)=>a+b)/10)
+    }
+    console.log(d.reduce((a,b)=>a+b)/100)
 
 
 
