@@ -86,10 +86,25 @@
    
    console.log(avg.toPrecision(2),calcd.map((x,i)=>(x[1]-avg).toPrecision(2)))
    
+   function getClosest(val){
+   let index = 0
+   let closest = calcd.reduce((a,b,i)=>{
+       let del = Math.abs((b[1]-avg)-val)
+       if(Math.abs((a[1]-avg)-val)<del){
+          return a
+       }else{
+          index = i
+          return b
+       }
+   },((calcd[0][1]-avg)-val))
+   return closest
+   }
    
+   let ch = getRandom(calcd)
+   let cl = getClosest((ch[1]-avg)*-1)
+   console.log(cl,cl[1]-avg,ch,ch[1]-avg)
    
-   
-   
+   let r2 = addRow()
     
 
 
