@@ -361,7 +361,10 @@ function jumpAndHit(isPlayerA, dmg) {
             fighter.jumpWithAngle(isPlayerA ? -45 : 45, 20);
             isPlayerA? fighter.faceRight() : fighter.faceLeft();
             unsub();
-            resolve()
+            unsub = fighter.landing_emitter.subscribe('land', () => {
+                resolve();
+                unsub();
+            })
         })
     })
 }
@@ -376,7 +379,10 @@ function jumpSpinHit(isPlayerA, dmg) {
             fighter.jumpWithAngle(isPlayerA ? -45 : 45, 20);
             isPlayerA? fighter.faceRight() : fighter.faceLeft();
             handleDamage(target, dmg);
-            unsub();
+            unsub = fighter.landing_emitter.subscribe('land', () => {
+                resolve();
+                unsub();
+            })
         })
     })
 }
