@@ -33,10 +33,10 @@ let teamB = {
 };
 
 function setup() {
-    teamA.hpDiv = new LoadingBar(width*.21,height*.35,width/5,35,0,100,100)
-    teamB.hpDiv = new LoadingBar(width*.59,height*.35,width/5,35,0,100,100)
+    teamA.hpDiv = new LoadingBar(width * .21, height * .35, width / 5, 35, 0, 100, 100)
+    teamB.hpDiv = new LoadingBar(width * .59, height * .35, width / 5, 35, 0, 100, 100)
 
-    let [a,b] = get2DPSArrays(words);
+    let [a, b] = get2DPSArrays(words);
     teamA.wordPool = a;
     teamB.wordPool = b;
     nextWord(true);
@@ -45,13 +45,12 @@ function setup() {
     teamB.input = createInputBox('B');
 }
 
-function nextWord(isTeamA){
-    let team = isTeamA? teamA : teamB;
+function nextWord(isTeamA) {
+    let team = isTeamA ? teamA : teamB;
     team.word = team.wordPool[team.wordIndex][0];
     team.wordIndex++;
-    setUpWord(isTeamA,team.word);
+    setUpWord(isTeamA, team.word);
 }
-
 
 
 function setUpWord(team, word) {
@@ -70,10 +69,9 @@ function setUpWord(team, word) {
     }
 }
 
-
-function get2DPSArrays(array){
-    function getCloseToAverageBy(val,exception) {
-        return wordDPS.filter(x=>x!==exception).reduce((a, b) => {
+function get2DPSArrays(array) {
+    function getCloseToAverageBy(val, exception) {
+        return wordDpsTemp2.filter(x => x !== exception).reduce((a, b) => {
             let del = Math.abs((b[1] - averageDPS) - val);
             if (Math.abs((a[1] - averageDPS) - val) < del) {
                 return a
@@ -82,6 +80,7 @@ function get2DPSArrays(array){
             }
         }, ((wordDPS[0][1] - averageDPS) - val))
     }
+
     let wordDPS = [];
     array.forEach(w => {
         let l = w.length;
@@ -94,13 +93,15 @@ function get2DPSArrays(array){
     let newWordOrder = [];
     let newWordOrder2 = [];
     let wordDpsTemp = Array.from(wordDPS);
-    for(let i = 0; i<(wordDPS.length); i++){
-        let ch = wordDpsTemp.splice(getRandom(wordDpsTemp.length),1)[0];
-        let cl = getCloseToAverageBy((ch[1] - averageDPS),ch);
+    let wordDpsTemp2 = Array.from(wordDPS);
+    for (let i = 0; i < (wordDPS.length); i++) {
+        let ch = wordDpsTemp.splice(getRandom(wordDpsTemp.length), 1)[0];
+        let cl = getCloseToAverageBy((ch[1] - averageDPS), ch);
+        wordDpsTemp2.splice(wordDpsTemp2.indexOf(cl), 1);
         newWordOrder.push(ch);
-        newWordOrder2.push(cl)
+        newWordOrder2.push(cl);
     }
-    return [newWordOrder,newWordOrder2];
+    return [newWordOrder, newWordOrder2];
 }
 
 
@@ -112,8 +113,10 @@ function createInputBox(team) {
     }
 }
 
+let BATTLE_IN_PROGRESS = false;
 
 function submitLetters() {
+    if (BATTLE_IN_PROGRESS) return;
     let A = teamA.puzzleDiv;
     let B = teamB.puzzleDiv;
     let letterA = teamA.input.getLetter();
@@ -130,6 +133,7 @@ function submitLetters() {
         return
     }
 
+    BATTLE_IN_PROGRESS = true;
     let finishedA = A.confirmLetter(letterA);
     let finishedB = B.confirmLetter(letterB);
 
@@ -276,7 +280,8 @@ let spriteA = new Img(IMAGE_PATH + '/' + playerA.name + '.png', 0, 0, width / 8)
     playerA.minbounds.x = width * .21;
     playerA.maxbounds.y = height - 20;
     playerA.minbounds.y = height * .2;
-    playerA.powerType = 'web'
+    playerA.powerType = 'web';
+    spriteA.set('zIndex', '10000');
     THINGS_TO_UPDATE.push(playerA);
 });
 let playerB = new Character(width * .72, height - 100, 'thor');
@@ -290,7 +295,9 @@ let spriteB = new Img(IMAGE_PATH + '/' + playerB.name + '.png', 0, 0, width / 8)
     playerB.minbounds.y = height * .2;
     THINGS_TO_UPDATE.push(playerB);
     playerB.faceLeft();
-    playerB.powerType = 'electric'
+    playerB.powerType = 'electric';
+
+    spriteB.set('zIndex', '10000');
 });
 
 function unIdlePlayers() {
@@ -331,6 +338,40 @@ function unIdlePlayers() {
 
 
 //===============FIGHTING FUNCTIONS============
+//===============FIGHTING FUNCTIONS============
+//===============FIGHTING FUNCTIONS============
+//===============FIGHTING FUNCTIONS============
+
+function doShot(player, target) {
+    return new Promise(resolve => {
+        let p = player.shoot();
+        if (!p) {
+            setTimeout(() => {
+                p = player.shoot();
+                if (!p) {
+                    player.powerUp(5);
+                    setTimeout(() => {
+                        doShot(player, target).then(() => {
+                            resolve();
+                        })
+                    }, 500)
+                } else {
+                    p.target = target;
+                    PROJECTILES.push(p);
+                    setTimeout(() => {
+                        resolve()
+                    }, 1000)
+                }
+            }, 500);
+        } else {
+            p.target = target;
+            PROJECTILES.push(p);
+            setTimeout(() => {
+                resolve()
+            }, 1000)
+        }
+    })
+}
 
 
 function regularShoot(isPlayerA, num) {
@@ -343,10 +384,9 @@ function regularShoot(isPlayerA, num) {
             }, (i + 1) * 1000)
         }
         setTimeout(() => {
-            let p = fighter.shoot();
-            p.target = target;
-            PROJECTILES.push(p)
-            resolve()
+            doShot(fighter, target).then(() => {
+                resolve()
+            })
         }, (num + 1) * 1000);
     })
 }
@@ -359,11 +399,11 @@ function jumpAndHit(isPlayerA, dmg) {
         let unsub = fighter.landing_emitter.subscribe('land', () => {
             handleDamage(target, dmg);
             fighter.jumpWithAngle(isPlayerA ? -45 : 45, 20);
-            isPlayerA? fighter.faceRight() : fighter.faceLeft();
+            isPlayerA ? fighter.faceRight() : fighter.faceLeft();
             unsub();
             unsub = fighter.landing_emitter.subscribe('land', () => {
-                resolve();
                 unsub();
+                resolve();
             })
         })
     })
@@ -374,14 +414,15 @@ function jumpSpinHit(isPlayerA, dmg) {
     let target = isPlayerA ? playerB : playerA;
     return new Promise(resolve => {
         fighter.jumpWithAngle(isPlayerA ? 45 : -45, 20);
-        fighter.doSpin(-360, 10);
+        fighter.doSpin(360 * (isPlayerA? -1:1), 10);
         let unsub = playerA.landing_emitter.subscribe('land', () => {
             fighter.jumpWithAngle(isPlayerA ? -45 : 45, 20);
-            isPlayerA? fighter.faceRight() : fighter.faceLeft();
+            isPlayerA ? fighter.faceRight() : fighter.faceLeft();
             handleDamage(target, dmg);
+            unsub();
             unsub = fighter.landing_emitter.subscribe('land', () => {
-                resolve();
                 unsub();
+                resolve();
             })
         })
     })
@@ -391,20 +432,20 @@ function spinShot(isPlayerA, dmg) {
     let fighter = isPlayerA ? playerA : playerB;
     let target = isPlayerA ? playerB : playerA;
     return new Promise(resolve => {
-        fighter.jumpUp(2);
-        fighter.doSpin(-360, 10);
+        fighter.jumpUp(1.2);
+        fighter.doSpin(360 * (isPlayerA? -1:1), 10);
         fighter.powerUp(dmg / 2);
         setTimeout(() => {
             fighter.powerUp(dmg / 2);
-        }, 500);
+        }, 200);
         setTimeout(() => {
-            let p = fighter.shoot();
-            p.target = target;
-            PROJECTILES.push(p)
-            resolve()
+            doShot(fighter, target).then(() => {
+                resolve()
+            })
         }, 800)
     })
 }
+
 
 function rapidFire(isPlayerA, dmg) {
     let fighter = isPlayerA ? playerA : playerB;
@@ -413,9 +454,7 @@ function rapidFire(isPlayerA, dmg) {
         let shootloop = setInterval(() => {
             fighter.powerUp(dmg / 8);
             setTimeout(() => {
-                let p = fighter.shoot();
-                p.target = target;
-                PROJECTILES.push(p);
+                doShot(fighter, target)
             }, 300)
         }, 600);
         setTimeout(() => {
@@ -431,7 +470,7 @@ function pickUpandThrow(isPlayerA, dmg) {
     return new Promise(resolve => {
         fighter.jumpWithAngle(isPlayerA ? 45 : -45, 20);
         let unsub = fighter.landing_emitter.subscribe('land', () => {
-            isPlayerA? fighter.faceLeft() : fighter.faceRight();
+            isPlayerA ? fighter.faceLeft() : fighter.faceRight();
             unsub();
             target.forces = [];
             target.doMoveTo(target.p.copy().sub(new Vector(isPlayerA ? 10 : -10, 50)), 0.5).then(() => {
@@ -440,25 +479,24 @@ function pickUpandThrow(isPlayerA, dmg) {
                     target.jumpWithAngle(isPlayerA ? -80 : 80, 50);
                     setTimeout(() => {
                         handleDamage(target, dmg / 1.5)
-                    }, 100);
+                    }, 200);
                     unsub = target.landing_emitter.subscribe('land', () => {
                         fighter.powerUp(dmg / 3);
-                        setTimeout(() => {
-                            let p = fighter.shoot();
-                            p.target = target;
-                            PROJECTILES.push(p);
-                            setTimeout(() => {
-                                fighter.jumpWithAngle(isPlayerA ? -45 : 45, 20);
-                                isPlayerA? fighter.faceRight() : fighter.faceLeft();
-                                target.jumpWithAngle(isPlayerA ? 45 : -45, 20);
-                                unsub = target.landing_emitter.subscribe('land',()=>{
-                                    resolve();
-                                    unsub()
-                                });
-                                isPlayerA? target.faceLeft() : target.faceRight();
-                            }, 2000)
-                        }, 500);
                         unsub();
+                        setTimeout(() => {
+                            doShot(fighter, target).then(() => {
+                                setTimeout(() => {
+                                    fighter.jumpWithAngle(isPlayerA ? -45 : 45, 20);
+                                    isPlayerA ? fighter.faceRight() : fighter.faceLeft();
+                                    target.jumpWithAngle(isPlayerA ? 45 : -45, 20);
+                                    unsub = target.landing_emitter.subscribe('land', () => {
+                                        isPlayerA ? target.faceLeft() : target.faceRight();
+                                        unsub();
+                                        resolve();
+                                    });
+                                }, 300)
+                            });
+                        }, 500);
                     })
                 }, 1000);
             })
@@ -471,28 +509,24 @@ function spinHitAndShoot(isPlayerA, dmg) {
     let target = isPlayerA ? playerB : playerA;
     return new Promise(resolve => {
         fighter.jumpWithAngle(isPlayerA ? 45 : -45, 20);
-        fighter.doSpin(-360, 10);
+        fighter.doSpin(360 * (isPlayerA? -1:1), 10);
         let unsub = fighter.landing_emitter.subscribe('land', () => {
             handleDamage(target, dmg / 3);
-            fighter.jumpWithAngle(isPlayerA ? -45 : 45, 10);
-            isPlayerA? fighter.faceRight() : fighter.faceLeft();
+            fighter.jumpWithAngle(isPlayerA ? -45 : 45, 15);
+            isPlayerA ? fighter.faceRight() : fighter.faceLeft();
             unsub();
             fighter.powerUp(dmg / 3);
             setTimeout(() => {
-                let p = fighter.shoot();
-                p.target = target;
-                PROJECTILES.push(p);
-                setTimeout(() => {
+                doShot(fighter,target).then(()=>{
                     fighter.jumpWithAngle(isPlayerA ? -45 : 45, 20);
-                    isPlayerA? fighter.faceRight() : fighter.faceLeft();
+                    isPlayerA ? fighter.faceRight() : fighter.faceLeft();
                     fighter.powerUp(dmg / 3);
                     setTimeout(() => {
-                        let p = fighter.shoot();
-                        p.target = target;
-                        PROJECTILES.push(p);
-                        resolve();
+                        doShot(fighter, target).then(() => {
+                            resolve()
+                        })
                     }, 500)
-                }, 2000)
+                })
             }, 500)
         })
     })
@@ -513,6 +547,105 @@ function throwBomb(isPlayerA, dmg) {
     })
 }
 
+
+//================ FINAL SMASH FUNCS =========================
+//================ FINAL SMASH FUNCS =========================
+//================ FINAL SMASH FUNCS =========================
+//================ FINAL SMASH FUNCS =========================
+
+function goGiantAndStomp(isPlayerA,val){
+    let fighter = isPlayerA ? playerA : playerB;
+    let target = isPlayerA ? playerB : playerA;
+    let team = isPlayerA ? teamA : teamB;
+    return new Promise(resolve => {
+        fighter.y -= height;
+        fighter.sprite.addClass('slowsmoothed');
+        fighter.width *=5;
+        fighter.minbounds.y = -1000 ;
+        fighter.minbounds.x = 0;
+        fighter.maxbounds.x = width;
+        setTimeout(()=>{
+            team.puzzleDiv.addClass('smoothed');
+            team.puzzleDiv.inputBox.addClass('smoothed');
+            team.puzzleDiv.rotateTo(90* (isPlayerA? -1 : 1));
+            team.puzzleDiv.x -= width*.15*(isPlayerA? 1 : -1);
+            team.puzzleDiv.inputBox.x -= width*.15* (isPlayerA? 1 : -1);
+        },3000);
+        setTimeout(()=>{
+            fighter.sprite.removeClass('slowsmoothed');
+            isPlayerA? fighter.jumpRight() : fighter.jumpLeft();
+            let unsub = fighter.landing_emitter.subscribe('land',()=>{
+                unsub();
+                target.height = '10px';
+                target.sprite.addClass('smoothed');
+                handleDamage(isPlayerA,val);
+                setTimeout(()=>{
+                    fighter.sprite.addClass('smoothed');
+                    fighter.width /=5;
+                    fighter.minbounds.y = height * .2;
+                    fighter.minbounds.x = width * .21;
+                    fighter.maxbounds.x = width * .79;
+                    setTimeout(()=>{
+                        fighter.jumpWithAngle(45* (isPlayerA? -1 : 1),20);
+                        unsub = fighter.landing_emitter.subscribe('land',()=>{
+                            fighter.sprite.removeClass('smoothed');
+                            team.puzzleDiv.removeClass('smoothed');
+                            team.puzzleDiv.inputBox.removeClass('smoothed');
+                            unsub();
+                            setTimeout(()=>{
+                                target.height = '';
+                                target.sprite.removeClass('smoothed');
+                                NEEDS_RESET = true;
+                                resolve();
+                            },1000)
+                        })
+                    },1100)
+                },3000)
+            });
+        },6000);
+
+    });
+}
+
+function throwMeteor(isPlayerA,val){
+    let fighter = isPlayerA ? playerA : playerB;
+    let target = isPlayerA ? playerB : playerA;
+    return new Promise(resolve => {
+
+    });
+}
+
+function runBackAndSquish(isPlayerA,val){
+    let fighter = isPlayerA ? playerA : playerB;
+    let target = isPlayerA ? playerB : playerA;
+    return new Promise(resolve => {
+
+    });
+}
+
+
+
+function marioHop(isPlayerA,val){
+    let fighter = isPlayerA ? playerA : playerB;
+    let target = isPlayerA ? playerB : playerA;
+    return new Promise(resolve => {
+
+    });
+}
+
+
+
+function explode(isPlayerA,val){
+    let fighter = isPlayerA ? playerA : playerB;
+    let target = isPlayerA ? playerB : playerA;
+    return new Promise(resolve => {
+
+    });
+}
+
+
+let NEEDS_RESET = false;
+
 function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishingblow) {
     let pA = team1points;
     let pB = team2points;
@@ -521,109 +654,143 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
     let hpA = teamA.hp;
     let hpB = teamB.hp;
 
-    console.log(fbA,fbB)
-
-    unIdlePlayers().then(() => {
-        playerAState = 'fighting';
-        playerBState = 'fighting';
-
-        function doAttack(plyr, val,isFB) {
-            console.log(plyr,isFB)
-            return new Promise(resolve => {
-                if (val && !isFB) {
-                    if (val === 1) {
-                        if (getRandom(10) < 2) {
-                            jumpAndHit(plyr, 5).then(() => {
-                                resolve()
-                            })
-                        } else if (pB === 1 && getRandom(10) < 0) {
-                            // if 1 and pB is 1
-                            //projectiles hit eachother
-                        } else {
-                            regularShoot(plyr, val).then(() => {
-                                resolve()
-                            })
-                        }
+    function doAttack(plyr, val, isFB, oppVal, oppFB) {
+        return new Promise(resolve => {
+            if (val && !isFB) {
+                if (val === 1) {
+                    if (getRandom(10) < 2) {
+                        jumpAndHit(plyr, 5).then(() => {
+                            resolve()
+                        })
+                    } else if (oppVal === 1 && getRandom(10) < 0) {
+                        // if 1 and pB is 1
+                        //projectiles hit eachother
+                    } else {
+                        regularShoot(plyr, val).then(() => {
+                            resolve()
+                        })
                     }
-                    if (pA === 2) {
-                        if (getRandom(10) < 3) {
-                            jumpSpinHit(plyr, 10).then(() => {
-                                resolve()
-                            })
-                        } else if (getRandom(10) < 3) {
-                            spinShot(plyr, 10).then(() => {
-                                resolve()
-                            })
-                        } else if (pB === 2 && getRandom(10) < 0) {
-                            // if 2 and pB is 2
-                            //projectiles hit eachother
-                        } else if (getRandom(10 < 3)) {
-                            throwBomb(plyr, 10).then(() => {
-                                resolve()
-                            })
-                        } else {
-                            regularShoot(plyr, val).then(() => {
-                                resolve()
-                            })
-                        }
-                    }
-                    if (pA === 3) {
-                        if (getRandom(10) < 0) {
-                            rapidFire(plyr, 15).then(() => {
-                                resolve()
-                            });
-                        } else if (getRandom(10) < 10) {
-                            //pick up and throw
-                            pickUpandThrow(plyr, 15).then(() => {
-                                resolve()
-                            })
-                        } else if (getRandom(10) < 3) {
-                            spinHitAndShoot(plyr, 15).then(() => {
-                                resolve()
-                            });
-                        } else {
-                            regularShoot(plyr, val).then(() => {
-                                resolve()
-                            })
-                        }
-                    }
-                    //is there gonna be a 4+?
-                    if (pA >= 4) {
-                        //idk
-                    }
-                }else if(isFB){
-                    console.log((plyr? 'Team A' : 'Team B') + ' does a final smash' )
-                    resolve();
-                }else if(val===0 && !isFB){
-                    resolve();
-                }else{
-                    console.log('oh no');
                 }
-            })
-        }
-
-        let order = getRandom(2);
-        //TODO finishing blow will be second if first survives, else FB goes first
-
-        doAttack(order,order? pA :pB,order?fbA:fbB).then(()=>{
-            doAttack(!order,order? pB : pA,order?fbB:fbA).then(()=>{
-                console.log('done!');
-                playerAState = 'idle';
-                playerBState = 'idle';
-                if(fbA){
-                    nextWord(true)
+                if (val === 2) {
+                    if (getRandom(10) < 3) {
+                        jumpSpinHit(plyr, 10).then(() => {
+                            resolve()
+                        })
+                    } else if (getRandom(10) < 3) {
+                        spinShot(plyr, 10).then(() => {
+                            resolve()
+                        })
+                    } else if (oppVal === 2 && getRandom(10) < 0) {
+                        // if 2 and pB is 2
+                        //projectiles hit eachother
+                    } else if (getRandom(10 < 3)) {
+                        throwBomb(plyr, 10).then(() => {
+                            resolve()
+                        })
+                    } else {
+                        regularShoot(plyr, val).then(() => {
+                            resolve()
+                        })
+                    }
                 }
-                if(fbB){
-                    nextWord(false)
+                if (val === 3) {
+                    if (getRandom(10) < 3) {
+                        rapidFire(plyr, 15).then(() => {
+                            resolve()
+                        });
+                    } else if (getRandom(10) < 3) {
+                        //pick up and throw
+                        pickUpandThrow(plyr, 15).then(() => {
+                            resolve()
+                        })
+                    } else if (getRandom(10) < 3) {
+                        spinHitAndShoot(plyr, 15).then(() => {
+                            resolve()
+                        });
+                    } else {
+                        regularShoot(plyr, val).then(() => {
+                            resolve()
+                        })
+                    }
                 }
-                resetBtn.shape.click()
-            })
+                //is there gonna be a 4+?
+                if (val >= 4) {
+                    //idk
+                }
+            } else if (isFB) {
+                console.log((plyr ? 'Team A' : 'Team B') + ' does a final smash');
+                if(getRandom(10)<10){
+                    goGiantAndStomp(plyr,20).then(()=>{
+                        resolve()
+                    })
+                }
+            } else if (val === 0 && !isFB) {
+                resolve();
+            } else {
+                console.log('oh no');
+            }
         })
-    //TODO set back team hp
+    }
+
+    return new Promise(resolve => {
+            unIdlePlayers().then(() => {
+                playerAState = 'fighting';
+                playerBState = 'fighting';
+                let isPlyrA = getRandom(2);
+                //TODO finishing blow will be second if first survives, else FB goes first
+
+                doAttack(isPlyrA, isPlyrA ? pA : pB, isPlyrA ? fbA : fbB, isPlyrA ? pB : pA, isPlyrA ? fbB : fbA).then(() => {
+                    doAttack(!isPlyrA, isPlyrA ? pB : pA, isPlyrA ? fbB : fbA, isPlyrA ? pA : pB, isPlyrA ? fbA : fbB).then(() => {
+                        console.log('done!');
+                        playerA.jumpWithAngle(-70,10);
+                        playerB.jumpWithAngle(70,10);
+                        playerAState = 'idle';
+                        playerBState = 'idle';
+                        if (fbA) {
+                            nextWord(true)
+                        }
+                        if (fbB) {
+                            nextWord(false)
+                        }
+                        resetBtn.shape.click()
+                        BATTLE_IN_PROGRESS = false;
+                        if(NEEDS_RESET){
+                            resetAll();
+                        }
+                        resolve();
+                    })
+                })
+            });
+        }
+    )
 }
 
-)
+function resetAll(){
+    teamA.puzzleDiv.rotateTo(0);
+    teamB.puzzleDiv.rotateTo(0);
+    teamA.puzzleDiv.x = 0;
+    teamA.puzzleDiv.y = 0;
+    teamB.puzzleDiv.x = width*.7 -6;
+    teamB.puzzleDiv.y = 0;
+    teamA.puzzleDiv.inputBox.x = width * 0.005;
+    teamA.puzzleDiv.inputBox.y = height * 0.5;
+    teamA.puzzleDiv.inputBox.rotateTo() ;
+    teamA.puzzleDiv.removeClass('smoothed');
+    teamB.puzzleDiv.inputBox.x = width * 0.81;
+    teamB.puzzleDiv.inputBox.y = height * 0.5;
+    teamB.puzzleDiv.inputBox.rotateTo() ;
+    teamB.puzzleDiv.removeClass('smoothed');
 
+    playerA.x = width * .28;
+    playerA.y = height - 100;
+    playerB.x = width * .72;
+    playerB.y = height - 100;
+
+    playerA.shoot();
+    playerB.shoot();
+
+    playerAState = 'idle';
+    playerBState = 'idle';
 }
 
 function addAction(isA, action, args, isPerm) {
@@ -655,23 +822,28 @@ function subroutines() {
 
 function handleDamage(player, num) {
     if (player.team === 'A') {
+        console.log('Team A takes ' + num + ' damage');
         teamA.hp -= num;
-        if(teamA.hp<= 0){
+        if (teamA.hp <= 0) {
             teamA.hp = 0;
             playerA.kill()
         }
-            console.log('Team A takes ' + num + ' damage');
         teamA.hpDiv.value = teamA.hp;
-        //TODO deal with healthbar
     } else {
         console.log('Team B takes ' + num + ' damage');
         teamB.hp -= num;
-        teamB.hpDiv.value = teamB.hp;
-        if(teamB.hp<= 0){
+        if (teamB.hp <= 0) {
             teamB.hp = 0;
             playerB.kill()
         }
+        teamB.hpDiv.value = teamB.hp;
     }
+    MAINARENA.border = 'solid red 5px';
+    MAINARENA.x -= 2;
+    setTimeout(()=>{
+        MAINARENA.x +=2;
+        MAINARENA.border = 'solid black 5px'
+    },50)
 }
 
 
@@ -706,8 +878,17 @@ function floop() {
     subroutines();
 }
 
-setup()
+setup();
 createFallbackLoopFunction(floop).start();
 
-console.log(teamA.wordPool.map(x=>x[0]))
-console.log(teamB.wordPool.map(x=>x[0]))
+console.log(teamA.wordPool.map(x => x[0]));
+console.log(teamB.wordPool.map(x => x[0]));
+
+let testing = false;
+function test() {
+    let [a, b] = [getRandom(4), getRandom(4)];
+    console.log('Battle ! with (' + a + ',' + b + ')');
+    battle(a, b).then(()=>{
+        if(testing)test()
+    })
+}

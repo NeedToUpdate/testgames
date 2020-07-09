@@ -196,3 +196,10 @@ body{
     background-color: lightblue;
     width: 75px;
 }
+
+.smoothed{
+    transition: 1s
+}
+.slowsmoothed{
+    transition: 2s
+}
