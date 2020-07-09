@@ -34,10 +34,10 @@ let teamB = {
 
 class Glow extends Div{
     constructor(x,y,color){
-        super(x,y,1,1,0)
-        this.glow = color
-        this.set('zIndex','1000')
-        this.color = color
+        super(x,y,1,1,0);
+        this.glow = color;
+        this.set('zIndex','1000');
+        this.color = color;
         this.set('boxShadow', '0 0 10px 10px ' + this.glow)
     }
 }
@@ -181,14 +181,41 @@ function submitLetters() {
                 } else {
                     mover = charA;
                 }
-                mover.doMoveTo(A.letterDivs[indices[i]].p, 0.5).then(() => {
+                let target = A.letterDivs[indices[i]].p;
+                mover.doMoveTo(target, 0.5).then(() => {
+                    let glow = new Character(target.x,target.y, 'cyan');
+                    glow.addSprite(new Glow(0,0,'cyan'));
+                    glow.addForce(new Vector(1,0));
+                    THINGS_TO_UPDATE.push(glow);
+                    THINGS_TO_KILL.push(glow);
                     mover.kill();
                     A.revealLetter(indices[i]);
-                    if (i === numA - 1) {
-                        readyA = true;
-                        doBattle()
-                        A.flash();
-                    }
+                    glow.doMoveTo(playerA.p,0.5).then(()=>{
+                        glow.kill();
+                        if (i === numA - 1) {
+                            A.flash();
+                            if (finishedA) {
+                                A.letterDivs.forEach((x,k) => {
+                                    x.color = 'limegreen';
+                                    let glow = new Character(x.x,x.y, 'cyan');
+                                    glow.addSprite(new Glow(0,0,'cyan'));
+                                    glow.addForce(new Vector(1,0));
+                                    THINGS_TO_UPDATE.push(glow);
+                                    THINGS_TO_KILL.push(glow);
+                                    glow.doMoveTo(playerA.p,0.5).then(()=>{
+                                        glow.kill();
+                                        if (k === A.letterDivs.length-1) {
+                                            readyA = true;
+                                            doBattle();
+                                        }
+                                    });
+                                })
+                            }else{
+                                readyA = true;
+                                doBattle();
+                            }
+                        }
+                    });
                 });
             }, 1000)
         }
@@ -222,15 +249,41 @@ function submitLetters() {
                 } else {
                     mover = charB;
                 }
-
-                mover.doMoveTo(B.letterDivs[indices[i]].p.copy().add(B.p), 0.5).then(() => {
+                let target = B.letterDivs[indices[i]].p.copy().add(B.p);
+                mover.doMoveTo(target, 0.5).then(() => {
+                    let glow = new Character(target.x,target.y, 'orange');
+                    glow.addSprite(new Glow(0,0,'orange'));
+                    glow.addForce(new Vector(-1,0));
+                    THINGS_TO_UPDATE.push(glow);
+                    THINGS_TO_KILL.push(glow);
                     mover.kill();
                     B.revealLetter(indices[i]);
-                    if (i === numB - 1) {
-                        readyB = true
-                        B.flash()
-                        doBattle()
-                    }
+                    glow.doMoveTo(playerB.p,0.5).then(()=>{
+                        glow.kill();
+                        if (i === numB - 1) {
+                            B.flash();
+                            if (finishedB) {
+                                B.letterDivs.forEach((x,k) => {
+                                    x.color = 'limegreen';
+                                    let glow = new Character(x.x,x.y, 'orange');
+                                    glow.addSprite(new Glow(0,0,'orange'));
+                                    glow.addForce(new Vector(-1,0));
+                                    THINGS_TO_UPDATE.push(glow);
+                                    THINGS_TO_KILL.push(glow);
+                                    glow.doMoveTo(playerB.p,0.5).then(()=>{
+                                        glow.kill();
+                                        if (k === B.letterDivs.length-1) {
+                                            readyB = true;
+                                            doBattle();
+                                        }
+                                    });
+                                })
+                            }else{
+                                readyB = true;
+                                doBattle();
+                            }
+                        }
+                    });
                 });
             }, 1000)
         }
@@ -247,20 +300,16 @@ function submitLetters() {
         }, 1000);
     }
 
+    if (finishedB) {
+        B.letterDivs.forEach(x => {
+            x.color = 'limegreen';
+        })
+    }
     function doBattle() {
         //console.log('Battle is called' + (readyA? '': ' but Team A is not Ready') +(readyB? '' : ' but team B is not Ready'))
         if (!readyA || !readyB) return;
         console.log('battle phase!')
-        if (finishedA) {
-            A.letterDivs.forEach(x => {
-                x.color = 'limegreen';
-            })
-        }
-        if (finishedB) {
-            B.letterDivs.forEach(x => {
-                x.color = 'limegreen';
-            })
-        }
+
         battle(numA, numB, finishedA, finishedB);
     }
 }
@@ -427,7 +476,7 @@ function jumpSpinHit(isPlayerA, dmg) {
     return new Promise(resolve => {
         fighter.jumpWithAngle(isPlayerA ? 45 : -45, 20);
         fighter.doSpin(360 * (isPlayerA? -1:1), 10);
-        let unsub = playerA.landing_emitter.subscribe('land', () => {
+        let unsub = fighter.landing_emitter.subscribe('land', () => {
             fighter.jumpWithAngle(isPlayerA ? -45 : 45, 20);
             isPlayerA ? fighter.faceRight() : fighter.faceLeft();
             handleDamage(target, dmg);
@@ -904,6 +953,16 @@ function floop() {
     subroutines();
 }
 
+let resetAllBtn = new Circle(0,0,20)
+resetAllBtn.color = 'transparent';
+resetAllBtn.set('zIndex', '10000');
+resetAllBtn.shape.addEventListener('click',()=>{
+    console.log('emergency reset');
+    resetAll()
+});
+
+
+
 setup();
 createFallbackLoopFunction(floop).start();
 
@@ -919,9 +978,3 @@ function test() {
     })
 }
 
-
-let q = new Glow(100,100,'pink')
-let glowy = new Character(100,100,'g')
-glowy.addSprite(q)
-glowy.doMoveTo(new Vector(500,400),0.05)
-THINGS_TO_UPDATE.push(glowy)
