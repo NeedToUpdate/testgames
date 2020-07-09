@@ -32,11 +32,18 @@ MAINARENA.set('backgroundSize', 'cover');
 MAINARENA.set('backgroundRepeat', 'no-repeat');
 MAINARENA.set('backgroundPosition', 'center');
 
-let round_circle = new Circle(width/2 +40,80,20).asOutline('black',3).fromCenter();
-let round_circleA1 = new Circle(width/2 -20 ,65,12).asOutline('black',3).fromCenter();
-let round_circleA2 = new Circle(width/2 -55,65,12).asOutline('black',3).fromCenter();
-let round_circleB1 = new Circle(width/2 +67,65,12).asOutline('black',3).fromCenter();
-let round_circleB2 = new Circle(width/2 +102,65,12).asOutline('black',3).fromCenter();
+let bigR = width/35;
+let smallR = width/45
+let rc = new Circle(width/2 +bigR*2 +6, 30 + bigR,bigR).asOutline('black',3).fromCenter();
+let rcA1 = new Circle(width/2 + bigR*2 - smallR - 20,30+ smallR,smallR).asOutline('black',3).fromCenter();
+let rcA2 = new Circle(width/2 + bigR*2 - smallR*2 - 40,30+ smallR,smallR).asOutline('black',3).fromCenter();
+let rcB1 = new Circle(width/2 + bigR*2 + smallR + 20,30+ smallR,smallR).asOutline('black',3).fromCenter();
+let rcB2 = new Circle(width/2 + bigR*2 + smallR*2 + 40,30+ smallR,smallR).asOutline('black',3).fromCenter();
+
+
+let circles = [rcA1,rcA2,rc,rcB1,rcB2];
+
+
 
 let teamA = {
     wordPool: [],
@@ -702,7 +709,7 @@ function goGiantAndStomp(isPlayerA,val){
                 unsub();
                 target.height = '10px';
                 target.sprite.addClass('smoothed');
-                handleDamage(isPlayerA,val);
+                handleDamage(target,val);
                 setTimeout(()=>{
                     fighter.sprite.addClass('smoothed');
                     fighter.width /=5;
