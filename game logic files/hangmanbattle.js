@@ -1,4 +1,28 @@
 let IMAGE_PATH = '../images/'
+
+let characters = [
+    'cat',
+    'spiderman', 'ultraman', 'ironman',
+    'peppapig', 'spongebob', 'monkey',
+    'tiger', 'shark', 'cinderella',
+    'elsa', 'ariel', 'deadfish', 'mrkrabs', 'thanos', 'pikachu', 'drstrange',
+    'superman', 'genie', 'simba', 'captainmarvel', 'mewtwo', 'sailormoon', 'venom', 'thor',
+    'ultraman2', 'ultraman3', 'olaf', 'hulk', 'gundam', 'optimus', 'snowwhite', 'deadpool',
+    'goku', 'ash', 'charizard', 'captainamerica', 'nakoruru', 'mario', 'emmet', 'wyldstyle',
+    'tree','link', 'isabelle',
+];
+let powers = [
+    'blueenergy',
+    'web', 'bluebeam', 'fire',
+    'pinkenergy', 'krabbypatty', 'banana',
+    'fire', 'water', 'blueenergy',
+    'ice', 'water', 'nuke', 'water', 'blackenergy', 'electric', 'magic',
+    'fire', 'magic', 'magic', 'electric', 'magic', 'pinkenergy', 'blackenergy', 'electric',
+    'magic', 'electric', 'ice', 'rock', 'bluebeam', 'bullet', 'bluebeam', 'bullet',
+    'bluebeam', 'fire', 'fire', 'fire', 'fire', 'fire', 'legored', 'blackenergy',
+    'apple','blueenergy','water',
+];
+
 document.body.style.backgroundColor = 'lightgrey'
 let MAINARENA = new Rectangle(width * .2, height * .2, width * .6 - 5, height * .8).asOutline('black', 5);
 let background = 'background' + getRandom(20).toString() + '.jpg';
@@ -8,8 +32,11 @@ MAINARENA.set('backgroundSize', 'cover');
 MAINARENA.set('backgroundRepeat', 'no-repeat');
 MAINARENA.set('backgroundPosition', 'center');
 
-LOADED_IMAGES = new ImageLoader(IMAGE_PATH + 'projectiles/', ['web', 'electric', 'fire', 'dynamite'].map(x => x + '_projectile'));
-LOADED_IMAGES.add('fire', IMAGE_PATH);
+let round_circle = new Circle(width/2 +40,80,20).asOutline('black',3).fromCenter();
+let round_circleA1 = new Circle(width/2 -20 ,65,12).asOutline('black',3).fromCenter();
+let round_circleA2 = new Circle(width/2 -55,65,12).asOutline('black',3).fromCenter();
+let round_circleB1 = new Circle(width/2 +67,65,12).asOutline('black',3).fromCenter();
+let round_circleB2 = new Circle(width/2 +102,65,12).asOutline('black',3).fromCenter();
 
 let teamA = {
     wordPool: [],
@@ -42,6 +69,36 @@ class Glow extends Div{
     }
 }
 
+function create_player(num) {
+    let chosennum = num || getRandom(characters.length);
+    if (num === 0) {
+        chosennum = 0;
+    }
+    let char_name = characters[chosennum];
+    let powr_name = powers[chosennum];
+    if (char_name === 'deadfish') {
+        powr_name = 'nuke';
+    }
+    if (char_name === 'snowwhite') {
+        powr_name = 'bluebird';
+    }
+    if (char_name === 'ash') {
+        powr_name = 'poke';
+    }
+    if (char_name === 'captainamerica') {
+        powr_name = 'cashield';
+    }
+    if (char_name === 'nakoruru') {
+        powr_name = 'mamahaha'
+    }
+    if (char_name === 'wyldstyle') {
+        powr_name = 'blacklego'
+    }
+    if (char_name === 'link') {
+        powr_name = 'zeldabomb'
+    }
+    return {num: chosennum, name: char_name, power: powr_name};
+}
 
 
 function setup() {
@@ -331,8 +388,12 @@ window.addEventListener('DOMContentLoaded', () => {
     goBtn.attach(id('checkmark').content.cloneNode(true));
 });
 
+let pAname = create_player(getRandom(characters.length))
+let pBname = create_player(getRandom(characters.length))
 
-let playerA = new Character(width * .28, height - 100, 'spiderman');
+LOADED_IMAGES = new ImageLoader(IMAGE_PATH + 'projectiles/', [pAname.power,pBname.power, 'fire', 'dynamite'].map(x => x + '_projectile'));
+LOADED_IMAGES.add('fire', IMAGE_PATH);
+let playerA = new Character(width * .28, height - 100, pAname.name);
 let spriteA = new Img(IMAGE_PATH + '/' + playerA.name + '.png', 0, 0, width / 8).fromCenter().onLoad(() => {
     playerA.addSprite(spriteA);
     playerA.team = 'A';
@@ -341,11 +402,12 @@ let spriteA = new Img(IMAGE_PATH + '/' + playerA.name + '.png', 0, 0, width / 8)
     playerA.minbounds.x = width * .21;
     playerA.maxbounds.y = height - 20;
     playerA.minbounds.y = height * .2;
-    playerA.powerType = 'web';
+    playerA.powerType = pAname.power;
     spriteA.set('zIndex', '10000');
     THINGS_TO_UPDATE.push(playerA);
+    playerA.addDeathImage(LOADED_IMAGES.fire.cloneNode());
 });
-let playerB = new Character(width * .72, height - 100, 'thor');
+let playerB = new Character(width * .72, height - 100, pBname.name);
 let spriteB = new Img(IMAGE_PATH + '/' + playerB.name + '.png', 0, 0, width / 8).fromCenter().onLoad(() => {
     playerB.addSprite(spriteB);
     playerB.team = 'B';
@@ -356,8 +418,8 @@ let spriteB = new Img(IMAGE_PATH + '/' + playerB.name + '.png', 0, 0, width / 8)
     playerB.minbounds.y = height * .2;
     THINGS_TO_UPDATE.push(playerB);
     playerB.faceLeft();
-    playerB.powerType = 'electric';
-
+    playerB.powerType = pBname.power;
+    playerB.addDeathImage(LOADED_IMAGES.fire.cloneNode());
     spriteB.set('zIndex', '10000');
 });
 
@@ -899,6 +961,7 @@ function handleDamage(player, num) {
     if (player.team === 'A') {
         console.log('Team A takes ' + num + ' damage');
         teamA.hp -= num;
+        playerA.jumpFwd(-0.3);
         if (teamA.hp <= 0) {
             teamA.hp = 0;
             playerA.kill()
@@ -907,6 +970,7 @@ function handleDamage(player, num) {
     } else {
         console.log('Team B takes ' + num + ' damage');
         teamB.hp -= num;
+        playerB.jumpFwd(-0.3);
         if (teamB.hp <= 0) {
             teamB.hp = 0;
             playerB.kill()
@@ -953,7 +1017,7 @@ function floop() {
     subroutines();
 }
 
-let resetAllBtn = new Circle(0,0,20)
+let resetAllBtn = new Circle(0,0,20);
 resetAllBtn.color = 'transparent';
 resetAllBtn.set('zIndex', '10000');
 resetAllBtn.shape.addEventListener('click',()=>{
@@ -978,3 +1042,8 @@ function test() {
     })
 }
 
+//TODO =================== MAIN =================
+//DONE add jumpBack when getting hit
+//TODO add 3 rounds
+//TODO add player select screen
+//TODO add free for all

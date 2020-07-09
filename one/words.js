@@ -27,6 +27,7 @@
 //let words = ['t-shirt','skirt','tank top','pants','flip flops','dress','swimsuit','sunglasses','trunks','sandals']
 //let words = ['ten','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety','hundred','thousand'];
 //let words = ['stones','bones','sticks','quill','ink','brush','pencil','pen','marker','crayon'];
+let words = ['stones','bones','sticks','quill','feather','ink','brush','pencil','pen'];
 //let words = ['mirror','lamp','laptop','wardrobe','chair','rug','football','alarm clock','picture','bed'];
 //let words = ['first', 'second', 'third', 'fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth','thirteenth',
    // 'fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth'];
@@ -126,7 +127,7 @@
 //let words = ['fast','slow','happy','sad','tired','wet','open','heavy','dirty','tall','scared','hot','loud','bright','sticky','scary','beautiful','ugly','sweet','sharp'];
 //let words = ['sore','throat','cough','backache','cold','fever','headache','stomach','ache','earache'];
 //let words = ['coronavirus','mask','temperature','disinfection','alcohol','circulation','fever','cough','soap','sneeze'];
-let words = ['kangaroo','jacket','monster','monkey','octopus','lake','kite','piano','penguin','pig','lemon','queen']
+//let words = ['kangaroo','jacket','monster','monkey','octopus','lake','kite','piano','penguin','pig','lemon','queen']
 
 let difficulty = 0
 

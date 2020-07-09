@@ -357,7 +357,7 @@
         projectiles.forEach(projectile => {
             projectile.update();
             if (projectile.owner === 'player') {
-                if (projectile.hitbox.contains(monster.hitbox)) {
+                if (projectile.hitbox.contains(monster.hitbox.vMiddle)) {
                     if (!monster.isShielded) {
                         monster.health -= projectile.power;
                         //console.log(monster.health)
@@ -376,7 +376,7 @@
                 if (projectile.p.x > width) projectile.kill();
             }
             if (projectile.owner === 'monster') {
-                if (projectile.hitbox.contains(player.hitbox)) {
+                if (projectile.hitbox.contains(player.hitbox.vMiddle)) {
                     if (!player.isShielded) {
                         player.health -= projectile.power;
                     }
