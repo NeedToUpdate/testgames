@@ -322,7 +322,8 @@ function submitLetters() {
                             if (finishedB) {
                                 B.letterDivs.forEach((x,k) => {
                                     x.color = 'limegreen';
-                                    let glow = new Character(x.x,x.y, 'orange');
+									let trgt = x.p.copy().add(B.p)
+                                    let glow = new Character(trgt.x,trgt.y, 'orange');
                                     glow.addSprite(new Glow(0,0,'orange'));
                                     glow.addForce(new Vector(-1,0));
                                     THINGS_TO_UPDATE.push(glow);
