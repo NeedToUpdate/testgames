@@ -32,6 +32,18 @@ let teamB = {
     wordIndex: 0,
 };
 
+class Glow extends Div{
+    constructor(x,y,color){
+        super(x,y,1,1,0)
+        this.glow = color
+        this.set('zIndex','1000')
+        this.color = color
+        this.set('boxShadow', '0 0 10px 10px ' + this.glow)
+    }
+}
+
+
+
 function setup() {
     teamA.hpDiv = new LoadingBar(width * .21, height * .35, width / 5, 35, 0, 100, 100)
     teamB.hpDiv = new LoadingBar(width * .59, height * .35, width / 5, 35, 0, 100, 100)
@@ -736,8 +748,22 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
             unIdlePlayers().then(() => {
                 playerAState = 'fighting';
                 playerBState = 'fighting';
-                let isPlyrA = getRandom(2);
-                //TODO finishing blow will be second if first survives, else FB goes first
+                let isPlyrA = getRandom(2)
+                if(fbA && hpA>pB*5) {
+                   isPlyrA = false;
+                }else if(fbA && !fbB && hpA<pB*5){
+                   isPlyrA = true;
+                }
+                if(fbB && hpB>pA*5) {
+                  isPlyrA = true;
+                }else if (fbB && !fbA && hpB<pA*5){
+                  isPlyrA = false;
+                }
+                if(hpA<=5 && hpB >=10){
+                   isPlyrA = true;
+                }else if(hpB <= 5 && hpA >= 10){
+                   isPlyrA = false;
+                }
 
                 doAttack(isPlyrA, isPlyrA ? pA : pB, isPlyrA ? fbA : fbB, isPlyrA ? pB : pA, isPlyrA ? fbB : fbA).then(() => {
                     doAttack(!isPlyrA, isPlyrA ? pB : pA, isPlyrA ? fbB : fbA, isPlyrA ? pA : pB, isPlyrA ? fbA : fbB).then(() => {
@@ -892,3 +918,10 @@ function test() {
         if(testing)test()
     })
 }
+
+
+let q = new Glow(100,100,'pink')
+let glowy = new Character(100,100,'g')
+glowy.addSprite(q)
+glowy.doMoveTo(new Vector(500,400),0.05)
+THINGS_TO_UPDATE.push(glowy)
