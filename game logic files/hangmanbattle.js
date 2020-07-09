@@ -43,6 +43,16 @@ let rcB2 = new Circle(width/2 + bigR*2 + smallR*2 + 40,30+ smallR,smallR).asOutl
 
 let circles = [rcA1,rcA2,rc,rcB1,rcB2];
 
+let winsA = 0
+let winsB = 0
+function handleWin(isTeamA){
+    if(isTeamA){
+       winsA++ 
+    }else{
+       winsB++
+    }
+    
+}
 
 
 let teamA = {
