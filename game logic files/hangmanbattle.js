@@ -1,6 +1,18 @@
 let DAMAGE_PER_TICK = 7;
 let FINAL_SMASH_SCALING = 5;
 
+// if(typeof console !=='undefined'){
+//     if(typeof console.log !== 'undefined'){
+//         console.olog = console.log;
+//     }else{
+//         console.olog = function(){};
+//     }
+//     console.log = function(message){
+//         console.olog(message);
+//         id('debugdiv').append(`<p>` + message + `</p>`)
+//     }
+//     console.error = console.debug = console.info = console.log;
+// }
 
 let IMAGE_PATH = '../images/';
 
@@ -13,7 +25,7 @@ let characters = [
     'superman', 'genie', 'simba', 'captainmarvel', 'mewtwo', 'sailormoon', 'venom', 'thor',
     'ultraman2', 'ultraman3', 'olaf', 'hulk', 'gundam', 'optimus', 'snowwhite', 'deadpool',
     'goku', 'ash', 'charizard', 'captainamerica', 'nakoruru', 'mario', 'emmet', 'wyldstyle',
-    'tree', 'link', 'isabelle',
+    'tree', 'link', 'isabelle', 'doraemon', 'hellokitty'
 ];
 let powers = [
     'blueenergy',
@@ -24,7 +36,7 @@ let powers = [
     'fire', 'magic', 'magic', 'electric', 'magic', 'pinkenergy', 'blackenergy', 'electric',
     'magic', 'electric', 'ice', 'rock', 'bluebeam', 'bullet', 'bluebeam', 'bullet',
     'bluebeam', 'fire', 'fire', 'fire', 'fire', 'fire', 'legored', 'blackenergy',
-    'apple', 'blueenergy', 'water',
+    'apple', 'blueenergy', 'water', 'blueenergy','pinkenergy'
 ];
 
 document.body.style.backgroundColor = 'lightgrey'
@@ -113,10 +125,11 @@ async function choose_your_fighter(isTeamA) {
 
         let images = [];
         let lines = [];
-        let text = new P('Choose Your Fighter', screenx + screenw / 3, screeny + 10).fromCenter();
+        let text = new P('Choose Your Fighter', screenx + screenw / 2, screeny + screeny*0.18).fromCenter();
         let names = [];
         text.shape.style.fontSize = width * 0.02 + 'px';
         text.shape.style.zIndex = '2070';
+        text.shape.x = screenx + screenw / 2
 
         function start_the_game(num) {
             crop.remove();
@@ -360,8 +373,16 @@ function setup() {
 
 function nextWord(isTeamA) {
     let team = isTeamA ? teamA : teamB;
+    if(team.wordPool[team.wordIndex] === undefined){
+        team.wordIndex = 0;
+        team.word = team.wordPool[team.wordIndex][0];
+    }
     team.word = team.wordPool[team.wordIndex][0];
     team.wordIndex++;
+    if(team.word === undefined){
+        team.wordIndex = 0;
+        team.word = team.wordPool[team.wordIndex][0];
+    }
     setUpWord(isTeamA, team.word);
     message(isTeamA, 'New Word!')
 }
@@ -550,6 +571,7 @@ function submitLetters() {
                     p.shape.remove();
                     p.shape = DomObject.attach(divB.shape.cloneNode(true));
                     mover.addSprite(p);
+                    p.set('zIndex','15')
                     THINGS_TO_UPDATE.push(mover);
                     THINGS_TO_KILL.push(mover);
                 } else {
