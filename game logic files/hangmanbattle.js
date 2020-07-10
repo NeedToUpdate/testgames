@@ -353,7 +353,6 @@ function setup() {
                         teamB.input = createInputBox('B');
                         setUpCircles();
                         toggleBlackout();
-                        explode(1,0)
                         resolve();
                     });
                 })
