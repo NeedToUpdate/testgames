@@ -113,7 +113,7 @@ async function choose_your_fighter(isTeamA) {
         let lines = [];
         let text = new P('Choose Your Fighter', screenx + screenw / 3, screeny +10).fromCenter();
         let names = [];
-        text.shape.style.fontSize = '2em';
+        text.shape.style.fontSize = width*0.02 + 'px';
         text.shape.style.zIndex = '2070';
 
         function start_the_game(num) {
@@ -1052,7 +1052,21 @@ function marioHop(isPlayerA,val){
     let fighter = isPlayerA ? playerA : playerB;
     let target = isPlayerA ? playerB : playerA;
     return new Promise(resolve => {
-
+        let unsub = fighter.jumpWithAngle((isPlayerA?45:-45,20))
+        fighter.landing_emitter.subscribe('land',()=>{
+            target.height *= 0.8;
+            unsub();
+            unsub = fighter.jumpUp(2)
+            fighter.landing_emitter.subscribe('land',()=>{
+            unsub();
+             target.height *= 0.8;
+                unsub = fighter.jumpUp(2)
+                fighter.landing_emitter.subscribe('land',()=>{
+                unsub();
+                target.height *=0.8;
+                })
+            })
+        })
     });
 }
 
@@ -1192,6 +1206,10 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                 }
 
                 doAttack(isPlyrA, isPlyrA ? pA : pB, isPlyrA ? fbA : fbB, isPlyrA ? pB : pA, isPlyrA ? fbB : fbA).then(() => {
+                
+                    if(NEEDS_RESET){
+                       resetAll()
+                    }
                     doAttack(!isPlyrA, isPlyrA ? pB : pA, isPlyrA ? fbB : fbA, isPlyrA ? pA : pB, isPlyrA ? fbA : fbB).then(() => {
                         console.log('done!');
                         playerA.jumpWithAngle(-70,10);
