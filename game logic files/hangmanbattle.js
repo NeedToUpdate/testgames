@@ -1,4 +1,8 @@
-let IMAGE_PATH = '../images/'
+let DAMAGE_PER_TICK = 7;
+let FINAL_SMASH_SCALING = 5;
+
+
+let IMAGE_PATH = '../images/';
 
 let characters = [
     'cat',
@@ -32,26 +36,177 @@ MAINARENA.set('backgroundSize', 'cover');
 MAINARENA.set('backgroundRepeat', 'no-repeat');
 MAINARENA.set('backgroundPosition', 'center');
 
-let bigR = width/35;
-let smallR = width/45
-let rc = new Circle(width/2 +bigR*2 +6, 30 + bigR,bigR).asOutline('black',3).fromCenter();
-let rcA1 = new Circle(width/2 + bigR*2 - smallR - 20,30+ smallR,smallR).asOutline('black',3).fromCenter();
-let rcA2 = new Circle(width/2 + bigR*2 - smallR*2 - 40,30+ smallR,smallR).asOutline('black',3).fromCenter();
-let rcB1 = new Circle(width/2 + bigR*2 + smallR + 20,30+ smallR,smallR).asOutline('black',3).fromCenter();
-let rcB2 = new Circle(width/2 + bigR*2 + smallR*2 + 40,30+ smallR,smallR).asOutline('black',3).fromCenter();
 
-
-let circles = [rcA1,rcA2,rc,rcB1,rcB2];
-
-let winsA = 0
-let winsB = 0
-function handleWin(isTeamA){
+function message(isTeamA,msg){
     if(isTeamA){
-       winsA++ 
+        teamA.puzzleDiv.title = msg;
+        setTimeout(()=>{
+            teamA.puzzleDiv.title = 'Team Blue';
+        },2000)
     }else{
-       winsB++
+        teamB.puzzleDiv.title = msg;
+        setTimeout(()=>{
+            teamB.puzzleDiv.title = 'Team Red';
+        },2000)
     }
-    
+}
+
+
+let circles = [];
+function setUpCircles(){
+    let bigR = width/45;
+    let smallR = width/60;
+    let rc = new Circle(width/2 +bigR*2 + 10, height*.18 + bigR/2,bigR).asOutline('black',3).fromCenter();
+    let rcA1 = new Circle(width/2 + bigR*2 - smallR*3,height*.18,smallR).asOutline('black',3).fromCenter();
+    let rcA2 = new Circle(width/2 + bigR*2 - smallR*5.6,height*.18,smallR).asOutline('black',3).fromCenter();
+    let rcB1 = new Circle(width/2 + bigR*2 + smallR*3,height*.18,smallR).asOutline('black',3).fromCenter();
+    let rcB2 = new Circle(width/2 + bigR*2 + smallR*5.6,height*.18,smallR).asOutline('black',3).fromCenter();
+    circles = [rcA2,rcA1,rc,rcB1,rcB2];
+}
+
+let blackout = {};
+function toggleBlackout(){
+    if(Object.keys(blackout).length>1){
+        blackout.remove();
+        blackout = {};
+        playerAState = 'idle';
+        playerBState = 'idle';
+    }else{
+        blackout = new Rectangle(0,0,width,height);
+        blackout.color = 'rgba(0,0,0,0.3)';
+        blackout.set('zIndex', '2000');
+        unIdlePlayers();
+    }
+
+}
+
+async function choose_your_fighter(isTeamA) {
+    return new Promise(resolve=>{
+        let num_of_choices = 4;
+        let chosen_nums = [];
+        for (let i = 0; i < num_of_choices; i++) {
+            let num = getRandom(characters.length);
+            while (chosen_nums.includes(num)) {
+                num = getRandom(characters.length);
+            }
+            chosen_nums.push(num);
+        }
+        let screenx = isTeamA? width*0.1 : width*0.6;
+        let screenw = width*0.35;
+        let screeny = height*0.3;
+        let screenh = height*0.3;
+        let screen = new Rectangle(screenx, screeny, screenw, screenh);
+        let screenstyle = {
+            backgroundColor: 'grey',
+            borderRadius: '10px',
+            border: (isTeamA? 'blue': 'red') +' solid 5px',
+            zIndex: 2050,
+        };
+        Object.assign(screen.shape.style, screenstyle);
+        let crop = new Rectangle(screenx + 2, screeny + screenh / 3 - 2, screenw, screenh / 3);
+        crop.shape.style.overflow = 'hidden';
+        crop.shape.style.backgroundColor = 'yellow';
+        crop.shape.style.border = (isTeamA? 'blue': 'red') +' solid 3px';
+        crop.shape.style.zIndex = '2060';
+
+        let images = [];
+        let lines = [];
+        let text = new P('Choose Your Fighter', screenx + screenw / 3, screeny +10).fromCenter();
+        let names = [];
+        text.shape.style.fontSize = '2em';
+        text.shape.style.zIndex = '2070';
+
+        function start_the_game(num) {
+            crop.remove();
+            lines.forEach(line => {
+                line.remove();
+            });
+            names.forEach(name => {
+                name.remove();
+            });
+            text.remove();
+            screen.remove();
+            resolve(num);
+        }
+
+        chosen_nums.forEach((num, i) => {
+            let img = new Img(IMAGE_PATH + characters[num] + '.png', ((screenw / chosen_nums.length)) * i + 10, 0, (screenw / chosen_nums.length) - 20);
+            crop.attach(img);
+            if (i !== 0) {
+                let line = Line.fromPoints(screenx + 5 + (screenw / chosen_nums.length) * i, screeny + screenh / 1.5, screenx + 5 + (screenw / chosen_nums.length) * i + 20, screeny + screenh / 3);
+                line.shape.style.backgroundColor = (isTeamA? 'blue': 'red');
+                line.shape.style.height = '4px';
+                line.shape.style.zIndex = '2070';
+                lines.push(line);
+            }
+            img.shape.addEventListener('click', () => {
+                start_the_game(num);
+            });
+            let name = new P(characters[num], screenx + (screenw / chosen_nums.length) * (i + .1) + 10, 5+ screeny + screenh / 1.5);
+            name.set('fontSize',width/50);
+            name.set('zIndex','2070');
+            if (name.width +20 > screenw / chosen_nums.length) {
+                name.string = characters[num].slice(0, 7) + '..'
+            }
+            name.string = name.string.replace(name.string.charAt(0), name.string.charAt(0).toUpperCase());
+            names.push(name);
+            images.push(img);
+        });
+
+    });
+}
+
+
+let winsA = 0;
+let winsB = 0;
+function handleWin(isTeamA){
+    let gameEnd = false;
+    if(isTeamA){
+       winsA++;
+       if (winsA>2) gameEnd = true;
+       let circle = circles[winsA-1];
+       let check = id('checkmark').content.cloneNode(true);
+       circle.attach(check)
+        circle.addClass('smoothed')
+        circle.border = 'solid royalblue 3px';
+        circle.color = 'cyan'
+        circle.shape.childNodes[1].childNodes[1].childNodes[3].setAttribute('fill','royalblue');
+        circle.shape.childNodes[1].childNodes[1].childNodes[3].setAttribute('stroke','blue');
+    }else{
+       winsB++;
+        if (winsB>2) gameEnd = true;
+        let circle = circles[5-winsB];
+        let check = id('checkmark').content.cloneNode(true);
+        circle.attach(check)
+        circle.addClass('smoothed')
+        circle.border = 'solid indianred 3px';
+        circle.color = 'orange'
+        circle.shape.childNodes[1].childNodes[1].childNodes[3].setAttribute('fill','indianred');
+        circle.shape.childNodes[1].childNodes[1].childNodes[3].setAttribute('stroke','red');
+    }
+    if(!gameEnd){
+        setTimeout(()=>{
+            toggleBlackout();
+            choose_your_fighter(!isTeamA).then(num=>{
+                toggleBlackout();
+                setUpCharacter(!isTeamA,num).then(()=>{
+                    teamA.hp = 100;
+                    teamA.hpDiv.value = 100;
+                    teamB.hp = 100;
+                    teamB.hpDiv.value = 100;
+                    resetAll()
+                });
+            });
+            INTERRUPT_DAMAGE = false;
+        },4000)
+    }else{
+        if(isTeamA){
+            playerAState = 'winner';
+        }else{
+            playerBState = 'winner';
+        }
+    }
+
 }
 
 
@@ -117,18 +272,86 @@ function create_player(num) {
     return {num: chosennum, name: char_name, power: powr_name};
 }
 
+let playerA = {};
+let playerB = {};
+
+function setUpCharacter(isTeamA,num){
+    return new Promise(resolve=>{
+        let vals = create_player(num);
+        LOADED_IMAGES.add(vals.power + '_projectile', IMAGE_PATH + 'projectiles/');
+        let player = isTeamA? playerA : playerB;
+        player = new Character(width * (isTeamA? .28 : .72), height - 100, vals.name);
+        let sprite =  new Img(IMAGE_PATH + '/' + vals.name + '.png', 0, 0, width / 8).fromCenter().onLoad(() => {
+            player.addSprite(sprite);
+            player.team = (isTeamA? 'A' : 'B');
+            player.addForce(VECTORS.gravity);
+            player.maxbounds.x = width * .79;
+            player.minbounds.x = width * .21;
+            player.maxbounds.y = height - 20;
+            player.minbounds.y = height * .2;
+            player.powerType = vals.power;
+            sprite.set('zIndex', '1000');
+            THINGS_TO_UPDATE.push(player);
+            player.addDeathImage(LOADED_IMAGES.fire.cloneNode());
+            if(isTeamA){
+                playerA = player;
+            }else{
+                playerB = player;
+                player.faceLeft()
+            }
+            resolve();
+        });
+    })
+}
+function setUpCharacters(numA,numB){
+    return new Promise(resolve=> {
+        setUpCharacter(true, numA).then(() => {
+            setUpCharacter(false, numB).then(() => {
+                resolve()
+            });
+        });
+    })
+  }
+
 
 function setup() {
-    teamA.hpDiv = new LoadingBar(width * .21, height * .35, width / 5, 35, 0, 100, 100)
-    teamB.hpDiv = new LoadingBar(width * .59, height * .35, width / 5, 35, 0, 100, 100)
-
-    let [a, b] = get2DPSArrays(words);
-    teamA.wordPool = a;
-    teamB.wordPool = b;
-    nextWord(true);
-    nextWord(false);
-    teamA.input = createInputBox('A');
-    teamB.input = createInputBox('B');
+    LOADED_IMAGES = new ImageLoader(IMAGE_PATH + 'projectiles/', ['fire', 'dynamite'].map(x => x + '_projectile'));
+    LOADED_IMAGES.add('fire', IMAGE_PATH);
+    return new Promise(resolve=>{
+        let numA,numB;
+        toggleBlackout();
+        let [a, b] = get2DPSArrays(words);
+        teamA.wordPool = a;
+        teamB.wordPool = b;
+        nextWord(true);
+        nextWord(false);
+        let go = new Rectangle(width/2 - 50, height/2 - 20, 100, 40);
+        let p = new P('GO!', 50,20).fromCenter();
+        go.attach(p)
+        go.set('borderRadius', '20px');
+        go.set('zIndex', '2200');
+        go.color = 'limegreen';
+        go.border = 'solid green 2px'
+        go.shape.addEventListener('click',()=>{
+            go.remove();
+            choose_your_fighter(true).then(num=>{
+                numA = num;
+                choose_your_fighter(false).then(num=>{
+                    numB = num;
+                    setUpCharacters(numA,numB).then(()=>{
+                        teamA.hpDiv = new LoadingBar(width * .21, height * .35, width / 5, 35, 0, 100, 100);
+                        teamB.hpDiv = new LoadingBar(width * .59, height * .35, width / 5, 35, 0, 100, 100);
+                        teamA.puzzleDiv.set('zIndex', '10');
+                        teamA.input = createInputBox('A');
+                        teamB.input = createInputBox('B');
+                        setUpCircles();
+                        toggleBlackout();
+                        resolve();
+                    });
+                })
+            });
+        });
+    });
 }
 
 function nextWord(isTeamA) {
@@ -136,6 +359,7 @@ function nextWord(isTeamA) {
     team.word = team.wordPool[team.wordIndex][0];
     team.wordIndex++;
     setUpWord(isTeamA, team.word);
+    message(isTeamA,'New Word!')
 }
 
 
@@ -143,12 +367,14 @@ function setUpWord(team, word) {
     if (team) {
         if (Object.keys(teamA.puzzleDiv).length === 0) {
             teamA.puzzleDiv = new Puzzle(word, 0, 0, width * .3, height * .3, 'A')
+            teamA.puzzleDiv.set('zIndex', '10')
         } else {
             teamA.puzzleDiv.addNewWord(word)
         }
     } else {
         if (Object.keys(teamB.puzzleDiv).length === 0) {
             teamB.puzzleDiv = new Puzzle(word, width * .7 - 6, 0, width * .3, height * .3, 'B')
+            teamB.puzzleDiv.set('zIndex', '10')
         } else {
             teamB.puzzleDiv.addNewWord(word)
         }
@@ -258,6 +484,7 @@ function submitLetters() {
                 let target = A.letterDivs[indices[i]].p;
                 mover.doMoveTo(target, 0.5).then(() => {
                     let glow = new Character(target.x,target.y, 'cyan');
+                    glow.hasNoBounds = true;
                     glow.addSprite(new Glow(0,0,'cyan'));
                     glow.addForce(new Vector(1,0));
                     THINGS_TO_UPDATE.push(glow);
@@ -272,6 +499,7 @@ function submitLetters() {
                                 A.letterDivs.forEach((x,k) => {
                                     x.color = 'limegreen';
                                     let glow = new Character(x.x,x.y, 'cyan');
+                                    glow.hasNoBounds = true;
                                     glow.addSprite(new Glow(0,0,'cyan'));
                                     glow.addForce(new Vector(1,0));
                                     THINGS_TO_UPDATE.push(glow);
@@ -326,6 +554,7 @@ function submitLetters() {
                 let target = B.letterDivs[indices[i]].p.copy().add(B.p);
                 mover.doMoveTo(target, 0.5).then(() => {
                     let glow = new Character(target.x,target.y, 'orange');
+                    glow.hasNoBounds = true;
                     glow.addSprite(new Glow(0,0,'orange'));
                     glow.addForce(new Vector(-1,0));
                     THINGS_TO_UPDATE.push(glow);
@@ -342,6 +571,7 @@ function submitLetters() {
 									let trgt = x.p.copy().add(B.p)
                                     let glow = new Character(trgt.x,trgt.y, 'orange');
                                     glow.addSprite(new Glow(0,0,'orange'));
+                                    glow.hasNoBounds = true;
                                     glow.addForce(new Vector(-1,0));
                                     THINGS_TO_UPDATE.push(glow);
                                     THINGS_TO_KILL.push(glow);
@@ -394,6 +624,7 @@ goBtn.shape.addEventListener('click', submitLetters);
 let resetBtn = new Circle(width * 0.02, height * 0.37 + 35, 14).asOutline('red', 3);
 let THINGS_TO_KILL = [];
 resetBtn.shape.addEventListener('click', () => {
+    BATTLE_IN_PROGRESS = false;
     teamA.input.reset();
     teamB.input.reset();
     THINGS_TO_KILL.forEach(x => {
@@ -406,40 +637,7 @@ window.addEventListener('DOMContentLoaded', () => {
     goBtn.attach(id('checkmark').content.cloneNode(true));
 });
 
-let pAname = create_player(getRandom(characters.length))
-let pBname = create_player(getRandom(characters.length))
 
-LOADED_IMAGES = new ImageLoader(IMAGE_PATH + 'projectiles/', [pAname.power,pBname.power, 'fire', 'dynamite'].map(x => x + '_projectile'));
-LOADED_IMAGES.add('fire', IMAGE_PATH);
-let playerA = new Character(width * .28, height - 100, pAname.name);
-let spriteA = new Img(IMAGE_PATH + '/' + playerA.name + '.png', 0, 0, width / 8).fromCenter().onLoad(() => {
-    playerA.addSprite(spriteA);
-    playerA.team = 'A';
-    playerA.addForce(VECTORS.gravity);
-    playerA.maxbounds.x = width * .79;
-    playerA.minbounds.x = width * .21;
-    playerA.maxbounds.y = height - 20;
-    playerA.minbounds.y = height * .2;
-    playerA.powerType = pAname.power;
-    spriteA.set('zIndex', '10000');
-    THINGS_TO_UPDATE.push(playerA);
-    playerA.addDeathImage(LOADED_IMAGES.fire.cloneNode());
-});
-let playerB = new Character(width * .72, height - 100, pBname.name);
-let spriteB = new Img(IMAGE_PATH + '/' + playerB.name + '.png', 0, 0, width / 8).fromCenter().onLoad(() => {
-    playerB.addSprite(spriteB);
-    playerB.team = 'B';
-    playerB.addForce(VECTORS.gravity);
-    playerB.maxbounds.x = width * .79;
-    playerB.minbounds.x = width * .21;
-    playerB.maxbounds.y = height - 20;
-    playerB.minbounds.y = height * .2;
-    THINGS_TO_UPDATE.push(playerB);
-    playerB.faceLeft();
-    playerB.powerType = pBname.power;
-    playerB.addDeathImage(LOADED_IMAGES.fire.cloneNode());
-    spriteB.set('zIndex', '10000');
-});
 
 function unIdlePlayers() {
     playerAState = '';
@@ -521,7 +719,7 @@ function regularShoot(isPlayerA, num) {
     return new Promise(resolve => {
         for (let i = 0; i < num; i++) {
             setTimeout(() => {
-                fighter.powerUp(5);
+                fighter.powerUp(DAMAGE_PER_TICK);
             }, (i + 1) * 1000)
         }
         setTimeout(() => {
@@ -538,10 +736,14 @@ function jumpAndHit(isPlayerA, dmg) {
     return new Promise(resolve => {
         fighter.jumpWithAngle(isPlayerA ? 45 : -45, 20);
         let unsub = fighter.landing_emitter.subscribe('land', () => {
+            unsub();
             handleDamage(target, dmg);
+            if(INTERRUPT_DAMAGE){
+                NEEDS_RESET = true;
+                resolve()
+            }
             fighter.jumpWithAngle(isPlayerA ? -45 : 45, 20);
             isPlayerA ? fighter.faceRight() : fighter.faceLeft();
-            unsub();
             unsub = fighter.landing_emitter.subscribe('land', () => {
                 unsub();
                 resolve();
@@ -595,7 +797,12 @@ function rapidFire(isPlayerA, dmg) {
         let shootloop = setInterval(() => {
             fighter.powerUp(dmg / 8);
             setTimeout(() => {
-                doShot(fighter, target)
+                doShot(fighter, target);
+                if(INTERRUPT_DAMAGE){
+                    clearInterval(shootloop);
+                    NEEDS_RESET = true;
+                    resolve();
+                }
             }, 300)
         }, 600);
         setTimeout(() => {
@@ -620,10 +827,15 @@ function pickUpandThrow(isPlayerA, dmg) {
                     target.jumpWithAngle(isPlayerA ? -80 : 80, 50);
                     setTimeout(() => {
                         handleDamage(target, dmg / 1.5)
+                        if(INTERRUPT_DAMAGE){
+                            NEEDS_RESET = true;
+                            resolve();
+                        }
                     }, 200);
+
                     unsub = target.landing_emitter.subscribe('land', () => {
-                        fighter.powerUp(dmg / 3);
                         unsub();
+                        fighter.powerUp(dmg / 3);
                         setTimeout(() => {
                             doShot(fighter, target).then(() => {
                                 setTimeout(() => {
@@ -652,10 +864,14 @@ function spinHitAndShoot(isPlayerA, dmg) {
         fighter.jumpWithAngle(isPlayerA ? 45 : -45, 20);
         fighter.doSpin(360 * (isPlayerA? -1:1), 10);
         let unsub = fighter.landing_emitter.subscribe('land', () => {
+            unsub();
             handleDamage(target, dmg / 3);
+            if(INTERRUPT_DAMAGE){
+                NEEDS_RESET = true;
+                resolve()
+            }
             fighter.jumpWithAngle(isPlayerA ? -45 : 45, 15);
             isPlayerA ? fighter.faceRight() : fighter.faceLeft();
-            unsub();
             fighter.powerUp(dmg / 3);
             setTimeout(() => {
                 doShot(fighter,target).then(()=>{
@@ -717,9 +933,13 @@ function goGiantAndStomp(isPlayerA,val){
             isPlayerA? fighter.jumpRight() : fighter.jumpLeft();
             let unsub = fighter.landing_emitter.subscribe('land',()=>{
                 unsub();
-                target.height = '10px';
+                target.height = 10;
                 target.sprite.addClass('smoothed');
                 handleDamage(target,val);
+                if(INTERRUPT_DAMAGE){
+                    NEEDS_RESET = true;
+                    resolve()
+                }
                 setTimeout(()=>{
                     fighter.sprite.addClass('smoothed');
                     fighter.width /=5;
@@ -751,8 +971,70 @@ function goGiantAndStomp(isPlayerA,val){
 function throwMeteor(isPlayerA,val){
     let fighter = isPlayerA ? playerA : playerB;
     let target = isPlayerA ? playerB : playerA;
-    return new Promise(resolve => {
+    let team = isPlayerA ? teamA : teamB;
+    function breakTop(onLeft){
+        MAINARENA.set('borderTop', 'solid transparent 5px');
+        let l = Line.fromAngle(MAINARENA.x + (onLeft? 0: MAINARENA.width),MAINARENA.y,100,(onLeft? -45:-135),5);
+        let l2 = Line.fromAngle(MAINARENA.x+ (onLeft? 250: MAINARENA.width-250),MAINARENA.y,100,(onLeft? -135:-45),5);
+        let l3 = Line.fromAngle(MAINARENA.x+(onLeft? 250: 0),MAINARENA.y,MAINARENA.width - 250,0,5);
+        l3.set('zIndex', '3')
+        l.color = 'black';
+        team.puzzleDiv.addClass('smoothed');
+        team.puzzleDiv.rotateTo(45* (isPlayerA? -1 : 1));
+        team.puzzleDiv.y -= height*.15;
+        team.puzzleDiv.x -= height*.15*(isPlayerA? 1 : -1);
+        return {
+            clear:function(){
+                l.remove();
+                l2.remove();
+                l3.remove();
+            }
+        }
+    }
 
+    return new Promise(resolve => {
+        fighter.minbounds.y = -1000;
+        fighter.forces = [];
+        let lines = {}
+        setTimeout(()=>{
+            lines = breakTop(isPlayerA);
+        },200)
+        fighter.doMoveTo(new Vector(fighter.x,-200)).then(()=>{
+            let confused = setInterval(()=>{
+                target.turnAround();
+            },1000);
+            setTimeout(()=>{
+                let meteor = new Character(target.x + (isPlayerA? -100 : 100),-200,'meteor')
+                meteor.hasNoBounds = true;
+                meteor.y = -100;
+                let meteorSprite = new Img(IMAGE_PATH + 'meteor.png',0,0,600).fromCenter().onLoad(()=>{
+                    clearInterval(confused);
+                    meteor.addSprite(meteorSprite);
+                    meteorSprite.set('zIndex', '2000')
+                    meteor.addForce(VECTORS.slowGravity);
+                    THINGS_TO_UPDATE.push(meteor);
+                    THINGS_TO_KILL.push(meteor);
+                    meteor.addDeathImage(LOADED_IMAGES.fire.cloneNode());
+                    !isPlayerA? meteor.faceLeft() : '';
+                    setTimeout(()=>{
+                        lines.clear();
+                        target.angle = isPlayerA? -90 : 90;
+                        fighter.addForce(VECTORS.gravity);
+                        fighter.minbounds.y = height*.2;
+                        handleDamage(target,val);
+                        if(INTERRUPT_DAMAGE){
+                            NEEDS_RESET = true;
+                            resolve()
+                        }
+                        setTimeout(()=>{
+                            target.angle = 0;
+                           NEEDS_RESET = true;
+                           resolve();
+                        },2000)
+                    },600)
+                })
+            },3000)
+        })
     });
 }
 
@@ -794,13 +1076,15 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
     let fbB = isTeam2finishingblow;
     let hpA = teamA.hp;
     let hpB = teamB.hp;
+    let dmg = DAMAGE_PER_TICK;
+    let fbD = FINAL_SMASH_SCALING;
 
     function doAttack(plyr, val, isFB, oppVal, oppFB) {
         return new Promise(resolve => {
             if (val && !isFB) {
                 if (val === 1) {
                     if (getRandom(10) < 2) {
-                        jumpAndHit(plyr, 5).then(() => {
+                        jumpAndHit(plyr, dmg*val).then(() => {
                             resolve()
                         })
                     } else if (oppVal === 1 && getRandom(10) < 0) {
@@ -814,18 +1098,18 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                 }
                 if (val === 2) {
                     if (getRandom(10) < 3) {
-                        jumpSpinHit(plyr, 10).then(() => {
+                        jumpSpinHit(plyr, dmg*val).then(() => {
                             resolve()
                         })
                     } else if (getRandom(10) < 3) {
-                        spinShot(plyr, 10).then(() => {
+                        spinShot(plyr,  dmg*val).then(() => {
                             resolve()
                         })
                     } else if (oppVal === 2 && getRandom(10) < 0) {
                         // if 2 and pB is 2
                         //projectiles hit eachother
                     } else if (getRandom(10 < 3)) {
-                        throwBomb(plyr, 10).then(() => {
+                        throwBomb(plyr,  dmg*val).then(() => {
                             resolve()
                         })
                     } else {
@@ -836,16 +1120,16 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                 }
                 if (val === 3) {
                     if (getRandom(10) < 3) {
-                        rapidFire(plyr, 15).then(() => {
+                        rapidFire(plyr,  dmg*val).then(() => {
                             resolve()
                         });
                     } else if (getRandom(10) < 3) {
                         //pick up and throw
-                        pickUpandThrow(plyr, 15).then(() => {
+                        pickUpandThrow(plyr,  dmg*val).then(() => {
                             resolve()
                         })
                     } else if (getRandom(10) < 3) {
-                        spinHitAndShoot(plyr, 15).then(() => {
+                        spinHitAndShoot(plyr,  dmg*val).then(() => {
                             resolve()
                         });
                     } else {
@@ -859,10 +1143,16 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                     //idk
                 }
             } else if (isFB) {
+                let team = plyr? teamA : teamB;
+                let fbDmg = team.wordPool[team.wordIndex][1]*fbD;
                 console.log((plyr ? 'Team A' : 'Team B') + ' does a final smash');
-                if(getRandom(10)<10){
-                    goGiantAndStomp(plyr,20).then(()=>{
+                if(getRandom(10)<5){
+                    goGiantAndStomp(plyr,fbDmg).then(()=>{
                         resolve()
+                    })
+                }else if(getRandom(10)<10){
+                    throwMeteor(plyr,fbDmg).then(()=>{
+                        resolve();
                     })
                 }
             } else if (val === 0 && !isFB) {
@@ -877,7 +1167,9 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
             unIdlePlayers().then(() => {
                 playerAState = 'fighting';
                 playerBState = 'fighting';
-                let isPlyrA = getRandom(2)
+                let isPlyrA = getRandom(2);
+
+                //TODO optimize this mess
                 if(fbA && hpA>pB*5) {
                    isPlyrA = false;
                 }else if(fbA && !fbB && hpA<pB*5){
@@ -893,6 +1185,11 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                 }else if(hpB <= 5 && hpA >= 10){
                    isPlyrA = false;
                 }
+                if(fbA && fbB && hpA<20 && hpB <20){
+                    isPlyrA = getRandom(2);
+                }else if(hpA<DAMAGE_PER_TICK && hpB<DAMAGE_PER_TICK){
+                    isPlyrA = getRandom(2);
+                }
 
                 doAttack(isPlyrA, isPlyrA ? pA : pB, isPlyrA ? fbA : fbB, isPlyrA ? pB : pA, isPlyrA ? fbB : fbA).then(() => {
                     doAttack(!isPlyrA, isPlyrA ? pB : pA, isPlyrA ? fbB : fbA, isPlyrA ? pA : pB, isPlyrA ? fbA : fbB).then(() => {
@@ -907,7 +1204,7 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                         if (fbB) {
                             nextWord(false)
                         }
-                        resetBtn.shape.click()
+                        resetBtn.shape.click();
                         BATTLE_IN_PROGRESS = false;
                         if(NEEDS_RESET){
                             resetAll();
@@ -943,9 +1240,15 @@ function resetAll(){
 
     playerA.shoot();
     playerB.shoot();
+    playerA.faceRight();
+    playerB.faceLeft();
+    playerA.angle = 0;
+    playerB.angle = 0;
 
     playerAState = 'idle';
     playerBState = 'idle';
+
+    BATTLE_IN_PROGRESS = false;
 }
 
 function addAction(isA, action, args, isPerm) {
@@ -973,27 +1276,50 @@ function subroutines() {
         addAction(0, 'sparHop', 0.5);
         timeSinceCheckB = time;
     }
+    if (playerAState === 'winner' && time - timeSinceCheckA > 810) {
+        addAction(1, 'jumpUp', 1.5);
+        addAction(1, 'doSpin', [270,10]);
+        timeSinceCheckA = time;
+    }
+    if (playerBState === 'winner' && time - timeSinceCheckB > 700) {
+        addAction(0, 'jumpUp', 1.5);
+        addAction(0, 'doSpin', [270,10]);
+        timeSinceCheckB = time;
+    }
 }
 
+let INTERRUPT_DAMAGE = false;
 function handleDamage(player, num) {
     if (player.team === 'A') {
-        console.log('Team A takes ' + num + ' damage');
-        teamA.hp -= num;
-        playerA.jumpFwd(-0.3);
-        if (teamA.hp <= 0) {
-            teamA.hp = 0;
-            playerA.kill()
+        if(!playerA.dead){
+            console.log('Team A takes ' + num + ' damage');
+            teamA.hp -= num;
+            playerA.jumpFwd(-0.3);
+            if (teamA.hp <= 0) {
+                teamA.hp = 0;
+                playerA.kill();
+                INTERRUPT_DAMAGE = true;
+                setTimeout(()=>{
+                    handleWin(false);
+                },2000);
+            }
+            teamA.hpDiv.value = teamA.hp;
         }
-        teamA.hpDiv.value = teamA.hp;
     } else {
-        console.log('Team B takes ' + num + ' damage');
-        teamB.hp -= num;
-        playerB.jumpFwd(-0.3);
-        if (teamB.hp <= 0) {
-            teamB.hp = 0;
-            playerB.kill()
+        if(!playerB.dead) {
+            console.log('Team B takes ' + num + ' damage');
+            teamB.hp -= num;
+            playerB.jumpFwd(-0.3);
+            if (teamB.hp <= 0) {
+                teamB.hp = 0;
+                playerB.kill()
+                INTERRUPT_DAMAGE = true;
+                setTimeout(() => {
+                    handleWin(true);
+                }, 2000);
+            }
+            teamB.hpDiv.value = teamB.hp;
         }
-        teamB.hpDiv.value = teamB.hp;
     }
     MAINARENA.border = 'solid red 5px';
     MAINARENA.x -= 2;
@@ -1017,13 +1343,17 @@ function floop() {
     }
     for (let i = ACTION_QUEUE.length - 1; i >= 0; i--) {
         let act = ACTION_QUEUE[i];
-        act.target[act.action].call(act.target, act.args);
+        if(typeof act.args === 'number'){
+            act.target[act.action].call(act.target, act.args);
+        }else{
+            act.target[act.action].call(act.target, ...act.args);
+        }
         if (!act.permanent) ACTION_QUEUE.splice(i, 1);
     }
     for (let i = PROJECTILES.length - 1; i >= 0; i--) {
         let p = PROJECTILES[i];
         p.update();
-        if (p.hasHitbox && p.target.hasHitbox && p.hitbox.contains(p.target.hitbox.vMiddle)) {
+        if (p.hasHitbox && p.target.hasHitbox && p.hitbox.contains(p.target.hitbox.vMiddleTall)) {
             handleDamage(p.target, p.power);
             p.kill()
         }
@@ -1045,8 +1375,9 @@ resetAllBtn.shape.addEventListener('click',()=>{
 
 
 
-setup();
-createFallbackLoopFunction(floop).start();
+setup().then(()=>{
+    createFallbackLoopFunction(floop).start();
+});
 
 console.log(teamA.wordPool.map(x => x[0]));
 console.log(teamB.wordPool.map(x => x[0]));
@@ -1062,6 +1393,9 @@ function test() {
 
 //TODO =================== MAIN =================
 //DONE add jumpBack when getting hit
-//TODO add 3 rounds
-//TODO add player select screen
+//DONE add 3 rounds
+//DONE add player select screen
+//TODO fix small gfx issue with completed word
+//TODO add draw clause
 //TODO add free for all
+//TODO make gfx for player turn select
