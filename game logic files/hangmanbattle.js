@@ -991,9 +991,9 @@ function throwShuriken(isPlayerA, dmg) {
             di.style.zIndex = '3002';
             p.addDeathImage(di);
             PROJECTILES.push(p);
-            setTimeout(()=>{
+            setTimeout(() => {
                 return resolve();
-            },300);
+            }, 300);
         }, 1000)
     })
 }
@@ -1052,7 +1052,9 @@ function goGiantAndStomp(isPlayerA, val) {
                                 target.height = '';
                                 target.sprite.removeClass('smoothed');
                                 NEEDS_RESET = true;
-                                return resolve();
+                                setTimeout(() => {
+                                    return resolve();
+                                }, 500);
                             }, 1000)
                         })
                     }, 1100)
@@ -1126,8 +1128,10 @@ function throwMeteor(isPlayerA, val) {
                         setTimeout(() => {
                             target.angle = 0;
                             NEEDS_RESET = true;
-                            return resolve();
-                        }, 2000)
+                            setTimeout(() => {
+                                return resolve();
+                            }, 500);
+                        }, 1500)
                     }, 600)
                 })
             }, 3000)
@@ -1201,7 +1205,9 @@ function marioHop(isPlayerA, val) {
                                     target.height *= (1 / 0.168);
                                     target.height = '';
                                     NEEDS_RESET = true;
-                                    return resolve();
+                                    setTimeout(() => {
+                                        return resolve();
+                                    }, 500);
                                 }, 2000);
                             })
                         }, 1000);
@@ -1304,15 +1310,15 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                     } else if (oppVal === 2 && getRandom(10) < 0) {
                         // if 2 and pB is 2
                         //projectiles hit eachother
-                    } else if (getRandom(10) < 2) {
-                        throwBomb(plyr, dmg * val/2).then(() => {
-                            throwBomb(plyr, dmg * val/2).then(() => {
+                    } else if (getRandom(10) < 3) {
+                        throwBomb(plyr, dmg * val / 2).then(() => {
+                            throwBomb(plyr, dmg * val / 2).then(() => {
                                 return resolve()
                             })
                         })
-                    } else if (getRandom(10) < 2) {
-                        throwShuriken(plyr, dmg * val/2).then(() => {
-                            throwShuriken(plyr, dmg * val/2).then(() => {
+                    } else if (getRandom(10) < 3) {
+                        throwShuriken(plyr, dmg * val / 2).then(() => {
+                            throwShuriken(plyr, dmg * val / 2).then(() => {
                                 return resolve()
                             })
                         })
@@ -1346,17 +1352,23 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                 if (val >= 4) {
                     //idk
                     if (getRandom(10) < 3) {
-                        rapidFire(plyr, dmg * val).then(() => {
-                            return resolve()
+                        rapidFire(plyr, dmg * val/2).then(() => {
+                            rapidFire(plyr, dmg * val/2).then(() => {
+                                return resolve()
+                            });
                         });
                     } else if (getRandom(10) < 3) {
                         //pick up and throw
-                        pickUpandThrow(plyr, dmg * val).then(() => {
-                            return resolve()
+                        pickUpandThrow(plyr, dmg * val/2).then(() => {
+                            regularShoot(plyr, 2).then(() => {
+                                return resolve()
+                            })
                         })
                     } else if (getRandom(10) < 3) {
-                        spinHitAndShoot(plyr, dmg * val).then(() => {
-                            return resolve()
+                        spinHitAndShoot(plyr, dmg * val/2).then(() => {
+                            regularShoot(plyr, 2).then(() => {
+                                return resolve()
+                            })
                         });
                     } else {
                         regularShoot(plyr, val).then(() => {
@@ -1475,7 +1487,8 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
         }
     )
 }
-function resetSome(){
+
+function resetSome() {
     teamA.puzzleDiv.rotateTo(0);
     teamB.puzzleDiv.rotateTo(0);
     teamA.puzzleDiv.x = 0;
@@ -1506,7 +1519,6 @@ function resetAll() {
     resetSome()
     if (teamA.puzzleDiv.isFinished) nextWord(1);
     if (teamB.puzzleDiv.isFinished) nextWord(0);
-
 
 
     playerAState = 'idle';
