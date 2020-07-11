@@ -1406,7 +1406,9 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                 }
             } else if (isFB) {
                 let team = plyr ? teamA : teamB;
-                let fbDmg = team.wordPool[team.wordIndex][1] * fbD;
+                let index = team.wordIndex-1
+                if(index === -1) index = 0;
+                let fbDmg = team.wordPool[index][1] * fbD;
                 console.log((plyr ? 'Team A' : 'Team B') + ' does a final smash');
                 if (isFB && (plyr ? hpA : hpB) <= DAMAGE_PER_TICK && (plyr ? hpB : hpA) < fbDmg && oppVal > 0) {
                     //if youre gonna do a final attack, and that attack will kill, but you will also die from one shot
@@ -1603,7 +1605,7 @@ function handleDamage(player, num) {
         if (!playerA.dead) {
             console.log('Team A takes ' + num + ' damage');
             teamA.hp -= num;
-            playerA.jumpFwd(-0.3);
+            playerA.addForce(Vector.fromAngle(-45).mult(6));
             if (teamA.hp <= 0) {
                 teamA.hp = 0;
                 playerA.kill();
@@ -1618,7 +1620,7 @@ function handleDamage(player, num) {
         if (!playerB.dead) {
             console.log('Team B takes ' + num + ' damage');
             teamB.hp -= num;
-            playerB.jumpFwd(-0.3);
+            playerB.addForce(Vector.fromAngle(45).mult(6));
             if (teamB.hp <= 0) {
                 teamB.hp = 0;
                 playerB.kill();
