@@ -468,6 +468,7 @@
             return this.INTERNAL_ID;
         }
     }
+    //TODO make this dynamic
     let turn_order = [0,1,2,3,4,5,6,12,11,10,9,8,7,13,14,15,16,17,18,24,23,22,21,20,19];
     function getNextTurnVal(val,reverse){
         let vals = reverse? Array.from(turn_order).reverse() : turn_order;
@@ -598,6 +599,7 @@
             this.powers = [];
             plyr.powers.forEach(p => {
                 let new_p = new Power(p.type);
+                new_p.powerData = p;
                 if (p.isUsed) new_p.use(true);
                 this.addPower(new_p);
             })
@@ -761,6 +763,10 @@
             this.init();
         }
 
+        set powerData(data){
+            this.INTERNAL_DATA = data;
+        }
+
         init() {
             let circle = new Circle(0, 0, 10).withNoCss();
             let icon = id(power_type_dictionary[this.type].split(" ").join("").toLowerCase()).content.cloneNode(true);
@@ -806,6 +812,9 @@
         use(gfxOnly) {
             if (this.type === 0 && !gfxOnly) return;
             this.isUsed = true;
+            if(Object.keys(this.INTERNAL_DATA).length>0){
+                this.INTERNAL_DATA.isUsed = true;
+            }
             this.div.attachments.circles[0].addClass('used_power');
             if (gfxOnly) return;
             stats.lastUsedPower = {

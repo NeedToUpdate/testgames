@@ -1708,3 +1708,4 @@ function test() {
 //TODO add draw clause
 //TODO add free for all
 //TODO make gfx for player turn select
+//TODO add quick ending
