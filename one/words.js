@@ -18,7 +18,7 @@
 //let words = ['living room','dining room','bedroom','garage','kitchen','terrace','bathroom','yard']
 //let words = ['happy','sad','nervous','relaxed','excited','energetic','tired','confused','scared','curious','bored','hungry','sleepy','angry','surprised','confident'];
 //let words = ['first', 'second', 'third', 'fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth','thirteenth',    'fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth'];
-let words = ['january','february','march','april','may','june','july','august','september','october','november','december'];
+//let words = ['january','february','march','april','may','june','july','august','september','october','november','december'];
 //let words = ['birthday','party','amazing','growth','interview','gift','meaningful','year','special'];
 //let words = ['skateboard','frisbee','football','robot','rubiks cube','basketball','guitar','puzzles','lego','hula hoop','doll',
 //    'board game','yoyo','car'];
@@ -37,7 +37,7 @@ let words = ['january','february','march','april','may','june','july','august','
 //let words = ['stones','bones','sticks','quill','ink','brush','ancient','pencil','water']
 //let words = ['red','yellow','green','blue','purple','orange','violet','white','black','gray','light','dark','pink'];
 //let words = ['exercise','body','healthy','stronger','lungs','heart','energy','muscles','stretch'];
-//let words = ['hair','eyebrow','eye','nose','mouth','chest','stomach','leg','knee','foot','toe','head','neck','back','arm','elbow','finger','tongue','shoulder','hand','ankle','heel']
+let words = ['hair','eyebrow','eye','nose','mouth','chest','stomach','leg','knee','foot','toe','head','neck','back','arm','elbow','finger','tongue','shoulder','hand','ankle','heel']
 //let words = ['bedroom','living room','dining room','kitchen','garage','bathroom','bathroom'];
 //let words = ['hat','cap','sunglasses','tie','bowtie','scarf','belt','socks','jacket','coat','vest','suit','sweater','sweatshirt','shirt','jeans','shorts','sweatpants','skirt','sandals','sneakers','flats','heels','slippers','boots']
 //let words = ['bag','cap','doll','frog','girl','apple','elephant','insect','orange','umbrella','airplane','parrot','baby','hat','egg','rabbit','mouse','armchair'];

@@ -27,7 +27,7 @@ let characters = [
     'superman', 'genie', 'simba', 'captainmarvel', 'mewtwo', 'sailormoon', 'venom', 'thor',
     'ultraman2', 'ultraman3', 'olaf', 'hulk', 'gundam', 'optimus', 'snowwhite', 'deadpool',
     'goku', 'ash', 'charizard', 'captainamerica', 'nakoruru', 'mario', 'emmet', 'wyldstyle',
-    'tree', 'link', 'isabelle', 'doraemon', 'hellokitty'
+    'tree', 'link', 'isabelle', 'doraemon', 'hellokitty','penguin'
 ];
 let powers = [
     'blueenergy',
@@ -38,7 +38,7 @@ let powers = [
     'fire', 'magic', 'magic', 'electric', 'magic', 'pinkenergy', 'blackenergy', 'electric',
     'magic', 'electric', 'ice', 'rock', 'bluebeam', 'bullet', 'bluebeam', 'bullet',
     'bluebeam', 'fire', 'fire', 'fire', 'fire', 'fire', 'legored', 'blackenergy',
-    'apple', 'blueenergy', 'water', 'blueenergy', 'pinkenergy'
+    'apple', 'blueenergy', 'water', 'blueenergy', 'pinkenergy','fish'
 ];
 
 document.body.style.backgroundColor = 'lightgrey';
@@ -339,6 +339,9 @@ function create_player(num) {
     }
     if (char_name === 'link') {
         powr_name = 'zeldabomb'
+    }
+    if (char_name === 'tree') {
+        powr_name = getRandom(2)? 'apple':'pear'
     }
     return {num: chosennum, name: char_name, power: powr_name};
 }
