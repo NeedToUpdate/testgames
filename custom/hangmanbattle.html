@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
+    <script language="javascript" type="text/javascript"  src="../lib/vector.js"></script>
+    <script language="javascript"  type="text/javascript" src="../lib/DomObject.js"></script>
+    <script language="javascript"  type="text/javascript" src="../lib/HangmanPuzzle.js"></script>
+    <script language="javascript"  type="text/javascript" src="../lib/PhysicsObject.js"></script>
+    <script language="javascript"  type="text/javascript" src="../lib/Character.js"></script>
+    <script language="javascript"  type="text/javascript" src="../lib/collisioncontainer.js"></script>
+    <script language="javascript" type="text/javascript" src="../lib/eventemitter.js"></script>
+    <script language="javascript" type="text/javascript" src="../lib/drawbase.js"></script>
+    <script language="javascript" type="text/javascript"  src="words.js"></script>
+    <title>Artem's Battle of the Words</title>
+    <link rel="stylesheet" type="text/css" href="../global_styles.css">
+    <div id="black_square"  style="position: absolute;top: 0; left: 0; z-index: 9999; width: 50px; height:60px"></div>
+</head>
+
+<body class="locked">
+<div id="debugdiv" style=" position: absolute;z-index: 200000"></div>
+<script language="javascript" type="text/javascript" src="../game%20logic%20files/hangmanbattle.js">
+
+
+</script>
+<template id="backbutton">
+    <svg viewBox="0 0 210 210" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <g>
+            <path id="svg_1"
+                  d="m29.75,67.3296l36.36735,-37.5796l38.63248,39.9199l38.63248,-39.9199l36.3677,37.5796l-38.63249,39.92022l38.63249,39.92022l-36.3677,37.57995l-38.63248,-39.92023l-38.63248,39.92023l-36.36735,-37.57995l38.63216,-39.92022l-38.63216,-39.92022z"
+                  stroke-width="7.5" stroke="#7f0000" fill="#ff0000"></path>
+        </g>
+    </svg>
+</template>
+<template id="checkmark">
+    <svg viewBox="0 0 210 210" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <g>
+            <path id="svg_3" d="m205,215.48438" opacity="0.5" fill-opacity="null" stroke-opacity="null"
+                  stroke-width="1.5" stroke="#000" fill="#fff"></path>
+            <path stroke="#007f00" transform="rotate(44 105.4511489868164,85.55574798583983) " id="svg_4"
+                  d="m56.75836,167.31935l96.89123,0.32685l0.49434,-163.54702l-22.73978,-0.6339l-1.48303,136.92308l-72.66842,0l-0.49434,26.93098z"
+                  stroke-width="5.5" fill="#00ff00"></path>
+        </g>
+    </svg>
+</template>
+</body>
+</html>
