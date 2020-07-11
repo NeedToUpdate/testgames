@@ -455,8 +455,8 @@ function setUpWord(team, word) {
 }
 
 function get2DPSArrays(array) {
-    function getCloseToAverageBy(val, exception) {
-        return wordDpsTemp2.filter(x => x !== exception).reduce((a, b) => {
+    function getCloseToAverageBy(val, exceptions) {
+        return wordDpsTemp2.filter(x => !exceptions.includes(x)).reduce((a, b) => {
             let del = Math.abs((b[1] - averageDPS) - val);
             if (Math.abs((a[1] - averageDPS) - val) < del) {
                 return a
@@ -481,7 +481,11 @@ function get2DPSArrays(array) {
     let wordDpsTemp2 = Array.from(wordDPS);
     for (let i = 0; i < (wordDPS.length); i++) {
         let ch = wordDpsTemp.splice(getRandom(wordDpsTemp.length), 1)[0];
-        let cl = getCloseToAverageBy((ch[1] - averageDPS), ch);
+        let exclusions = [ch];
+        if(wordDpsTemp2.map(x=>x[0]).includes(ch)){
+            exclusions.push(wordDpsTemp[wordDpsTemp2.map(x=>x[0]).indexOf(ch)])
+        }
+        let cl = getCloseToAverageBy((ch[1] - averageDPS), exclusions);
         wordDpsTemp2.splice(wordDpsTemp2.indexOf(cl), 1);
         newWordOrder.push(ch);
         newWordOrder2.push(cl);
