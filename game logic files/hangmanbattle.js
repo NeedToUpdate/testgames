@@ -211,7 +211,8 @@ function handleWin(isTeamA) {
         if (winsB > 2) gameEnd = true;
         checkCircle(isTeamA)
     } else {
-        if (winsA > 1 && winsB > 1) {
+        if (winsA >= 2 && winsB >= 2) gameEnd = true;
+        if (false) {//TODO
             //draw
         } else {
             winsA++;
@@ -219,24 +220,26 @@ function handleWin(isTeamA) {
             checkCircle(0);
             checkCircle(1);
             let numA;
-            setTimeout(() => {
-                toggleBlackout();
-                choose_your_fighter(isTeamA).then(num => {
-                    numA = num;
-                    choose_your_fighter(!isTeamA).then(numB => {
-                        toggleBlackout();
-                        setUpCharacters(numA, numB).then(() => {
-                            teamA.hp = 100;
-                            teamA.hpDiv.value = 100;
-                            teamB.hp = 100;
-                            teamB.hpDiv.value = 100;
-                            resetAll()
+            if(!gameEnd){
+                setTimeout(() => {
+                    toggleBlackout();
+                    choose_your_fighter(isTeamA).then(num => {
+                        numA = num;
+                        choose_your_fighter(!isTeamA).then(numB => {
+                            toggleBlackout();
+                            setUpCharacters(numA, numB).then(() => {
+                                teamA.hp = 100;
+                                teamA.hpDiv.value = 100;
+                                teamB.hp = 100;
+                                teamB.hpDiv.value = 100;
+                                resetAll()
+                            });
                         });
                     });
-                });
-                INTERRUPT_DAMAGE = false;
-            }, 4000);
-            return;
+                    INTERRUPT_DAMAGE = false;
+                }, 4000);
+                return;
+            }
         }
     }
     if (!gameEnd) {
