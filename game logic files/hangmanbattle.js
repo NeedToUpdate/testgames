@@ -1,6 +1,6 @@
 let DAMAGE_PER_TICK = 7;
-let FINAL_SMASH_SCALING = 3;
-
+let FINAL_SMASH_SCALING = 5;
+let ROUNDS = 3;
 
 let IMAGE_PATH = '../images/';
 
@@ -42,6 +42,9 @@ let powers = [
 ];
 
 document.body.style.backgroundColor = 'lightgrey';
+
+
+
 let MAINARENA = new Rectangle(width * .2, height * .2, width * .6 - 5, height * .8).asOutline('black', 5);
 let background = 'background' + getRandom(20).toString() + '.jpg';
 MAINARENA.set('backgroundColor', 'grey');
@@ -72,11 +75,11 @@ function setUpCircles() {
     let bigR = width / 45;
     let smallR = width / 60;
     let rc = new Circle(width / 2 + bigR * 2 + 10, height * .18 + bigR / 2, bigR).asOutline('black', 3).fromCenter();
-    let rcA1 = new Circle(width / 2 + bigR * 2 - smallR * 3, height * .18, smallR).asOutline('black', 3).fromCenter();
-    let rcA2 = new Circle(width / 2 + bigR * 2 - smallR * 5.6, height * .18, smallR).asOutline('black', 3).fromCenter();
-    let rcB1 = new Circle(width / 2 + bigR * 2 + smallR * 3, height * .18, smallR).asOutline('black', 3).fromCenter();
-    let rcB2 = new Circle(width / 2 + bigR * 2 + smallR * 5.6, height * .18, smallR).asOutline('black', 3).fromCenter();
-    circles = [rcA2, rcA1, rc, rcB1, rcB2];
+    circles = [rc];
+    for(let i =0;i<(ROUNDS-1); i+=2){
+        circles.unshift(new Circle(width / 2 + bigR * 2 - smallR * (3 + i*1.3), height * .18, smallR).asOutline('black', 3).fromCenter())
+        circles.push(new Circle(width / 2 + bigR * 2 + smallR * (3+i*1.3), height * .18, smallR).asOutline('black', 3).fromCenter())
+    }
 }
 
 let blackout = {};
@@ -187,7 +190,7 @@ function checkCircle(isTeamA) {
         circle.shape.childNodes[1].childNodes[1].childNodes[3].setAttribute('fill', 'royalblue');
         circle.shape.childNodes[1].childNodes[1].childNodes[3].setAttribute('stroke', 'blue');
     } else if (isTeamA == 0) {
-        let circle = circles[5 - winsB];
+        let circle = circles[ROUNDS - winsB];
         let check = id('checkmark').content.cloneNode(true);
         circle.attach(check);
         circle.addClass('smoothed');
@@ -196,7 +199,17 @@ function checkCircle(isTeamA) {
         circle.shape.childNodes[1].childNodes[1].childNodes[3].setAttribute('fill', 'indianred');
         circle.shape.childNodes[1].childNodes[1].childNodes[3].setAttribute('stroke', 'red');
     } else {
-
+        let circle = circles[ROUNDS/2 |0];
+        let check = id('checkmark').content.cloneNode(true);
+        circle.attach(check);
+        circle.addClass('smoothed');
+        circle.set('borderTop','solid royalblue 3px');
+        circle.set('borderLeft','solid royalblue 3px');
+        circle.set('borderBottom','solid indianred 3px');
+        circle.set('borderRight','solid indianred 3px');
+        circle.set('backgroundImage','linear-gradient(135deg,cyan 0%,orange 100%)');
+        circle.shape.childNodes[1].childNodes[1].childNodes[3].setAttribute('fill', 'indianred');
+        circle.shape.childNodes[1].childNodes[1].childNodes[3].setAttribute('stroke', 'royalblue');
     }
 }
 
@@ -204,16 +217,16 @@ function handleWin(isTeamA) {
     let gameEnd = false;
     if (isTeamA == 1) {
         winsA++;
-        if (winsA > 2) gameEnd = true;
+        if (winsA > ROUNDS/2) gameEnd = true;
         checkCircle(isTeamA)
     } else if (isTeamA == 0) {
         winsB++;
-        if (winsB > 2) gameEnd = true;
+        if (winsB > ROUNDS/2) gameEnd = true;
         checkCircle(isTeamA)
     } else {
-        if (winsA >= 2 && winsB >= 2) gameEnd = true;
-        if (false) {//TODO
-            //draw
+        if (winsA >= (ROUNDS/2-1)&& winsB >= (ROUNDS/2-1)) gameEnd = true;
+        if (winsA>=(ROUNDS/2 -1) && winsB>=(ROUNDS/2 -1)) {
+            checkCircle(2);
         } else {
             winsA++;
             winsB++;
@@ -680,9 +693,9 @@ function submitLetters() {
     }
 }
 
-let goBtn = new Circle(width * 0.02, height * 0.37, 14).asOutline('green', 3);
+let goBtn = new Circle(width * 0.03, height * 0.37, 14).asOutline('green', 3);
 goBtn.shape.addEventListener('click', submitLetters);
-let resetBtn = new Circle(width * 0.02, height * 0.37 + 35, 14).asOutline('red', 3);
+let resetBtn = new Circle(width * 0.03, height * 0.37 + 35, 14).asOutline('red', 3);
 let THINGS_TO_KILL = [];
 resetBtn.shape.addEventListener('click', () => {
     BATTLE_IN_PROGRESS = false;
@@ -758,6 +771,7 @@ function doShot(player, target) {
                     p.sprite.set('zIndex', '3000');
                     p.target = target;
                     PROJECTILES.push(p);
+                    THINGS_TO_KILL.push(p);
                     setTimeout(() => {
                         return resolve()
                     }, 1000)
@@ -767,6 +781,7 @@ function doShot(player, target) {
             p.sprite.set('zIndex', '3000');
             p.target = target;
             PROJECTILES.push(p);
+            THINGS_TO_KILL.push(p);
             setTimeout(() => {
                 return resolve()
             }, 1000)
@@ -973,7 +988,9 @@ function throwBomb(isPlayerA, dmg) {
             p.addDeathImage(di);
             p.target = target;
             PROJECTILES.push(p);
-            return resolve();
+            setTimeout(() => {
+                return resolve();
+            }, 500);
         }, 1000)
     })
 }
@@ -996,7 +1013,7 @@ function throwShuriken(isPlayerA, dmg) {
             PROJECTILES.push(p);
             setTimeout(() => {
                 return resolve();
-            }, 300);
+            }, 500);
         }, 1000)
     })
 }
@@ -1250,8 +1267,12 @@ function explode(isPlayerA, val) {
                                         white.remove();
                                         playerA.kill();
                                         playerB.kill();
-                                        handleWin(2);
-                                        return resolve()
+                                        teamA.hpDiv.value = 0;
+                                        teamB.hpDiv.value = 0;
+                                        setTimeout(() => {
+                                            handleWin(2)
+                                            return resolve();
+                                        }, 2000);
                                     }, 3100)
                                 }, 100);
                             }, 1000)
@@ -1519,7 +1540,11 @@ function resetSome() {
 }
 
 function resetAll() {
-    resetSome()
+    resetSome();
+    THINGS_TO_KILL.forEach(x=>{
+        x.kill()
+    })
+    THINGS_TO_KILL = [];
     if (teamA.puzzleDiv.isFinished) nextWord(1);
     if (teamB.puzzleDiv.isFinished) nextWord(0);
 
@@ -1673,7 +1698,7 @@ function test() {
 
 //TODO =================== MAIN =================
 //DONE add jumpBack when getting hit
-//DONE add 3 rounds
+//DONE add 3 ROUNDS
 //DONE add player select screen
 //TODO fix small gfx issue with completed word
 //TODO add draw clause
