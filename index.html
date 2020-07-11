@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Artem's Games</title>
+    <script type="text/javascript" src="./one/words.js"></script>
 </head>
 <body>
+<p id='worddiv'>Words: </p>
 <a href="./one/buildtheword.html">build the word</a>
 <br>
 <a href="./one/wordsearch.html">word search</a>
@@ -16,5 +18,15 @@
 <a href="./one/timetrial.html">time trial</a>
 <br>
 <a href="./fightinggame.html">fighting game</a>
+<br>
+<a href="./one/hangmanbattle.html">battle of the words</a>
+
+<script type="text/javascript">
+   words.forEach((w,i)=>{
+      document.getElementById('worddiv').append(w+ (i<words.length-1?', ': '.'))
+   })
+   
+</script>
+
 </body>
 </html>
