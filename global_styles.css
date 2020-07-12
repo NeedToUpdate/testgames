@@ -203,3 +203,6 @@ body{
 .slowsmoothed{
     transition: 2s
 }
+.fastsmoothed{
+    transition: 0.2s
+}

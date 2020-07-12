@@ -27,7 +27,7 @@ let characters = [
     'superman', 'genie', 'simba', 'captainmarvel', 'mewtwo', 'sailormoon', 'venom', 'thor',
     'ultraman2', 'ultraman3', 'olaf', 'hulk', 'gundam', 'optimus', 'snowwhite', 'deadpool',
     'goku', 'ash', 'charizard', 'captainamerica', 'nakoruru', 'mario', 'emmet', 'wyldstyle',
-    'tree', 'link', 'isabelle', 'doraemon', 'hellokitty','penguin'
+    'tree', 'link', 'isabelle', 'doraemon', 'hellokitty', 'penguin'
 ];
 let powers = [
     'blueenergy',
@@ -38,11 +38,10 @@ let powers = [
     'fire', 'magic', 'magic', 'electric', 'magic', 'pinkenergy', 'blackenergy', 'electric',
     'magic', 'electric', 'ice', 'rock', 'bluebeam', 'bullet', 'bluebeam', 'bullet',
     'bluebeam', 'fire', 'fire', 'fire', 'fire', 'fire', 'legored', 'blackenergy',
-    'apple', 'blueenergy', 'water', 'blueenergy', 'pinkenergy','fish'
+    'apple', 'blueenergy', 'water', 'blueenergy', 'pinkenergy', 'fish'
 ];
 
 document.body.style.backgroundColor = 'lightgrey';
-
 
 
 let MAINARENA = new Rectangle(width * .2, height * .2, width * .6 - 5, height * .8).asOutline('black', 5);
@@ -76,9 +75,9 @@ function setUpCircles() {
     let smallR = width / 60;
     let rc = new Circle(width / 2 + bigR * 2 + 10, height * .18 + bigR / 2, bigR).asOutline('black', 3).fromCenter();
     circles = [rc];
-    for(let i =0;i<(ROUNDS-1); i+=2){
-        circles.unshift(new Circle(width / 2 + bigR * 2 - smallR * (3 + i*1.3), height * .18, smallR).asOutline('black', 3).fromCenter())
-        circles.push(new Circle(width / 2 + bigR * 2 + smallR * (3+i*1.3), height * .18, smallR).asOutline('black', 3).fromCenter())
+    for (let i = 0; i < (ROUNDS - 1); i += 2) {
+        circles.unshift(new Circle(width / 2 + bigR * 2 - smallR * (3 + i * 1.3), height * .18, smallR).asOutline('black', 3).fromCenter())
+        circles.push(new Circle(width / 2 + bigR * 2 + smallR * (3 + i * 1.3), height * .18, smallR).asOutline('black', 3).fromCenter())
     }
 }
 
@@ -199,15 +198,15 @@ function checkCircle(isTeamA) {
         circle.shape.childNodes[1].childNodes[1].childNodes[3].setAttribute('fill', 'indianred');
         circle.shape.childNodes[1].childNodes[1].childNodes[3].setAttribute('stroke', 'red');
     } else {
-        let circle = circles[ROUNDS/2 |0];
+        let circle = circles[ROUNDS / 2 | 0];
         let check = id('checkmark').content.cloneNode(true);
         circle.attach(check);
         circle.addClass('smoothed');
-        circle.set('borderTop','solid royalblue 3px');
-        circle.set('borderLeft','solid royalblue 3px');
-        circle.set('borderBottom','solid indianred 3px');
-        circle.set('borderRight','solid indianred 3px');
-        circle.set('backgroundImage','linear-gradient(135deg,cyan 0%,orange 100%)');
+        circle.set('borderTop', 'solid royalblue 3px');
+        circle.set('borderLeft', 'solid royalblue 3px');
+        circle.set('borderBottom', 'solid indianred 3px');
+        circle.set('borderRight', 'solid indianred 3px');
+        circle.set('backgroundImage', 'linear-gradient(135deg,cyan 0%,orange 100%)');
         circle.shape.childNodes[1].childNodes[1].childNodes[3].setAttribute('fill', 'indianred');
         circle.shape.childNodes[1].childNodes[1].childNodes[3].setAttribute('stroke', 'royalblue');
     }
@@ -217,15 +216,15 @@ function handleWin(isTeamA) {
     let gameEnd = false;
     if (isTeamA == 1) {
         winsA++;
-        if (winsA > ROUNDS/2) gameEnd = true;
+        if (winsA > ROUNDS / 2) gameEnd = true;
         checkCircle(isTeamA)
     } else if (isTeamA == 0) {
         winsB++;
-        if (winsB > ROUNDS/2) gameEnd = true;
+        if (winsB > ROUNDS / 2) gameEnd = true;
         checkCircle(isTeamA)
     } else {
-        if (winsA >= (ROUNDS/2-1)&& winsB >= (ROUNDS/2-1)) gameEnd = true;
-        if (winsA>=(ROUNDS/2 -1) && winsB>=(ROUNDS/2 -1)) {
+        if (winsA >= (ROUNDS / 2 - 1) && winsB >= (ROUNDS / 2 - 1)) gameEnd = true;
+        if (winsA >= (ROUNDS / 2 - 1) && winsB >= (ROUNDS / 2 - 1)) {
             checkCircle(2);
         } else {
             winsA++;
@@ -233,7 +232,7 @@ function handleWin(isTeamA) {
             checkCircle(0);
             checkCircle(1);
             let numA;
-            if(!gameEnd){
+            if (!gameEnd) {
                 setTimeout(() => {
                     toggleBlackout();
                     choose_your_fighter(isTeamA).then(num => {
@@ -341,7 +340,7 @@ function create_player(num) {
         powr_name = 'zeldabomb'
     }
     if (char_name === 'tree') {
-        powr_name = getRandom(2)? 'apple':'pear'
+        powr_name = getRandom(2) ? 'apple' : 'pear'
     }
     return {num: chosennum, name: char_name, power: powr_name};
 }
@@ -393,6 +392,7 @@ function setup() {
     LOADED_IMAGES = new ImageLoader(IMAGE_PATH + 'projectiles/', ['fire', 'dynamite', 'shuriken'].map(x => x + '_projectile'));
     LOADED_IMAGES.add('fire', IMAGE_PATH);
     LOADED_IMAGES.add('bloodsplatter', IMAGE_PATH);
+    LOADED_IMAGES.add('heal', IMAGE_PATH);
     return new Promise(resolve => {
         let numA, numB;
         toggleBlackout();
@@ -485,15 +485,15 @@ function get2DPSArrays(array) {
     for (let i = 0; i < (wordDPS.length); i++) {
         let ch = wordDpsTemp.splice(getRandom(wordDpsTemp.length), 1)[0];
         let exclusions = [ch];
-        if(wordDpsTemp2.map(x=>x[0]).includes(ch)){
-            exclusions.push(wordDpsTemp[wordDpsTemp2.map(x=>x[0]).indexOf(ch)])
+        if (wordDpsTemp2.map(x => x[0]).includes(ch)) {
+            exclusions.push(wordDpsTemp[wordDpsTemp2.map(x => x[0]).indexOf(ch)])
         }
         let cl = getCloseToAverageBy((ch[1] - averageDPS), exclusions);
         wordDpsTemp2.splice(wordDpsTemp2.indexOf(cl), 1);
         newWordOrder.push(ch);
         newWordOrder2.push(cl);
     }
-    return [newWordOrder, newWordOrder2];
+    return shuffle([newWordOrder, newWordOrder2]);
 }
 
 
@@ -1025,6 +1025,43 @@ function throwShuriken(isPlayerA, dmg) {
     })
 }
 
+function heal(isPlayerA, val) {
+    val = val || 0;
+    let fighter = isPlayerA ? playerA : playerB;
+    return new Promise(resolve => {
+        let healImg = new Img(LOADED_IMAGES.heal.cloneNode(), fighter.x, fighter.y + fighter.height / 2, fighter.width, 10).fromCenter().onLoad(() => {
+            healImg.addClass('fastsmoothed');
+            healImg.zIndex = 3002;
+            setTimeout(() => {
+                healImg.height = fighter.height * 1.2;
+                healImg.y = fighter.y - fighter.height / 1.2;
+                healImg.removeClass('fastsmoothed');
+                healImg.addClass('smoothed');
+                setTimeout(() => {
+                    healImg.set('opacity', '0');
+                    let team = isPlayerA ? teamA : teamB;
+                    let value = team.hp + val;
+                    if (value > 100) value = 100;
+                    let healing = setInterval(() => {
+                        if (team.hp >= value) {
+                            clearInterval(healing)
+                        } else {
+                            team.hp++;
+                            team.hpDiv.value = team.hp;
+                        }
+                    }, 30);
+                    setTimeout(() => {
+                        healImg.remove();
+                        setTimeout(() => {
+                            return resolve();
+                        }, 500)
+                    }, 1000)
+                }, 700)
+            }, 100)
+        });
+    })
+}
+
 
 //================ FINAL SMASH FUNCS =========================
 //================ FINAL SMASH FUNCS =========================
@@ -1044,8 +1081,8 @@ function goGiantAndStomp(isPlayerA, val) {
         fighter.minbounds.x = 0;
         fighter.maxbounds.x = width;
         setTimeout(() => {
-            team.puzzleDiv.addClass('smoothed');
-            team.puzzleDiv.inputBox.addClass('smoothed');
+            team.puzzleDiv.addClass('fastsmoothed');
+            team.puzzleDiv.inputBox.addClass('fastsmoothed');
             team.puzzleDiv.rotateTo(90 * (isPlayerA ? -1 : 1));
             team.puzzleDiv.x -= width * .15 * (isPlayerA ? 1 : -1);
             team.puzzleDiv.inputBox.x -= width * .15 * (isPlayerA ? 1 : -1);
@@ -1072,8 +1109,8 @@ function goGiantAndStomp(isPlayerA, val) {
                         fighter.jumpWithAngle(45 * (isPlayerA ? -1 : 1), 20);
                         unsub = fighter.landing_emitter.subscribe('land', () => {
                             fighter.sprite.removeClass('smoothed');
-                            team.puzzleDiv.removeClass('smoothed');
-                            team.puzzleDiv.inputBox.removeClass('smoothed');
+                            team.puzzleDiv.removeClass('fastsmoothed');
+                            team.puzzleDiv.inputBox.removeClass('fastsmoothed');
                             unsub();
                             setTimeout(() => {
                                 target.height = '';
@@ -1104,12 +1141,13 @@ function throwMeteor(isPlayerA, val) {
         let l3 = Line.fromAngle(MAINARENA.x + (onLeft ? 250 : 0), MAINARENA.y, MAINARENA.width - 250, 0, 5);
         l3.set('zIndex', '3');
         l.color = 'black';
-        team.puzzleDiv.addClass('smoothed');
+        team.puzzleDiv.addClass('fastsmoothed');
         team.puzzleDiv.rotateTo(45 * (isPlayerA ? -1 : 1));
         team.puzzleDiv.y -= height * .15;
         team.puzzleDiv.x -= height * .15 * (isPlayerA ? 1 : -1);
         return {
             clear: function () {
+                team.puzzleDiv.removeClass('fastsmoothed');
                 l.remove();
                 l2.remove();
                 l3.remove();
@@ -1170,7 +1208,52 @@ function runBackAndSquish(isPlayerA, val) {
     let fighter = isPlayerA ? playerA : playerB;
     let target = isPlayerA ? playerB : playerA;
     return new Promise(resolve => {
-
+        if (fighter.dead) return resolve();
+        if (isPlayerA) {
+            fighter.minbounds.x = 0;
+        } else {
+            fighter.maxbounds.x = width;
+        }
+        fighter.jumpWithAngle(80 * (isPlayerA ? -1 : 1), 30);
+        let unsub = fighter.landing_emitter.subscribe('land', () => {
+            unsub();
+            setTimeout(() => {
+                fighter.addForce(new Vector((isPlayerA ? 100 : -100), 0));
+                setTimeout(() => {
+                    handleDamage(target, val * 3 / 4);
+                    target.height = target.sprite.height;
+                    target.width = 10;
+                    setTimeout(() => {
+                        fighter.jumpWithAngle((isPlayerA ? -45 : 45), 20);
+                        unsub = fighter.landing_emitter.subscribe('land', () => {
+                            unsub();
+                            setTimeout(() => {
+                                if (isPlayerA) {
+                                    fighter.minbounds.x = width * .21;
+                                } else {
+                                    fighter.maxbounds.x = width * .79;
+                                }
+                                fighter.powerUp(val / 8);
+                                setTimeout(() => {
+                                    fighter.powerUp(val / 8);
+                                    setTimeout(() => {
+                                        doShot(fighter, target).then(() => {
+                                            setTimeout(() => {
+                                                target.height = '';
+                                                target.width = 120;
+                                                setTimeout(() => {
+                                                    return resolve();
+                                                }, 500)
+                                            }, 1000)
+                                        })
+                                    }, 500);
+                                }, 500)
+                            }, 1800)
+                        })
+                    }, 500)
+                }, 500)
+            }, 1000)
+        })
     });
 }
 
@@ -1305,11 +1388,12 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
     let fbD = FINAL_SMASH_SCALING;
 
     function doAttack(plyr, val, isFB, oppVal, oppFB) {
+        let hp = plyr ? hpA : hpB;
         return new Promise(resolve => {
             if (val && !isFB) {
                 if (val === 1) {
-                    if (getRandom(10) < 4) {
-                        jumpAndHit(plyr, dmg * val).then(() => {
+                    if (getRandom(10) < ((50 - hp) / 10)) {
+                        heal(plyr, dmg * val + 10).then(() => {
                             return resolve()
                         })
                     } else if (oppVal === 1 && getRandom(10) < 0) {
@@ -1323,6 +1407,10 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                         throwShuriken(plyr, dmg * val).then(() => {
                             return resolve()
                         })
+                    } else if (getRandom(10) < 4) {
+                        jumpAndHit(plyr, dmg * val).then(() => {
+                            return resolve()
+                        })
                     } else {
                         regularShoot(plyr, val).then(() => {
                             return resolve()
@@ -1330,8 +1418,8 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                     }
                 }
                 if (val === 2) {
-                    if (getRandom(10) < 4) {
-                        jumpSpinHit(plyr, dmg * val).then(() => {
+                    if (getRandom(10) < ((50 - hp) / 10)) {
+                        heal(plyr, dmg * val + 10).then(() => {
                             return resolve()
                         })
                     } else if (getRandom(10) < 3) {
@@ -1353,6 +1441,10 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                                 return resolve()
                             })
                         })
+                    } else if (getRandom(10) < 4) {
+                        jumpSpinHit(plyr, dmg * val).then(() => {
+                            return resolve()
+                        })
                     } else {
                         regularShoot(plyr, val).then(() => {
                             return resolve()
@@ -1360,10 +1452,10 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                     }
                 }
                 if (val === 3) {
-                    if (getRandom(10) < 3) {
-                        rapidFire(plyr, dmg * val).then(() => {
+                    if (getRandom(10) < ((50 - hp) / 10)) {
+                        heal(plyr, dmg * val + 10).then(() => {
                             return resolve()
-                        });
+                        })
                     } else if (getRandom(10) < 3) {
                         //pick up and throw
                         pickUpandThrow(plyr, dmg * val).then(() => {
@@ -1371,6 +1463,10 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                         })
                     } else if (getRandom(10) < 3) {
                         spinHitAndShoot(plyr, dmg * val).then(() => {
+                            return resolve()
+                        });
+                    } else if (getRandom(10) < 3) {
+                        rapidFire(plyr, dmg * val).then(() => {
                             return resolve()
                         });
                     } else {
@@ -1383,20 +1479,20 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                 if (val >= 4) {
                     //idk
                     if (getRandom(10) < 3) {
-                        rapidFire(plyr, dmg * val/2).then(() => {
-                            rapidFire(plyr, dmg * val/2).then(() => {
+                        rapidFire(plyr, dmg * val / 2).then(() => {
+                            rapidFire(plyr, dmg * val / 2).then(() => {
                                 return resolve()
                             });
                         });
                     } else if (getRandom(10) < 3) {
                         //pick up and throw
-                        pickUpandThrow(plyr, dmg * val/2).then(() => {
+                        pickUpandThrow(plyr, dmg * val / 2).then(() => {
                             regularShoot(plyr, 2).then(() => {
                                 return resolve()
                             })
                         })
                     } else if (getRandom(10) < 3) {
-                        spinHitAndShoot(plyr, dmg * val/2).then(() => {
+                        spinHitAndShoot(plyr, dmg * val / 2).then(() => {
                             regularShoot(plyr, 2).then(() => {
                                 return resolve()
                             })
@@ -1409,8 +1505,8 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                 }
             } else if (isFB) {
                 let team = plyr ? teamA : teamB;
-                let index = team.wordIndex-1
-                if(index === -1) index = 0;
+                let index = team.wordIndex - 1;
+                if (index === -1) index = 0;
                 let fbDmg = team.wordPool[index][1] * fbD;
                 console.log((plyr ? 'Team A' : 'Team B') + ' does a final smash');
                 if (isFB && (plyr ? hpA : hpB) <= DAMAGE_PER_TICK && (plyr ? hpB : hpA) < fbDmg && oppVal > 0) {
@@ -1426,6 +1522,10 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                     } else if (getRandom(10) < 4) {
                         throwMeteor(plyr, fbDmg).then(() => {
                             return resolve();
+                        })
+                    } else if (getRandom(10) < 4) {
+                        runBackAndSquish(plyr, fbDmg).then(() => {
+                            return resolve()
                         })
                     } else if (getRandom(10) < 10) {
                         marioHop(plyr, fbDmg).then(() => {
@@ -1532,10 +1632,12 @@ function resetSome() {
     teamA.puzzleDiv.inputBox.y = height * 0.5;
     teamA.puzzleDiv.inputBox.rotateTo();
     teamA.puzzleDiv.removeClass('smoothed');
+    teamA.puzzleDiv.removeClass('fastsmoothed');
     teamB.puzzleDiv.inputBox.x = width * 0.81;
     teamB.puzzleDiv.inputBox.y = height * 0.5;
     teamB.puzzleDiv.inputBox.rotateTo();
     teamB.puzzleDiv.removeClass('smoothed');
+    teamB.puzzleDiv.removeClass('fastsmoothed');
     playerA.x = width * .28;
     playerA.y = height - 100;
     playerB.x = width * .72;
@@ -1550,10 +1652,22 @@ function resetSome() {
 
 function resetAll() {
     resetSome();
-    THINGS_TO_KILL.forEach(x=>{
+    THINGS_TO_KILL.forEach(x => {
         x.kill()
     })
     THINGS_TO_KILL = [];
+    playerA.width = 120;
+    playerB.width = 120;
+    playerA.height = '';
+    playerB.height = '';
+    playerA.maxbounds.x = width * .79;
+    playerA.minbounds.x = width * .21;
+    playerA.maxbounds.y = height - 20;
+    playerA.minbounds.y = height * .2;
+    playerB.maxbounds.x = width * .79;
+    playerB.minbounds.x = width * .21;
+    playerB.maxbounds.y = height - 20;
+    playerB.minbounds.y = height * .2;
     if (teamA.puzzleDiv.isFinished) nextWord(1);
     if (teamB.puzzleDiv.isFinished) nextWord(0);
 
