@@ -1029,6 +1029,7 @@ function heal(isPlayerA, val) {
     val = val || 0;
     let fighter = isPlayerA ? playerA : playerB;
     return new Promise(resolve => {
+        if(fighter.dead) return resolve()
         let healImg = new Img(LOADED_IMAGES.heal.cloneNode(), fighter.x, fighter.y + fighter.height / 2, fighter.width, 10).fromCenter().onLoad(() => {
             healImg.addClass('fastsmoothed');
             healImg.zIndex = 3002;

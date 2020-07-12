@@ -419,6 +419,8 @@
         target_turn: -1,
         lastUsedPower: {player_id: -1, type: -1, ref: {}},
         game_running: false,
+        first_desk: null,
+        second_desk: null,
     };
 
 
@@ -541,6 +543,15 @@
             GAMEBOARD.attach(outside);
             outside.shape.addEventListener('click', () => {
                 if (!desks.initialized) this.toggleMode()
+                if (stats.mode === 'changedesks'){
+                    if(stats.first_desk === null){
+                        stats.first_desk = this;
+                        this.toggleSelect();
+                    }else{
+                        stats.second_desk = this;
+                        drawCustomArrow(this.id,stats.first_desk.id)
+                    }
+                }
             })
         }
 
@@ -1377,7 +1388,7 @@
             if (Object.keys(GLOBAL_ARROW2).length > 0) GLOBAL_ARROW2.addClass('none');
             selectPower().then(x => {
                 if (x !== null) {
-                    if(x==7) x = getRandom(6);
+                    if(x===7) x = getRandom(6);
                     players.getById(stats.current_turn).powers.push(new PowerData(x));
                     desks.getById(stats.current_turn).updatePowers();
                 }
@@ -1388,8 +1399,30 @@
             })
         });
 
-        id('btn6').innerText = 'Load Game';
-        id('btn6').addEventListener('click', loadGame);
+        id('btn6').innerText = '@';
+        id('btn6').addEventListener('click', ()=>{
+            //TODO
+            if(stats.mode === 'changedesks' && stats.first_desk !== null && stats.second_desk !== null){
+                let temp = {
+                    name: players.getById(stats.second_desk.id).name,
+                    powers: Array.from(players.getById(stats.second_desk.id).powers)
+                };
+                stats.second_desk.setAvatar(players.getById(stats.first_desk.id).name);
+                players.getById(stats.second_desk.id).powers = players.getById(stats.first_desk.id).powers;
+                stats.second_desk.updatePowers();
+                stats.first_desk.setAvatar(temp.name);
+                players.getById(stats.first_desk.id).powers = temp.powers;
+                stats.first_desk.updatePowers();
+                stats.first_desk = null;
+                stats.second_desk = null;
+            }else if(stats.mode === 'changedesks'){
+                stats.mode = 'none';
+            }else{
+                    stats.mode = 'changedesks'
+
+            }
+
+        });
         id('btn7').innerText = 'Save Game';
         id('btn7').addEventListener('click', saveGame);
 
