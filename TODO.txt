@@ -11,13 +11,26 @@
 
 - add more ending animations
 
-//==== NEW GAMES ===
-
-//CROSSWORD GAME
-
 //HANGMAN (VS)
+- add maybe choice of heal, attack, or block (?)
+- add more attacks
+
 
 //WORD TRAIN
 - add save function for players as a base64 string <- haha lol idk
 - check how many desks per row and load turn order array dynamically
+- add move desk position
+- add "add to all" function
+- add 'get a hint' functionality
+
+
+
+//==== NEW GAMES ===
+
+//CROSSWORD GAME
+
+//EASY LETTER GAME
+- where is the letter
+- catch the letter
+
 
