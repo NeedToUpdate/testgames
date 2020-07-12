@@ -4,21 +4,17 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
-    <script language="javascript" type="text/javascript"  src="../lib/vector.js"></script>
     <script language="javascript" type="text/javascript"  src="../lib/drawbase.js"></script>
-    <script language="javascript"  type="text/javascript" src="../lib/matrix.js"></script>
-    <script language="javascript"  type="text/javascript" src="../lib/character.js"></script>
-    <script language="javascript"  type="text/javascript" src="../lib/old_and_unused/div.js"></script>
-    <script language="javascript"  type="text/javascript" src="../lib/rect.js"></script>
-    <script language="javascript" type="text/javascript" src="../lib/eventemitter.js"></script>
     <script language="javascript" type="text/javascript"  src="words.js"></script>
     <script language="javascript" type="text/javascript"  src="./sentences.js"></script>
 </head>
 <body>
-<p id="words"></p>
+<div id="words" style="max-height: 400px; display: flex; flex-direction: column; flex-wrap: wrap;font-size: 2em; color: blue; margin: 0; padding: 0;"></div>
 <p id="sentences"></p>
 <script>
-    id('words').innerText = words;
+    words.forEach(x=>{
+        id('words').innerHTML += '<p style="padding: 0; margin: 0">' + x + '</p>';
+    });
     id('sentences').innerText = sentences;
 
 </script>

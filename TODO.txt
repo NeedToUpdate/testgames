@@ -23,6 +23,9 @@
 - add "add to all" function
 - add 'get a hint' functionality
 
+//DRAWBASE
+
+- add checks for imports and dont
 
 
 //==== NEW GAMES ===
