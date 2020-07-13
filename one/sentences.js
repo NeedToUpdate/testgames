@@ -15,7 +15,9 @@
 
 //let sentences = ['open your book','listen to your teacher','raise your hand','take out your pen','don\'t talk loud','put away your toys','stand up','sit down','close your book','open your book'];
 
-let sentences = ['I go to bed at night','I go to school in March','I get up in the morning','I dance on Easter',"I eat dinner at five o'clock", 'I eat ice-cream in the summer','I fly on Monday','I play games on Sunday']
+//let sentences = ['I go to bed at night','I go to school in March','I get up in the morning','I dance on Easter',"I eat dinner at five o'clock", 'I eat ice-cream in the summer','I fly on Monday','I play games on Sunday']
+
+let sentences = ['clap your hands','touch your nose','stretch up high','spin around','stomp your feet','shake your body','jump up and down','wave your arms','bend down'];
 
 //let sentences = ['sort clothes','watch tv','make the bed','take a bath','brush teeth','organize toys','cook food','organize toys','wash the dishes','eat','set the table','clean up the table','mow the lawn','wash the car','walk the dog'];
 //let nouns = ['shoe','chair','book','lamp','backpack','computer','desk','teddy bear','toy']

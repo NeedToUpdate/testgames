@@ -18,29 +18,6 @@ let IMAGE_PATH = '../images/';
 // }
 
 
-let characters = [
-    'cat',
-    'spiderman', 'ultraman', 'ironman',
-    'peppapig', 'spongebob', 'monkey',
-    'tiger', 'shark', 'cinderella',
-    'elsa', 'ariel', 'deadfish', 'mrkrabs', 'thanos', 'pikachu', 'drstrange',
-    'superman', 'genie', 'simba', 'captainmarvel', 'mewtwo', 'sailormoon', 'venom', 'thor',
-    'ultraman2', 'ultraman3', 'olaf', 'hulk', 'gundam', 'optimus', 'snowwhite', 'deadpool',
-    'goku', 'ash', 'charizard', 'captainamerica', 'nakoruru', 'mario', 'emmet', 'wyldstyle',
-    'tree', 'link', 'isabelle', 'doraemon', 'hellokitty', 'penguin'
-];
-let powers = [
-    'blueenergy',
-    'web', 'bluebeam', 'fire',
-    'pinkenergy', 'krabbypatty', 'banana',
-    'fire', 'water', 'blueenergy',
-    'ice', 'water', 'nuke', 'water', 'blackenergy', 'electric', 'magic',
-    'fire', 'magic', 'magic', 'electric', 'magic', 'pinkenergy', 'blackenergy', 'electric',
-    'magic', 'electric', 'ice', 'rock', 'bluebeam', 'bullet', 'bluebeam', 'bullet',
-    'bluebeam', 'fire', 'fire', 'fire', 'fire', 'fire', 'legored', 'blackenergy',
-    'apple', 'blueenergy', 'water', 'blueenergy', 'pinkenergy', 'fish'
-];
-
 document.body.style.backgroundColor = 'lightgrey';
 
 
@@ -76,7 +53,7 @@ function setUpCircles() {
     let rc = new Circle(width / 2 + bigR * 2 + 10, height * .18 + bigR / 2, bigR).asOutline('black', 3).fromCenter();
     circles = [rc];
     for (let i = 0; i < (ROUNDS - 1); i += 2) {
-        circles.unshift(new Circle(width / 2 + bigR * 2 - smallR * (3 + i * 1.3), height * .18, smallR).asOutline('black', 3).fromCenter())
+        circles.unshift(new Circle(width / 2 + bigR * 2 - smallR * (3 + i * 1.3), height * .18, smallR).asOutline('black', 3).fromCenter());
         circles.push(new Circle(width / 2 + bigR * 2 + smallR * (3 + i * 1.3), height * .18, smallR).asOutline('black', 3).fromCenter())
     }
 }
@@ -98,88 +75,12 @@ function toggleBlackout() {
 
 }
 
-async function choose_your_fighter(isTeamA) {
-    return new Promise(resolve => {
-        let num_of_choices = 4;
-        let chosen_nums = [];
-        for (let i = 0; i < num_of_choices; i++) {
-            let num = getRandom(characters.length);
-            while (chosen_nums.includes(num)) {
-                num = getRandom(characters.length);
-            }
-            chosen_nums.push(num);
-        }
-        let screenx = isTeamA ? width * 0.1 : width * 0.6;
-        let screenw = width * 0.35;
-        let screeny = height * 0.3;
-        let screenh = height * 0.3;
-        let screen = new Rectangle(screenx, screeny, screenw, screenh);
-        let screenstyle = {
-            backgroundColor: 'grey',
-            borderRadius: '10px',
-            border: (isTeamA ? 'blue' : 'red') + ' solid 5px',
-            zIndex: 2050,
-        };
-        Object.assign(screen.shape.style, screenstyle);
-        let crop = new Rectangle(screenx + 2, screeny + screenh / 3 - 2, screenw, screenh / 3);
-        crop.shape.style.overflow = 'hidden';
-        crop.shape.style.backgroundColor = 'yellow';
-        crop.shape.style.border = (isTeamA ? 'blue' : 'red') + ' solid 3px';
-        crop.shape.style.zIndex = '2060';
-
-        let images = [];
-        let lines = [];
-        let text = new P('Choose Your Fighter', screenx + screenw / 3, screeny + 10).fromCenter();
-        let names = [];
-        text.shape.style.fontSize = width * 0.02 + 'px';
-        text.shape.style.zIndex = '2070';
-
-        function start_the_game(num) {
-            crop.remove();
-            lines.forEach(line => {
-                line.remove();
-            });
-            names.forEach(name => {
-                name.remove();
-            });
-            text.remove();
-            screen.remove();
-            resolve(num);
-        }
-
-        chosen_nums.forEach((num, i) => {
-            let img = new Img(IMAGE_PATH + characters[num] + '.png', ((screenw / chosen_nums.length)) * i + 10, 0, (screenw / chosen_nums.length) - 20);
-            crop.attach(img);
-            if (i !== 0) {
-                let line = Line.fromPoints(screenx + 5 + (screenw / chosen_nums.length) * i, screeny + screenh / 1.5, screenx + 5 + (screenw / chosen_nums.length) * i + 20, screeny + screenh / 3);
-                line.shape.style.backgroundColor = (isTeamA ? 'blue' : 'red');
-                line.shape.style.height = '4px';
-                line.shape.style.zIndex = '2070';
-                lines.push(line);
-            }
-            img.shape.addEventListener('click', () => {
-                start_the_game(num);
-            });
-            let name = new P(characters[num], screenx + (screenw / chosen_nums.length) * (i + .1) + 10, 5 + screeny + screenh / 1.5);
-            name.set('fontSize', width / 50);
-            name.set('zIndex', '2070');
-            if (name.width + 20 > screenw / chosen_nums.length) {
-                name.string = characters[num].slice(0, 7) + '..'
-            }
-            name.string = name.string.replace(name.string.charAt(0), name.string.charAt(0).toUpperCase());
-            names.push(name);
-            images.push(img);
-        });
-
-    });
-}
-
 
 let winsA = 0;
 let winsB = 0;
 
 function checkCircle(isTeamA) {
-    console.log(winsA,winsB,isTeamA)
+    console.log(winsA, winsB, isTeamA);
     if (isTeamA == 1) {
         let circle = circles[winsA - 1];
         let check = id('checkmark').content.cloneNode(true);
@@ -215,11 +116,11 @@ function checkCircle(isTeamA) {
 
 function handleWin(isTeamA) {
     let gameEnd = false;
-    if (isTeamA==1) {
+    if (isTeamA == 1) {
         winsA++;
         if (winsA > ROUNDS / 2) gameEnd = true;
         checkCircle(isTeamA)
-    } else if (isTeamA==0) {
+    } else if (isTeamA == 0) {
         winsB++;
         if (winsB > ROUNDS / 2) gameEnd = true;
         checkCircle(isTeamA)
@@ -227,7 +128,7 @@ function handleWin(isTeamA) {
         winsA++;
         winsB++;
         if (winsA >= (ROUNDS / 2) || winsB >= (ROUNDS / 2)) gameEnd = true;
-        if (winsA > (ROUNDS / 2 |0) && winsB > (ROUNDS / 2 |0)) {
+        if (winsA > (ROUNDS / 2 | 0) && winsB > (ROUNDS / 2 | 0)) {
             checkCircle(2);
         } else {
             checkCircle(0);
@@ -236,9 +137,9 @@ function handleWin(isTeamA) {
             if (!gameEnd) {
                 setTimeout(() => {
                     toggleBlackout();
-                    choose_your_fighter(isTeamA).then(num => {
+                    choose_your_fighter_2Team(isTeamA).then(num => {
                         numA = num;
-                        choose_your_fighter(!isTeamA).then(numB => {
+                        choose_your_fighter_2Team(!isTeamA).then(numB => {
                             toggleBlackout();
                             setUpCharacters(numA, numB).then(() => {
                                 teamA.hp = 100;
@@ -258,9 +159,9 @@ function handleWin(isTeamA) {
     if (!gameEnd) {
         setTimeout(() => {
             toggleBlackout();
-            choose_your_fighter(!isTeamA).then(num => {
+            choose_your_fighter_2Team(!isTeamA).then(num => {
                 toggleBlackout();
-                setUpCharacter(!isTeamA, num).then(() => {
+                setUpCharacter_2Team(!isTeamA, num).then(() => {
                     teamA.hp = 100;
                     teamA.hpDiv.value = 100;
                     teamB.hp = 100;
@@ -312,76 +213,15 @@ class Glow extends Div {
     }
 }
 
-function create_player(num) {
-    let chosennum = num || getRandom(characters.length);
-    if (num === 0) {
-        chosennum = 0;
-    }
-    let char_name = characters[chosennum];
-    let powr_name = powers[chosennum];
-    if (char_name === 'deadfish') {
-        powr_name = 'nuke';
-    }
-    if (char_name === 'snowwhite') {
-        powr_name = 'bluebird';
-    }
-    if (char_name === 'ash') {
-        powr_name = 'poke';
-    }
-    if (char_name === 'captainamerica') {
-        powr_name = 'cashield';
-    }
-    if (char_name === 'nakoruru') {
-        powr_name = 'mamahaha'
-    }
-    if (char_name === 'wyldstyle') {
-        powr_name = 'blacklego'
-    }
-    if (char_name === 'link') {
-        powr_name = 'zeldabomb'
-    }
-    if (char_name === 'tree') {
-        powr_name = getRandom(2) ? 'apple' : 'pear'
-    }
-    return {num: chosennum, name: char_name, power: powr_name};
-}
 
 let playerA = {};
 let playerB = {};
 
-function setUpCharacter(isTeamA, num) {
-    return new Promise(resolve => {
-        let vals = create_player(num);
-        LOADED_IMAGES.add(vals.power + '_projectile', IMAGE_PATH + 'projectiles/');
-        let player = isTeamA ? playerA : playerB;
-        player = new Character(width * (isTeamA ? .28 : .72), height - 100, vals.name);
-        let sprite = new Img(IMAGE_PATH + '/' + vals.name + '.png', 0, 0, width / 8).fromCenter().onLoad(() => {
-            player.addSprite(sprite);
-            player.team = (isTeamA ? 'A' : 'B');
-            player.addForce(VECTORS.gravity);
-            player.maxbounds.x = width * .79;
-            player.minbounds.x = width * .21;
-            player.maxbounds.y = height - 20;
-            player.minbounds.y = height * .2;
-            player.powerType = vals.power;
-            sprite.set('zIndex', '1000');
-            THINGS_TO_UPDATE.push(player);
-            player.addDeathImage(LOADED_IMAGES.fire.cloneNode());
-            if (isTeamA) {
-                playerA = player;
-            } else {
-                playerB = player;
-                player.faceLeft()
-            }
-            return resolve();
-        });
-    })
-}
 
 function setUpCharacters(numA, numB) {
     return new Promise(resolve => {
-        setUpCharacter(true, numA).then(() => {
-            setUpCharacter(false, numB).then(() => {
+        setUpCharacter_2Team(true, numA).then(() => {
+            setUpCharacter_2Team(false, numB).then(() => {
                 return resolve()
             });
         });
@@ -411,9 +251,9 @@ function setup() {
         go.border = 'solid green 2px';
         go.shape.addEventListener('click', () => {
             go.remove();
-            choose_your_fighter(true).then(num => {
+            choose_your_fighter_2Team(true).then(num => {
                 numA = num;
-                choose_your_fighter(false).then(num => {
+                choose_your_fighter_2Team(false).then(num => {
                     numB = num;
                     setUpCharacters(numA, numB).then(() => {
                         teamA.hpDiv = new LoadingBar(width * .21, height * .35, width / 5, 35, 0, 100, 100);
@@ -497,71 +337,75 @@ function get2DPSArrays(array) {
     return shuffle([newWordOrder, newWordOrder2]);
 }
 
-function createSpinner(word1,word2,winner) {
-    return new Promise(resolve=>{
-        let left = width/2 - 3;
-        let top = height/2 -3;
-        let circleBG = new Circle(left,top,150);
+function createSpinner(word1, word2, winner) {
+    return new Promise(resolve => {
+        let left = width / 2 - 3;
+        let top = height / 2 - 3;
+        let circleBG = new Circle(left, top, 150);
         circleBG.color = 'yellow';
         circleBG.border = 'blue solid 3px';
-        let circle = new Circle(left,top,100);
+        let circle = new Circle(left, top, 100);
         circle.color = 'yellow';
         circle.border = "blue solid 3px";
-        let arrow = new Arrow(width/2 - 103,top,left,top,5);
+        let arrow = new Arrow(width / 2 - 103, top, left, top, 5);
         arrow.shape.style.transformOrigin = '100% 50%';
         arrow.color = 'blue';
-        function eq(val){
-            return -1*(0.05*val-7.7)**2+60
+
+        function eq(val) {
+            return -1 * (0.05 * val - 7.7) ** 2 + 60
         }
-        let stuffToRemove = []
-        let cheat = getRandom(0,360);
-        function setWordsInCircle(wordA,wordB){
+
+        let stuffToRemove = [];
+        let cheat = getRandom(0, 360);
+
+        function setWordsInCircle(wordA, wordB) {
             let wordArray = wordA.split('').reverse().concat(wordB.split(''));
-            let theta = 360/wordArray.length;
+            let theta = 360 / wordArray.length;
             let angles = [];
-            if(typeof winner === 'boolean'){
-                cheat = winner? getRandom(360-(wordA.length*theta)+1,360-(theta/2)-1) : getRandom(theta/-2 +1, theta*wordB.length - 1);
+            if (typeof winner === 'boolean') {
+                cheat = winner ? getRandom(360 - (wordA.length * theta) + 1, 360 - (theta / 2) - 1) : getRandom(theta / -2 + 1, theta * wordB.length - 1);
             }
-            for(let i = 0; i<wordArray.length; i++){
-                let index = (wordA.length+i)%wordArray.length;
-                let p = new P(wordArray[index],left-6+ Math.cos(((theta*i)-90 + theta/2)/180*Math.PI)*125,top-9+Math.sin(((theta*i-90+ theta/2)/180)*Math.PI)*125);
-                let l = Line.fromAngle(left+2+ Math.cos(((theta*i)-90)/180*Math.PI)*101,top+2+Math.sin(((theta*i-90)/180)*Math.PI)*101,50,theta*i-90,3);
+            for (let i = 0; i < wordArray.length; i++) {
+                let index = (wordA.length + i) % wordArray.length;
+                let p = new P(wordArray[index], left - 6 + Math.cos(((theta * i) - 90 + theta / 2) / 180 * Math.PI) * 125, top - 9 + Math.sin(((theta * i - 90 + theta / 2) / 180) * Math.PI) * 125);
+                let l = Line.fromAngle(left + 2 + Math.cos(((theta * i) - 90) / 180 * Math.PI) * 101, top + 2 + Math.sin(((theta * i - 90) / 180) * Math.PI) * 101, 50, theta * i - 90, 3);
                 l.color = 'blue';
-                p.color = index<wordA.length? 'royalblue': 'indianred';
+                p.color = index < wordA.length ? 'royalblue' : 'indianred';
                 p.size = '3em';
-                p.set('fontWeight','bolder');
+                p.set('fontWeight', 'bolder');
                 p.y -= 20;
                 p.x -= 3;
-                stuffToRemove.push(p)
-                stuffToRemove.push(l)
-                angles.push({w:wordArray[index],a:theta*i-theta/2,t:index<wordA.length})
+                stuffToRemove.push(p);
+                stuffToRemove.push(l);
+                angles.push({w: wordArray[index], a: theta * i - theta / 2, t: index < wordA.length})
             }
             return angles
         }
-        let angs = setWordsInCircle(word1,word2);
+
+        let angs = setWordsInCircle(word1, word2);
 
         let angle = -63 + cheat;
         let x = 0;
-        let loops = setInterval(()=>{
+        let loops = setInterval(() => {
             arrow.rotateTo(angle);
-            angle+=eq(x);
+            angle += eq(x);
             x++;
-            if(eq(x)<0){
-                let finala = ((angle-92)%360);
-                let lower = angs.filter(x=>x.a<finala);
+            if (eq(x) < 0) {
+                let finala = ((angle - 92) % 360);
+                let lower = angs.filter(x => x.a < finala);
                 clearInterval(loops);
-                console.log(lower,finala)
-                setTimeout(()=>{
+                console.log(lower, finala);
+                setTimeout(() => {
                     circle.remove();
                     circleBG.remove();
-                    stuffToRemove.forEach(x=>{
+                    stuffToRemove.forEach(x => {
                         x.remove();
-                    })
+                    });
                     arrow.remove();
-                    return resolve(lower[lower.length-1].t);
-                },3000)
+                    return resolve(lower[lower.length - 1].t);
+                }, 3000)
             }
-        },30);
+        }, 30);
     })
 }
 
@@ -845,6 +689,7 @@ function doShot(player, target) {
                 } else {
                     p.sprite.set('zIndex', '3000');
                     p.target = target;
+                    p.angle = 0;
                     PROJECTILES.push(p);
                     THINGS_TO_KILL.push(p);
                     setTimeout(() => {
@@ -855,6 +700,7 @@ function doShot(player, target) {
         } else {
             p.sprite.set('zIndex', '3000');
             p.target = target;
+            p.angle = 0;
             PROJECTILES.push(p);
             THINGS_TO_KILL.push(p);
             setTimeout(() => {
@@ -1097,7 +943,7 @@ function heal(isPlayerA, val) {
     val = val || 0;
     let fighter = isPlayerA ? playerA : playerB;
     return new Promise(resolve => {
-        if(fighter.dead) return resolve();
+        if (fighter.dead) return resolve();
         let healImg = new Img(LOADED_IMAGES.heal.cloneNode(), fighter.x, fighter.y + fighter.height / 2, fighter.width, 10).fromCenter().onLoad(() => {
             healImg.addClass('fastsmoothed');
             healImg.zIndex = 3002;
@@ -1118,8 +964,8 @@ function heal(isPlayerA, val) {
                             team.hp++;
                             team.hpDiv.value = team.hp;
                         }
-                        if(fighter.dead){
-                            fighter.kill()
+                        if (fighter.dead) {
+                            fighter.kill();
                             team.hp = 0;
                             team.hpDiv.value = team.hp;
                             clearInterval(healing);
@@ -1436,7 +1282,7 @@ function explode(isPlayerA, val) {
                                         teamA.hpDiv.value = 0;
                                         teamB.hpDiv.value = 0;
                                         setTimeout(() => {
-                                            handleWin(2)
+                                            handleWin(2);
                                             return resolve();
                                         }, 2000);
                                     }, 3100)
@@ -1585,9 +1431,11 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                 if (index === -1) index = 0;
                 let fbDmg = team.wordPool[index][1] * fbD;
                 console.log((plyr ? 'Team A' : 'Team B') + ' does a final smash');
-                if (isFB && (plyr ? hpA : hpB) <= DAMAGE_PER_TICK && (plyr ? hpB : hpA) < fbDmg && oppVal > 0 && winsA<(ROUNDS/2 |0) && winsB<(ROUNDS/2 |0)) {
+                if (isFB && (plyr ? hpA : hpB) <= DAMAGE_PER_TICK && (plyr ? hpB : hpA) < fbDmg && oppVal > 0 && winsA < (ROUNDS / 2 | 0) && winsB < (ROUNDS / 2 | 0)) {
                     //if youre gonna do a final attack, and that attack will kill, but you will also die from one shot
                     explode(plyr, fbDmg).then(() => {
+                        UNTICK_LETTER = false;
+                        console.log('both die, so no undo letter');
                         return resolve();
                     })
                 } else {
@@ -1620,21 +1468,22 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
     async function fancyChoice(hasCheat) {
         console.log('decided by roll');
         let cheat;
-        if(winsA===winsB){
+        if (winsA === winsB) {
             cheat = null;
-        }else{
-            cheat = !(winsA>winsB);
+        } else {
+            cheat = !(winsA > winsB);
         }
-        if(typeof hasCheat === 'boolean'){
+        if (typeof hasCheat === 'boolean') {
             cheat = hasCheat;
         }
         return new Promise(resolve => {
-            createSpinner(teamA.word,teamB.word,cheat).then(x=>{
+            createSpinner(teamA.word, teamB.word, cheat).then(x => {
                 resolve(x);
             })
         })
     }
 
+    let UNTICK_LETTER = false;
     return new Promise(resolve => {
             unIdlePlayers().then(async () => {
                 playerAState = 'fighting';
@@ -1644,25 +1493,31 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                 //TODO optimize this mess
                 if (fbA && hpA > pB * DAMAGE_PER_TICK) {
                     isPlyrA = false;
-                } else if (fbA && !fbB && hpA < pB * 5) {
+                } else if (fbA && !fbB && hpA < pB * DAMAGE_PER_TICK) {
                     isPlyrA = true;
                 }
                 if (fbB && hpB > pA * DAMAGE_PER_TICK) {
                     isPlyrA = true;
-                } else if (fbB && !fbA && hpB < pA * 5) {
+                } else if (fbB && !fbA && hpB < pA * DAMAGE_PER_TICK) {
                     isPlyrA = false;
                 }
-                if (hpA <= DAMAGE_PER_TICK && hpB >= DAMAGE_PER_TICK*2) {
+                if (hpA <= DAMAGE_PER_TICK && hpB >= DAMAGE_PER_TICK * 2) {
+                    console.log('A will die, so they go first');
                     isPlyrA = await fancyChoice(true);
-                } else if (hpB <= DAMAGE_PER_TICK && hpA >= DAMAGE_PER_TICK*2) {
+                } else if (hpB <= DAMAGE_PER_TICK && hpA >= DAMAGE_PER_TICK * 2) {
+                    console.log('B will die, so they go first');
                     isPlyrA = await fancyChoice(false);
                 }
-                if (fbA && fbB && hpA <= DAMAGE_PER_TICK*pB && hpB <= DAMAGE_PER_TICK*pA) {
+                if (fbA && fbB && hpA <= teamB.wordPool[teamB.wordIndex - 1 === -1 ? 0 : teamB.wordIndex - 1][1] * fbD && hpB <= teamA.wordPool[teamA.wordIndex - 1 === -1 ? 0 : teamA.wordIndex - 1][1] * fbD) {
+                    console.log('Both are doing final smash, so roll dice');
                     isPlyrA = await fancyChoice();
-                } else if (hpA <= DAMAGE_PER_TICK*pB && hpB <= DAMAGE_PER_TICK*pA && !fbA && !fbB) {
+                    UNTICK_LETTER = true;
+                    console.log('someone will get back a letter')
+                } else if (hpA <= DAMAGE_PER_TICK * pB && hpB <= DAMAGE_PER_TICK * pA && !fbA && !fbB) {
+                    console.log('Both are doing small damage but will die, so roll dice');
                     isPlyrA = await fancyChoice();
-                } else if ((fbA || fbB) && hpA <= DAMAGE_PER_TICK*pB && hpB <= DAMAGE_PER_TICK*pA) {
-
+                } else if ((fbA || fbB) && hpA <= DAMAGE_PER_TICK * pB && hpB <= DAMAGE_PER_TICK * pA) {
+                    console.log('one is doing final smash, other will kill, so final smash first');
                     //if fbA is the thing that procd this, then this should work
                     isPlyrA = await fancyChoice(Boolean(fbA));
                 }
@@ -1681,10 +1536,14 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                             playerBState = 'idle';
                             resetBtn.shape.click();
                             BATTLE_IN_PROGRESS = false;
+                            if (UNTICK_LETTER) {
+                                let team = playerB.dead ? teamB : teamA;
+                                console.log('player ' + (playerB.dead ? 'B' : 'A') + ' undoes letter');
+                                team.puzzleDiv.undoLetter();
+                            }
                             if (NEEDS_RESET) {
                                 resetAll();
                             }
-
                             if (teamA.puzzleDiv.isFinished) {
                                 nextWord(true)
                             }
@@ -1734,7 +1593,7 @@ function resetAll() {
     resetSome();
     THINGS_TO_KILL.forEach(x => {
         x.kill()
-    })
+    });
     THINGS_TO_KILL = [];
     playerA.width = 120;
     playerB.width = 120;
@@ -1861,7 +1720,10 @@ function floop() {
     for (let i = PROJECTILES.length - 1; i >= 0; i--) {
         let p = PROJECTILES[i];
         p.update();
-        if (p.hasHitbox && p.target.hasHitbox && p.hitbox.contains(p.target.hitbox.vMiddleTall)) {
+        if (!p.dead && p.hasHitbox && p.target.hasHitbox && p.hitbox.contains(p.target.hitbox.vMiddleTall)) {
+            handleDamage(p.target, p.power);
+            p.kill()
+        } else if (!p.dead && (p.target.team === 'B' && p.hitbox.x2 > p.target.x) || (p.target.team === 'A' && p.hitbox.x2 < p.target.x)) {
             handleDamage(p.target, p.power);
             p.kill()
         }
@@ -1906,5 +1768,5 @@ function test() {
 //TODO fix small gfx issue with completed word
 //TODO add draw clause
 //TODO add free for all
-//TODO make gfx for player turn select
+//DONE make gfx for player turn select
 //TODO add quick ending

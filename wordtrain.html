@@ -15,6 +15,7 @@
 </head>
 <style type="text/css">
     #gamearea {
+        will-change: width;
         position: absolute;
         top: 10vh;
         height: 85vh !important;
@@ -94,6 +95,7 @@
     }
 
     .desk {
+        will-change: width;
         position: relative;
         border-radius: 5px;
         border-top: solid #9c845f 3px;
@@ -542,7 +544,7 @@
             // outside.attach(selector);
             GAMEBOARD.attach(outside);
             outside.shape.addEventListener('click', () => {
-                if (!desks.initialized) this.toggleMode()
+                if (!desks.initialized || stats.mode==='toggledesks') this.toggleMode()
                 if (stats.mode === 'changedesks'){
                     if(stats.first_desk === null){
                         stats.first_desk = this;
@@ -1428,14 +1430,20 @@
                 stats.first_desk.updatePowers();
                 stats.first_desk = null;
                 stats.second_desk = null;
-                stats.mode = 'none'
-            }else if(stats.mode === 'changedesks'){
                 stats.mode = 'none';
+                id('btn6').innerText = '@';
+            }else if(stats.mode === 'changedesks'){
+                stats.mode = 'toggledesks';
+                id('btn6').innerText = 'T';
+            }else if(stats.mode=== 'toggledesks') {
+                stats.mode = 'none'
+                id('btn6').innerText = '@';
             }else{
-                    stats.mode = 'changedesks'
+                    stats.mode = 'changedesks';
+                    id('btn6').innerText = '?';
 
             }
-
+            console.log(stats.mode)
         });
         id('btn7').innerText = 'Save Game';
         id('btn7').addEventListener('click', saveGame);
