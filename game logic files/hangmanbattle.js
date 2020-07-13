@@ -179,6 +179,7 @@ let winsA = 0;
 let winsB = 0;
 
 function checkCircle(isTeamA) {
+    console.log(winsA,winsB,isTeamA)
     if (isTeamA == 1) {
         let circle = circles[winsA - 1];
         let check = id('checkmark').content.cloneNode(true);
@@ -214,21 +215,21 @@ function checkCircle(isTeamA) {
 
 function handleWin(isTeamA) {
     let gameEnd = false;
-    if (isTeamA == 1) {
+    if (isTeamA==1) {
         winsA++;
         if (winsA > ROUNDS / 2) gameEnd = true;
         checkCircle(isTeamA)
-    } else if (isTeamA == 0) {
+    } else if (isTeamA==0) {
         winsB++;
         if (winsB > ROUNDS / 2) gameEnd = true;
         checkCircle(isTeamA)
     } else {
-        if (winsA >= (ROUNDS / 2 - 1) && winsB >= (ROUNDS / 2 - 1)) gameEnd = true;
-        if (winsA >= (ROUNDS / 2 - 1) && winsB >= (ROUNDS / 2 - 1)) {
+        winsA++;
+        winsB++;
+        if (winsA >= (ROUNDS / 2) || winsB >= (ROUNDS / 2)) gameEnd = true;
+        if (winsA > (ROUNDS / 2 |0) && winsB > (ROUNDS / 2 |0)) {
             checkCircle(2);
         } else {
-            winsA++;
-            winsB++;
             checkCircle(0);
             checkCircle(1);
             let numA;
@@ -496,6 +497,73 @@ function get2DPSArrays(array) {
     return shuffle([newWordOrder, newWordOrder2]);
 }
 
+function createSpinner(word1,word2,winner) {
+    return new Promise(resolve=>{
+        let left = width/2 - 3;
+        let top = height/2 -3;
+        let circleBG = new Circle(left,top,150);
+        circleBG.color = 'yellow';
+        circleBG.border = 'blue solid 3px';
+        let circle = new Circle(left,top,100);
+        circle.color = 'yellow';
+        circle.border = "blue solid 3px";
+        let arrow = new Arrow(width/2 - 103,top,left,top,5);
+        arrow.shape.style.transformOrigin = '100% 50%';
+        arrow.color = 'blue';
+        function eq(val){
+            return -1*(0.05*val-7.7)**2+60
+        }
+        let stuffToRemove = []
+        let cheat = getRandom(0,360);
+        function setWordsInCircle(wordA,wordB){
+            let wordArray = wordA.split('').reverse().concat(wordB.split(''));
+            let theta = 360/wordArray.length;
+            let angles = [];
+            if(typeof winner === 'boolean'){
+                cheat = winner? getRandom(360-(wordA.length*theta)+1,360-(theta/2)-1) : getRandom(theta/-2 +1, theta*wordB.length - 1);
+            }
+            for(let i = 0; i<wordArray.length; i++){
+                let index = (wordA.length+i)%wordArray.length;
+                let p = new P(wordArray[index],left-6+ Math.cos(((theta*i)-90 + theta/2)/180*Math.PI)*125,top-9+Math.sin(((theta*i-90+ theta/2)/180)*Math.PI)*125);
+                let l = Line.fromAngle(left+2+ Math.cos(((theta*i)-90)/180*Math.PI)*101,top+2+Math.sin(((theta*i-90)/180)*Math.PI)*101,50,theta*i-90,3);
+                l.color = 'blue';
+                p.color = index<wordA.length? 'royalblue': 'indianred';
+                p.size = '3em';
+                p.set('fontWeight','bolder');
+                p.y -= 20;
+                p.x -= 3;
+                stuffToRemove.push(p)
+                stuffToRemove.push(l)
+                angles.push({w:wordArray[index],a:theta*i-theta/2,t:index<wordA.length})
+            }
+            return angles
+        }
+        let angs = setWordsInCircle(word1,word2);
+
+        let angle = -63 + cheat;
+        let x = 0;
+        let loops = setInterval(()=>{
+            arrow.rotateTo(angle);
+            angle+=eq(x);
+            x++;
+            if(eq(x)<0){
+                let finala = ((angle-92)%360);
+                let lower = angs.filter(x=>x.a<finala);
+                clearInterval(loops);
+                console.log(lower,finala)
+                setTimeout(()=>{
+                    circle.remove();
+                    circleBG.remove();
+                    stuffToRemove.forEach(x=>{
+                        x.remove();
+                    })
+                    arrow.remove();
+                    return resolve(lower[lower.length-1].t);
+                },3000)
+            }
+        },30);
+    })
+}
 
 function createInputBox(team) {
     if (team === 'A') {
@@ -997,7 +1065,7 @@ function throwBomb(isPlayerA, dmg) {
             PROJECTILES.push(p);
             setTimeout(() => {
                 return resolve();
-            }, 500);
+            }, 1000);
         }, 1000)
     })
 }
@@ -1020,7 +1088,7 @@ function throwShuriken(isPlayerA, dmg) {
             PROJECTILES.push(p);
             setTimeout(() => {
                 return resolve();
-            }, 500);
+            }, 1000);
         }, 1000)
     })
 }
@@ -1029,7 +1097,7 @@ function heal(isPlayerA, val) {
     val = val || 0;
     let fighter = isPlayerA ? playerA : playerB;
     return new Promise(resolve => {
-        if(fighter.dead) return resolve()
+        if(fighter.dead) return resolve();
         let healImg = new Img(LOADED_IMAGES.heal.cloneNode(), fighter.x, fighter.y + fighter.height / 2, fighter.width, 10).fromCenter().onLoad(() => {
             healImg.addClass('fastsmoothed');
             healImg.zIndex = 3002;
@@ -1049,6 +1117,13 @@ function heal(isPlayerA, val) {
                         } else {
                             team.hp++;
                             team.hpDiv.value = team.hp;
+                        }
+                        if(fighter.dead){
+                            fighter.kill()
+                            team.hp = 0;
+                            team.hpDiv.value = team.hp;
+                            clearInterval(healing);
+                            return resolve()
                         }
                     }, 30);
                     setTimeout(() => {
@@ -1388,7 +1463,7 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
     let dmg = DAMAGE_PER_TICK;
     let fbD = FINAL_SMASH_SCALING;
 
-    function doAttack(plyr, val, isFB, oppVal, oppFB) {
+    async function doAttack(plyr, val, isFB, oppVal, oppFB) {
         let hp = plyr ? hpA : hpB;
         return new Promise(resolve => {
             if (val && !isFB) {
@@ -1510,7 +1585,7 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                 if (index === -1) index = 0;
                 let fbDmg = team.wordPool[index][1] * fbD;
                 console.log((plyr ? 'Team A' : 'Team B') + ' does a final smash');
-                if (isFB && (plyr ? hpA : hpB) <= DAMAGE_PER_TICK && (plyr ? hpB : hpA) < fbDmg && oppVal > 0) {
+                if (isFB && (plyr ? hpA : hpB) <= DAMAGE_PER_TICK && (plyr ? hpB : hpA) < fbDmg && oppVal > 0 && winsA<(ROUNDS/2 |0) && winsB<(ROUNDS/2 |0)) {
                     //if youre gonna do a final attack, and that attack will kill, but you will also die from one shot
                     explode(plyr, fbDmg).then(() => {
                         return resolve();
@@ -1542,50 +1617,54 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
         })
     }
 
-    function fancyChoice() {
+    async function fancyChoice(hasCheat) {
         console.log('decided by roll');
-        let a = Array(teamA.word.length).fill('A');
-        let b = Array(teamB.word.length).fill('B');
-        console.log(a.concat(b));
-        let chosen = getRandom(a.concat(b));
-        if (chosen === 'A') {
-            return 1;
-        } else {
-            return 0;
+        let cheat;
+        if(winsA===winsB){
+            cheat = null;
+        }else{
+            cheat = !(winsA>winsB);
         }
-
+        if(typeof hasCheat === 'boolean'){
+            cheat = hasCheat;
+        }
+        return new Promise(resolve => {
+            createSpinner(teamA.word,teamB.word,cheat).then(x=>{
+                resolve(x);
+            })
+        })
     }
 
     return new Promise(resolve => {
-            unIdlePlayers().then(() => {
+            unIdlePlayers().then(async () => {
                 playerAState = 'fighting';
                 playerBState = 'fighting';
                 let isPlyrA = getRandom(2);
 
                 //TODO optimize this mess
-                if (fbA && hpA > pB * 5) {
+                if (fbA && hpA > pB * DAMAGE_PER_TICK) {
                     isPlyrA = false;
                 } else if (fbA && !fbB && hpA < pB * 5) {
                     isPlyrA = true;
                 }
-                if (fbB && hpB > pA * 5) {
+                if (fbB && hpB > pA * DAMAGE_PER_TICK) {
                     isPlyrA = true;
                 } else if (fbB && !fbA && hpB < pA * 5) {
                     isPlyrA = false;
                 }
-                if (hpA <= 5 && hpB >= 10) {
-                    isPlyrA = true;
-                } else if (hpB <= 5 && hpA >= 10) {
-                    isPlyrA = false;
+                if (hpA <= DAMAGE_PER_TICK && hpB >= DAMAGE_PER_TICK*2) {
+                    isPlyrA = await fancyChoice(true);
+                } else if (hpB <= DAMAGE_PER_TICK && hpA >= DAMAGE_PER_TICK*2) {
+                    isPlyrA = await fancyChoice(false);
                 }
-                if (fbA && fbB && hpA < 20 && hpB < 20) {
-                    isPlyrA = fancyChoice();
-                } else if (hpA < DAMAGE_PER_TICK && hpB < DAMAGE_PER_TICK && !fbA && !fbB) {
-                    isPlyrA = fancyChoice();
-                } else if ((fbA || fbB) && hpA < DAMAGE_PER_TICK && hpB < DAMAGE_PER_TICK) {
+                if (fbA && fbB && hpA <= DAMAGE_PER_TICK*pB && hpB <= DAMAGE_PER_TICK*pA) {
+                    isPlyrA = await fancyChoice();
+                } else if (hpA <= DAMAGE_PER_TICK*pB && hpB <= DAMAGE_PER_TICK*pA && !fbA && !fbB) {
+                    isPlyrA = await fancyChoice();
+                } else if ((fbA || fbB) && hpA <= DAMAGE_PER_TICK*pB && hpB <= DAMAGE_PER_TICK*pA) {
 
                     //if fbA is the thing that procd this, then this should work
-                    isPlyrA = fbA;
+                    isPlyrA = await fancyChoice(Boolean(fbA));
                 }
 
                 doAttack(isPlyrA, isPlyrA ? pA : pB, isPlyrA ? fbA : fbB, isPlyrA ? pB : pA, isPlyrA ? fbB : fbA).then(() => {
