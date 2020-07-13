@@ -298,7 +298,7 @@
         z-index:1000;
     }
 
-    #btn6,#btn7{
+    #btn7{
         display: none;
     }
 
@@ -618,6 +618,7 @@
 
         setAvatar(string) {
             if (Object.keys(this.avatar).length > 0) this.avatar.remove();
+            if(string === "") return
             let token = makeToken(string);
             this.div.attach(token);
             token.set('position', 'absolute');
@@ -904,6 +905,7 @@
         let token = name[1];
         if (!valid_tokens.includes(token) && token !== 'empty') {
             console.error('no svgs with that name: ' + token);
+            
             return;
         }
         let number = 1;
@@ -1407,14 +1409,26 @@
                     name: players.getById(stats.second_desk.id).name,
                     powers: Array.from(players.getById(stats.second_desk.id).powers)
                 };
-                stats.second_desk.setAvatar(players.getById(stats.first_desk.id).name);
+                let p1name = players.getById(stats.first_desk.id).name
+                if(p1name.startsWith("P")){
+                    stats.second_desk.setAvatar("")
+                }else{
+                    stats.second_desk.setAvatar(p1name);
+                }
                 players.getById(stats.second_desk.id).powers = players.getById(stats.first_desk.id).powers;
                 stats.second_desk.updatePowers();
-                stats.first_desk.setAvatar(temp.name);
+                
+                if(temp.name.startsWith('P')){
+                    stats.first_desk.setAvatar("")
+                }else{
+                    stats.first_desk.setAvatar(temp.name);
+                }
                 players.getById(stats.first_desk.id).powers = temp.powers;
+               // jlog(players.getById(stats.first_desk.id).powers)
                 stats.first_desk.updatePowers();
                 stats.first_desk = null;
                 stats.second_desk = null;
+                stats.mode = 'none'
             }else if(stats.mode === 'changedesks'){
                 stats.mode = 'none';
             }else{
