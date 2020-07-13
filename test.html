@@ -119,8 +119,51 @@
     }
     console.log(d.reduce((a,b)=>a+b)/100)
 
-
-
+    let circ = new Circle(200-3,200-3,150)
+    circ.color = 'yellow'
+    circ.border = 'blue solid 3px'
+    let circle = new Circle(200-3,200-3,100)
+    circle.color = 'yellow'
+    circle.border = "blue solid 3px"
+    let arrow = new Arrow(100,200,200,200,5)
+    arrow.shape.style.transformOrigin = '100% 50%'
+    arrow.color = 'blue'
+    let angle = -63 + 54
+    let xx = 0
+    
+    function setWordsInCircle(w1,w2){
+        let arr = w1.split('').reverse().concat(w2.split(''))
+        let theta = 360/arr.length
+        let angles = []
+         for(let i = 0; i<arr.length; i++){
+            let index = (w1.length+i)%arr.length
+            let p = new P(arr[index],200-3+ Math.cos(((theta*i)-90)/180*Math.PI)*120,200-3+Math.sin(((theta*i-90)/180)*Math.PI)*120)
+            let l = Line.fromAngle(200+ Math.cos(((theta*i)-90+theta/2)/180*Math.PI)*100,200-1+Math.sin(((theta*i-90+theta/2)/180)*Math.PI)*100,50,theta*i-90+theta/2,3)
+            l.color = 'blue'
+            p.color = 'blue'
+            angles.push({w:arr[index],a:theta*i-theta/2,t:index<w1.length})
+        }
+        return angles
+    }
+    let angs = setWordsInCircle('team','banana')
+    
+    
+    function eqq(val){
+        return -1*(0.05*val-7.7)**2+60
+    }
+    let loops = setInterval(()=>{
+      arrow.rotateTo(angle)
+      angle+=eqq(xx)
+      xx++
+      if(eqq(xx)<0){
+          let finala = (angle%360) -90
+          let lower = angs.filter(x=>x.a<finala)
+          jlog(lower[lower.length-1])
+          clearInterval(loops)
+      }
+    },30)
+    
+   
 </script>
 
 </body>
