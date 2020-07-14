@@ -41,7 +41,7 @@
 //let words = ['red','yellow','green','blue','rabbit','cat','dog','tiger','apple','banana','watermelon','pear','football','basketball'];
 //let words = ['january','february','march','april','may','june','july','august','september','october','november','december'];
 //let words = ['stones','bones','sticks','quill','feather','ink','brush','pencil','pen'];
-let words = ['first', 'second', 'third', 'fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth','thirteenth','fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth'];
+//let words = ['first', 'second', 'third', 'fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth','thirteenth','fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth'];
 //let words = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
 //let words = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday','morning','afternoon','evening','breakfast','lunch','dinner'];
 //let words = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday','noon','easter','summer','june','afternoon','may','birthday','spring','morning'];
@@ -134,6 +134,6 @@ let words = ['first', 'second', 'third', 'fourth','fifth','sixth','seventh','eig
 //let words = ['coronavirus','mask','temperature','disinfection','alcohol','circulation','fever','cough','soap','sneeze'];
 //let words = ['remember','uncomment','needed','words','after','sync'];
 //let words = ['kangaroo','jacket','monster','monkey','octopus','lake','kite','piano','penguin','pig','lemon','queen']
-
+//let words = ['test test','test test','test test','this is a test',' test a a a'];
 
 let difficulty = 1

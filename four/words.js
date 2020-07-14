@@ -137,4 +137,4 @@
 //let words = ['kangaroo','jacket','monster','monkey','octopus','lake','kite','piano','penguin','pig','lemon','queen']
 let words = ['annoying','birthday','complete','criminal','everyone','exciting','everyday','exercise','language','mountain','thousand','tomorrow','whatever','whenever']
 
-let difficulty = 1
+let difficulty = 1;

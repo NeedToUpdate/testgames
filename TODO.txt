@@ -14,7 +14,15 @@
 //HANGMAN (VS)
 - add maybe choice of heal, attack, or block (?)
 - add more attacks
-
+- [DONE] IMPORTANT add spaces to input words
+- [DONE] add jumpBack when getting hit
+- [DONE] add 3 ROUNDS
+- [DONE] add player select screen
+- [DONE] fix small gfx issue with completed word
+- add draw clause
+- add free for all
+- [DONE] make gfx for player turn select
+- add quick ending
 
 //WORD TRAIN
 - add save function for players as a base64 string <- haha lol idk

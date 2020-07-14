@@ -45,9 +45,9 @@
    // 'fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth'];
 //let words = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
 //let words = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday','morning','afternoon','evening','breakfast','lunch','dinner'];
-let words = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday','noon','easter','summer','june','afternoon','may','birthday','spring','morning'];
+//let words = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday','noon','easter','summer','june','afternoon','may','birthday','spring','morning'];
 //let words = ['time','measure','sundial','sandglass','candle','clock','hourglass','sun','minute','hour'];
-//let words = ['january','february','march','april','may','june','july','august','september','october','november','december']
+let words = ['january','february','march','april','may','june','july','august','september','october','november','december']
 //let words = ['sunny','cloudy','rainy','drizzling','stormy','snowy','sleeting','hailing','foggy','windy','thermometer'];
 
 //================ESL1=================

@@ -47,7 +47,7 @@
 //let words = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday','morning','afternoon','evening','breakfast','lunch','dinner'];
 //let words = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday','noon','easter','summer','june','afternoon','may','birthday','spring','morning'];
 //let words = ['time','measure','sundial','sandglass','candle','clock','hourglass','sun','minute','hour'];
-let words = ['january','february','march','april','may','june','july','august','september','october','november','december']
+//let words = ['january','february','march','april','may','june','july','august','september','october','november','december']
 
 //================ESL1=================
 
@@ -135,7 +135,7 @@ let words = ['january','february','march','april','may','june','july','august','
 //let words = ['coronavirus','mask','temperature','disinfection','alcohol','circulation','fever','cough','soap','sneeze'];
 //let words = ['remember','uncomment','needed','words','after','sync'];
 //let words = ['kangaroo','jacket','monster','monkey','octopus','lake','kite','piano','penguin','pig','lemon','queen']
-
+let words = ['sugar','water','colors','glass','blend','testtube','warm']
 
 let difficulty = 1
 

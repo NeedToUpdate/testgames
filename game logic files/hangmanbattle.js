@@ -315,7 +315,7 @@ function get2DPSArrays(array) {
         let l = w.length;
         let uniq = Array.from(new Set(w.split(''))).length;
         let eff = (l / uniq);
-        let dmg = Math.sqrt(eff) * (l - 1);
+        let dmg = Math.sqrt(eff) * Math.sqrt(l);
         wordDPS.push([w, ((dmg + l))])
     });
     let averageDPS = wordDPS.reduce((a, b) => a + b[1], 0) / wordDPS.length;
@@ -597,12 +597,6 @@ function submitLetters() {
         }, 1000);
     }
 
-    if (finishedB) {
-        B.letterDivs.forEach(x => {
-            x.color = 'limegreen';
-        })
-    }
-
     function doBattle() {
         //console.log('Battle is called' + (readyA? '': ' but Team A is not Ready') +(readyB? '' : ' but team B is not Ready'))
         if (!readyA || !readyB) return;
@@ -621,6 +615,9 @@ resetBtn.shape.addEventListener('click', () => {
     teamA.input.reset();
     teamB.input.reset();
     THINGS_TO_KILL.forEach(x => {
+        if(x.isProjectile && !x.isHandled){
+            handleDamage(x.target, x.power);
+        }
         x.kill();
     });
     THINGS_TO_KILL = [];
@@ -690,6 +687,7 @@ function doShot(player, target) {
                     p.sprite.set('zIndex', '3000');
                     p.target = target;
                     p.angle = 0;
+                    p.isProjectile = true;
                     PROJECTILES.push(p);
                     THINGS_TO_KILL.push(p);
                     setTimeout(() => {
@@ -701,6 +699,7 @@ function doShot(player, target) {
             p.sprite.set('zIndex', '3000');
             p.target = target;
             p.angle = 0;
+            p.isProjectile = true;
             PROJECTILES.push(p);
             THINGS_TO_KILL.push(p);
             setTimeout(() => {
@@ -797,21 +796,27 @@ function rapidFire(isPlayerA, dmg) {
     let target = isPlayerA ? playerB : playerA;
     return new Promise(resolve => {
         if (fighter.dead) return resolve();
-        let shootloop = setInterval(() => {
-            fighter.powerUp(dmg / 8);
-            setTimeout(() => {
-                doShot(fighter, target);
-                if (INTERRUPT_DAMAGE) {
-                    clearInterval(shootloop);
-                    NEEDS_RESET = true;
-                    return resolve();
+        let timeouts = []
+        for(let i = 0; i<8; i++){
+            timeouts.push(setTimeout(()=>{
+                fighter.powerUp(dmg / 8);
+                setTimeout(() => {
+                    doShot(fighter, target);
+                    if (INTERRUPT_DAMAGE) {
+                        NEEDS_RESET = true;
+                        timeouts.forEach(t=>{
+                            clearTimeout(t);
+                        })
+                        return resolve();
+                    }
+                }, 300);
+                if(i ===7){
+                    setTimeout(()=>{
+                        return resolve();
+                    },1500);
                 }
-            }, 300)
-        }, 600);
-        setTimeout(() => {
-            clearInterval(shootloop);
-            return resolve();
-        }, 5000)
+            },500*i))
+        }
     })
 }
 
@@ -908,6 +913,7 @@ function throwBomb(isPlayerA, dmg) {
             di.style.zIndex = '3002';
             p.addDeathImage(di);
             p.target = target;
+            p.isProjectile = true;
             PROJECTILES.push(p);
             setTimeout(() => {
                 return resolve();
@@ -931,6 +937,7 @@ function throwShuriken(isPlayerA, dmg) {
             let di = LOADED_IMAGES.bloodsplatter.cloneNode();
             di.style.zIndex = '3002';
             p.addDeathImage(di);
+            p.isProjectile = true;
             PROJECTILES.push(p);
             setTimeout(() => {
                 return resolve();
@@ -1592,6 +1599,9 @@ function resetSome() {
 function resetAll() {
     resetSome();
     THINGS_TO_KILL.forEach(x => {
+        if(x.isProjectile && !x.isHandled){
+            handleDamage(x.target, x.power);
+        }
         x.kill()
     });
     THINGS_TO_KILL = [];
@@ -1661,7 +1671,7 @@ function handleDamage(player, num) {
         if (!playerA.dead) {
             console.log('Team A takes ' + num + ' damage');
             teamA.hp -= num;
-            playerA.addForce(Vector.fromAngle(-45).mult(6));
+            playerA.addForce(Vector.fromAngle(0).mult(6));
             if (teamA.hp <= 0) {
                 teamA.hp = 0;
                 playerA.kill();
@@ -1676,7 +1686,7 @@ function handleDamage(player, num) {
         if (!playerB.dead) {
             console.log('Team B takes ' + num + ' damage');
             teamB.hp -= num;
-            playerB.addForce(Vector.fromAngle(45).mult(6));
+            playerB.addForce(Vector.fromAngle(0).mult(6));
             if (teamB.hp <= 0) {
                 teamB.hp = 0;
                 playerB.kill();
@@ -1721,9 +1731,11 @@ function floop() {
         let p = PROJECTILES[i];
         p.update();
         if (!p.dead && p.hasHitbox && p.target.hasHitbox && p.hitbox.contains(p.target.hitbox.vMiddleTall)) {
+            p.isHandled = true;
             handleDamage(p.target, p.power);
             p.kill()
         } else if (!p.dead && (p.target.team === 'B' && p.hitbox.x2 > p.target.x) || (p.target.team === 'A' && p.hitbox.x2 < p.target.x)) {
+            p.isHandled = true;
             handleDamage(p.target, p.power);
             p.kill()
         }
@@ -1761,12 +1773,3 @@ function test() {
     })
 }
 
-//TODO =================== MAIN =================
-//DONE add jumpBack when getting hit
-//DONE add 3 ROUNDS
-//DONE add player select screen
-//TODO fix small gfx issue with completed word
-//TODO add draw clause
-//TODO add free for all
-//DONE make gfx for player turn select
-//TODO add quick ending
