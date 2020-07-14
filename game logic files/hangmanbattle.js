@@ -1734,11 +1734,12 @@ function floop() {
             p.isHandled = true;
             handleDamage(p.target, p.power);
             p.kill()
-        } else if (!p.dead && (p.target.team === 'B' && p.hitbox.x2 > p.target.x) || (p.target.team === 'A' && p.hitbox.x2 < p.target.x)) {
-            p.isHandled = true;
-            handleDamage(p.target, p.power);
-            p.kill()
-        }
+        } 
+        // else if (!p.dead && (p.target.team === 'B' && p.hitbox.x2 > p.target.x) || (p.target.team === 'A' && p.hitbox.x2 < p.target.x)) {
+        //     p.isHandled = true;
+        //     handleDamage(p.target, p.power);
+        //     p.kill()
+        // }
         if (p.dead) {
             PROJECTILES.splice(i, 1);
         }
