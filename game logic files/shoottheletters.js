@@ -248,6 +248,7 @@ function loop() {
             })
         });
         Promise.all(promises).then(()=>{
+            stop();
             win();
         })
     }
@@ -256,7 +257,7 @@ function loop() {
 function win() {
     buildings.forEach(bld=>{
         let val = Math.random()*5;
-        bld.y-= val;
+        bld.y-= val*1.05;
         bld.fire.y -= val;
     });
     bullets.forEach(x=>{
