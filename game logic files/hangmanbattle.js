@@ -1527,6 +1527,11 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                     console.log('one is doing final smash, other will kill, so final smash first');
                     //if fbA is the thing that procd this, then this should work
                     isPlyrA = await fancyChoice(Boolean(fbA));
+                } else if ((fbA && hpB <= teamA.wordPool[teamA.wordIndex - 1 === -1 ? 0 : teamA.wordIndex - 1][1] * fbD) || (fbB && hpA <= teamB.wordPool[teamB.wordIndex - 1 === -1 ? 0 : teamB.wordIndex - 1][1] * fbD) ){
+                    console.log('both doing fb but one isnt going to kill');
+                    isPlyrA = await fancyChoice();
+                    UNTICK_LETTER = true;
+                    console.log('someone will get back a letter')
                 }
 
                 doAttack(isPlyrA, isPlyrA ? pA : pB, isPlyrA ? fbA : fbB, isPlyrA ? pB : pA, isPlyrA ? fbB : fbA).then(() => {

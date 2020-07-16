@@ -300,7 +300,7 @@
         z-index:1000;
     }
 
-    #btn6,#btn7{
+    #btn6{
         display: none;
     }
 
@@ -362,6 +362,7 @@
 <button id="btn5">btn5</button>
 <button id="btn6">btn6</button>
 <button id="btn7">btn7</button>
+<button id="btn8">btn7</button>
 <h4 id="gamemessage"></h4>
 <script type="text/javascript">
     window.addEventListener('beforeunload',event=>{
@@ -465,6 +466,7 @@
 
         set name(string) {
             this.INTERNAL_NAME = string;
+            if(string === 'no name') string = ''
             desks.getById(this.id).setAvatar(string);
         }
 
@@ -1209,14 +1211,47 @@
     }
 
 
+    function saveGame(){
+        localStorage.setItem('stats',JSON.stringify(stats));
+        localStorage.setItem('players',JSON.stringify(players.players));
+        localStorage.setItem('desks',JSON.stringify(desks.desks));
+        localStorage.setItem('turns',JSON.stringify(turn_order));
+    }
+    function loadGame(){
+
+
+        let players_data = JSON.parse(localStorage.getItem('players'));
+        let desks_data = JSON.parse(localStorage.getItem('desks'));
+        desks_data.forEach((data,index)=>{
+            for(let i = data.mode; i>0; i--){
+                desks.desks[index].toggleMode();
+            }
+        })
+        createPlayers();
+        players_data.forEach((x,index)=>{
+            players.getById(index).name = x.INTERNAL_NAME
+            x.powers.forEach(pow=>{
+                let p = new PowerData(pow.type);
+                players.getById(index).powers.push(p);
+                if(pow.isUsed) p.use(true);
+            })
+        });
+        stats = JSON.parse(localStorage.getItem('stats'));
+        turn_order = Array.from(JSON.parse(localStorage.getItem('turns')));
+        for(let i = 0; i<players.players.length; i++){
+            desks.getById(i).updatePowers()
+        }
+        stats.game_running = true;
+        stats.mode = 'none';
+        id('btn1').innerHTML = '';
+        id('btn1').appendChild(id('arrow').content.cloneNode(true));
+    }
 
 
 
 
 
-
-
-    function saveGame() {
+    function compressSave() {
         function toBin(num,dig){
             num = num.toString(2);
             while(num.length<dig){
@@ -1319,7 +1354,7 @@
         return newnewstring
     }
 
-    function loadGame(string) {
+    function uncompressSave(string) {
         //TODO
         let values = string.split('');
         let new_desks = [];
@@ -1445,8 +1480,10 @@
             }
             console.log(stats.mode)
         });
-        id('btn7').innerText = 'Save Game';
+        id('btn7').innerHTML = 'Save';
         id('btn7').addEventListener('click', saveGame);
+        id('btn8').innerText = 'Load';
+        id('btn8').addEventListener('click', loadGame);
 
     }
 
@@ -1527,7 +1564,6 @@
             stats.mode = 'none';
             id('btn1').innerHTML = '';
             id('btn1').appendChild(id('arrow').content.cloneNode(true));
-            saveGame()
         })
     }
 
