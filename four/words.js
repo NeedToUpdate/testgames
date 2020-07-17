@@ -14,7 +14,7 @@
 //================ESLS=================
 
 //let words = ['living room','dining room','bedroom','garage','kitchen','terrace','bathroom','yard']
-//let words = ['happy','sad','nervous','relaxed','excited','energetic','tired','confused','scared','curious','bored','hungry','sleepy','angry','surprised','confident'];
+let words = ['happy','sad','nervous','relaxed','excited','energetic','tired','confused','scared','curious','bored','hungry','sleepy','angry','surprised','confident'];
 //let words = ['first', 'second', 'third', 'fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth','thirteenth',    'fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth'];
 //let words = ['birthday','party','amazing','growth','interview','gift','meaningful','year','special'];
 //let words = ['skateboard','frisbee','football','robot','rubiks cube','basketball','guitar','puzzles','lego','hula hoop','doll',
@@ -42,7 +42,7 @@
 //let words = ['january','february','march','april','may','june','july','august','september','october','november','december'];
 //let words = ['stones','bones','sticks','quill','feather','ink','brush','pencil','pen'];
 //let words = ['first', 'second', 'third', 'fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth','thirteenth',
-   // 'fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth'];
+// 'fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth'];
 //let words = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
 //let words = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday','morning','afternoon','evening','breakfast','lunch','dinner'];
 //let words = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday','noon','easter','summer','june','afternoon','may','birthday','spring','morning'];
@@ -135,6 +135,6 @@
 //let words = ['coronavirus','mask','temperature','disinfection','alcohol','circulation','fever','cough','soap','sneeze'];
 //let words = ['remember','uncomment','needed','words','after','sync'];
 //let words = ['kangaroo','jacket','monster','monkey','octopus','lake','kite','piano','penguin','pig','lemon','queen']
-let words = ['annoying','birthday','complete','criminal','everyone','exciting','everyday','exercise','language','mountain','thousand','tomorrow','whatever','whenever']
+//let words = ['annoying','birthday','complete','criminal','everyone','exciting','everyday','exercise','language','mountain','thousand','tomorrow','whatever','whenever']
 
 let difficulty = 1;

@@ -9,6 +9,7 @@
     <script language="javascript" src="lib/Character.js"></script>
     <script language="javascript" src="lib/collisioncontainer.js"></script>
     <script language="javascript" src="lib/eventemitter.js"></script>
+    <script language="javascript" src="lib/PlayerImages.js"></script>
     <title>Artem's Fighting Game</title>
     <link rel="stylesheet" href="global_styles.css">
 </head>
@@ -32,28 +33,6 @@
     let NUM_OF_MONSTERS = 46;
     let IMAGE_PATH = './images/';
 
-    let characters = [
-        'cat',
-        'spiderman', 'ultraman', 'ironman',
-        'peppapig', 'spongebob', 'monkey',
-        'tiger', 'shark', 'cinderella',
-        'elsa', 'ariel', 'deadfish', 'mrkrabs', 'thanos', 'pikachu', 'drstrange',
-        'superman', 'genie', 'simba', 'captainmarvel', 'mewtwo', 'sailormoon', 'venom', 'thor',
-        'ultraman2', 'ultraman3', 'olaf', 'hulk', 'gundam', 'optimus', 'snowwhite', 'deadpool',
-        'goku', 'ash', 'charizard', 'captainamerica', 'nakoruru', 'mario', 'emmet', 'wyldstyle',
-        'tree','link', 'isabelle', 'doraemon','hellokitty','penguin'
-    ];
-    let powers = [
-        'blueenergy',
-        'web', 'bluebeam', 'fire',
-        'pinkenergy', 'krabbypatty', 'banana',
-        'fire', 'water', 'blueenergy',
-        'ice', 'water', 'nuke', 'water', 'blackenergy', 'electric', 'magic',
-        'fire', 'magic', 'magic', 'electric', 'magic', 'pinkenergy', 'blackenergy', 'electric',
-        'magic', 'electric', 'ice', 'rock', 'bluebeam', 'bullet', 'bluebeam', 'bullet',
-        'bluebeam', 'fire', 'fire', 'fire', 'fire', 'fire', 'legored', 'blackenergy',
-        'apple','blueenergy','water','pinkenergy','blueenergy','fish'
-    ];
 
 
     let background = 'background' + (getRandom(20)).toString() + '.jpg';
@@ -62,39 +41,7 @@
     document.body.style.backgroundSize = width + 'px auto';
     document.body.style.backgroundRepeat = 'no-repeat';
 
-    function create_player(num) {
-        let chosennum = num || getRandom(characters.length);
-        if (num === 0) {
-            chosennum = 0;
-        }
-        let char_name = characters[chosennum];
-        let powr_name = powers[chosennum];
-        if (char_name === 'deadfish') {
-            powr_name = 'nuke';
-        }
-        if (char_name === 'snowwhite') {
-            powr_name = 'bluebird';
-        }
-        if (char_name === 'ash') {
-            powr_name = 'poke';
-        }
-        if (char_name === 'captainamerica') {
-            powr_name = 'cashield';
-        }
-        if (char_name === 'nakoruru') {
-            powr_name = 'mamahaha'
-        }
-        if (char_name === 'wyldstyle') {
-            powr_name = 'blacklego'
-        }
-        if (char_name === 'link') {
-            powr_name = 'zeldabomb'
-        }
-        if (char_name === 'tree') {
-            powr_name = getRandom(2)? 'apple':'pear'
-        }
-        return {num: chosennum, name: char_name, power: powr_name};
-    }
+
 
     function create_monster(num) {
         let mons_num = num || getRandom(NUM_OF_MONSTERS + 2);

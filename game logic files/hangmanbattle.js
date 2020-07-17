@@ -1139,6 +1139,7 @@ function runBackAndSquish(isPlayerA, val) {
                     handleDamage(target, val * 3 / 4);
                     target.height = target.sprite.height;
                     target.width = 10;
+                    target.addForce(new Vector((isPlayerA?20:-20),0));
                     setTimeout(() => {
                         fighter.jumpWithAngle((isPlayerA ? -45 : 45), 20);
                         unsub = fighter.landing_emitter.subscribe('land', () => {
@@ -1156,7 +1157,7 @@ function runBackAndSquish(isPlayerA, val) {
                                         doShot(fighter, target).then(() => {
                                             setTimeout(() => {
                                                 target.height = '';
-                                                target.width = 120;
+                                                target.width = width/8;
                                                 setTimeout(() => {
                                                     return resolve();
                                                 }, 500)

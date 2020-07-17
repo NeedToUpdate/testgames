@@ -144,6 +144,9 @@
     .smoothed {
         transition: 1s ease-in-out;
     }
+    .fast_smoothed {
+        transition: 0.3s ease-in-out;
+    }
 
     .empty {
         border-top-color: rgba(156, 132, 95, 0.3);
@@ -401,12 +404,12 @@
     GAMEBOARD.isExpanded = true;
     GAMEBOARD.toggleCollapse = function () {
         if (this.isExpanded) {
-            this.addClass('collapsed', 'smoothed');
-            desks.setAll('smoothed');
+            this.addClass('collapsed', 'fast_smoothed');
+            desks.setAll('fast_smoothed');
             desks.toggleTinyPowers();
             setTimeout(() => {
-                this.removeClass('smoothed');
-                desks.removeAll('smoothed')
+                this.removeClass('fast_smoothed');
+                desks.removeAll('fast_smoothed')
             }, 1000);
             this.removeClass('expanded');
             desks.setAll('small_desk');
@@ -414,14 +417,14 @@
 
         } else {
             this.removeClass('collapsed');
-            this.addClass('expanded', 'smoothed');
+            this.addClass('expanded', 'fast_smoothed');
             desks.removeAll('small_desk');
             desks.setAll('medium_desk');
-            desks.setAll('smoothed');
+            desks.setAll('fast_smoothed');
             desks.toggleTinyPowers();
             setTimeout(() => {
-                this.removeClass('smoothed');
-                desks.removeAll('smoothed')
+                this.removeClass('fast_smoothed');
+                desks.removeAll('fast_smoothed')
             }, 1000)
         }
         this.isExpanded = !this.isExpanded
@@ -636,6 +639,7 @@
 
         updatePowers() {
             let plyr = players.getById(this.INTERNAL_ID);
+            if(plyr === undefined) return;
             this.powers.forEach(p => {
                 p.div.remove();
             });
@@ -1265,6 +1269,7 @@
             players.getById(index).desk_position = x.desk_position
         });
         desks.initialize(players.players);
+        turn_order = desks.createPositionArray().map(pos=>players.players.find(x=>x.desk_position === pos).INTERNAL_ID)
         players_data.forEach((x, index) => {
             players.getById(index).name = x.INTERNAL_NAME;
             x.powers.forEach(pow => {
@@ -1273,7 +1278,7 @@
                 if (pow.isUsed) p.use(true);
             })
         });
-        turn_order = Array.from(JSON.parse(localStorage.getItem('turns')));
+
         desks.setSelected(stats.current_turn);
         stats = JSON.parse(localStorage.getItem('stats'));
         for (let i = 0; i < players.players.length; i++) {
@@ -1529,13 +1534,13 @@
 
     }
 
-    function giveToAll(powrtype) {
-        if (stats.mode !== 'none') return
+    function giveToAll() {
+        if (stats.mode !== 'none') return;
         selectPower().then(result => {
             //console.log(result)
             if (typeof result === 'number') {
                 players.players.forEach(p => {
-                    p.powers.push(new PowerData(result))
+                   if(!p.dead) p.powers.push(new PowerData(result))
                 })
                 desks.desks.forEach(d => {
                     d.updatePowers()
