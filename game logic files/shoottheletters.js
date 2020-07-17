@@ -247,8 +247,8 @@ function loop() {
                 });
             })
         });
+        stop();
         Promise.all(promises).then(()=>{
-            stop();
             win();
         })
     }

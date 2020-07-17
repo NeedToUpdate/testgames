@@ -136,6 +136,6 @@
 //let words = ['kangaroo','jacket','monster','monkey','octopus','lake','kite','piano','penguin','pig','lemon','queen']
 //let words = ['test test','test test','test test','this is a test',' test a a a'];
 
-let words = ['volcano','baking soda','vinegar','clay','cup','spoon','bowl','plate']
+let words = ['volcano','baking soda','vinegar','clay','cup','spoon','bowl','plate'];
 
 let difficulty = 1

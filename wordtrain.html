@@ -356,7 +356,7 @@
 </style>
 
 <body>
-
+<div id="debugdiv" style="position: absolute; z-index: 9999999; top:40px"></div>
 
 <button id="btn1">btn1</button>
 <button id="btn2">btn2</button>
@@ -374,6 +374,27 @@
         event.returnValue = '';
         return '';
     });
+
+
+    if (typeof console !== 'undefined') {
+        if (typeof console.log !== 'undefined') {
+            console.olog = console.log;
+        } else {
+            console.olog = function () {
+            };
+        }
+        console.log = function (message) {
+            console.olog(message);
+            id('debugdiv').append(`\n` + message)
+        }
+        console.error = console.exception = console.debug = console.info = console.log;
+    }
+    window.addEventListener('error', e => {
+        id('debugdiv').append(`\n` + e.message)
+    });
+    id('debugdiv').addEventListener('click', () => {
+        id('debugdiv').innerText = ''
+    })
 
 
     let GAMEBOARD = new Rectangle(width * .02, height * .1, width * .90, height * .8).withNoCss().withId('gamearea');
@@ -1225,25 +1246,36 @@
 
     function loadGame() {
 
+        let players_read = localStorage.getItem('players');
+        let players_data = [];
+        if (players_read !== 'undefined') {
+            players_data = JSON.parse(players_read);
+        }
 
-        let players_data = JSON.parse(localStorage.getItem('players'));
         let desks_data = JSON.parse(localStorage.getItem('desks'));
         desks_data.forEach((data, index) => {
             for (let i = data.mode; i > 0; i--) {
                 desks.desks[index].toggleMode();
             }
-        })
-        createPlayers();
+        });
+
+        players = new PlayerHandler(players_data.length);
+
         players_data.forEach((x, index) => {
-            players.getById(index).name = x.INTERNAL_NAME
+            players.getById(index).desk_position = x.desk_position
+        });
+        desks.initialize(players.players);
+        players_data.forEach((x, index) => {
+            players.getById(index).name = x.INTERNAL_NAME;
             x.powers.forEach(pow => {
                 let p = new PowerData(pow.type);
                 players.getById(index).powers.push(p);
                 if (pow.isUsed) p.use(true);
             })
         });
-        stats = JSON.parse(localStorage.getItem('stats'));
         turn_order = Array.from(JSON.parse(localStorage.getItem('turns')));
+        desks.setSelected(stats.current_turn);
+        stats = JSON.parse(localStorage.getItem('stats'));
         for (let i = 0; i < players.players.length; i++) {
             desks.getById(i).updatePowers()
         }
@@ -1483,7 +1515,7 @@
                 id('btn6').innerText = '?';
 
             }
-            console.log(stats.mode)
+            //console.log(stats.mode)
         });
         id('btn7').innerHTML = '';
         id('btn7').addEventListener('click', saveGame);
@@ -1498,10 +1530,10 @@
     }
 
     function giveToAll(powrtype) {
-        if(stats.mode !== 'none') return
-        selectPower().then(result=>{
-            console.log(result)
-            if(typeof result === 'number'){
+        if (stats.mode !== 'none') return
+        selectPower().then(result => {
+            //console.log(result)
+            if (typeof result === 'number') {
                 players.players.forEach(p => {
                     p.powers.push(new PowerData(result))
                 })

@@ -4,19 +4,6 @@ let ROUNDS = 3;
 
 let IMAGE_PATH = '../images/';
 
-// if(typeof console !=='undefined'){
-//     if(typeof console.log !== 'undefined'){
-//         console.olog = console.log;
-//     }else{
-//         console.olog = function(){};
-//     }
-//     console.log = function(message){
-//         console.olog(message);
-//         id('debugdiv').append(`<p>` + message + `</p>`)
-//     }
-//     console.error = console.debug = console.info = console.log;
-// }
-
 
 document.body.style.backgroundColor = 'lightgrey';
 
@@ -230,7 +217,7 @@ function setUpCharacters(numA, numB) {
 
 
 function setup() {
-    LOADED_IMAGES = new ImageLoader(IMAGE_PATH + 'projectiles/', ['fire', 'dynamite', 'shuriken'].map(x => x + '_projectile'));
+    LOADED_IMAGES = new ImageLoader(IMAGE_PATH + 'projectiles/', ['fire', 'dynamite', 'shuriken','knife','grenade'].map(x => x + '_projectile'));
     LOADED_IMAGES.add('fire', IMAGE_PATH);
     LOADED_IMAGES.add('bloodsplatter', IMAGE_PATH);
     LOADED_IMAGES.add('heal', IMAGE_PATH);
@@ -903,11 +890,11 @@ function throwBomb(isPlayerA, dmg) {
     let fighter = isPlayerA ? playerA : playerB;
     let target = isPlayerA ? playerB : playerA;
     return new Promise(resolve => {
-
+        let wep = getRandom(2)?  'dynamite' : 'grenade';
         if (fighter.dead) return resolve();
-        fighter.powerUp(dmg, 'dynamite');
+        fighter.powerUp(dmg, wep);
         setTimeout(() => {
-            let p = fighter.shoot('dynamite');
+            let p = fighter.shoot(wep);
             p.sprite.set('zIndex', '3001');
             let di = LOADED_IMAGES.fire.cloneNode();
             di.style.zIndex = '3002';
@@ -926,11 +913,11 @@ function throwShuriken(isPlayerA, dmg) {
     let fighter = isPlayerA ? playerA : playerB;
     let target = isPlayerA ? playerB : playerA;
     return new Promise(resolve => {
-
+        let wep = getRandom(2)?  'shuriken' : 'knife';
         if (fighter.dead) return resolve();
-        fighter.powerUp(dmg, 'shuriken');
+        fighter.powerUp(dmg,wep);
         setTimeout(() => {
-            let p = fighter.shoot('shuriken');
+            let p = fighter.shoot(wep);
             p.target = target;
             p.sprite.set('zIndex', '3001');
             p.doSpin(720, 30);
