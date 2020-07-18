@@ -19,10 +19,11 @@
 - [DONE] add 3 ROUNDS
 - [DONE] add player select screen
 - [DONE] fix small gfx issue with completed word
-- add draw clause
+- [DONE] add draw clause
 - add free for all
 - [DONE] make gfx for player turn select
 - add quick ending
+- add round 1 2 etc screens
 
 //WORD TRAIN
 - add save function for players as a base64 string <- haha lol idk

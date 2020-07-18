@@ -1527,6 +1527,11 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                     if (NEEDS_RESET) {
                         resetSome()
                     }
+                    if (UNTICK_LETTER) {
+                        let team = playerB.dead ? teamB : teamA;
+                        console.log('player ' + (playerB.dead ? 'B' : 'A') + ' undoes letter');
+                        team.puzzleDiv.undoLetter();
+                    }
                     unIdlePlayers().then(() => {
                         doAttack(!isPlyrA, isPlyrA ? pB : pA, isPlyrA ? fbB : fbA, isPlyrA ? pA : pB, isPlyrA ? fbA : fbB).then(() => {
                             console.log('done!');
@@ -1536,11 +1541,6 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                             playerBState = 'idle';
                             resetBtn.shape.click();
                             BATTLE_IN_PROGRESS = false;
-                            if (UNTICK_LETTER) {
-                                let team = playerB.dead ? teamB : teamA;
-                                console.log('player ' + (playerB.dead ? 'B' : 'A') + ' undoes letter');
-                                team.puzzleDiv.undoLetter();
-                            }
                             if (NEEDS_RESET) {
                                 resetAll();
                             }
