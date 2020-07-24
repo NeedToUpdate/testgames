@@ -1422,11 +1422,16 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                 }
             } else if (isFB) {
                 let team = plyr ? teamA : teamB;
+                let oppteam = plyr ? teamB : teamA;
                 let index = team.wordIndex - 1;
                 if (index === -1) index = 0;
+                let oppIndex = team.wordIndex - 1;
+                if (oppIndex === -1) oppIndex = 0;
                 let fbDmg = team.wordPool[index][1] * fbD;
                 console.log((plyr ? 'Team A' : 'Team B') + ' does a final smash');
-                if (isFB && (plyr ? hpA : hpB) <= DAMAGE_PER_TICK && (plyr ? hpB : hpA) < fbDmg && oppVal > 0 && winsA < (ROUNDS / 2 | 0) && winsB < (ROUNDS / 2 | 0)) {
+                let hpIsLessThanFBD = (plyr ? hpA : hpB) <= oppteam.wordPool[oppIndex][1]*fbD;
+                let hpIsLessThanRegularDmg = (plyr ? hpA : hpB)<oppVal*DAMAGE_PER_TICK;
+                if (isFB && ((oppFB && hpIsLessThanFBD) || (!oppFB && hpIsLessThanRegularDmg)) && (plyr ? hpB : hpA) <= fbDmg && oppVal > 0) {
                     //if youre gonna do a final attack, and that attack will kill, but you will also die from one shot
                     explode(plyr, fbDmg).then(() => {
                         UNTICK_LETTER = false;
@@ -1496,10 +1501,10 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                 } else if (fbB && !fbA && hpB < pA * DAMAGE_PER_TICK) {
                     isPlyrA = false;
                 }
-                if (hpA <= DAMAGE_PER_TICK && hpB >= DAMAGE_PER_TICK * 2) {
+                if ((!fbA && !fbB) && hpA <= DAMAGE_PER_TICK && hpB >= DAMAGE_PER_TICK * 2) {
                     console.log('A will die, so they go first');
                     isPlyrA = await fancyChoice(true);
-                } else if (hpB <= DAMAGE_PER_TICK && hpA >= DAMAGE_PER_TICK * 2) {
+                } else if ((!fbA && !fbB) && hpB <= DAMAGE_PER_TICK && hpA >= DAMAGE_PER_TICK * 2) {
                     console.log('B will die, so they go first');
                     isPlyrA = await fancyChoice(false);
                 }
@@ -1515,7 +1520,7 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                     console.log('one is doing final smash, other will kill, so final smash first');
                     //if fbA is the thing that procd this, then this should work
                     isPlyrA = await fancyChoice(Boolean(fbA));
-                } else if ((fbA && hpB <= teamA.wordPool[teamA.wordIndex - 1 === -1 ? 0 : teamA.wordIndex - 1][1] * fbD) || (fbB && hpA <= teamB.wordPool[teamB.wordIndex - 1 === -1 ? 0 : teamB.wordIndex - 1][1] * fbD) ){
+                } else if ((fbA && fbB && hpB <= teamA.wordPool[teamA.wordIndex - 1 === -1 ? 0 : teamA.wordIndex - 1][1] * fbD) || (fbB && fbA && hpA <= teamB.wordPool[teamB.wordIndex - 1 === -1 ? 0 : teamB.wordIndex - 1][1] * fbD) ){
                     console.log('both doing fb but one isnt going to kill');
                     isPlyrA = await fancyChoice();
                     UNTICK_LETTER = true;
@@ -1527,7 +1532,7 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                     if (NEEDS_RESET) {
                         resetSome()
                     }
-                    if (UNTICK_LETTER) {
+                    if (UNTICK_LETTER && (playerA.dead || playerB.dead)) {
                         let team = playerB.dead ? teamB : teamA;
                         console.log('player ' + (playerB.dead ? 'B' : 'A') + ' undoes letter');
                         team.puzzleDiv.undoLetter();
