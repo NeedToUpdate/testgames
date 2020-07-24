@@ -13,6 +13,7 @@
 
 <body class="locked">
     <button id="spin" class="bluebtn">Spin!</button>
+    <p>Speed: <span id="speedspan"></span> deg per second</p>
     <script>
         let animals = [
             'cat', 'dog', 'horse',
@@ -134,10 +135,10 @@
             if(withinBorders(e.clientX,e.clientY)){
                 DRAGGING = true;
                 event = e;
-                clearInterval(speedSpinInt)
             }
         }
         function clickUp(e){
+            console.log('let go')
             DRAGGING = false;
             event = e;
             spinWithSpeed()
@@ -160,13 +161,13 @@
                 }
 
         }
-        document.body.addEventListener('mousedown',clickDown);
-        document.body.addEventListener('touchstop',e=>{
+
+        document.body.addEventListener('touchend',e=>{
             clickUp(e.touches[0])
         });
         document.body.addEventListener('mouseup',clickUp);
+        document.body.addEventListener('mousedown',clickDown);
         document.body.addEventListener('touchstart',e=>{
-
             clickDown(e.touches[0])
         });
         let lastcheck = 0;
@@ -179,15 +180,24 @@
         let lastTheta = 1;
         let want_check = false;
         let currSpeed = 0;
+        let lightsAreOn = false;
         function speedCheck(){
             if(thetaHist.length>=200) thetaHist.shift();
             thetaHist.push(main_theta-lastTheta);
             lastTheta = main_theta
             if(thetaHist.length===200){
                 currSpeed = thetaHist.reduce((a,b)=>a+b);
+                id('speedspan').innerText = Math.abs(currSpeed).toPrecision(4)
                 if(want_check){
                     console.log('speed is ' + currSpeed + ' degrees per second')
                     want_check = false;
+                }
+                if(Math.abs(currSpeed)>500 && !lightsAreOn){
+                    lightsAreOn = true;
+                    console.log('lights')
+                }else if(lightsAreOn && Math.abs(currSpeed)<50){
+                    lightsAreOn = false;
+                    console.log('turn off lights')
                 }
             }
         }
@@ -195,12 +205,21 @@
 
         let speedSpinInt = 0;
         function spinWithSpeed(speed){
-            clearInterval(speedSpinInt)
-            let del = speed || currSpeed/200;
-            speedSpinInt = setInterval(()=>{
-                main_theta += del;
-                spinTo(main_theta)
-            },5)
+                clearInterval(speedSpinInt)
+                let del = speed/200 || currSpeed/200;
+                speedSpinInt = setInterval(()=>{
+                    main_theta += del;
+                    let drag = 0.01;
+                    if(del<0){
+                        del += drag
+                    }else if(del>0){
+                        del -= drag
+                    }
+                    if(Math.abs(del)<0.1){
+                        clearInterval(speedSpinInt)
+                    }
+                    spinTo(main_theta)
+                },5)
         }
 
         button = document.getElementById('spin');
