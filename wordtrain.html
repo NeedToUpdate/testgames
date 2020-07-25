@@ -1539,8 +1539,10 @@
         selectPower().then(result => {
             //console.log(result)
             if (typeof result === 'number') {
+                let powerNum = result;
                 players.players.forEach(p => {
-                   if(!p.dead) p.powers.push(new PowerData(result))
+                    if(result === 7) powerNum = getRandom(0,7)|0
+                   if(!p.dead) p.powers.push(new PowerData(powerNum))
                 })
                 desks.desks.forEach(d => {
                     d.updatePowers()

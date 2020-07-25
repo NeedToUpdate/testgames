@@ -156,5 +156,5 @@ let words = ['tornado','typhoon','forest fire','tsunami','thunderstorm','earthqu
 //let words = ['jeep','jar','juice','jacket']
 
 
-let difficulty = 1
+let difficulty = 1;
 

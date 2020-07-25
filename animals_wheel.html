@@ -143,6 +143,7 @@
             event = e;
             spinWithSpeed()
         }
+        let stopBuffer = [];
         function dragWheel(e){
                 if(DRAGGING && withinBorders(e.clientX,e.clientY) && window.performance.now()-lastcheck > 17){
                     let dist = Math.sqrt((originX-e.clientX)**2 + (originY-e.clientY)**2);
@@ -152,11 +153,26 @@
                     let xmid = wheelShape.x + wheelShape.width/2;
                     let ymid = wheelShape.y + wheelShape.height/2;
                     event = e;
-                    main_theta -= Math.abs(deltaX)>Math.abs(deltaY)? e.clientY<ymid?deltaX : deltaX*-1 : e.clientX>xmid?deltaY:deltaY*-1;
-                    spinTo(main_theta)
+                    let deltaV =  Math.abs(deltaX)>Math.abs(deltaY)? e.clientY<ymid?deltaX : deltaX*-1 : e.clientX>xmid?deltaY:deltaY*-1;
+                    main_theta -= deltaV;
+                    spinTo(main_theta);
+                    if(Math.sign(currSpeed)+Math.sign(deltaV*-1)===0){
+                        stopBuffer.push('blah');
+                        if(stopBuffer.length>7){
+                            //opposite directions;
+                            clearInterval(speedSpinInt);
+                            let l = thetaHist.length;
+                            thetaHist.splice(0,l/2 |0);
+                            thetaHist = thetaHist.concat(new Array(l/2).fill(0));
+                            console.log('opp')
+                        }
+                    }else{
+                        stopBuffer.pop();
+                    }
+
                     lastcheck = window.performance.now()
                 }else if(DRAGGING && window.performance.now()-lastcheck > 17){
-                    console.log('let go')
+                    console.log('let go');
                     spinWithSpeed()
                 }
 
@@ -205,8 +221,8 @@
 
         let speedSpinInt = 0;
         function spinWithSpeed(speed){
-                clearInterval(speedSpinInt)
                 let del = speed/200 || currSpeed/200;
+                clearInterval(speedSpinInt);
                 speedSpinInt = setInterval(()=>{
                     main_theta += del;
                     let drag = 0.01;
@@ -217,6 +233,7 @@
                     }
                     if(Math.abs(del)<0.1){
                         clearInterval(speedSpinInt)
+                        speedSpinInt = 0;
                     }
                     spinTo(main_theta)
                 },5)
