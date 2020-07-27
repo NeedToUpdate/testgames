@@ -13,6 +13,7 @@
 
 //================ESLS=================
 
+let words = ['apple','coconut','pomelo','lemon','pineapple','orange','mango','grapes','watermelon','kiwifruit','cherry', 'durian','eggplant','mushroom','strawberry','cauliflower','carrot','tomato','lettuce','potato','onion','corn','pumpkin'];
 //let words = ['living room','dining room','bedroom','garage','kitchen','terrace','bathroom','yard']
 //let words = ['happy','sad','nervous','relaxed','excited','energetic','tired','confused','scared','curious','bored','hungry','sleepy','angry','surprised','confident'];
 //let words = ['first', 'second', 'third', 'fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth','thirteenth',    'fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth'];
@@ -148,7 +149,7 @@
 //let words = ['annoying','birthday','complete','criminal','everyone','exciting','everyday','exercise','language','mountain','thousand','tomorrow','whatever','whenever']
 //let words = ['a bag','a cap','a doll','a frog','a girl','an apple','an elephant','an insect','an orange','an umbrella','a car','an airplane','a parrot','a baby','a hat','an egg','a rabbit','a mouse','a snake','an armchair','a doll']
 //let words = ['ant','beluga','chameleon','cheetah','cobra','kangaroo','koala','komodo','mosquito','platypus','starfish','scorpion','owl','orca','rhino','panda','lion'];
-let words = ['tornado','typhoon','forest fire','tsunami','thunderstorm','earthquake','flood','eruption'];
+//let words = ['tornado','typhoon','forest fire','tsunami','thunderstorm','earthquake','flood','eruption'];
 //let words = ['rice flour','milk','mango','boiling water','cold water','chopsticks','juicer','bowl','disposable'];
 //let words = ['test test','test test','test test','this is a test',' test a a a'];
 //let words = ['cave','sky','ocean','jungle','river','forest','savannah','desert','tundra'];

@@ -64,7 +64,7 @@
 //let words = ['festival','harvest','leaves','crops','mooncake','dragon','meal','celebrate']
 //let words = ['fresh','fruit','vegetables','snack','meal','sports','wash','prepare','sick','important','exercise','hygiene','sleep']
 //let words = ['apple','banana','grape','broccoli','cabbage','bread','rice','cereal','pasta','milk','cheese','meat','chicken','egg'];
-let words = ['apple','coconut','pomelo','lemon','pineapple','orange','mango','grapes','watermelon','kiwifruit','cherry', 'durian','eggplant','mushroom','strawberry','cauliflower','carrot','tomato','lettuce','potato','onion','corn','pumpkin'];
+//let words = ['apple','coconut','pomelo','lemon','pineapple','orange','mango','grapes','watermelon','kiwifruit','cherry', 'durian','eggplant','mushroom','strawberry','cauliflower','carrot','tomato','lettuce','potato','onion','corn','pumpkin'];
 //let words =['raining','thunder','storm','snowing','windy','hailing','sleeting','foggy','drizzling','cloudy'];
 //let words = ['firefighter','cleaner','doctor','chef','office worker','police officer','teacher','vet'];
 //let words = ['autumn','crops','fruits','vegetables','farmer','festival','parade','dragon','mooncake','celebrate','mid fall','harvest']
@@ -96,6 +96,7 @@ let words = ['apple','coconut','pomelo','lemon','pineapple','orange','mango','gr
 //let words = ['bananas','cabbages','potatoes','cucumbers','strawberries','carrots','peppers','grapes','oranges','pears','bread','turkey','tomatoes','mustard','eggs'];
 //let words = ['exercise','body','healthy','stronger','lungs','heart','energy','muscles','stretch'];
 //let words = ['feathers','beak','fins','pouch','fur','tail','teeth','wings','mammal','reptile','amphibian','fish','bird'];
+let words = ['delicious','tasty','yummy','disgusting','salty','sweet','sour','bitter','spicy','stinky','chewy','tough']
 
 //================ESL2=================
 

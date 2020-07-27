@@ -46,8 +46,8 @@
     function loop() {
         for(let i = 0; i<repeat; i++){
             let t = OMG.t;
-           dot(getx(t),gety(t))
-            OMG.t-=0.1
+           dot(getx(t),gety(t));
+            OMG.t-=0.1;
             stopCount++;
         }
         if(OMG.t>0) requestAnimationFrame(loop)

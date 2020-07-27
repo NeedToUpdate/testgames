@@ -63,7 +63,7 @@
 //let words = ['freshwater','people','animal','ocean','salt','melting','insect','river','lake','mountain',]
 //let words = ['festival','harvest','leaves','crops','mooncake','dragon','meal','celebrate']
 //let words = ['fresh','fruit','vegetables','snack','meal','sports','wash','prepare','sick','important','exercise','hygiene','sleep']
-let words = ['apple','banana','grape','broccoli','cabbage','bread','rice','cereal','pasta','milk','cheese','meat','chicken','egg'];
+//let words = ['apple','banana','grape','broccoli','cabbage','bread','rice','cereal','pasta','milk','cheese','meat','chicken','egg'];
 //  let words = ['apple','coconut','pomelo','lemon','pineapple','orange','mango','grapes','watermelon','kiwifruit','cherry', 'durian'
 //      ,'eggplant','mushroom','strawberry','cauliflower','carrot','tomato','lettuce','potato','onion','corn','pumpkin'];
 //let words =['raining','thunder','storm','snowing','windy','hailing','sleeting','foggy','drizzling','cloudy'];
@@ -78,7 +78,7 @@ let words = ['apple','banana','grape','broccoli','cabbage','bread','rice','cerea
 //let words = ['technology','travel','place','walk','bicycle','car','wheel','motor','jet','engine','airplane'];
 //let words = ['bread','turkey','green pepper','cucumber','tomato','mustard','egg'];
 //let words = ['tennis','gymnastics','volleyball','judo','basketball','ping-pong','football','baseball','badminton']
-//let words = ['long','straight','curly','short','hair','beard','mustache','blond','black','glasses']
+let words = ['long','straight','curly','short','hair','beard','mustache','blond','black','glasses']
 //let words = ['astronaut','space','moon','spaceship','landed','stepped','footprint','rocks','soil','studied','flag'];
 //let words = ['comfortable','weather','cave','igloo','stilt house','house','place'];
 //let words = ['touch your nose','stretch up high','clap your hands','bend your feet','shake your body','lift your leg','wave your arms','stomp your feet','spin around']

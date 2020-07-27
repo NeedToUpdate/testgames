@@ -1,6 +1,6 @@
 difficulty = 2;
 
-extras = ['fire'];
+let extras = ['fire'];
 let IMAGE_PATH = '../images/';
 let LOADED_IMAGES = new ImageLoader(IMAGE_PATH, extras);
 let loaded = false;

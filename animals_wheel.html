@@ -13,8 +13,14 @@
 
 <body class="locked">
     <button id="spin" class="bluebtn">Spin!</button>
-    <p>Speed: <span id="speedspan"></span> deg per second</p>
+    <p style="color: white">Speed: <span id="speedspan"></span> deg per second</p>
     <script>
+        let background = 'bg' + (getRandom(3,5) | 0).toString() + '.jpg';
+        document.body.style.backgroundColor = 'grey';
+        document.body.style.backgroundImage = 'url(' + './images/' + background.toString() + ')';
+        //document.body.style.backgroundSize = width + 'px auto';
+        document.body.style.backgroundRepeat = 'no-repeat';
+
         let animals = [
             'cat', 'dog', 'horse',
             'clownfish', 'seahorse', 'crocodile',
@@ -27,7 +33,7 @@
             let nums = [];
             let escape = 0;
             while (nums.length < num && escape < 1000) {
-                let n = Math.floor(Math.random() * animals.length)
+                let n = Math.floor(Math.random() * animals.length);
                 if (nums.indexOf(n) === -1) {
                     nums.push(n);
                 }
@@ -45,7 +51,42 @@
         for (let i = 0; i < images.length; i++) {
             console.log(`%c ${images[i]} weight: ${weights[i]}`, 'color: darkblue');
         }
-
+        class Light extends Circle{
+            constructor(x,y,r,rgb){
+                super(x,y,r);
+                if(!(rgb instanceof Array)) throw "Light color must be an Array, received" + typeof rgb;
+                this.rgb = rgb;
+                this.color = 'rgb(' + rgb.join(',') + ')';
+                this.border = 'solid ' + 'rgb(' + rgb.join(',') + ')'  + ' 1px';
+                this.set('boxShadow','0 0 5px 5px ' + 'rgba(' + rgb.join(',') + ',0.7)');
+                this.isOn = true;
+            }
+            toggle(bool){
+                if(typeof bool === 'boolean'){
+                    if(bool){
+                        this.turnOn();
+                    }else{
+                        this.turnOff();
+                    }
+                }else{
+                    if(this.isOn){
+                        this.turnOff();
+                    }else{
+                        this.turnOn();
+                    }
+                }
+            }
+            turnOn(){
+                this.isOn = true;
+                this.color = 'rgb(' + this.rgb.join(',') + ')';
+                this.set('boxShadow', '0 0 5px 5px ' + 'rgb(' + this.rgb.join(',') + ',0.7)');
+            }
+            turnOff(){
+                this.isOn = false;
+                this.color = 'rgb(' + darken(this.rgb,150).join(',') + ')';
+                this.set('boxShadow', '');
+            }
+        }
 
 
 
@@ -72,14 +113,15 @@
                 return originX + customRadius * Math.cos(angle/180*Math.PI);
             }
             return originX + radius * Math.cos(angle);
-        };
+        }
         function getY(angle, customRadius) {
             if (customRadius) {
                 return originY + customRadius * Math.sin(angle/180*Math.PI);
             }
             return originY + radius * Math.sin(angle);
-        };
+        }
         let sections = [];
+        let lights = [];
         function setup(){
             return new Promise(resolve=>{
                 let total = images.length;
@@ -89,8 +131,8 @@
                     l.color = 'blue';
                     lines.push(l);
                     let r = 200;
-                    let img = new Img(LOADED_IMAGES[images[i]],getX((360/total)*i,r),getY((360/total)*i,r),80,undefined,(360/total)*i +90).fromCenter()
-                    imageDivs.push(img)
+                    let img = new Img(LOADED_IMAGES[images[i]],getX((360/total)*i,r),getY((360/total)*i,r),80,undefined,(360/total)*i +90).fromCenter();
+                    imageDivs.push(img);
                     img.onLoad(()=>{
                         check++;
                         if(check===total){
@@ -100,9 +142,22 @@
                 });
                 wheelShape.color = 'yellow';
                 wheelShape.border = 'blue solid 3px';
+                for(let i = 0; i<23; i++){
+                    let coords = new Vector(originX,originY);
+                    coords.sub(Vector.fromAngle(70 + 10*i).mult(radius*2));
+                    let col = new Array(3).fill(0).map(()=>getRandom(180,255)|0);
+                    if(getRandom(3)===0){
+                        col[getRandom(0,3)|0] = 0;
+                        col[getRandom(0,3)|0] = 0;
+                    }else{
+                        col[getRandom(0,3)|0] = 0;
+                    }
+                    let l = new Light(coords.x,coords.y,5,col);
+                    l.toggle();
+                    lights.push(l)
+                }
             })
-        };
-        setup();
+        }
         function spinTo(angle) {
             imageDivs.forEach(image=>{
                 image.x = getX(image.angle - angle,200);
@@ -112,7 +167,28 @@
             lines.forEach(line=>{
                 line.rotateTo(line.angle-angle);
             })
-        };
+        }
+        let BLINKINGLIGHTS = false;
+        let lightBlinkInt = 0;
+        function toggleBlinking(){
+            if(BLINKINGLIGHTS) {
+                BLINKINGLIGHTS = false;
+                clearInterval(lightBlinkInt);
+                lights.forEach(x=>{
+                    x.toggle(false)
+                })
+            }else{
+                BLINKINGLIGHTS = true;
+                lightBlinkInt =  setInterval(()=>{
+                    lights.forEach(x=>{
+                        if(getRandom(2)){
+                            x.toggle();
+                        }
+                    })
+                },100)
+            }
+        }
+
 
 
         let SPINNING = false;
@@ -120,15 +196,16 @@
         let main_theta = 1;
         setup().then(()=>{
             requestAnimationFrame(()=>{
+                toggleRoundFlash();
                 spinTo(0)
             });
         });
         let DRAGGING = false;
         let event = {};
-        let rSqrd = circleRadius**2
+        let rSqrd = circleRadius**2;
         function withinBorders(x,y){
             //check if distance from origin point isnt more than the circle radius
-            let unsqd = (originX-x)**2 + (originY-y)**2
+            let unsqd = (originX-x)**2 + (originY-y)**2;
             return unsqd<rSqrd;
         }
         function clickDown(e){
@@ -138,7 +215,6 @@
             }
         }
         function clickUp(e){
-            console.log('let go')
             DRAGGING = false;
             event = e;
             spinWithSpeed()
@@ -164,7 +240,6 @@
                             let l = thetaHist.length;
                             thetaHist.splice(0,l/2 |0);
                             thetaHist = thetaHist.concat(new Array(l/2).fill(0));
-                            console.log('opp')
                         }
                     }else{
                         stopBuffer.pop();
@@ -172,7 +247,6 @@
 
                     lastcheck = window.performance.now()
                 }else if(DRAGGING && window.performance.now()-lastcheck > 17){
-                    console.log('let go');
                     spinWithSpeed()
                 }
 
@@ -192,6 +266,19 @@
             dragWheel(e.touches[0])
         });
 
+        let triangle = new Square(0);
+        triangle.color = 'red';
+        triangle.border = '';
+        triangle.set('borderRadius', '');
+        triangle.set('borderBottom', 'none');
+        triangle.set('borderTop', '20px solid red');
+        triangle.set('borderLeft', '10px solid black');
+        triangle.set('borderRight', '10px solid black');
+        triangle.set('width', '0');
+        triangle.set('fontSize', '0px');
+        triangle.set('lineHeight', '0px');
+        triangle.x = originX
+        triangle.y = originY - radius*1.75
         let thetaHist = [];
         let lastTheta = 1;
         let want_check = false;
@@ -200,20 +287,23 @@
         function speedCheck(){
             if(thetaHist.length>=200) thetaHist.shift();
             thetaHist.push(main_theta-lastTheta);
-            lastTheta = main_theta
+            lastTheta = main_theta;
             if(thetaHist.length===200){
                 currSpeed = thetaHist.reduce((a,b)=>a+b);
-                id('speedspan').innerText = Math.abs(currSpeed).toPrecision(4)
+                id('speedspan').innerText = Math.abs(currSpeed).toPrecision(4);
                 if(want_check){
-                    console.log('speed is ' + currSpeed + ' degrees per second')
+                    console.log('speed is ' + currSpeed + ' degrees per second');
                     want_check = false;
                 }
-                if(Math.abs(currSpeed)>500 && !lightsAreOn){
+                if(Math.abs(currSpeed)>1000 && !lightsAreOn){
                     lightsAreOn = true;
-                    console.log('lights')
-                }else if(lightsAreOn && Math.abs(currSpeed)<50){
+                    toggleBlinking()
+                    toggleRoundFlash();
+                }else if(lightsAreOn && Math.abs(currSpeed)<300){
                     lightsAreOn = false;
-                    console.log('turn off lights')
+                    toggleBlinking()
+                    toggleRoundFlash();
+                    SPINNING = false;
                 }
             }
         }
@@ -232,7 +322,7 @@
                         del -= drag
                     }
                     if(Math.abs(del)<0.1){
-                        clearInterval(speedSpinInt)
+                        clearInterval(speedSpinInt);
                         speedSpinInt = 0;
                     }
                     spinTo(main_theta)
@@ -241,17 +331,46 @@
 
         button = document.getElementById('spin');
         button.addEventListener('click', function () {
-
            if(SPINNING){
-               clearInterval(spinInt)
+               clearInterval(speedSpinInt)
            }else{
-               spinInt = setInterval(()=>{
-                   spinTo(main_theta);
-                   main_theta+=3;
-               },1000/60)
+               spinWithSpeed(-3000)
            }
-            SPINNING = !SPINNING
+           SPINNING = !SPINNING
         });
+
+        function darken(array,val){
+            return array.map(x=>x-val<0?0:x-val);
+        }
+
+        let LIGHTSGOINGROUND = false;
+        let lightsRoundInt = 0;
+        let lightsRoundCurr = 1;
+        function toggleRoundFlash(){
+           if(LIGHTSGOINGROUND){
+               LIGHTSGOINGROUND = false;
+               clearInterval(lightsRoundInt);
+               lights.forEach(x=>{
+                   x.toggle(false)
+               })
+               lightsRoundCurr = 1;
+           }else{
+               LIGHTSGOINGROUND = true;
+               lights[0].toggle();
+               lights[11].toggle();
+               lightsRoundInt = setInterval(()=>{
+                   let index = Math.abs(lightsRoundCurr%lights.length);
+                   let prev = [Math.abs((lightsRoundCurr-1)%lights.length), Math.abs((lightsRoundCurr+11)%lights.length), Math.abs((lightsRoundCurr+10)%lights.length), ];
+                   lights[index].toggle();
+                   prev.forEach(x=>{
+                       lights[x].toggle()
+                   })
+                   lightsRoundCurr = index +1;
+               },100)
+           }
+        }
+
+
 
     </script>
 </body>
