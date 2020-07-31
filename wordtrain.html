@@ -857,6 +857,14 @@
             this.isTiny = !this.isTiny
         }
 
+        unuse(gfxOnly){
+            if (this.type === 0 && !gfxOnly) return;
+            this.isUsed = false;
+            if (Object.keys(this.INTERNAL_DATA).length > 0) {
+                this.INTERNAL_DATA.isUsed = false;
+            }
+            this.div.attachments.circles[0].removeClass('used_power');
+        }
         use(gfxOnly) {
             if (this.type === 0 && !gfxOnly) return;
             this.isUsed = true;
@@ -883,8 +891,7 @@
                         if (result) {
                             nextTurn();
                         } else {
-                            this.isUsed = false;
-                            this.div.attachments.circles[0].removeClass('used_power')
+                            this.unuse();
                         }
                     });
                     break;
@@ -906,8 +913,7 @@
                                 if (desk.selected && desk !== desks.getById(stats.current_turn)) desk.toggleSelect()
                             })
                         } else {
-                            this.isUsed = false;
-                            this.div.attachments.circles[0].removeClass('used_power')
+                            this.unuse();
                         }
                         drawArrows();
                         message(players.getById(stats.current_turn).name + '\'s turn!')
@@ -919,8 +925,7 @@
                         if (result) {
                             nextTurn();
                         } else {
-                            this.isUsed = false;
-                            this.div.attachments.circles[0].removeClass('used_power')
+                            this.unuse();
                         }
                     });
                     break;
