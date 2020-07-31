@@ -3,7 +3,7 @@
 //let words = ['paul','cook','food','spoon','hook','boots','foot','august','autumn','paw','jaw','saw'];
 //let words = ['park','horse','fork','nurse','skirt','singer','farmer','bird','arm','car','turtle'];
 //let words = ['goat','coat','boat','cloak','clock','wall','green','grass','ball'];
-//let words = ['flute','luke','prune','sue','blue','glue','fruit','suit','juice','cute','mule','cube'];
+let words = ['flute','luke','prune','sue','blue','glue','fruit','suit','juice','cute','mule','cube'];
 //let words = ['tape','cake','lake','tail','mail','nail','day','hay','pay'];
 //let words = ['hamburger','egg','carrot','hot dog','sausage','tomato','noodle','cookie','candy','dumpling','chip','sandwich','kiwifruit','pineapple','watermelon','grape','peach','strawberry'];
 //let words = ['trousers','truck','train','strawberry','trash','tree','draw','drink','dragon','driver','drum','drawer'];
@@ -148,7 +148,7 @@
 //let words = ['ant','beluga','chameleon','cheetah','cobra','kangaroo','koala','komodo','mosquito','platypus','starfish','scorpion','owl','orca','rhino','panda','lion'];
 //let words = ['tornado','typhoon','forest fire','tsunami','thunderstorm','earthquake','flood','eruption'];
 //let words = ['rice flour','milk','mango','boiling water','cold water','chopsticks','juicer','bowl','disposable'];
-let words = ['aaa','aaaa'];
+//let words = ['aaa','aaaa'];
 //let words = ['cave','sky','ocean','jungle','river','forest','savannah','desert','tundra'];
 //let words = ['sugar','warm water','colors','glass','blend','test tube','dropper','water bottle','spoon']
 //let words = ['jeep','jar','juice','jacket']

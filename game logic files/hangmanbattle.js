@@ -2,8 +2,9 @@ let DAMAGE_PER_TICK = 7;
 let FINAL_SMASH_SCALING = 5;
 let ROUNDS = 3;
 
-let IMAGE_PATH = '../images/';
+let HELP_A_TEAM = 'none';
 
+let IMAGE_PATH = '../images/';
 
 document.body.style.backgroundColor = 'lightgrey';
 
@@ -245,6 +246,14 @@ function setup() {
                     setUpCharacters(numA, numB).then(() => {
                         teamA.hpDiv = new LoadingBar(width * .21, height * .35, width / 5, 35, 0, 100, 100);
                         teamB.hpDiv = new LoadingBar(width * .59, height * .35, width / 5, 35, 0, 100, 100);
+                        teamA.hpDiv.shape.addEventListener('click',()=>{
+                            HELP_A_TEAM = 'A';
+                            console.log('helping team A')
+                        });
+                        teamB.hpDiv.shape.addEventListener('click',()=>{
+                            HELP_A_TEAM = 'B';
+                            console.log('helping team B')
+                        });
                         teamA.puzzleDiv.set('zIndex', '10');
                         teamA.input = createInputBox('A');
                         teamB.input = createInputBox('B');
@@ -371,7 +380,7 @@ function createSpinner(word1, word2, winner) {
         }
 
         let angs = setWordsInCircle(word1, word2);
-        console.log(angs)
+        console.log(angs);
         let angle = -63 + cheat;
         let x = 0;
         let loops = setInterval(() => {
@@ -698,14 +707,15 @@ function doShot(player, target) {
 }
 
 
-function regularShoot(isPlayerA, num) {
+function regularShoot(isPlayerA, num,damage){
+    if(damage === undefined) damage = DAMAGE_PER_TICK;
     let fighter = isPlayerA ? playerA : playerB;
     let target = isPlayerA ? playerB : playerA;
     return new Promise(resolve => {
         if (fighter.dead) return resolve();
         for (let i = 0; i < num; i++) {
             setTimeout(() => {
-                fighter.powerUp(DAMAGE_PER_TICK);
+                fighter.powerUp(damage);
             }, (i + 1) * 1000)
         }
         setTimeout(() => {
@@ -784,7 +794,7 @@ function rapidFire(isPlayerA, dmg) {
     let target = isPlayerA ? playerB : playerA;
     return new Promise(resolve => {
         if (fighter.dead) return resolve();
-        let timeouts = []
+        let timeouts = [];
         for(let i = 0; i<8; i++){
             timeouts.push(setTimeout(()=>{
                 fighter.powerUp(dmg / 8);
@@ -794,7 +804,7 @@ function rapidFire(isPlayerA, dmg) {
                         NEEDS_RESET = true;
                         timeouts.forEach(t=>{
                             clearTimeout(t);
-                        })
+                        });
                         return resolve();
                     }
                 }, 300);
@@ -1302,93 +1312,109 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
     let fbB = isTeam2finishingblow;
     let hpA = teamA.hp;
     let hpB = teamB.hp;
-    let dmg = DAMAGE_PER_TICK;
+    let dmgA = DAMAGE_PER_TICK;
+    let dmgB = DAMAGE_PER_TICK;
     let fbD = FINAL_SMASH_SCALING;
+
+    if(HELP_A_TEAM!=='none'){
+        if(HELP_A_TEAM === 'A'){
+            dmgA += 1;
+            console.log('adding 1 more damage per tick to team A')
+        }else{
+            dmgB += 1;
+            console.log('adding 1 more damage per tick to team B')
+        }
+        if(!getRandom(5)) {
+            HELP_A_TEAM = 'none';
+            console.log('resetting help back to none')
+        }
+    }
 
     async function doAttack(plyr, val, isFB, oppVal, oppFB) {
         let hp = plyr ? hpA : hpB;
+        let damage = plyr? dmgA : dmgB;
         return new Promise(resolve => {
             if (val && !isFB) {
                 if (val === 1) {
                     if (getRandom(10) < ((50 - hp) / 10)) {
-                        heal(plyr, dmg * val + 10).then(() => {
+                        heal(plyr, damage * val + 10).then(() => {
                             return resolve()
                         })
                     } else if (oppVal === 1 && getRandom(10) < 0) {
                         // if 1 and pB is 1
                         //projectiles hit eachother
                     } else if (getRandom(10) < 3) {
-                        throwBomb(plyr, dmg * val).then(() => {
+                        throwBomb(plyr, damage * val).then(() => {
                             return resolve()
                         })
                     } else if (getRandom(10) < 3) {
-                        throwShuriken(plyr, dmg * val).then(() => {
+                        throwShuriken(plyr, damage * val).then(() => {
                             return resolve()
                         })
                     } else if (getRandom(10) < 4) {
-                        jumpAndHit(plyr, dmg * val).then(() => {
+                        jumpAndHit(plyr, damage * val).then(() => {
                             return resolve()
                         })
                     } else {
-                        regularShoot(plyr, val).then(() => {
+                        regularShoot(plyr, val,damage).then(() => {
                             return resolve()
                         })
                     }
                 }
                 if (val === 2) {
                     if (getRandom(10) < ((50 - hp) / 10)) {
-                        heal(plyr, dmg * val + 10).then(() => {
+                        heal(plyr, damage * val + 10).then(() => {
                             return resolve()
                         })
                     } else if (getRandom(10) < 3) {
-                        spinShot(plyr, dmg * val).then(() => {
+                        spinShot(plyr, damage * val).then(() => {
                             return resolve()
                         })
                     } else if (oppVal === 2 && getRandom(10) < 0) {
                         // if 2 and pB is 2
                         //projectiles hit eachother
                     } else if (getRandom(10) < 3) {
-                        throwBomb(plyr, dmg * val / 2).then(() => {
-                            throwBomb(plyr, dmg * val / 2).then(() => {
+                        throwBomb(plyr, damage * val / 2).then(() => {
+                            throwBomb(plyr, damage * val / 2).then(() => {
                                 return resolve()
                             })
                         })
                     } else if (getRandom(10) < 3) {
-                        throwShuriken(plyr, dmg * val / 2).then(() => {
-                            throwShuriken(plyr, dmg * val / 2).then(() => {
+                        throwShuriken(plyr, damage * val / 2).then(() => {
+                            throwShuriken(plyr, damage * val / 2).then(() => {
                                 return resolve()
                             })
                         })
                     } else if (getRandom(10) < 4) {
-                        jumpSpinHit(plyr, dmg * val).then(() => {
+                        jumpSpinHit(plyr, damage * val).then(() => {
                             return resolve()
                         })
                     } else {
-                        regularShoot(plyr, val).then(() => {
+                        regularShoot(plyr, val,damage).then(() => {
                             return resolve()
                         })
                     }
                 }
                 if (val === 3) {
                     if (getRandom(10) < ((50 - hp) / 10)) {
-                        heal(plyr, dmg * val + 10).then(() => {
+                        heal(plyr, damage * val + 10).then(() => {
                             return resolve()
                         })
                     } else if (getRandom(10) < 3) {
                         //pick up and throw
-                        pickUpandThrow(plyr, dmg * val).then(() => {
+                        pickUpandThrow(plyr, damage * val).then(() => {
                             return resolve()
                         })
                     } else if (getRandom(10) < 3) {
-                        spinHitAndShoot(plyr, dmg * val).then(() => {
+                        spinHitAndShoot(plyr, damage * val).then(() => {
                             return resolve()
                         });
                     } else if (getRandom(10) < 3) {
-                        rapidFire(plyr, dmg * val).then(() => {
+                        rapidFire(plyr, damage * val).then(() => {
                             return resolve()
                         });
                     } else {
-                        regularShoot(plyr, val).then(() => {
+                        regularShoot(plyr, val,damage).then(() => {
                             return resolve()
                         })
                     }
@@ -1397,26 +1423,26 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                 if (val >= 4) {
                     //idk
                     if (getRandom(10) < 3) {
-                        rapidFire(plyr, dmg * val / 2).then(() => {
-                            rapidFire(plyr, dmg * val / 2).then(() => {
+                        rapidFire(plyr, damage * val / 2).then(() => {
+                            rapidFire(plyr, damage * val / 2).then(() => {
                                 return resolve()
                             });
                         });
                     } else if (getRandom(10) < 3) {
                         //pick up and throw
-                        pickUpandThrow(plyr, dmg * val / 2).then(() => {
-                            regularShoot(plyr, 2).then(() => {
+                        pickUpandThrow(plyr, damage * val / 2).then(() => {
+                            regularShoot(plyr, 2,damage).then(() => {
                                 return resolve()
                             })
                         })
                     } else if (getRandom(10) < 3) {
-                        spinHitAndShoot(plyr, dmg * val / 2).then(() => {
-                            regularShoot(plyr, 2).then(() => {
+                        spinHitAndShoot(plyr, damage * val / 2).then(() => {
+                            regularShoot(plyr, 2,damage).then(() => {
                                 return resolve()
                             })
                         });
                     } else {
-                        regularShoot(plyr, val).then(() => {
+                        regularShoot(plyr, val,damage).then(() => {
                             return resolve()
                         })
                     }
@@ -1477,6 +1503,15 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
         if (typeof hasCheat === 'boolean') {
             cheat = hasCheat;
         }
+        if(HELP_A_TEAM!== 'none'){
+            console.log('help requested for team ' + HELP_A_TEAM + '. Fancy choice is set to cheat mode.');
+            cheat = HELP_A_TEAM === 'A';
+            if(getRandom(4)) {
+                HELP_A_TEAM = 'none';
+                console.log('Help reset back to none')
+            }
+        }
+        if(cheat!== null) console.log('cheating in favor of team ' + (cheat? 'A': 'B'));
         return new Promise(resolve => {
             createSpinner(teamA.word, teamB.word, cheat).then(x => {
                 resolve(x);
