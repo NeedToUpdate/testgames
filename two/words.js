@@ -13,7 +13,7 @@
 
 //================ESLS=================
 
-let words = ['apple','coconut','pomelo','lemon','pineapple','orange','mango','grapes','watermelon','kiwifruit','cherry', 'durian','eggplant','mushroom','strawberry','cauliflower','carrot','tomato','lettuce','potato','onion','corn','pumpkin'];
+//let words = ['apple','coconut','pomelo','lemon','pineapple','orange','mango','grapes','watermelon','kiwifruit','cherry', 'durian','eggplant','mushroom','strawberry','cauliflower','carrot','tomato','lettuce','potato','onion','corn','pumpkin'];
 //let words = ['living room','dining room','bedroom','garage','kitchen','terrace','bathroom','yard']
 //let words = ['happy','sad','nervous','relaxed','excited','energetic','tired','confused','scared','curious','bored','hungry','sleepy','angry','surprised','confident'];
 //let words = ['first', 'second', 'third', 'fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth','thirteenth',    'fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth'];
@@ -58,6 +58,7 @@ let words = ['apple','coconut','pomelo','lemon','pineapple','orange','mango','gr
 //let words = ['vision','touch','hear','smell','taste','colorful','music','yummy','animals','soft','bitter'];
 //let words = ['first', 'second', 'third', 'fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth','thirteenth','fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth'];
 //let words = ['january','february','march','april','may','june','july','august','september','october','november','december','summer','autumn','spring','winter']
+//let words = ['delicious','tasty','yummy','disgusting','salty','sweet','sour','bitter','spicy','stinky','chewy','tough'];
 
 //================ESL1=================
 
@@ -95,7 +96,7 @@ let words = ['apple','coconut','pomelo','lemon','pineapple','orange','mango','gr
 //let words = ['movie theater','zoo','swimming pool','cafe','hospital','mall','hotel','library','park','east','west','north','south'];
 //let words = ['hear','see','taste','touch','smell','sour','sweet','bitter','colorful','soft','hard','warm','cold','grass','trees','animals'];
 //let words =['science','animals','pets','veterinarian','sick','diet','healthy','owners'];
-//let words = ['bananas','cabbages','potatoes','cucumbers','strawberries','carrots','peppers','grapes','oranges','pears','bread','turkey','tomatoes','mustard','eggs'];
+let words = ['bananas','cabbages','potatoes','cucumbers','strawberries','carrots','peppers','grapes','oranges','pears','bread','turkey','tomatoes','mustard','eggs'];
 //let words = ['exercise','body','healthy','stronger','lungs','heart','energy','muscles','stretch'];
 //let words = ['feathers','beak','fins','pouch','fur','tail','teeth','wings','mammal','reptile','amphibian','fish','bird'];
 

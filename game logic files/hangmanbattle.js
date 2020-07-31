@@ -260,6 +260,7 @@ function setup() {
 
 function nextWord(isTeamA) {
     let team = isTeamA ? teamA : teamB;
+    if(team.wordIndex>=team.wordPool.length) team.wordIndex = 0;
     team.word = team.wordPool[team.wordIndex][0];
     team.wordIndex++;
     setUpWord(isTeamA, team.word);
@@ -364,13 +365,13 @@ function createSpinner(word1, word2, winner) {
                 p.x -= 3;
                 stuffToRemove.push(p);
                 stuffToRemove.push(l);
-                angles.push({w: wordArray[index], a: theta * i - theta / 2, t: index < wordA.length})
+                angles.push({w: wordArray[index], a: theta * i, t: index < wordA.length})
             }
             return angles
         }
 
         let angs = setWordsInCircle(word1, word2);
-
+        console.log(angs)
         let angle = -63 + cheat;
         let x = 0;
         let loops = setInterval(() => {
@@ -381,7 +382,7 @@ function createSpinner(word1, word2, winner) {
                 let finala = ((angle - 92) % 360);
                 let lower = angs.filter(x => x.a < finala);
                 clearInterval(loops);
-                console.log(lower, finala);
+                console.log(lower, finala, lower[lower.length - 1].t?'teamA':'teamB' );
                 setTimeout(() => {
                     circle.remove();
                     circleBG.remove();
