@@ -370,6 +370,7 @@
 <button id="btn7">btn7</button>
 <button id="btn8">btn8</button>
 <button id="btn9">btn9</button>
+<button id="btn10">btn10</button>
 <h4 id="gamemessage"></h4>
 <script type="text/javascript">
     window.addEventListener('beforeunload', event => {
@@ -1536,6 +1537,9 @@
         id('btn9').innerText = '';
         id('btn9').addEventListener('click', giveToAll);
         id('btn9').appendChild(id('newletter').content.cloneNode(true));
+        id('btn10').innerText = '';
+        id('btn10').addEventListener('click', createClock);
+        id('btn10').appendChild(id('heart').content.cloneNode(true));
 
     }
 
@@ -1634,6 +1638,31 @@
         })
     }
 
+
+
+    function createClock(){
+        let back = new Circle(width/2,height/2,60)
+        back.asOutline('black',3);
+        back.color = 'grey';
+        let time = new P('5', 60,60).fromCenter();
+        back.attach(time);
+        time.size = '5em';
+        time.x = 60;
+        time.y = 60
+        time.color = 'black';
+        back.zIndex = 1000;
+        function startCountdown(){
+            let loop = setInterval(()=>{
+                if(parseInt(time.string)===0){
+                    clearInterval(loop);
+                    back.remove();
+                }else{
+                    time.string = parseInt(time.string) -1;
+                }
+            },1500);
+        }
+        startCountdown()
+    }
 
 </script>
 <template id="backbutton">
