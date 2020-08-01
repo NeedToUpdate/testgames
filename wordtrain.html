@@ -444,7 +444,7 @@
         players: player_num,
         direction: 1,
         powers_on: true,
-        timer_on: true,
+        timer_on: false,
         hard_timer: false,
         current_turn: 0,
         mode: 'none',
@@ -1224,6 +1224,9 @@
         stats.current_turn = plyr.id;
         message(plyr.name + '\'s turn!');
         drawArrows();
+        if(stats.timer_on){
+            createClock()
+        }
     }
 
     function killCurrentPlayer() {
@@ -1538,9 +1541,8 @@
         id('btn9').addEventListener('click', giveToAll);
         id('btn9').appendChild(id('newletter').content.cloneNode(true));
         id('btn10').innerText = '';
-        id('btn10').addEventListener('click', createClock);
-        id('btn10').appendChild(id('heart').content.cloneNode(true));
-
+        id('btn10').addEventListener('click', toggleClockMode);
+        id('btn10').appendChild(id('clock').content.cloneNode(true));
     }
 
     function giveToAll() {
@@ -1638,28 +1640,55 @@
         })
     }
 
+    function toggleClockMode(){
+        if(stats.timer_on){
+            if(stats.hard_timer){
+                stats.timer_on = false;
+                stats.hard_timer = false;
+                //console.log('timer off')
+                id('btn10').childNodes[1].childNodes[1].childNodes[1].setAttribute('fill', 'black');
+            }else{
+                stats.hard_timer = true;
+                //console.log('hard mode')
+                id('btn10').childNodes[1].childNodes[1].childNodes[1].setAttribute('fill', 'red');
+            }
+        }else{
+            stats.timer_on = true;
+            //console.log('timer on')
+            id('btn10').childNodes[1].childNodes[1].childNodes[1].setAttribute('fill', 'green');
+        }
+    }
 
-
+    let CLOCK_OBJECT = {};
     function createClock(){
-        let back = new Circle(width/2,height/2,60)
+        if(checkObj(CLOCK_OBJECT))CLOCK_OBJECT.remove();
+        let back = new Circle(width/2,height/2,60);
+        back.shape.addEventListener('click',()=>{
+            back.remove();
+        })
         back.asOutline('black',3);
-        back.color = 'grey';
+        back.color = 'rgba(100,100,100,0.3)';
         let time = new P('5', 60,60).fromCenter();
         back.attach(time);
         time.size = '5em';
         time.x = 60;
-        time.y = 60
+        time.y = 60;
         time.color = 'black';
         back.zIndex = 1000;
+        let timeout = stats.hard_timer? 1000: 1500;
+        CLOCK_OBJECT = back;
         function startCountdown(){
-            let loop = setInterval(()=>{
-                if(parseInt(time.string)===0){
-                    clearInterval(loop);
-                    back.remove();
-                }else{
-                    time.string = parseInt(time.string) -1;
-                }
-            },1500);
+            for(let i = 0; i<=5; i++){
+                timeout += stats.hard_timer? 0:200;
+                setTimeout(()=>{
+                    if(parseInt(time.string)===0){
+                        if(checkObj(back))back.remove();
+                    }else{
+                        time.string = parseInt(time.string) -1;
+                        if(parseInt(time.string)===0)time.color = 'red'
+                    }
+                },timeout*(i+1))
+            }
         }
         startCountdown()
     }
@@ -1887,6 +1916,13 @@
             <path id="svg_2"
                   d="m165.06956,84.59749c0.12924,-1.37764 0.20406,-2.76942 0.20406,-4.17532c0,-24.38781 -19.0318,-44.15523 -42.51207,-44.15523c-18.22238,0 -33.72398,11.93251 -39.77089,28.67617c-4.00634,-4.56388 -9.71996,-7.48166 -16.13418,-7.48166c-12.09383,0 -21.89542,10.18043 -21.89542,22.74171c0,1.48362 0.15644,2.93191 0.42172,4.33074c-16.13418,2.76235 -28.47969,17.20994 -28.47969,34.74486c0,19.51308 15.22953,35.32418 34.00966,35.32418l23.15378,0l-4.80897,-4.99484c-2.56433,-2.66344 -3.97913,-6.20999 -3.97913,-9.98261c0,-3.76556 1.4148,-7.31211 3.97913,-9.97555l3.78187,-3.93511c2.72077,-2.81887 6.37341,-4.43672 10.00564,-4.43672c0.18365,0 0.3673,0 0.54415,0.01413l0,-3.3346c0,-7.79958 6.10813,-14.1438 13.60386,-14.1438l22.21511,0c7.50253,0 13.60386,6.34422 13.60386,14.1438l0,3.3346c0.18365,-0.01413 0.3673,-0.01413 0.55096,-0.01413c3.62543,0 7.27807,1.61785 9.99884,4.45085l3.78868,3.89979c5.30551,5.51764 5.30551,14.48291 0,19.97936l-4.80216,4.99484l16.34504,0c18.78694,0 34.00966,-15.8111 34.00966,-35.32418c0.0068,-17.31591 -12.00541,-31.65753 -27.8335,-34.68128zm-22.528,50.03317l-3.78187,-3.92098c-2.65275,-2.74822 -6.55706,-3.17918 -8.67926,-0.96788c-2.1222,2.20423 -3.8635,0.83365 -3.8635,-3.05201l0,-8.74627c0,-3.88566 -3.06767,-7.06484 -6.80193,-7.06484l-22.20831,0c-3.74106,0 -6.80193,3.17918 -6.80193,7.06484l0,8.74627c0,3.88566 -1.74129,5.25624 -3.8703,3.05201c-2.1222,-2.21129 -6.03331,-1.78034 -8.67926,0.96788l-3.78187,3.92098c-2.65275,2.74822 -2.65275,7.23439 -0.0068,9.98261l29.43876,30.5978c1.31957,1.37058 3.06767,2.05587 4.80897,2.05587s3.48259,-0.68529 4.80897,-2.05587l29.43196,-30.5978c2.64595,-2.74116 2.63915,-7.23439 -0.0136,-9.98261z"
                   fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="#000000"/>
+        </g>
+    </svg>
+</template>
+<template id="clock">
+    <svg viewBox="0 0 210 210" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <g>
+            <path id="svg_1" d="m104.74995,3.05428c-56.33367,0 -101.99995,45.6663 -101.99995,102.00001c0,56.3337 45.66628,102.00001 101.99995,102.00001c56.33367,0 101.99995,-45.6663 101.99995,-102.00001c0,-56.3337 -45.66628,-102.00001 -101.99995,-102.00001zm0,182.93891c-44.64165,0 -80.94588,-36.31127 -80.94588,-80.93891c0,-44.63465 36.30424,-80.94593 80.94588,-80.94593c44.64165,0 80.93886,36.30425 80.93886,80.94593c0,44.64167 -36.31125,80.93891 -80.93886,80.93891zm-0.00702,-157.25995c-3.88097,0 -7.01101,3.14408 -7.01101,7.01803l0,64.71323l-42.43097,18.55566c-3.55112,1.558 -5.16527,5.69864 -3.60726,9.24976c1.15096,2.63176 3.71955,4.2038 6.42149,4.2038c0.94042,0 1.90188,-0.18949 2.81423,-0.59653l46.50142,-20.33824c0.03509,-0.01404 0.06316,-0.02807 0.09123,-0.04211l0.02807,-0.01404c0.10527,-0.04211 0.16141,-0.14036 0.25967,-0.17545c0.72987,-0.36494 1.41062,-0.79304 1.95803,-1.36852c0.23861,-0.23861 0.37196,-0.54741 0.55442,-0.82111c0.33687,-0.44915 0.70882,-0.89129 0.91234,-1.43168c0.16843,-0.42108 0.18247,-0.87725 0.26668,-1.32641c0.09123,-0.45617 0.26668,-0.8562 0.26668,-1.31237l0,-69.30302c0,-3.86693 -3.14407,-7.01101 -7.02504,-7.01101z" stroke-width="1.5" stroke="#000" fill="#000000"/>
         </g>
     </svg>
 </template>
