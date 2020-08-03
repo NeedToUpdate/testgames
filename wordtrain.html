@@ -176,7 +176,7 @@
         position: absolute;
         top: 1px;
         right: 10px;
-        font-size: 3em;
+        font-size: 2.5em;
         color: #fffafe;
         padding: 0;
         margin: 0;
@@ -516,8 +516,6 @@
     class PlayerHandler {
         constructor(NumberOfPlayers) {
             this.players = Array(NumberOfPlayers).fill(0).map((x, i) => new Player(i, i));
-            this.active_players = this.players.map(x => x.id);
-            this.inactive_players = []
         }
 
         getById(id) {
@@ -535,26 +533,34 @@
                 return
             }
             this.getById(id).dead = true;
-            this.active_players.splice(this.active_players.indexOf(id), 1);
-            this.inactive_players.push(id);
             desks.getById(id).makeEmpty();
-            turn_order.splice(turn_order.indexOf(id), 1);
-            if (this.active_players.length === 1) {
-                let winnerId = this.active_players[0];
+            //turn_order.splice(turn_order.indexOf(id), 1);
+            if (this.players.filter(x=>!x.dead).length === 1) {
+                let winnerId = this.players.filter(x=>!x.dead)[0].id;
                 removeArrows();
                 removeArrows();
                 message(this.getById(winnerId).name + ' wins!');
                 desks.getById(winnerId).div.addClass('winner')
             }
         }
+        revive(id){
+            this.getById(id).dead = false;
+            desks.getById(id).div.removeClass('empty');
+        }
 
         getNext(id) {
             let index = getNextTurnVal(id);
+            while(players.getById(index).dead){
+                index = getNextTurnVal(index);
+            }
             return this.getById(index)
         }
 
         getPrev(id) {
             let index = getNextTurnVal(id, true);
+            while(players.getById(index).dead){
+                index = getNextTurnVal(index);
+            }
             return this.getById(index)
         }
     }
@@ -705,7 +711,7 @@
                         });
                         stats.current_turn = plyr.id;
                         drawArrows();
-                        drawCustomArrow(stats.current_turn, temp_turn);
+                        drawCustomArrow(stats.current_turn,players.getPrev(stats.current_turn).id);
                         message(plyr.name + '\'s turn!')
                     } else if (stats.mode === 'choosingChangePeople') {
                         this.desks[plyr.desk_position].toggleSelect();
@@ -1231,9 +1237,15 @@
 
     function killCurrentPlayer() {
         let deadPlyr = stats.current_turn;
-        message(players.getById(deadPlyr).name + ' is out!');
-        nextTurn();
-        players.remove(deadPlyr);
+        if(players.getById(deadPlyr).dead){
+            message(players.getById(deadPlyr).name + ' is revived!');
+            players.revive(deadPlyr);
+        }else{
+            message(players.getById(deadPlyr).name + ' is out!');
+            nextTurn();
+            players.remove(deadPlyr);
+        }
+
     }
 
     function otherWay() {
