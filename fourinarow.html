@@ -1,10 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
+    <script language="javascript" src="lib/vector.js"></script>
+    <script language="javascript" src="lib/matrix.js"></script>
+    <script language="javascript" src="lib/drawbase.js"></script>
+    <script language="javascript" src="lib/PhysicsObject.js"></script>
+    <script language="javascript" src="lib/DomObject.js"></script>
+    <script language="javascript" src="lib/Character.js"></script>
+    <script language="javascript" src="lib/collisioncontainer.js"></script>
+    <script language="javascript" src="lib/eventemitter.js"></script>
+    <title>Artem's Four In A Row</title>
 </head>
+<style type="text/css">
+</style>
 <body>
+<button id="btn1">btn1</button>
+<button id="btn2">btn2</button>
+<button id="btn3">btn3</button>
+<button id="btn4">btn4</button>
+<script>
+    let TOP = height*0.2;
+    let LEFT = width*0.3;
+
+    let lines = [];
+    let titles = [];
+    let rowNum = 13;
+    let colNum = 15;
+    function setup(){
+        for(let i = 0; i<=colNum; i++){
+            let l = Line.fromAngle(LEFT,TOP + i*((height-TOP*2)/colNum),width-LEFT*2);
+            l.color = 'black';
+            lines.push(l);
+            if(i<colNum){
+                let p = new P(alphabet[i],LEFT-10,TOP + 15 + i*((height-TOP*2)/colNum),width-LEFT*2).fromCenter();
+                p.color = 'black';
+                titles.push(p)
+            }
+
+        }
+        for(let i=0; i<=rowNum; i++){
+            let l = Line.fromAngle(LEFT + i*((width-LEFT*2)/rowNum),TOP,height-TOP*2,90);
+            l.color = 'black';
+            if(i<rowNum){
+                let p = new P(i+1,LEFT + 15 + i*((width-LEFT*2)/rowNum),TOP-10,height-TOP*2).fromCenter();
+                p.color = 'black';
+                titles.push(p)
+            }
+        }
+    }
+
+
+    setup();
+</script>
 
 </body>
 </html>

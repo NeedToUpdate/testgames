@@ -1258,8 +1258,9 @@ function marioHop(isPlayerA, val) {
 
 
 function explode(isPlayerA, val) {
-    let fighter = isPlayerA ? playerA : playerB;
-    let target = isPlayerA ? playerB : playerA;
+    let target = isPlayerA ? playerA : playerB;
+    let fighter = isPlayerA ? playerB : playerA;
+    //since both die, makes more sense to flip those
     return new Promise(resolve => {
         if (fighter.dead) return resolve();
         target.powerUp(0);
@@ -1343,11 +1344,11 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                     } else if (oppVal === 1 && getRandom(10) < 0) {
                         // if 1 and pB is 1
                         //projectiles hit eachother
-                    } else if (getRandom(10) < 3) {
+                    } else if (getRandom(11) < 3) {
                         throwBomb(plyr, damage * val).then(() => {
                             return resolve()
                         })
-                    } else if (getRandom(10) < 3) {
+                    } else if (getRandom(11) < 3) {
                         throwShuriken(plyr, damage * val).then(() => {
                             return resolve()
                         })
@@ -1373,22 +1374,26 @@ function battle(team1points, team2points, isTeam1finishingblow, isTeam2finishing
                     } else if (oppVal === 2 && getRandom(10) < 0) {
                         // if 2 and pB is 2
                         //projectiles hit eachother
-                    } else if (getRandom(10) < 3) {
+                    } else if (getRandom(12) < 3) {
                         throwBomb(plyr, damage * val / 2).then(() => {
                             throwBomb(plyr, damage * val / 2).then(() => {
                                 return resolve()
                             })
                         })
-                    } else if (getRandom(10) < 3) {
+                    } else if (getRandom(12) < 3) {
                         throwShuriken(plyr, damage * val / 2).then(() => {
                             throwShuriken(plyr, damage * val / 2).then(() => {
                                 return resolve()
                             })
                         })
-                    } else if (getRandom(10) < 4) {
+                    } else if (getRandom(12) < 3) {
                         jumpSpinHit(plyr, damage * val).then(() => {
                             return resolve()
                         })
+                    }else if (getRandom(12) < 3) {
+                        rapidFire(plyr, damage * val).then(() => {
+                            return resolve()
+                        });
                     } else {
                         regularShoot(plyr, val,damage).then(() => {
                             return resolve()
