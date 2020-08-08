@@ -8,6 +8,7 @@
     <script language="javascript" src="./lib/DomObject.js"></script>
     <script language="javascript" src="./lib/PhysicsObject.js"></script>
     <script language="javascript" src="./lib/eventemitter.js"></script>
+    <script language="javascript" src="./pictures_animals.js"></script>
     <link rel="stylesheet" href="global_styles.css">
 </head>
 
@@ -21,14 +22,7 @@
         //document.body.style.backgroundSize = width + 'px auto';
         document.body.style.backgroundRepeat = 'no-repeat';
 
-        let animals = [
-            'cat', 'dog', 'horse',
-            'clownfish', 'seahorse', 'crocodile',
-            'elephant', 'monkey', 'owl',
-            'penguin', 'frog',  'salamander', 'snake', 'whale',
-            'sheep', 'tiger', 'lion', 'eagle', 'dolphin', 'shark', 'lizard','crab','worm','lobster','fly','spider','jellyfish','snail',
-            'octopus','butterfly','starfish','mosquito','ant','scorpion','dragonfly'
-        ];
+        let animals = ANIMAL_NAMES
         function getRandomArray(num) {
             let nums = [];
             let escape = 0;
@@ -45,7 +39,7 @@
         let images = getRandomArray(8);
         let imageDivs = [];
         let weights = images.map(x => 1);
-        let LOADED_IMAGES = new ImageLoader('./images/', images);
+        let LOADED_IMAGES = new ImageLoader('../Classes/Animals/pngs/', images);
 
 
         for (let i = 0; i < images.length; i++) {
@@ -90,17 +84,6 @@
 
 
 
-        //Debug
-        let LOGGING = true;
-
-
-
-
-        let interval = 10;
-
-        //speen of rotation
-        let speed = 1;
-        let clicked = false;
         let originX = width/2;
         let originY = height/2 + height/3;
         let circleRadius = 250;
@@ -120,7 +103,6 @@
             }
             return originY + radius * Math.sin(angle);
         }
-        let sections = [];
         let lights = [];
         function setup(){
             return new Promise(resolve=>{
@@ -130,7 +112,7 @@
                     let l = Line.fromAngle(originX,originY, 250, (360/total)*i + 180/total ,3);
                     l.color = 'blue';
                     lines.push(l);
-                    let r = 200;
+                    let r = 150;
                     let img = new Img(LOADED_IMAGES[images[i]],getX((360/total)*i,r),getY((360/total)*i,r),80,undefined,(360/total)*i +90).fromCenter();
                     imageDivs.push(img);
                     img.onLoad(()=>{
@@ -315,7 +297,7 @@
                 clearInterval(speedSpinInt);
                 speedSpinInt = setInterval(()=>{
                     main_theta += del;
-                    let drag = 0.01;
+                    let drag = 0.03;
                     if(del<0){
                         del += drag
                     }else if(del>0){
