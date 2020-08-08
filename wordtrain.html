@@ -536,6 +536,8 @@
             //turn_order.splice(turn_order.indexOf(id), 1);
             if (this.players.filter(x=>!x.dead).length === 1) {
                 let winnerId = this.players.filter(x=>!x.dead)[0].id;
+                stats.timer_on = false;
+                stats.hard_timer = false;
                 removeArrows();
                 removeArrows();
                 message(this.getById(winnerId).name + ' wins!');
@@ -558,7 +560,7 @@
         getPrev(id) {
             let index = getNextTurnVal(id, true);
             while(players.getById(index).dead){
-                index = getNextTurnVal(index);
+                index = getNextTurnVal(index,true);
             }
             return this.getById(index)
         }
@@ -1241,8 +1243,8 @@
             players.revive(deadPlyr);
         }else{
             message(players.getById(deadPlyr).name + ' is out!');
-            nextTurn();
             players.remove(deadPlyr);
+            nextTurn();
         }
 
     }
@@ -1289,9 +1291,10 @@
             players.getById(index).desk_position = x.desk_position
         });
         desks.initialize(players.players);
-        turn_order = desks.createPositionArray().map(pos=>players.players.find(x=>x.desk_position === pos).INTERNAL_ID)
+        turn_order = JSON.parse(localStorage.getItem('turns'))// desks.createPositionArray().map(pos=>players.players.find(x=>x.desk_position === pos).INTERNAL_ID)
         players_data.forEach((x, index) => {
             players.getById(index).name = x.INTERNAL_NAME;
+            players.getById(index).dead = x.dead;
             x.powers.forEach(pow => {
                 let p = new PowerData(pow.type);
                 players.getById(index).powers.push(p);
