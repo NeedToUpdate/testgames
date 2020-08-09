@@ -10,46 +10,131 @@
     <script language="javascript" src="lib/Character.js"></script>
     <script language="javascript" src="lib/collisioncontainer.js"></script>
     <script language="javascript" src="lib/eventemitter.js"></script>
+    <script language="JavaScript" src="external/signature_pad-master/docs/js/signature_pad.umd.js"></script>
+    <link rel="stylesheet" href="global_styles.css">
     <title>Artem's Four In A Row</title>
 </head>
 <style type="text/css">
 </style>
-<body>
-<button id="btn1">btn1</button>
-<button id="btn2">btn2</button>
-<button id="btn3">btn3</button>
-<button id="btn4">btn4</button>
+<body class="locked">
+<h3 id="message">Current Turn: Player <span id="current_turn">1</span></h3>
+<button id="btn1">set icon</button>
+<button id="btn2">next turn</button>
+<button id="btn3">save</button>
+<button id="btn4" >load</button>
+<div style="position:absolute; top: 150px; left: 50px; width: 200px; height: 230px;">
+    <canvas id="canvas" height="200px" width="200px"  style="height: 200px; width: 200px; border: solid black 2px"></canvas>
+    <button onclick="PAD.penColor = 'red'">red</button>
+    <button onclick="PAD.penColor = 'blue'">blue</button>
+    <button onclick="PAD.penColor = 'deeppink'">pink</button>
+    <button onclick="PAD.penColor = 'green'">green</button>
+    <button onclick="PAD.penColor = 'yellow'">yellow</button>
+    <button onclick="PAD.penColor = 'black'">black</button>
+    <button onclick="{let data = PAD.toData(); data.pop(); PAD.fromData(data)}">undo</button>
+    <button onclick="PAD.clear()">clear</button>
+</div>
+<img style="height: 50px" id="p0Icon" src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNTAgNTAiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+PC9zdmc+==">
+<img style="height: 50px" id="p1Icon" src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNTAgNTAiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+PC9zdmc+==">
+<img style="height: 50px" id="p2Icon" src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNTAgNTAiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+PC9zdmc+==">
+<img style="height: 50px" id="p3Icon" src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNTAgNTAiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+PC9zdmc+==">
 <script>
     let TOP = height*0.2;
     let LEFT = width*0.3;
 
     let lines = [];
     let titles = [];
-    let rowNum = 13;
-    let colNum = 15;
+    let rowNum = 10;
+    let colNum = 11;
+    let background = {};
+    let foreground = {};
+    let col_labels = Array(colNum).fill('').map((x,i)=>alphabet[i]);
+    let row_labels = Array(rowNum).fill('').map((x,i)=>i+1);
+    let PAD = {};
+    let current_turn = 0;
+
+    let imageMatrix = new Matrix(rowNum,colNum);
+
     function setup(){
-        for(let i = 0; i<=colNum; i++){
-            let l = Line.fromAngle(LEFT,TOP + i*((height-TOP*2)/colNum),width-LEFT*2);
+        background = new Rectangle(LEFT,TOP,width-LEFT*2 +3,height-TOP*2 +3);
+        background.color = 'darkgrey';
+        for(let i = 0; i<=rowNum; i++){
+            let l = Line.fromAngle(LEFT,TOP + i*((height-TOP*2)/rowNum),width-LEFT*2);
             l.color = 'black';
             lines.push(l);
-            if(i<colNum){
-                let p = new P(alphabet[i],LEFT-10,TOP + 15 + i*((height-TOP*2)/colNum),width-LEFT*2).fromCenter();
+            if(i<rowNum){
+                let p = new P(row_labels[i],LEFT-10,TOP + 15 + i*((height-TOP*2)/rowNum),width-LEFT*2).fromCenter();
                 p.color = 'black';
                 titles.push(p)
             }
 
         }
-        for(let i=0; i<=rowNum; i++){
-            let l = Line.fromAngle(LEFT + i*((width-LEFT*2)/rowNum),TOP,height-TOP*2,90);
+        for(let i=0; i<=colNum; i++){
+            let l = Line.fromAngle(LEFT + i*((width-LEFT*2)/colNum),TOP,height-TOP*2,90);
             l.color = 'black';
-            if(i<rowNum){
-                let p = new P(i+1,LEFT + 15 + i*((width-LEFT*2)/rowNum),TOP-10,height-TOP*2).fromCenter();
+            if(i<colNum){
+                let p = new P(col_labels[i],LEFT + 15 + i*((width-LEFT*2)/colNum),TOP-10,height-TOP*2).fromCenter();
                 p.color = 'black';
                 titles.push(p)
             }
+        }
+        foreground = new Rectangle(LEFT-1.5,TOP-1.5,width-LEFT*2,height-TOP*2).asOutline('black',3);
+        foreground.zIndex = 10000;
+        foreground.shape.addEventListener('click',ev=>{
+            let xy = getPosFromXY(ev.clientX,ev.clientY);
+            let piece = id('p'+current_turn+'Icon').cloneNode();
+            let pos = getXYromPos(xy.x,xy.y);
+            piece.style.position = 'absolute';
+            piece.style.top = pos.y + 'px';
+            piece.style.left = pos.x + 'px';
+            document.body.appendChild(piece);
+            imageMatrix.values[xy.y][xy.x] = piece;
+            nextTurn()
+        });
+
+
+        PAD = new SignaturePad(id('canvas'));
+        for(let i =0; i<4; i++) {
+            id('p' + i + 'Icon').style.height = (rowNum > colNum ? (height - TOP * 2) / rowNum : (width - LEFT * 2) / colNum) + 'px';
         }
     }
 
+    function getPosFromXY(x,y) {
+        let board_w = width - LEFT * 2;
+        let board_h = height - TOP * 2;
+        let col = ((x - LEFT) / board_w) * colNum | 0;
+        let row = ((y - TOP) / board_h) * rowNum | 0;
+        return {x: col, y: row};
+    }
+    function getXYromPos(x,y){
+        let board_w = width - LEFT * 2;
+        let board_h = height - TOP * 2;
+        let col = (x/colNum)*board_w + LEFT;
+        let row = (y/rowNum)*board_h + TOP;
+        return {x: col, y: row};
+    }
+    function nextTurn(){
+        current_turn++;
+        current_turn %= 4;
+        id('current_turn').innerText = current_turn +1;
+    }
+    id('btn1').addEventListener('click',()=>{
+        id('p' + current_turn + 'Icon').src = PAD.toDataURL('image/svg+xml');
+        PAD.clear();
+        nextTurn();
+    });
+    id('btn2').addEventListener('click',nextTurn);
+    id('btn3').addEventListener('click',save);
+    id('btn4').addEventListener('click',load);
+    function save(){
+        for(let i = 0; i<4;i++){
+            localStorage.setItem(i + 'Icon',id('p' + i + 'Icon').src)
+        }
+    }
+    function load(){
+        for(let i = 0; i<4;i++){
+            id('p' + i + 'Icon').src = localStorage.getItem(i + 'Icon');
+        }
+    }
 
     setup();
 </script>
