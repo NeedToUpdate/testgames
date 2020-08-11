@@ -19,7 +19,7 @@
     let LEFT_PADDING = width * 0.1;
     let TOP_PADDING = height * 0.05;
     let LETTER_WIDTH = 80;
-    let RUNNING_LETTERS = false;
+    let RUNNING_LETTERS = true;
 
     function calcColNum() {
         return ((width - LEFT_PADDING * 2) / LETTER_WIDTH | 0) + 1;
@@ -54,7 +54,7 @@
         document.body.style.backgroundRepeat = 'no-repeat';
         return new Promise(resolve => {
             let selectedletters = '';
-            let selectednumber = 0;
+            let selectednumber =  0;
             (alphabet + '357✔').split('').forEach((letter, i) => {
                 let div = makeLetter(letter, LEFT_PADDING + LETTER_WIDTH * (i % COL_NUM), TOP_PADDING + LETTER_WIDTH * (i / COL_NUM | 0));
                 div.shape.addEventListener('click', () => {
@@ -75,7 +75,7 @@
 
                     } else {
                         resolve({
-                            letters: selectedletters, num: selectednumber,
+                            letters: selectedletters, num: parseInt(selectednumber),
                             removeFn: function () {
                                 alphabet_divs.forEach(div => {
                                     div.remove();
@@ -90,33 +90,70 @@
 
     }
 
-    function selectLetter(letter) {
+    function selectLetter(letter,num_of_letters) {
         THINGS_TO_UPDATE.forEach(x => {
             x.kill();
         });
-        let chars = ['peppapig'];
-        let char = new Character(-200, 0, getRandom(chars));
-        let sprite = new Img('../images/' + char.name + '.png', 0, 0, 200).fromCenter().usingNewTransform().onLoad(()=>{
-            char.addSprite(sprite);
-        });
+        let chars = ['peppapig','ultraman','spiderman','shark','cat','rabbit','sofia','elsa','superman'];
+        let char_w = width/(1.3*num_of_letters);
+        let dudes = [];
+        function showLetters(){
+            dudes.forEach((dude,i)=>{
+                let holding_letter_sprite = new P(i===1?letter:getRandom(Array.from(alphabet)),0,0);
+                holding_letter_sprite.color = 'white';
+                holding_letter_sprite.size = '7em'
+                holding_letter_sprite.set('textShadow','2px 2px black');
+                let holding_letter = new Character(0,0,'letter');
+                holding_letter.addSprite(holding_letter_sprite);
+                holding_letter.x = dude.x;
+                holding_letter.y = dude.y;
+                THINGS_TO_UPDATE.push(holding_letter);
+                holding_letter.maxbounds.y = holding_letter.y - holding_letter.height/2;
+                holding_letter.addForce(VECTORS.gravity);
+                holding_letter.hasNoSkyBox = true;
+                dude.sprite.shape.addEventListener('click',()=>{
+                   holding_letter.jumpUp(0.8);
+                   if(i===1){
+                       dude.sprite.zIndex = 0;
+                   }
+                });
+                setTimeout(()=>{
+                   holding_letter.jumpUp(0.7);
+                   dude.sprite.zIndex = 100;
+                },5000)
+            })
+        }
+        let count = num_of_letters;
+        for(let i = 0; i<num_of_letters; i++){
+            chars = shuffle(chars);
+            let char = new Character(-200, 0, chars.pop());
+            char.maxbounds = {x: width+300, y: height};
+            char.hasNoSkyBox = true;
+            char.minbounds = {x: -300, y: 100};
+            char.addForce(VECTORS.gravity);
+            let sprite = new Img('../images/' + char.name + '.png', 50,50, char_w).fromCenter().usingNewTransform().onLoad(()=>{
+                char.addSprite(sprite);
+            });
 
-        char.maxbounds = {x: width+300, y: height};
-        char.hasNoSkyBox = true;
-        char.minbounds = {x: -300, y: 100};
-        console.log(char);
-        THINGS_TO_UPDATE.push(char);
-        // setTimeout(() => {
-        //     char.jumpRight();
-        // }, 1000);
-        // let unsub = char.landing_emitter.subscribe('land', () => {
-        //     if (char.p.x > width / 2) {
-        //         unsub();
-        //     } else {
-        //         char.jumpRight();
-        //
-        //     }
-        //
-        // })
+            dudes.push(char);
+            THINGS_TO_UPDATE.push(char);
+            setTimeout(() => {
+                char.jumpFwd(0.5);
+            }, 1000);
+            let unsub = char.landing_emitter.subscribe('land', () => {
+                setTimeout(()=>{
+                    if (char.p.x > ((width-char_w)*i/num_of_letters)  + char_w/2) {
+                        unsub();
+                        count--;
+                        if(count<=0){
+                            showLetters()
+                        }
+                    } else {
+                        char.jumpFwd(0.5);
+                    }
+                },getRandom(30,60))
+            })
+        }
     }
 
     async function createKeyboard() {
@@ -157,10 +194,10 @@
                         letterChar.addForce(Vector.random(getRandom(10,15)));
                         letterChar.div.runcount += Math.random() * 0.2 + 0.7;
                     } else {
-                        selectLetter(letter)
+                        selectLetter(letter,x.num)
                     }
                 } else {
-                        selectLetter(letter)
+                        selectLetter(letter,x.num)
                 }
             });
             letterChar.p = new Vector(LEFT_PADDING + LETTER_WIDTH * (i % COL_NUM), TOP_PADDING + LETTER_WIDTH * (i / COL_NUM | 0));
@@ -182,11 +219,10 @@
                 THINGS_TO_UPDATE.splice(i, 1);
             }
         }
-        requestAnimationFrame(loop);
     };
 
     function start() {
-        requestAnimationFrame(loop);
+        createFallbackLoopFunction(loop).start();
     }
 
 </script>

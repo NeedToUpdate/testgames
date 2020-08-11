@@ -33,10 +33,33 @@
     <button onclick="{let data = PAD.toData(); data.pop(); PAD.fromData(data)}">undo</button>
     <button onclick="PAD.clear()">clear</button>
 </div>
-<img style="height: 50px" id="p0Icon" src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNTAgNTAiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+PC9zdmc+==">
-<img style="height: 50px" id="p1Icon" src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNTAgNTAiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+PC9zdmc+==">
-<img style="height: 50px" id="p2Icon" src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNTAgNTAiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+PC9zdmc+==">
-<img style="height: 50px" id="p3Icon" src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNTAgNTAiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+PC9zdmc+==">
+
+<div class="player_icon_container" id="p0Icon_container"><img class="player_icon" id="p0Icon" src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNTAgNTAiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+PC9zdmc+=="></div>
+<div class="player_icon_container" id="p1Icon_container"><img class="player_icon" id="p1Icon" src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNTAgNTAiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+PC9zdmc+=="></div>
+<div class="player_icon_container" id="p2Icon_container"><img class="player_icon" id="p2Icon" src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNTAgNTAiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+PC9zdmc+=="></div>
+<div class="player_icon_container" id="p3Icon_container"><img class="player_icon" id="p3Icon" src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNTAgNTAiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+PC9zdmc+=="></div>
+<style>
+    .player_icon_container{
+        position: absolute;
+        top: 5px;
+        border: solid black 2px;
+        border-radius: 3px;
+        transition: 0.5s;
+    }
+    #p0Icon_container{
+        left: 230px;
+        border: solid green 2px;
+    }
+    #p1Icon_container{
+        left: 280px;
+    }
+    #p2Icon_container{
+        left: 330px;
+    }
+    #p3Icon_container{
+        left: 380px;
+    }
+</style>
 <script>
     let TOP = height*0.2;
     let LEFT = width*0.3;
@@ -44,7 +67,7 @@
     let lines = [];
     let titles = [];
     let rowNum = 10;
-    let colNum = 11;
+    let colNum = 14;
     let background = {};
     let foreground = {};
     let col_labels = Array(colNum).fill('').map((x,i)=>alphabet[i]);
@@ -56,7 +79,7 @@
 
     function setup(){
         background = new Rectangle(LEFT,TOP,width-LEFT*2 +3,height-TOP*2 +3);
-        background.color = 'darkgrey';
+        background.color = 'lightgrey';
         for(let i = 0; i<=rowNum; i++){
             let l = Line.fromAngle(LEFT,TOP + i*((height-TOP*2)/rowNum),width-LEFT*2);
             l.color = 'black';
@@ -87,14 +110,22 @@
             piece.style.top = pos.y + 'px';
             piece.style.left = pos.x + 'px';
             document.body.appendChild(piece);
-            imageMatrix.values[xy.y][xy.x] = piece;
+            try {
+                imageMatrix.values[xy.y][xy.x].remove();
+            }catch{
+                //lol
+            }
+            imageMatrix.values[xy.y][xy.x] = {};
+            imageMatrix.values[xy.y][xy.x].piece = piece;
+            imageMatrix.values[xy.y][xy.x].player = current_turn;
             nextTurn()
         });
 
 
         PAD = new SignaturePad(id('canvas'));
         for(let i =0; i<4; i++) {
-            id('p' + i + 'Icon').style.height = (rowNum > colNum ? (height - TOP * 2) / rowNum : (width - LEFT * 2) / colNum) + 'px';
+            id('p' + i + 'Icon').style.height = ((height-TOP*2)/rowNum < (width-LEFT*2)/colNum ? (height - TOP * 2) / rowNum : (width - LEFT * 2) / colNum) + 'px';
+            id('p' + i + 'Icon').src = PAD.toDataURL('image/svg+xml');
         }
     }
 
@@ -116,6 +147,9 @@
         current_turn++;
         current_turn %= 4;
         id('current_turn').innerText = current_turn +1;
+        for(let i = 0; i<4; i++){
+            id('p' + i + 'Icon_container').style.border = 'solid ' + (i===current_turn? 'green' : 'black') +' 2px';
+        }
     }
     id('btn1').addEventListener('click',()=>{
         id('p' + current_turn + 'Icon').src = PAD.toDataURL('image/svg+xml');
