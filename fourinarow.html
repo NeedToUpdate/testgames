@@ -33,7 +33,7 @@
     <button onclick="{let data = PAD.toData(); data.pop(); PAD.fromData(data)}">undo</button>
     <button onclick="PAD.clear()">clear</button>
 </div>
-
+<div id="debugdiv" style="position: absolute; z-index: 9999999; top:40px"></div>
 <div class="player_icon_container" id="p0Icon_container"><img class="player_icon" id="p0Icon" src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNTAgNTAiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+PC9zdmc+=="></div>
 <div class="player_icon_container" id="p1Icon_container"><img class="player_icon" id="p1Icon" src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNTAgNTAiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+PC9zdmc+=="></div>
 <div class="player_icon_container" id="p2Icon_container"><img class="player_icon" id="p2Icon" src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNTAgNTAiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+PC9zdmc+=="></div>
@@ -61,6 +61,27 @@
     }
 </style>
 <script>
+
+    if (typeof console !== 'undefined') {
+        if (typeof console.log !== 'undefined') {
+            console.olog = console.log;
+        } else {
+            console.olog = function () {
+            };
+        }
+        console.log = function (message) {
+            console.olog(message);
+            id('debugdiv').append(`\n` + message)
+        }
+        console.error = console.exception = console.debug = console.info = console.log;
+    }
+    window.addEventListener('error', e => {
+        id('debugdiv').append(`\n` + e.message)
+    });
+    id('debugdiv').addEventListener('click', () => {
+        id('debugdiv').innerText = ''
+    })
+
     let TOP = height*0.2;
     let LEFT = width*0.3;
 
@@ -111,8 +132,8 @@
             piece.style.left = pos.x + 'px';
             document.body.appendChild(piece);
             try {
-                imageMatrix.values[xy.y][xy.x].remove();
-            }catch{
+                if(checkObj(imageMatrix.values[xy.y][xy.x]))imageMatrix.values[xy.y][xy.x].piece.remove();
+            }catch(e){
                 //lol
             }
             imageMatrix.values[xy.y][xy.x] = {};
@@ -169,6 +190,13 @@
             id('p' + i + 'Icon').src = localStorage.getItem(i + 'Icon');
         }
     }
+    function checkWin(x,y){
+        let player = imageMatrix.values[y][x].player;
+        console.log(player)
+        //direction 0 1 2 3 4 5 6 7
+    }
+
+
 
     setup();
 </script>
