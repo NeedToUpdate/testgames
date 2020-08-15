@@ -104,6 +104,7 @@
             let chosen = Array(dudes.length).fill(0);
             chosen[getRandom(dudes.length)] = 1;
             dudes.forEach((dude,i)=>{
+                dude.sprite.zIndex = 0;
                 let holding_letter_sprite = new P(chosen[i]?letter:getRandom(Array.from(alphabet.toUpperCase()).filter(x=>x!==letter)),0,0);
                 holding_letter_sprite.color = 'white';
                 holding_letter_sprite.size = 7-(dudes.length/2) + 'em';

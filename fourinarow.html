@@ -21,9 +21,10 @@
 <button id="btn1">set icon</button>
 <button id="btn2">next turn</button>
 <button id="btn3">save</button>
-<button id="btn4" >load</button>
+<button id="btn4">load</button>
 <div style="position:absolute; top: 150px; left: 50px; width: 200px; height: 230px;">
-    <canvas id="canvas" height="200px" width="200px"  style="height: 200px; width: 200px; border: solid black 2px"></canvas>
+    <canvas id="canvas" height="200px" width="200px"
+            style="height: 200px; width: 200px; border: solid black 2px"></canvas>
     <button onclick="PAD.penColor = 'red'">red</button>
     <button onclick="PAD.penColor = 'blue'">blue</button>
     <button onclick="PAD.penColor = 'deeppink'">pink</button>
@@ -34,171 +35,326 @@
     <button onclick="PAD.clear()">clear</button>
 </div>
 <div id="debugdiv" style="position: absolute; z-index: 9999999; top:40px"></div>
-<div class="player_icon_container" id="p0Icon_container"><img class="player_icon" id="p0Icon" src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNTAgNTAiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+PC9zdmc+=="></div>
-<div class="player_icon_container" id="p1Icon_container"><img class="player_icon" id="p1Icon" src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNTAgNTAiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+PC9zdmc+=="></div>
-<div class="player_icon_container" id="p2Icon_container"><img class="player_icon" id="p2Icon" src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNTAgNTAiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+PC9zdmc+=="></div>
-<div class="player_icon_container" id="p3Icon_container"><img class="player_icon" id="p3Icon" src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNTAgNTAiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+PC9zdmc+=="></div>
+<div class="player_icon_container" id="p0Icon_container"><img class="player_icon" id="p0Icon"
+                                                              src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNTAgNTAiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+PC9zdmc+==">
+</div>
+<div class="player_icon_container" id="p1Icon_container"><img class="player_icon" id="p1Icon"
+                                                              src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNTAgNTAiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+PC9zdmc+==">
+</div>
+<div class="player_icon_container" id="p2Icon_container"><img class="player_icon" id="p2Icon"
+                                                              src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNTAgNTAiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+PC9zdmc+==">
+</div>
+<div class="player_icon_container" id="p3Icon_container"><img class="player_icon" id="p3Icon"
+                                                              src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNTAgNTAiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+PC9zdmc+==">
+</div>
 <style>
-    .player_icon_container{
+    .player_icon_container {
         position: absolute;
         top: 5px;
         border: solid black 2px;
         border-radius: 3px;
         transition: 0.5s;
+        height: 60px;
+        width: 60px;
     }
-    #p0Icon_container{
-        left: 230px;
+
+    #p0Icon_container {
+        left: 40%;
         border: solid green 2px;
     }
-    #p1Icon_container{
-        left: 280px;
+
+    #p1Icon_container {
+        left: 50%;
     }
-    #p2Icon_container{
-        left: 330px;
+
+    #p2Icon_container {
+        left: 60%;
     }
-    #p3Icon_container{
-        left: 380px;
+
+    #p3Icon_container {
+        left: 70%;
+    }
+
+    .player_icon {
+        height: 60px;
+        width: 60px
     }
 </style>
 <script>
-
-    if (typeof console !== 'undefined') {
-        if (typeof console.log !== 'undefined') {
-            console.olog = console.log;
-        } else {
-            console.olog = function () {
-            };
+    let DEBUGDIVON = false;
+    if (DEBUGDIVON) {
+        if (typeof console !== 'undefined') {
+            if (typeof console.log !== 'undefined') {
+                console.olog = console.log;
+            } else {
+                console.olog = function () {
+                };
+            }
+            console.log = function (message) {
+                console.olog(message);
+                id('debugdiv').append(`\n` + message)
+            }
+            console.error = console.exception = console.debug = console.info = console.log;
         }
-        console.log = function (message) {
-            console.olog(message);
-            id('debugdiv').append(`\n` + message)
-        }
-        console.error = console.exception = console.debug = console.info = console.log;
+        window.addEventListener('error', e => {
+            id('debugdiv').append(`\n` + e.message)
+        });
+        id('debugdiv').addEventListener('click', () => {
+            id('debugdiv').innerText = ''
+        })
     }
-    window.addEventListener('error', e => {
-        id('debugdiv').append(`\n` + e.message)
-    });
-    id('debugdiv').addEventListener('click', () => {
-        id('debugdiv').innerText = ''
-    })
 
-    let TOP = height*0.2;
-    let LEFT = width*0.3;
 
+    let TOP = height * 0.2;
+    let LEFT = width * 0.3;
     let lines = [];
     let titles = [];
     let rowNum = 10;
-    let colNum = 14;
+    let colNum = 15;
+    let SMALLEST = ((height - TOP * 1.2) / rowNum < (width - LEFT * 1.2) / colNum ? (height - TOP * 1.2) / rowNum : (width - LEFT * 1.2) / colNum) | 0;
+    let SMALLEST_NUM = rowNum < colNum ? rowNum : colNum;
     let background = {};
     let foreground = {};
-    let col_labels = Array(colNum).fill('').map((x,i)=>alphabet[i]);
-    let row_labels = Array(rowNum).fill('').map((x,i)=>i+1);
+    let col_labels = Array(colNum).fill('').map((x, i) => alphabet[i % 26] + ((i / 26 | 0) === 0 ? '' : (i / 26 | 0)));
+    let row_labels = Array(rowNum).fill('').map((x, i) => i + 1);
     let PAD = {};
     let current_turn = 0;
 
-    let imageMatrix = new Matrix(rowNum,colNum);
+    let imageMatrix = {}
 
-    function setup(){
-        background = new Rectangle(LEFT,TOP,width-LEFT*2 +3,height-TOP*2 +3);
+    function setup() {
+        let board_w = SMALLEST * colNum;
+        let board_h = SMALLEST * rowNum;
+        background = new Rectangle(LEFT, TOP, board_w, board_h);
         background.color = 'lightgrey';
-        for(let i = 0; i<=rowNum; i++){
-            let l = Line.fromAngle(LEFT,TOP + i*((height-TOP*2)/rowNum),width-LEFT*2);
+        for (let i = 0; i <= colNum; i++) {
+            let l = Line.fromAngle(LEFT + i * (SMALLEST), TOP, board_h, 90);
             l.color = 'black';
             lines.push(l);
-            if(i<rowNum){
-                let p = new P(row_labels[i],LEFT-10,TOP + 15 + i*((height-TOP*2)/rowNum),width-LEFT*2).fromCenter();
+            if (i < colNum) {
+                let p = new P(col_labels[i], LEFT + 15 + i * (SMALLEST), TOP - 10, SMALLEST * SMALLEST_NUM).fromCenter();
+                p.color = 'black';
+                titles.push(p)
+            }
+        }
+        for (let i = 0; i <= rowNum; i++) {
+            let l = Line.fromAngle(LEFT, TOP + i * (SMALLEST), board_w);
+            l.color = 'black';
+            lines.push(l);
+            if (i < rowNum) {
+                let p = new P(row_labels[i], LEFT - 10, TOP + 15 + i * (SMALLEST), SMALLEST * SMALLEST_NUM).fromCenter();
                 p.color = 'black';
                 titles.push(p)
             }
 
         }
-        for(let i=0; i<=colNum; i++){
-            let l = Line.fromAngle(LEFT + i*((width-LEFT*2)/colNum),TOP,height-TOP*2,90);
-            l.color = 'black';
-            if(i<colNum){
-                let p = new P(col_labels[i],LEFT + 15 + i*((width-LEFT*2)/colNum),TOP-10,height-TOP*2).fromCenter();
-                p.color = 'black';
-                titles.push(p)
-            }
-        }
-        foreground = new Rectangle(LEFT-1.5,TOP-1.5,width-LEFT*2,height-TOP*2).asOutline('black',3);
+
+        foreground = new Rectangle(LEFT - 1.5, TOP - 1.5, board_w - 1.5, board_h - 1.5).asOutline('black', 3);
         foreground.zIndex = 10000;
-        foreground.shape.addEventListener('click',ev=>{
-            let xy = getPosFromXY(ev.clientX,ev.clientY);
-            let piece = id('p'+current_turn+'Icon').cloneNode();
-            let pos = getXYromPos(xy.x,xy.y);
+        imageMatrix = new Matrix(rowNum, colNum);
+        foreground.shape.addEventListener('click', ev => {
+            let xy = getPosFromXY(ev.clientX, ev.clientY);
+            let piece = id('p' + current_turn + 'Icon').cloneNode();
+            let pos = getXYromPos(xy.x, xy.y);
             piece.style.position = 'absolute';
             piece.style.top = pos.y + 'px';
             piece.style.left = pos.x + 'px';
+            piece.style.width = SMALLEST + 'px';
+            piece.style.height = SMALLEST + 'px';
             document.body.appendChild(piece);
-            try {
-                if(checkObj(imageMatrix.values[xy.y][xy.x]))imageMatrix.values[xy.y][xy.x].piece.remove();
-            }catch(e){
-                //lol
-            }
+            if (checkObj(imageMatrix.values[xy.y][xy.x])) imageMatrix.values[xy.y][xy.x].piece.remove();
             imageMatrix.values[xy.y][xy.x] = {};
             imageMatrix.values[xy.y][xy.x].piece = piece;
             imageMatrix.values[xy.y][xy.x].player = current_turn;
-            nextTurn()
+            let result = checkWin(xy.x, xy.y);
+            if (result.result) {
+                console.log('player ' + (result.player + 1) + ' is the winner!')
+                console.log(result);
+                let start = new Vector(getXYromPos(result.start.x, result.start.y))
+                start.add(new Vector(SMALLEST / 2, SMALLEST / 2));
+                let end = new Vector(getXYromPos(result.end.x, result.end.y));
+                end.add(new Vector(SMALLEST / 2, SMALLEST / 2));
+                let winLine = new LineFromPoints(start.x, start.y, end.x, end.y)
+                winLine.color = 'transparent';
+                winLine.thickness = 10;
+                winLine.set('borderRadius', '5px');
+                winLine.addClass('slowsmoothed');
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        winLine.color = 'green'
+                    })
+                })
+                lines.push(winLine);
+            } else {
+                nextTurn()
+            }
         });
 
 
-        PAD = new SignaturePad(id('canvas'));
-        for(let i =0; i<4; i++) {
-            id('p' + i + 'Icon').style.height = ((height-TOP*2)/rowNum < (width-LEFT*2)/colNum ? (height - TOP * 2) / rowNum : (width - LEFT * 2) / colNum) + 'px';
+        if (!checkObj(PAD)) PAD = new SignaturePad(id('canvas'));
+        for (let i = 0; i < 4; i++) {
+
+            id('p' + i + 'Icon').style.height = 60 + 'px';
             id('p' + i + 'Icon').src = PAD.toDataURL('image/svg+xml');
         }
     }
 
-    function getPosFromXY(x,y) {
-        let board_w = width - LEFT * 2;
-        let board_h = height - TOP * 2;
+    function removeAll() {
+        if (checkObj(background)) background.remove();
+        if (checkObj(foreground)) foreground.remove();
+        lines.forEach(line => {
+            line.remove()
+        });
+        titles.forEach(title => {
+            title.remove();
+        })
+        background = {}
+        foreground = {}
+        lines = [];
+        titles = [];
+    }
+
+    function getPosFromXY(x, y) {
+        let board_w = SMALLEST * colNum;
+        let board_h = SMALLEST * rowNum;
         let col = ((x - LEFT) / board_w) * colNum | 0;
         let row = ((y - TOP) / board_h) * rowNum | 0;
         return {x: col, y: row};
     }
-    function getXYromPos(x,y){
-        let board_w = width - LEFT * 2;
-        let board_h = height - TOP * 2;
-        let col = (x/colNum)*board_w + LEFT;
-        let row = (y/rowNum)*board_h + TOP;
+
+    function getXYromPos(x, y) {
+        let board_w = SMALLEST * colNum;
+        let board_h = SMALLEST * rowNum;
+        let col = (x / colNum) * board_w + LEFT;
+        let row = (y / rowNum) * board_h + TOP;
         return {x: col, y: row};
     }
-    function nextTurn(){
+
+    function nextTurn() {
         current_turn++;
         current_turn %= 4;
-        id('current_turn').innerText = current_turn +1;
-        for(let i = 0; i<4; i++){
-            id('p' + i + 'Icon_container').style.border = 'solid ' + (i===current_turn? 'green' : 'black') +' 2px';
+        id('current_turn').innerText = current_turn + 1;
+        for (let i = 0; i < 4; i++) {
+            id('p' + i + 'Icon_container').style.border = 'solid ' + (i === current_turn ? 'green' : 'black') + ' 2px';
         }
     }
-    id('btn1').addEventListener('click',()=>{
+
+    id('btn1').addEventListener('click', () => {
         id('p' + current_turn + 'Icon').src = PAD.toDataURL('image/svg+xml');
         PAD.clear();
         nextTurn();
     });
-    id('btn2').addEventListener('click',nextTurn);
-    id('btn3').addEventListener('click',save);
-    id('btn4').addEventListener('click',load);
-    function save(){
-        for(let i = 0; i<4;i++){
-            localStorage.setItem(i + 'Icon',id('p' + i + 'Icon').src)
+    id('btn2').addEventListener('click', nextTurn);
+    id('btn3').addEventListener('click', save);
+    id('btn4').addEventListener('click', load);
+
+    function save() {
+        for (let i = 0; i < 4; i++) {
+            localStorage.setItem(i + 'Icon', id('p' + i + 'Icon').src)
         }
+        let values = imageMatrix.values.map(row => row.map(x => x.player));
+        localStorage.setItem('pieces', JSON.stringify(values));
+        localStorage.setItem('colNum', colNum);
+        localStorage.setItem('rowNum', rowNum);
     }
-    function load(){
-        for(let i = 0; i<4;i++){
+
+    function load() {
+        removeAll()
+        colNum = parseInt(localStorage.getItem('colNum'));
+        rowNum = parseInt(localStorage.getItem('rowNum'));
+        SMALLEST = ((height - TOP * 1.2) / rowNum < (width - LEFT * 1.2) / colNum ? (height - TOP * 1.2) / rowNum : (width - LEFT * 1.2) / colNum) | 0;
+        SMALLEST_NUM = rowNum < colNum ? rowNum : colNum;
+        setup();
+        for (let i = 0; i < 4; i++) {
             id('p' + i + 'Icon').src = localStorage.getItem(i + 'Icon');
         }
+        imageMatrix.values = JSON.parse(localStorage.getItem('pieces')).map((row, i) => row.map((val, j) => {
+            if (val !== null) {
+                let piece = id('p' + val + 'Icon').cloneNode();
+                let pos = getXYromPos(j, i);
+                piece.style.position = 'absolute';
+                piece.style.top = pos.y + 'px';
+                piece.style.left = pos.x + 'px';
+                piece.style.width = SMALLEST + 'px';
+                piece.style.height = SMALLEST + 'px';
+                document.body.appendChild(piece);
+                return {player: parseInt(val), piece: piece}
+            } else {
+                return 0;
+            }
+
+        }));
     }
-    function checkWin(x,y){
+
+    function isValid(x, y) {
+        // if(x===3 && y===3) return false;
+        // return !(x === 2 && y === 3);
+        return true;
+    }
+
+    function checkWin(x, y) {
+        function checkSpot(x, y, player, dir) {
+            if (x < 0 || y < 0 || x > colNum - 1 || y > rowNum - 1) return 0;
+            let check_p = imageMatrix.values[y][x].player;
+            if (player === check_p) {
+                return 1 + checkSpot(x + dir.x, y + dir.y, player, dir);
+            } else {
+                return 0;
+            }
+        }
+
         let player = imageMatrix.values[y][x].player;
-        console.log(player)
-        //direction 0 1 2 3 4 5 6 7
+        if (!isValid(x, y) || player === undefined) return {result: false, player: player};
+        console.log(player + 1 + '\'s turn');
+        //directions
+        //  7  0  1
+        //  6  X  2
+        //  5  4  3
+        let dirs = [{x: 0, y: -1}, {x: 1, y: -1}, {x: 1, y: 0}, {x: 1, y: 1}, {x: 0, y: 1}, {x: -1, y: 1}, {
+            x: -1,
+            y: 0
+        }, {x: -1, y: -1}];
+        if (x <= 0) {
+            dirs[5] = -1; //cant be directions 5 6 or 7
+            dirs[6] = -1;
+            dirs[7] = -1;
+        }
+        if (y <= 0) {
+            dirs[7] = -1;
+            dirs[0] = -1;
+            dirs[1] = -1;
+        }
+        if (y >= rowNum - 1) {
+            dirs[5] = -1;
+            dirs[4] = -1;
+            dirs[3] = -1;
+        }
+        if (x >= colNum - 1) {
+            dirs[1] = -1;
+            dirs[2] = -1;
+            dirs[3] = -1;
+        }
+        //console.log(dirs);
+        let dirNums = Array(8).fill(0);
+        for (let i = 0; i < 8; i++) {
+            let dir = dirs[i];
+            if (dir !== -1) {
+                dirNums[i] = checkSpot(x, y, player, dir);
+            }
+        }
+        for (let i = 0; i < 4; i++) {
+            let index = i + 4;
+            if (dirNums[i] + dirNums[index] - 1 >= 4) {
+                let xy1 = {x: x + dirs[i].x * (dirNums[i] - 1), y: y + dirs[i].y * (dirNums[i] - 1)}
+                let xy2 = {x: x + dirs[index].x * (dirNums[index] - 1), y: y + dirs[index].y * (dirNums[index] - 1)}
+                return {result: true, player: player, dir: i, start: xy1, end: xy2};
+            }
+        }
+        return {result: false, player: player}
     }
 
 
-
-    setup();
+    requestAnimationFrame(() => requestAnimationFrame(setup));
 </script>
 
 </body>

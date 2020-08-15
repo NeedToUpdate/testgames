@@ -46,7 +46,7 @@
 // 'fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth'];
 //let words = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
 //let words = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday','morning','afternoon','evening','breakfast','lunch','dinner'];
-//let words = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday','noon','easter','summer','june','afternoon','may','birthday','spring','morning'];
+let words = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday','noon','easter','summer','june','afternoon','may','birthday','spring','morning'];
 //let words = ['time','measure','sundial','sandglass','candle','clock','hourglass','sun','minute','hour'];
 //let words = ['january','february','march','april','may','june','july','august','september','october','november','december']
 //let words = ['skateboard','frisbee','football','robot','rubiks cube','basketball','guitar','puzzles','lego','hula hoop','doll','board game','yoyo','car'];
@@ -64,10 +64,9 @@
 //let words = ['sunny','partly cloudy','cloudy','rainy','drizzling','stormy','snowy','sleeting','hailing','foggy','windy'];
 //let words = ['apple','coconut','pomelo','lemon','pineapple','orange','mango','grapes','watermelon','kiwifruit','cherry', 'durian','eggplant','mushroom','strawberry','cauliflower','carrot','tomato','lettuce','potato','onion','corn','pumpkin'];
 //let words = ['bird','mammal','reptile','fish','amphibian','animal'];
-let words = ['delicious','tasty','yummy','disgusting','salty','sweet','sour','bitter','spicy','stinky','chewy','tough'];
+//let words = ['delicious','tasty','yummy','disgusting','salty','sweet','sour','bitter','spicy','stinky','chewy','tough'];
 //let words = ['grandma','grandpa','uncle','aunt','me','dad','brother','mom','sister','puppy','cousin'];
 //let words = ['birthday','party','gift','special','growth','gift','picture']
-
 //let words = ['apple','banana','grape','broccoli','cabbage','bread','rice','cereal','pasta','milk','cheese','meat','chicken','egg'];
 
 
