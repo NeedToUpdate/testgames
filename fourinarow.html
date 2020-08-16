@@ -25,12 +25,13 @@
 <div style="position:absolute; top: 150px; left: 50px; width: 200px; height: 230px;">
     <canvas id="canvas" height="200px" width="200px"
             style="height: 200px; width: 200px; border: solid black 2px"></canvas>
-    <button onclick="PAD.penColor = 'red'">red</button>
-    <button onclick="PAD.penColor = 'blue'">blue</button>
-    <button onclick="PAD.penColor = 'deeppink'">pink</button>
-    <button onclick="PAD.penColor = 'green'">green</button>
-    <button onclick="PAD.penColor = 'yellow'">yellow</button>
-    <button onclick="PAD.penColor = 'black'">black</button>
+    <!--<button onclick="PAD.penColor = 'red'">red</button>-->
+    <!--<button onclick="PAD.penColor = 'blue'">blue</button>-->
+    <!--<button onclick="PAD.penColor = 'deeppink'">pink</button>-->
+    <!--<button onclick="PAD.penColor = 'green'">green</button>-->
+    <!--<button onclick="PAD.penColor = 'yellow'">yellow</button>-->
+    <!--<button onclick="PAD.penColor = 'black'">black</button>-->
+    <input id="color_slider" min="-1" max="361" value="0" type="range">
     <button onclick="{let data = PAD.toData(); data.pop(); PAD.fromData(data)}">undo</button>
     <button onclick="PAD.clear()">clear</button>
 </div>
@@ -79,6 +80,30 @@
         height: 60px;
         width: 60px
     }
+    #color_slider{
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        height: 25px;
+        outline: none;
+        opacity: 1;
+    }
+    #color_slider:hover{
+    }
+    #color_slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 25px;
+        height: 25px;
+        background: #F00;
+        cursor: pointer;
+    }
+    #color_slider::-moz-range-thumb {
+        width: 25px;
+        height: 25px;
+        background: #F00;
+        cursor: pointer;
+    }
+
 </style>
 <script>
     let DEBUGDIVON = false;
@@ -121,6 +146,30 @@
     let current_turn = 0;
 
     let imageMatrix = {}
+
+    let sliderStyle = document.createElement("style"); //since the thumb is a psudoelement
+    document.head.appendChild(sliderStyle);
+    id('color_slider').addEventListener('input',(ev)=>{
+        let val = parseInt(id('color_slider').value);
+        let rgb = val===-1? [0,0,0]: val===361? [255,255,255]:hslToRgb(val/360,1,0.5)
+        sliderStyle.innerHTML = `#color_slider::-webkit-slider-thumb {background: rgb(${rgb.join(',')})!important}
+                                    #color_slider::-moz-range-thumb {background: rgb(${rgb.join(',')})!important}`;
+        PAD.penColor = `rgb(${rgb.join(',')})`
+    });
+
+    //dont want to type out this whole thing, so its generated on the spot
+    let grad_string = 'linear-gradient(to right, rgb(0,0,0) 0%,';
+    let grad_steps = 36;
+    for(let i =0;i<grad_steps;i++){
+        let rgb = hslToRgb((i)/grad_steps,0.8,0.5);
+        grad_string += `rgb(${rgb.join(',')}) ${(((i)/grad_steps)*94 |0)+3}%`;
+        if(i<grad_steps-1){
+            grad_string+=','
+        }else{
+            grad_string+=',rgb(255,255,255) 100%)'
+        }
+    }
+    id('color_slider').style.backgroundImage = grad_string;
 
     function setup() {
         let board_w = SMALLEST * colNum;
@@ -181,9 +230,9 @@
                 winLine.addClass('slowsmoothed');
                 requestAnimationFrame(() => {
                     requestAnimationFrame(() => {
-                        winLine.color = 'green'
+                        winLine.color = 'limegreen'
                     })
-                })
+                });
                 lines.push(winLine);
             } else {
                 nextTurn()
@@ -191,7 +240,7 @@
         });
 
 
-        if (!checkObj(PAD)) PAD = new SignaturePad(id('canvas'));
+        if (!checkObj(PAD)) PAD = new SignaturePad(id('canvas'),{minWidth: 4,maxWidth:8});
         for (let i = 0; i < 4; i++) {
 
             id('p' + i + 'Icon').style.height = 60 + 'px';
@@ -236,6 +285,7 @@
         id('current_turn').innerText = current_turn + 1;
         for (let i = 0; i < 4; i++) {
             id('p' + i + 'Icon_container').style.border = 'solid ' + (i === current_turn ? 'green' : 'black') + ' 2px';
+            id('p' + i + 'Icon_container').style.boxShadow = (i === current_turn ? '0 0 5px 5px limegreen' : '');
         }
     }
 
@@ -305,7 +355,6 @@
 
         let player = imageMatrix.values[y][x].player;
         if (!isValid(x, y) || player === undefined) return {result: false, player: player};
-        console.log(player + 1 + '\'s turn');
         //directions
         //  7  0  1
         //  6  X  2
