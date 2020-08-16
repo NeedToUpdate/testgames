@@ -22,18 +22,13 @@
 <button id="btn2">next turn</button>
 <button id="btn3">save</button>
 <button id="btn4">load</button>
+<button id="btn5">undo</button>
+<button id="btn6">clear</button>
 <div style="position:absolute; top: 150px; left: 50px; width: 200px; height: 230px;">
-    <canvas id="canvas" height="200px" width="200px"
-            style="height: 200px; width: 200px; border: solid black 2px"></canvas>
-    <!--<button onclick="PAD.penColor = 'red'">red</button>-->
-    <!--<button onclick="PAD.penColor = 'blue'">blue</button>-->
-    <!--<button onclick="PAD.penColor = 'deeppink'">pink</button>-->
-    <!--<button onclick="PAD.penColor = 'green'">green</button>-->
-    <!--<button onclick="PAD.penColor = 'yellow'">yellow</button>-->
-    <!--<button onclick="PAD.penColor = 'black'">black</button>-->
+    <canvas id="canvas" height="200px" width="200px"></canvas>
     <input id="color_slider" min="-1" max="361" value="0" type="range">
-    <button onclick="{let data = PAD.toData(); data.pop(); PAD.fromData(data)}">undo</button>
-    <button onclick="PAD.clear()">clear</button>
+    <button id="undoBtn" onclick="{let data = PAD.toData(); data.pop(); PAD.fromData(data)}">undo</button>
+    <button id="clearBtn" onclick="PAD.clear()">clear</button>
 </div>
 <div id="debugdiv" style="position: absolute; z-index: 9999999; top:40px"></div>
 <div class="player_icon_container" id="p0Icon_container"><img class="player_icon" id="p0Icon"
@@ -49,14 +44,24 @@
                                                               src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNTAgNTAiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+PC9zdmc+==">
 </div>
 <style>
+    #message{
+        color:white;
+    }
+    #canvas{
+        height:200px;
+        width:200px;
+        border: lightblue solid 3px;
+        background-color: white;
+    }
     .player_icon_container {
         position: absolute;
         top: 5px;
-        border: solid black 2px;
+        border: solid lightblue 2px;
         border-radius: 3px;
         transition: 0.5s;
         height: 60px;
         width: 60px;
+        background-color: white;
     }
 
     #p0Icon_container {
@@ -87,6 +92,7 @@
         height: 25px;
         outline: none;
         opacity: 1;
+        border: solid white 1px;
     }
     #color_slider:hover{
     }
@@ -96,12 +102,22 @@
         height: 25px;
         background: #F00;
         cursor: pointer;
+        border: solid white 1px
     }
     #color_slider::-moz-range-thumb {
         width: 25px;
         height: 25px;
         background: #F00;
         cursor: pointer;
+        border: solid white 1px
+    }
+    button {
+        border-radius: 50%;
+        width: 3em;
+        height: 3em;
+        top: -5px;
+        position: relative;
+        z-index: 1000;
     }
 
 </style>
@@ -128,7 +144,11 @@
             id('debugdiv').innerText = ''
         })
     }
-
+    let background_img = 'bg' + (Math.random() * 8 | 0).toString() + '.jpg';
+    document.body.style.backgroundColor = 'grey';
+    document.body.style.backgroundImage = 'url(./images/'  + background_img.toString() + ')';
+    //document.body.style.backgroundSize = width + 'px auto';
+    document.body.style.backgroundRepeat = 'no-repeat';
 
     let TOP = height * 0.2;
     let LEFT = width * 0.3;
@@ -144,9 +164,9 @@
     let row_labels = Array(rowNum).fill('').map((x, i) => i + 1);
     let PAD = {};
     let current_turn = 0;
-
-    let imageMatrix = {}
-
+    let imageMatrix = {};
+    let TURN_HISTORY = []; //contains objects {action: <string>, player:<int>, data: <Object>};
+    let winlines = [];
     let sliderStyle = document.createElement("style"); //since the thumb is a psudoelement
     document.head.appendChild(sliderStyle);
     id('color_slider').addEventListener('input',(ev)=>{
@@ -171,18 +191,21 @@
     }
     id('color_slider').style.backgroundImage = grad_string;
 
+
+
+
     function setup() {
         let board_w = SMALLEST * colNum;
         let board_h = SMALLEST * rowNum;
         background = new Rectangle(LEFT, TOP, board_w, board_h);
-        background.color = 'lightgrey';
+        background.color = 'lightblue';
         for (let i = 0; i <= colNum; i++) {
             let l = Line.fromAngle(LEFT + i * (SMALLEST), TOP, board_h, 90);
             l.color = 'black';
             lines.push(l);
             if (i < colNum) {
                 let p = new P(col_labels[i], LEFT + 15 + i * (SMALLEST), TOP - 10, SMALLEST * SMALLEST_NUM).fromCenter();
-                p.color = 'black';
+                p.color = 'white';
                 titles.push(p)
             }
         }
@@ -192,7 +215,7 @@
             lines.push(l);
             if (i < rowNum) {
                 let p = new P(row_labels[i], LEFT - 10, TOP + 15 + i * (SMALLEST), SMALLEST * SMALLEST_NUM).fromCenter();
-                p.color = 'black';
+                p.color = 'white';
                 titles.push(p)
             }
 
@@ -215,6 +238,11 @@
             imageMatrix.values[xy.y][xy.x] = {};
             imageMatrix.values[xy.y][xy.x].piece = piece;
             imageMatrix.values[xy.y][xy.x].player = current_turn;
+            TURN_HISTORY.push({
+                player:current_turn,
+                action:'place_piece',
+                data:xy,
+            });
             let result = checkWin(xy.x, xy.y);
             if (result.result) {
                 console.log('player ' + (result.player + 1) + ' is the winner!')
@@ -234,6 +262,7 @@
                     })
                 });
                 lines.push(winLine);
+                winlines.push(winLine);
             } else {
                 nextTurn()
             }
@@ -261,6 +290,7 @@
         foreground = {}
         lines = [];
         titles = [];
+        winlines = [];
     }
 
     function getPosFromXY(x, y) {
@@ -289,14 +319,7 @@
         }
     }
 
-    id('btn1').addEventListener('click', () => {
-        id('p' + current_turn + 'Icon').src = PAD.toDataURL();
-        PAD.clear();
-        nextTurn();
-    });
-    id('btn2').addEventListener('click', nextTurn);
-    id('btn3').addEventListener('click', save);
-    id('btn4').addEventListener('click', load);
+
 
     function save() {
         for (let i = 0; i < 4; i++) {
@@ -306,6 +329,7 @@
         localStorage.setItem('pieces', JSON.stringify(values));
         localStorage.setItem('colNum', colNum);
         localStorage.setItem('rowNum', rowNum);
+        localStorage.setItem('history',JSON.stringify(TURN_HISTORY));
     }
 
     function load() {
@@ -334,6 +358,7 @@
             }
 
         }));
+        TURN_HISTORY = JSON.parse(localStorage.getItem('history'))
     }
 
     function isValid(x, y) {
@@ -344,7 +369,7 @@
 
     function checkWin(x, y) {
         function checkSpot(x, y, player, dir) {
-            if (x < 0 || y < 0 || x > colNum - 1 || y > rowNum - 1) return 0;
+            if (x < 0 || y < 0 || x > colNum - 1 || y > rowNum - 1 || !isValid(x,y)) return 0;
             let check_p = imageMatrix.values[y][x].player;
             if (player === check_p) {
                 return 1 + checkSpot(x + dir.x, y + dir.y, player, dir);
@@ -403,8 +428,143 @@
     }
 
 
-    requestAnimationFrame(() => requestAnimationFrame(setup));
-</script>
+    function undo(){
+        if(TURN_HISTORY.length<=0) return;
+        let lastTurn = TURN_HISTORY.pop();
+        switch(lastTurn.action){
+            case 'place_piece':
+                if(checkObj(imageMatrix.values[lastTurn.data.y][lastTurn.data.x])){
+                    imageMatrix.values[lastTurn.data.y][lastTurn.data.x].piece.remove()
+                    imageMatrix.values[lastTurn.data.y][lastTurn.data.x] = 0;
 
+                }
+                setTurn(lastTurn.player)
+                break;
+            case 'clear':
+                imageMatrix.values = lastTurn.data.map((row, i) => row.map((val, j) => {
+                    if (val !== undefined && val!==null) {
+                        let piece = id('p' + val + 'Icon').cloneNode();
+                        let pos = getXYromPos(j, i);
+                        piece.style.position = 'absolute';
+                        piece.style.top = pos.y + 'px';
+                        piece.style.left = pos.x + 'px';
+                        piece.style.width = SMALLEST + 'px';
+                        piece.style.height = SMALLEST + 'px';
+                        document.body.appendChild(piece);
+                        return {player: parseInt(val), piece: piece}
+                    } else {
+                        return 0;
+                    }
+                }));
+                setTurn(lastTurn.player);
+                break;
+        }
+    }
+
+    function setTurn(val){
+        current_turn = val;
+        id('current_turn').innerText = val + 1;
+        for (let i = 0; i < 4; i++) {
+            id('p' + i + 'Icon_container').style.border = 'solid ' + (i === val ? 'green' : 'black') + ' 2px';
+            id('p' + i + 'Icon_container').style.boxShadow = (i === val ? '0 0 5px 5px limegreen' : '');
+        }
+    }
+
+    function clear(){
+        let vals = imageMatrix.values.map(row=>row.map(col=>col.player));
+        TURN_HISTORY.push({
+            player:current_turn,
+            action:'clear',
+            data:vals,
+        });
+        imageMatrix.map(x=>{
+            if(checkObj(x))x.piece.remove();
+            return 0;
+        })
+        winlines.forEach(x=>{
+            x.remove()
+        })
+        winlines = [];
+    }
+
+    window.addEventListener('load',()=>{
+        setup();
+        id('btn1').innerText = '';
+        id('btn1').appendChild(id('checkmark').content.cloneNode(true));
+        id('btn2').innerText = '';
+        id('btn2').appendChild(id('arrow').content.cloneNode(true));
+        id('btn3').innerText = '';
+        id('btn3').appendChild(id('upload').content.cloneNode(true));
+        id('btn4').innerText = '';
+        id('btn4').appendChild(id('download').content.cloneNode(true));
+        id('btn5').innerText = '';
+        id('btn5').appendChild(id('backbutton').content.cloneNode(true));
+        id('btn6').innerText = '';
+        id('btn6').appendChild(id('backbutton').content.cloneNode(true));
+        id('btn1').addEventListener('click', () => {
+            id('p' + current_turn + 'Icon').src = PAD.toDataURL();
+            PAD.clear();
+            nextTurn();
+        });
+        id('btn2').addEventListener('click', nextTurn);
+        id('btn3').addEventListener('click', save);
+        id('btn4').addEventListener('click', load);
+        id('btn5').addEventListener('click', undo);
+        id('btn6').addEventListener('click', clear);
+    });
+
+
+</script>
+<template id="upload">
+    <svg viewBox="0 0 210 210" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <g>
+            <path stroke="#000" id="svg_1"
+                  d="m170.48804,83.03483c0.14026,-1.42388 0.22146,-2.86236 0.22146,-4.31544c0,-25.20628 -20.65463,-45.6371 -46.13705,-45.6371c-19.77618,0 -36.5996,12.33297 -43.16213,29.63856c-4.34796,-4.71705 -10.54877,-7.73275 -17.50993,-7.73275c-13.12507,0 -23.76242,10.52209 -23.76242,23.50493c0,1.53341 0.16978,3.0303 0.45768,4.47609c-17.50993,2.85506 -30.90813,17.78752 -30.90813,35.91092c0,20.16795 16.52814,36.50968 36.90964,36.50968l17.06702,0c-0.93012,-1.94232 -1.47639,-4.05988 -1.47639,-6.27236c0,-3.90654 1.53544,-7.59401 4.33319,-10.33224l31.92684,-31.61008c2.76822,-2.75283 6.47395,-4.27163 10.43066,-4.27163c3.98624,0 7.69197,1.53341 10.46019,4.28624l31.91207,31.61008c2.78299,2.72362 4.31843,6.4111 4.31843,10.31764c0,2.21979 -0.53888,4.33735 -1.47639,6.27236l9.68509,0c20.38888,0 36.90964,-16.34173 36.90964,-36.50968c0.01476,-17.89705 -13.02172,-32.71998 -30.19947,-35.8452zm-56.39054,29.29537c-1.42471,-1.42388 -3.32187,-2.12486 -5.21164,-2.12486s-3.77955,0.70099 -5.21902,2.12486l-31.9416,31.61738c-2.87895,2.84045 -2.87157,7.48448 0.00738,10.32494l4.10435,4.05257c2.87895,2.84045 7.11618,3.27857 9.41934,1.00037s4.19293,-0.86893 4.19293,3.15444l0,9.0398c0,4.00876 3.32925,7.30194 7.38193,7.30194l24.10199,0c4.06744,0 7.38193,-3.29317 7.38193,-7.30194l0,-9.0398c0,-4.02337 1.88977,-5.43264 4.20032,-3.15444c2.30316,2.2782 6.54777,1.84009 9.41934,-1.00037l4.10435,-4.05257c2.87895,-2.84045 2.87895,-7.48448 0.00738,-10.32494l-31.94898,-31.61738z"
+                  stroke-width="0" fill="#000000"></path>
+        </g>
+    </svg>
+</template>
+<template id="download">
+    <svg viewBox="0 0 210 210" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <g>
+            <path id="svg_2"
+                  d="m165.06956,84.59749c0.12924,-1.37764 0.20406,-2.76942 0.20406,-4.17532c0,-24.38781 -19.0318,-44.15523 -42.51207,-44.15523c-18.22238,0 -33.72398,11.93251 -39.77089,28.67617c-4.00634,-4.56388 -9.71996,-7.48166 -16.13418,-7.48166c-12.09383,0 -21.89542,10.18043 -21.89542,22.74171c0,1.48362 0.15644,2.93191 0.42172,4.33074c-16.13418,2.76235 -28.47969,17.20994 -28.47969,34.74486c0,19.51308 15.22953,35.32418 34.00966,35.32418l23.15378,0l-4.80897,-4.99484c-2.56433,-2.66344 -3.97913,-6.20999 -3.97913,-9.98261c0,-3.76556 1.4148,-7.31211 3.97913,-9.97555l3.78187,-3.93511c2.72077,-2.81887 6.37341,-4.43672 10.00564,-4.43672c0.18365,0 0.3673,0 0.54415,0.01413l0,-3.3346c0,-7.79958 6.10813,-14.1438 13.60386,-14.1438l22.21511,0c7.50253,0 13.60386,6.34422 13.60386,14.1438l0,3.3346c0.18365,-0.01413 0.3673,-0.01413 0.55096,-0.01413c3.62543,0 7.27807,1.61785 9.99884,4.45085l3.78868,3.89979c5.30551,5.51764 5.30551,14.48291 0,19.97936l-4.80216,4.99484l16.34504,0c18.78694,0 34.00966,-15.8111 34.00966,-35.32418c0.0068,-17.31591 -12.00541,-31.65753 -27.8335,-34.68128zm-22.528,50.03317l-3.78187,-3.92098c-2.65275,-2.74822 -6.55706,-3.17918 -8.67926,-0.96788c-2.1222,2.20423 -3.8635,0.83365 -3.8635,-3.05201l0,-8.74627c0,-3.88566 -3.06767,-7.06484 -6.80193,-7.06484l-22.20831,0c-3.74106,0 -6.80193,3.17918 -6.80193,7.06484l0,8.74627c0,3.88566 -1.74129,5.25624 -3.8703,3.05201c-2.1222,-2.21129 -6.03331,-1.78034 -8.67926,0.96788l-3.78187,3.92098c-2.65275,2.74822 -2.65275,7.23439 -0.0068,9.98261l29.43876,30.5978c1.31957,1.37058 3.06767,2.05587 4.80897,2.05587s3.48259,-0.68529 4.80897,-2.05587l29.43196,-30.5978c2.64595,-2.74116 2.63915,-7.23439 -0.0136,-9.98261z"
+                  fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="#000000"></path>
+        </g>
+    </svg>
+</template>
+<template id="arrow">
+    <svg viewBox="0 0 210 210" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+
+        <g display="none" overflow="visible" id="canvasGrid">
+            <rect fill="url(#gridpattern)" stroke-width="0" y="0" x="0" height="100%" width="100%"></rect>
+        </g>
+        <g>
+            <path stroke="#00007f" transform="rotate(90.37248992919922 106.75,106.36019134521486) " id="svg_1"
+                  d="m28.46325,106.12908l78.28675,-96.05529l78.28675,96.05529l-39.14338,0l0,96.51749l-78.28674,0l0,-96.51749l-39.14338,0z"
+                  stroke-width="5.5" fill="#0fffff"></path>
+        </g>
+    </svg>
+</template>
+<template id="checkmark">
+    <svg viewBox="0 0 210 210" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <g>
+            <path id="svg_3" d="m205,215.48438" opacity="0.5" fill-opacity="null" stroke-opacity="null"
+                  stroke-width="1.5" stroke="#000" fill="#fff"></path>
+            <path stroke="#007f00" transform="rotate(44 105.4511489868164,85.55574798583983) " id="svg_4"
+                  d="m56.75836,167.31935l96.89123,0.32685l0.49434,-163.54702l-22.73978,-0.6339l-1.48303,136.92308l-72.66842,0l-0.49434,26.93098z"
+                  stroke-width="5.5" fill="#00ff00"></path>
+        </g>
+    </svg>
+</template>
+<template id="backbutton">
+    <svg viewBox="0 0 210 210" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <g>
+            <path id="svg_1"
+                  d="m29.75,67.3296l36.36735,-37.5796l38.63248,39.9199l38.63248,-39.9199l36.3677,37.5796l-38.63249,39.92022l38.63249,39.92022l-36.3677,37.57995l-38.63248,-39.92023l-38.63248,39.92023l-36.36735,-37.57995l38.63216,-39.92022l-38.63216,-39.92022z"
+                  stroke-width="7.5" stroke="#7f0000" fill="#ff0000"></path>
+        </g>
+    </svg>
+</template>
 </body>
 </html>
