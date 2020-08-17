@@ -17,17 +17,18 @@
 <style type="text/css">
 </style>
 <body class="locked">
-<h3 id="message">Current Turn: Player <span id="current_turn">1</span></h3>
 <button id="btn1">set icon</button>
 <button id="btn2">next turn</button>
 <button id="btn3">save</button>
 <button id="btn4">load</button>
 <button id="btn5">undo</button>
 <button id="btn6">clear</button>
+<button id="btn7">toggle Disable Mode</button>
+<h3 id="message">Current Turn: Player <span id="current_turn">1</span></h3>
 <div style="position:absolute; top: 150px; left: 50px; width: 200px; height: 230px;">
     <canvas id="canvas" height="200px" width="200px"></canvas>
     <input id="color_slider" min="-1" max="361" value="0" type="range">
-    <button id="undoBtn" onclick="{let data = PAD.toData(); data.pop(); PAD.fromData(data)}">undo</button>
+    <button id="undoBtn" >undo</button>
     <button id="clearBtn" onclick="PAD.clear()">clear</button>
 </div>
 <div id="debugdiv" style="position: absolute; z-index: 9999999; top:40px"></div>
@@ -226,6 +227,11 @@
         imageMatrix = new Matrix(rowNum, colNum);
         foreground.shape.addEventListener('click', ev => {
             let xy = getPosFromXY(ev.clientX, ev.clientY);
+            if(DISABLE_SPOTS_MODE){
+                disableSpot(xy.x,xy.y);
+                return;
+            }
+            if(!isValid(xy.x,xy.y)) return;
             let piece = id('p' + current_turn + 'Icon').cloneNode();
             let pos = getXYromPos(xy.x, xy.y);
             piece.style.position = 'absolute';
@@ -245,8 +251,6 @@
             });
             let result = checkWin(xy.x, xy.y);
             if (result.result) {
-                console.log('player ' + (result.player + 1) + ' is the winner!')
-                console.log(result);
                 let start = new Vector(getXYromPos(result.start.x, result.start.y))
                 start.add(new Vector(SMALLEST / 2, SMALLEST / 2));
                 let end = new Vector(getXYromPos(result.end.x, result.end.y));
@@ -330,6 +334,10 @@
         localStorage.setItem('colNum', colNum);
         localStorage.setItem('rowNum', rowNum);
         localStorage.setItem('history',JSON.stringify(TURN_HISTORY));
+        let disableds = DISABLED_SPOTS.map(s=>{
+            return {x:s.x,y:s.y}
+        });
+        localStorage.setItem('disableds',JSON.stringify(disableds));
     }
 
     function load() {
@@ -356,15 +364,18 @@
             } else {
                 return 0;
             }
-
         }));
-        TURN_HISTORY = JSON.parse(localStorage.getItem('history'))
+        TURN_HISTORY = JSON.parse(localStorage.getItem('history'));
+        DISABLED_SPOTS = JSON.parse(localStorage.getItem('disableds')).map(spot=>{
+            let xy = getXYromPos(spot.x,spot.y);
+            let div = new Square(xy.x,xy.y,SMALLEST);
+            lines.push(div);
+            return {x:spot.x,y:spot.y,div:div};
+        })
     }
 
     function isValid(x, y) {
-        // if(x===3 && y===3) return false;
-        // return !(x === 2 && y === 3);
-        return true;
+        return !DISABLED_SPOTS.some(spot=>spot.x===x&&spot.y===y);
     }
 
     function checkWin(x, y) {
@@ -384,41 +395,18 @@
         //  7  0  1
         //  6  X  2
         //  5  4  3
-        let dirs = [{x: 0, y: -1}, {x: 1, y: -1}, {x: 1, y: 0}, {x: 1, y: 1}, {x: 0, y: 1}, {x: -1, y: 1}, {
+         let dirs = [{x: 0, y: -1}, {x: 1, y: -1}, {x: 1, y: 0}, {x: 1, y: 1}, {x: 0, y: 1}, {x: -1, y: 1}, {
             x: -1,
             y: 0
         }, {x: -1, y: -1}];
-        if (x <= 0) {
-            dirs[5] = -1; //cant be directions 5 6 or 7
-            dirs[6] = -1;
-            dirs[7] = -1;
-        }
-        if (y <= 0) {
-            dirs[7] = -1;
-            dirs[0] = -1;
-            dirs[1] = -1;
-        }
-        if (y >= rowNum - 1) {
-            dirs[5] = -1;
-            dirs[4] = -1;
-            dirs[3] = -1;
-        }
-        if (x >= colNum - 1) {
-            dirs[1] = -1;
-            dirs[2] = -1;
-            dirs[3] = -1;
-        }
-        //console.log(dirs);
         let dirNums = Array(8).fill(0);
         for (let i = 0; i < 8; i++) {
             let dir = dirs[i];
-            if (dir !== -1) {
-                dirNums[i] = checkSpot(x, y, player, dir);
-            }
-        }
+            dirNums[i] = checkSpot(x, y, player, dir);
+        };
         for (let i = 0; i < 4; i++) {
             let index = i + 4;
-            if (dirNums[i] + dirNums[index] - 1 >= 4) {
+            if (dirNums[i] + dirNums[index]-1 >= 4) {
                 let xy1 = {x: x + dirs[i].x * (dirNums[i] - 1), y: y + dirs[i].y * (dirNums[i] - 1)}
                 let xy2 = {x: x + dirs[index].x * (dirNums[index] - 1), y: y + dirs[index].y * (dirNums[index] - 1)}
                 return {result: true, player: player, dir: i, start: xy1, end: xy2};
@@ -487,6 +475,24 @@
         winlines = [];
     }
 
+    let DISABLED_SPOTS = [];
+    function disableSpot(x,y){
+        let possible = DISABLED_SPOTS.filter(spot=>spot.x===x&&spot.y===y);
+        if(possible.length>0){
+            let found = DISABLED_SPOTS.splice(DISABLED_SPOTS.indexOf(possible[0]),1)[0]
+            found.div.remove();
+        }else{
+            let xy = getXYromPos(x,y);
+            let disable = new Square(xy.x,xy.y,SMALLEST);
+            lines.push(disable);
+            DISABLED_SPOTS.push({x:x,y:y,div:disable});
+        }
+    }
+    let DISABLE_SPOTS_MODE = false;
+    function toggleDisableMode(){
+        DISABLE_SPOTS_MODE = !DISABLE_SPOTS_MODE;
+    }
+
     window.addEventListener('load',()=>{
         setup();
         id('btn1').innerText = '';
@@ -498,10 +504,17 @@
         id('btn4').innerText = '';
         id('btn4').appendChild(id('download').content.cloneNode(true));
         id('btn5').innerText = '';
-        id('btn5').appendChild(id('backbutton').content.cloneNode(true));
+        id('btn5').appendChild(id('undo').content.cloneNode(true));
         id('btn6').innerText = '';
         id('btn6').appendChild(id('backbutton').content.cloneNode(true));
+        id('undoBtn').innerText = '';
+        id('undoBtn').appendChild(id('undo').content.cloneNode(true));
+        id('clearBtn').innerText = '';
+        id('clearBtn').appendChild(id('backbutton').content.cloneNode(true));
+        id('btn7').innerText = '';
+        id('btn7').appendChild(id('random').content.cloneNode(true));
         id('btn1').addEventListener('click', () => {
+            if(PAD.toData().length===0) return;
             id('p' + current_turn + 'Icon').src = PAD.toDataURL();
             PAD.clear();
             nextTurn();
@@ -511,6 +524,15 @@
         id('btn4').addEventListener('click', load);
         id('btn5').addEventListener('click', undo);
         id('btn6').addEventListener('click', clear);
+        id('btn7').addEventListener('click', toggleDisableMode);
+        id('undoBtn').addEventListener('click',()=>{
+            let data = PAD.toData();
+            data.pop();
+            PAD.fromData(data);
+        });
+        id('clearBtn').addEventListener('click',()=>{
+            PAD.clear();
+        })
     });
 
 
@@ -563,6 +585,27 @@
             <path id="svg_1"
                   d="m29.75,67.3296l36.36735,-37.5796l38.63248,39.9199l38.63248,-39.9199l36.3677,37.5796l-38.63249,39.92022l38.63249,39.92022l-36.3677,37.57995l-38.63248,-39.92023l-38.63248,39.92023l-36.36735,-37.57995l38.63216,-39.92022l-38.63216,-39.92022z"
                   stroke-width="7.5" stroke="#7f0000" fill="#ff0000"></path>
+        </g>
+    </svg>
+</template>
+<template id="random">
+    <svg viewBox="-3 -4 50 50" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <g>
+            <path id="svg_4" d="m62.21185,18.04375c0.305,-0.875 1.5,0 0,1.125c-1.5,-1.125 -0.305,-2 0,-1.125z"
+                  fill-opacity="null" stroke-opacity="null" stroke-width="3" stroke="#000000" fill="#ffffff"></path>
+            <path stroke="#ffffff" id="svg_21"
+                  d="m22.13132,4.72292c1.74315,0.00216 3.40842,0.29728 4.98551,0.79031l-1.24815,2.11081l8.85984,0l-2.21553,-3.75181l-2.21384,-3.75069l-1.16538,1.97637c-2.18411,-0.78079 -4.53866,-1.21777 -7.00087,-1.21777c-11.33336,0 -20.51941,8.98274 -20.51941,20.06454c0,4.59931 1.5998,8.82507 4.26221,12.21076l3.12008,-2.34243c-2.15328,-2.73611 -3.44796,-6.15038 -3.45498,-9.86723c0.01568,-8.95949 7.42881,-16.20912 16.59051,-16.22286l0,0zm16.25936,4.01522l-3.12008,2.34355c2.15274,2.73506 3.44742,6.14719 3.45334,9.86514c-0.01568,8.95941 -7.42881,16.20801 -16.59104,16.22278c-1.6236,-0.00205 -3.17689,-0.26019 -4.65767,-0.6919l1.17455,-1.98595l-8.8598,0l2.21389,3.74974l2.21549,3.75491l1.23517,-2.09593c2.09483,0.71308 4.33682,1.1109 6.67838,1.11193c11.335,-0.00207 20.51947,-8.98482 20.52213,-20.06662c-0.00266,-4.5993 -1.6036,-8.82403 -4.26435,-12.20764l0,0z"
+                  stroke-width="0" fill="#2eff00"></path>
+            <path id="svg_22"
+                  d="m22.11612,8.642c-6.84633,0 -12.39579,5.54979 -12.39579,12.3958c0,6.84636 5.54946,12.39579 12.39579,12.39579c6.84601,0 12.3958,-5.54943 12.3958,-12.39579c0,-6.84601 -5.54979,-12.3958 -12.3958,-12.3958zm1.13256,19.53527l-2.3087,0l0,-2.21399l2.3087,0l0,2.21399zm0,-4.57799l0,0.73171l-2.3087,0l0,-0.90156c0,-2.72056 3.09601,-3.15228 3.09601,-5.08588c0,-0.88168 -0.78831,-1.55707 -1.82033,-1.55707c-1.06942,0 -2.00739,0.78798 -2.00739,0.78798l-1.31441,-1.63326c0,0 1.29554,-1.35116 3.5284,-1.35116c2.12098,0 4.09031,1.31343 4.09031,3.52775c0.00099,3.09765 -3.26389,3.45488 -3.26389,5.4815l0,0z"
+                  stroke-width="0" stroke="#ffffff" fill="#009137"></path>
+        </g>
+    </svg>
+</template>
+<template id="undo">
+    <svg viewBox="0 0 200 200" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <g>
+            <path stroke="#000" id="svg_1" d="m83.33314,43.53185l0,-15.956l-82.35344,49.42114l82.35344,49.42158l0,-17.12107c22.34706,-0.01086 61.5789,1.97412 61.5789,16.04229c0,19.6565 -40.97304,30.14266 -40.97304,30.14266l0,15.07116c0,0 92.0407,3.26875 92.0407,-69.45536c0,-57.13498 -78.82942,-59.28196 -112.64657,-57.56639z" stroke-width="1.5" fill="#00bf5f"></path>
         </g>
     </svg>
 </template>

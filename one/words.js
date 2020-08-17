@@ -10,6 +10,8 @@
 //let words = ['pie','tie','necktie','bite','nine','kite','hi','climb','blind','fly','cry','sky'];
 //let words = ['sword','storm','morning','corn','hard','jar','star','card','her','spider','runner','dancer','purse','purple','turn','fur'];
 //let words = ['tape','cake','lake','tail','mail','nail','day','hay','pay'];
+let words = ['bone','rope','robe','soap','boat','coat','bowl','snow','row'];
+
 
 //================ESLS=================
 
@@ -58,7 +60,7 @@
 //let words = ['stones','bones','sticks','quill','ink','brush','ancient','pencil','water'];
 //let words = ['red','yellow','green','blue','purple','orange','violet','white','black','gray','pink','indigo','dark','light'];
 //let words = ['sunny','partly cloudy','cloudy','rainy','drizzling','stormy','snowy','sleeting','hailing','foggy','windy'];
-let words = ['apple','coconut','pomelo','lemon','pineapple','orange','mango','grapes','watermelon','kiwifruit','cherry','durian','eggplant','mushroom','strawberry','cauliflower','carrot','tomato','lettuce','potato','onion','corn','pumpkin'];
+//let words = ['apple','coconut','pomelo','lemon','pineapple','orange','mango','grapes','watermelon','kiwifruit','cherry','durian','eggplant','mushroom','strawberry','cauliflower','carrot','tomato','lettuce','potato','onion','corn','pumpkin'];
 //let words = ['bird','mammal','reptile','fish','amphibian','animal'];
 //let words = ['delicious','tasty','yummy','disgusting','salty','sweet','sour','bitter','spicy','stinky','chewy','tough'];
 //let words = ['grandma','grandpa','uncle','aunt','me','dad','brother','mom','sister','puppy','cousin'];

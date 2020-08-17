@@ -46,7 +46,7 @@
 //let words = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
 //let words = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday','morning','afternoon','evening','breakfast','lunch','dinner'];
 //let words = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday','noon','easter','summer','june','afternoon','may','birthday','spring','morning'];
-//let words = ['time','measure','sundial','sandglass','candle','clock','hourglass','sun','minute','hour'];
+let words = ['time','measure','sundial','sandglass','candle','clock','hourglass','sun','minute','hour'];
 //let words = ['january','february','march','april','may','june','july','august','september','october','november','december']
 //let words = ['skateboard','frisbee','football','robot','rubiks cube','basketball','guitar','puzzles','lego','hula hoop','doll','board game','yoyo','car'];
 //let words = ['first', 'second', 'third', 'fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth','thirteenth',
@@ -171,6 +171,3 @@
 
 
 let difficulty = 1
-
-
-let words = ['remember','uncomment','needed','words','after','sync'];
