@@ -102,7 +102,7 @@
             spinTo(main_theta);
             id('speedspan').innerText = Math.abs(main_theta).toPrecision(3);
             id('direction').innerText = main_theta<0? '右':'左';
-            id('direction').innerText += '  ' + (Math.abs(main_theta)/360).toPrecision(3) + '圈';
+            id('direction').innerText += '  ' + (Math.abs(main_theta)/360).toPrecision(3).toString().slice(0,4) + '圈';
             if(Math.sign(currSpeed)+Math.sign(deltaV*-1)===0){
                 stopBuffer.push('blah');
                 if(stopBuffer.length>7){
