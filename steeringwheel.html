@@ -1,0 +1,153 @@
+<html>
+
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
+    <script language="javascript" src="./lib/vector.js"></script>
+    <script language="javascript" src="./lib/matrix.js"></script>
+    <script language="javascript" src="./lib/drawbase.js"></script>
+    <script language="javascript" src="./lib/DomObject.js"></script>
+    <script language="javascript" src="./lib/PhysicsObject.js"></script>
+    <script language="javascript" src="./lib/eventemitter.js"></script>
+    <script language="javascript" src="./pictures_animals.js"></script>
+    <link rel="stylesheet" href="global_styles.css">
+</head>
+
+<body class="locked">
+<p style="color: black; font-size: 4em"><span id="speedspan"></span>度 <span id="direction"></span></p>
+<script>
+    // let background = 'bg' + (getRandom(3,5) | 0).toString() + '.jpg';
+    // document.body.style.backgroundColor = 'grey';
+    // document.body.style.backgroundImage = 'url(' + './images/' + background.toString() + ')';
+    // //document.body.style.backgroundSize = width + 'px auto';
+    // document.body.style.backgroundRepeat = 'no-repeat';
+
+
+
+
+
+
+    let originX = width/2 -125;
+    let originY = height/2 -125 ;
+    let circleRadius = 250;
+    let wheelShape = {}
+    let lines = [];
+    let radius = 150;
+
+    function getX(angle, customRadius) {
+        if (customRadius) {
+            return originX + customRadius * Math.cos(angle/180*Math.PI);
+        }
+        return originX + radius * Math.cos(angle);
+    }
+    function getY(angle, customRadius) {
+        if (customRadius) {
+            return originY + customRadius * Math.sin(angle/180*Math.PI);
+        }
+        return originY + radius * Math.sin(angle);
+    }
+    let lights = [];
+    function setup(){
+        return new Promise(resolve=>{
+            wheelShape = new Img('./images/steering_wheel.png',originX,originY,circleRadius);
+            wheelShape.set('pointerEvents','none')
+            resolve();
+        })
+    }
+    function spinTo(angle) {
+        wheelShape.rotateTo(angle*-1)
+    }
+
+
+    let SPINNING = false;
+    let spinInt = 0;
+    let main_theta = 1;
+    setup().then(()=>{
+        requestAnimationFrame(()=>{
+            spinTo(0)
+        });
+    });
+    let DRAGGING = false;
+    let event = {};
+    let rSqrd = circleRadius**2;
+    function withinBorders(x,y){
+        //check if distance from origin point isnt more than the circle radius
+        let unsqd = (originX-x)**2 + (originY-y)**2;
+        return unsqd<rSqrd;
+    }
+    function clickDown(e){
+        if(withinBorders(e.clientX,e.clientY)){
+            DRAGGING = true;
+            event = e;
+        }
+    }
+    function clickUp(e){
+        DRAGGING = false;
+        event = e;
+    }
+    let stopBuffer = [];
+    function dragWheel(e){
+        if(DRAGGING && withinBorders(e.clientX,e.clientY) && window.performance.now()-lastcheck > 17){
+            let dist = Math.sqrt((originX-e.clientX)**2 + (originY-e.clientY)**2);
+            let speed = mapNum(dist,0,radius,0.3,2.5);
+            let deltaX = (e.clientX - event.clientX)/speed;
+            let deltaY = (e.clientY - event.clientY)/speed;
+            let xmid = wheelShape.x + wheelShape.width/2;
+            let ymid = wheelShape.y + wheelShape.height/2;
+            event = e;
+            let deltaV =  Math.abs(deltaX)>Math.abs(deltaY)? e.clientY<ymid?deltaX : deltaX*-1 : e.clientX>xmid?deltaY:deltaY*-1;
+            main_theta -= deltaV;
+            if(main_theta>540) main_theta = 540;
+            if(main_theta<-540) main_theta = -540;
+            spinTo(main_theta);
+            id('speedspan').innerText = Math.abs(main_theta).toPrecision(3);
+            id('direction').innerText = main_theta<0? '右':'左';
+            id('direction').innerText += '  ' + (Math.abs(main_theta)/360).toPrecision(3) + '圈';
+            if(Math.sign(currSpeed)+Math.sign(deltaV*-1)===0){
+                stopBuffer.push('blah');
+                if(stopBuffer.length>7){
+                    //opposite directions;
+                    clearInterval(speedSpinInt);
+                    let l = thetaHist.length;
+                    thetaHist.splice(0,l/2 |0);
+                    thetaHist = thetaHist.concat(new Array(l/2).fill(0));
+                }
+            }else{
+                stopBuffer.pop();
+            }
+
+            lastcheck = window.performance.now()
+        }else if(DRAGGING && window.performance.now()-lastcheck > 17){
+            // spinWithSpeed()
+        }
+
+    }
+
+    document.body.addEventListener('touchend',e=>{
+        clickUp(e.touches[0])
+    });
+    document.body.addEventListener('mouseup',clickUp);
+    document.body.addEventListener('mousedown',clickDown);
+    document.body.addEventListener('touchstart',e=>{
+        clickDown(e.touches[0])
+    });
+    let lastcheck = 0;
+    document.body.addEventListener('mousemove',dragWheel);
+    document.body.addEventListener('touchmove',e=>{
+        dragWheel(e.touches[0])
+    });
+
+    let thetaHist = [];
+    let lastTheta = 1;
+    let want_check = false;
+    let currSpeed = 0;
+
+
+
+
+
+
+
+</script>
+</body>
+
+</html>
