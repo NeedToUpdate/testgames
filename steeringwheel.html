@@ -13,7 +13,8 @@
 </head>
 
 <body class="locked">
-<p style="color: black; font-size: 4em"><span id="speedspan"></span>度 <span id="direction"></span></p>
+<button class="bluebtn" id="powerup">reset</button>
+<p style="color: black; font-size: 2em; position: absolute"><span id="speedspan"></span>度 <span id="direction"></span></p>
 <script>
     // let background = 'bg' + (getRandom(3,5) | 0).toString() + '.jpg';
     // document.body.style.backgroundColor = 'grey';
@@ -142,7 +143,11 @@
     let currSpeed = 0;
 
 
-
+    id('powerup').addEventListener('click',()=>{
+        spinTo(0);
+        id('speedspan').innerText = '0';
+        id('direction').innerText = '';
+    })
 
 
 
