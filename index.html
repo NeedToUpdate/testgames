@@ -7,19 +7,21 @@
 </head>
 <body>
 <p id='worddiv'>Words: </p>
-<a href="./custom/buildtheword.html">build the word</a>
+<input type="text" id="typewords" style="display:none" placeholder="type words separated by one space">
+<button id="submit" style="display:none;">OK!</button>
+<a href="./custom/buildtheword.html" class="with_words">build the word</a>
 <br>
-<a href="./custom/wordsearch.html">word search</a>
+<a href="./custom/wordsearch.html" class="with_words">word search</a>
 <br>
-<a href="./custom/shoottheletters.html">shoot the letters</a>
+<a href="./custom/shoottheletters.html" class="with_words">shoot the letters</a>
 <br>
-<a href="./custom/openthesafe.html">open the safe</a>
+<a href="./custom/openthesafe.html" class="with_words">open the safe</a>
 <br>
-<a href="./custom/timetrial.html">time trial</a>
+<a href="./custom/timetrial.html" class="with_words">time trial</a>
 <br>
 <a href="./fightinggame.html">fighting game</a>
 <br>
-<a href="./custom/hangmanbattle.html">battle of the words</a>
+<a href="./custom/hangmanbattle.html" class="with_words">battle of the words</a>
 <br>
 <a href="./animals_wheel.html">animal wheel</a>
 <br>
@@ -28,9 +30,36 @@
 <a href="./wordtrain.html">word train</a>
 
 <script type="text/javascript">
-   words.forEach((w,i)=>{
-      document.getElementById('worddiv').append(w+ (i<words.length-1?', ': '.'))
-   })
+    let words = ['click','here','to','change'];
+    let wordDiv =   document.getElementById('worddiv');
+    let input = document.getElementById('typewords');
+    let button = document.getElementById('submit');
+    wordDiv.innerText = 'Words:  ';
+    words.forEach((w,i)=>{
+        wordDiv.innerText += ' ' + w + (i===words.length-1?'.':',');
+    });
+    wordDiv.addEventListener('click',()=>{
+       wordDiv.style.display = 'none';
+       input.style.display = '';
+       button.style.display = '';
+
+    });
+    button.addEventListener('click',()=>{
+        words = input.value.split(' ');
+        wordDiv.innerText = 'Words: ';
+        words.forEach((w,i)=>{
+            wordDiv.innerText += ' ' + w + (i===words.length-1?'.':',');
+        });
+        wordDiv.style.display = '';
+        input.style.display = 'none';
+        button.style.display = 'none';
+        let els = Array.from(document.getElementsByTagName('a')).filter(x=>x.className === 'with_words');
+        els.forEach(x=>{
+            let orig = x.href.split('?')[0];
+            console.log(orig)
+            x.href =orig + `?words=["${words.join('","')}"]`
+        })
+    })
    
 </script>
 
