@@ -258,7 +258,7 @@
         if(projectile){
             projectile.owner = 'player';
             projectiles.push(projectile);
-            if (PLAYING) {
+            if (PLAYING && !monster.dead) {
                 let n = Math.random() * 10;
                 if (n > 9) {
                     if (monster.health > 90) {
@@ -278,10 +278,8 @@
                 setTimeout(() => {
                     monsterShoot();
                 }, 1500);
-
             }
         }
-
     });
     let hopstop = false;
     let monsterisshooting = false;
