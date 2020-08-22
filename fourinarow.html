@@ -45,7 +45,7 @@
     </div>
     <div id="bottomBtnContainer">
         <button id="undoBtn">undo</button>
-        <!--<button id="eraserBtn">erase</button>-->
+        <button id="fillBtn">erase</button>
         <button id="clearBtn">clear</button>
     </div>
 </div>
@@ -217,13 +217,13 @@
     let lines = [];
     let titles = [];
     let rowNum = 10
-    let colNum = 18;
+    let colNum = 15
     let SMALLEST = ((height - TOP * 1.2) / rowNum < (width - LEFT * 1.2) / colNum ? (height - TOP * 1.2) / rowNum : (width - LEFT * 1.2) / colNum) | 0;
     let SMALLEST_NUM = rowNum < colNum ? rowNum : colNum;
     let background = {};
     let foreground = {};
-    let col_labels = Array(colNum).fill('').map((x, i) => alphabet[i % 26].toUpperCase() + ((i / 26 | 0) === 0 ? '' : (i / 26 | 0)));
-    let row_labels = Array(rowNum).fill('').map((x, i) => i + 1);
+    let col_labels = Array(40).fill('').map((x, i) => alphabet[i % 26].toUpperCase() + ((i / 26 | 0) === 0 ? '' : (i / 26 | 0)));
+    let row_labels = Array(40).fill('').map((x, i) => i + 1);
     let PAD = {};
     let current_turn = 0;
     let imageMatrix = {};
@@ -675,6 +675,7 @@
     }
 
     let UNDO_CLEAR_CACHE = [];
+    let BACKGROUND_COLOR_CACHE = [];
     window.addEventListener('load', () => {
         setup();
         Array.from(document.getElementsByTagName('button')).forEach(x=>{
@@ -689,7 +690,7 @@
         id('undoBtn').appendChild(id('undo').content.cloneNode(true));
         id('clearBtn').appendChild(id('cross').content.cloneNode(true));
         id('editBtn').appendChild(id('edit').content.cloneNode(true));
-        // id('eraserBtn').appendChild(id('eraser').content.cloneNode(true));
+        id('fillBtn').appendChild(id('eraser').content.cloneNode(true));
         id('btn7').appendChild(id('lock').content.cloneNode(true));
         id('btn8').appendChild(id('help').content.cloneNode(true));
         id('setIconBtn').addEventListener('click', () => {
@@ -714,19 +715,27 @@
         id('btn6').addEventListener('click', clear);
         id('btn7').addEventListener('click', toggleDisableMode);
         id('btn8').addEventListener('click', fakeload);
-        // id('eraserBtn').addEventListener('click', ()=>{
-        //     PAD.penColor = 'rgba(0,0,0,0)'; //dpnt tin kyou can do this actually
-        // });
+        id('fillBtn').addEventListener('click', ()=>{
+           PAD.backgroundColor = PAD.penColor;
+           let data = PAD.toData();
+           if (data.length) UNDO_CLEAR_CACHE.push(data);
+           PAD.clear();
+           BACKGROUND_COLOR_CACHE.push(PAD.backgroundColor)
+        });
         id('undoBtn').addEventListener('click', () => {
             let data = PAD.toData();
             if (data.length <= 0) {
-                if (UNDO_CLEAR_CACHE.length > 0) data = UNDO_CLEAR_CACHE.pop();
+                if (UNDO_CLEAR_CACHE.length > 0) {
+                   PAD.backgroundColor = BACKGROUND_COLOR_CACHE.pop()
+                   data = UNDO_CLEAR_CACHE.pop();
+                }
             } else {
                 data.pop();
             }
             PAD.fromData(data);
         });
         id('clearBtn').addEventListener('click', () => {
+            PAD.backgroundColor = "rgba(0,0,0,0)"
             let data = PAD.toData();
             if (data.length) UNDO_CLEAR_CACHE.push(data);
             PAD.clear();
