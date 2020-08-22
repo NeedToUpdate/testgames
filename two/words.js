@@ -10,6 +10,7 @@
 //let words = ['pie','tie','necktie','bite','nine','kite','hi','climb','blind','fly','cry','sky'];
 //let words = ['sword','storm','morning','corn','hard','jar','star','card','her','spider','runner','dancer','purse','purple','turn','fur'];
 //let words = ['tape','cake','lake','tail','mail','nail','day','hay','pay'];
+let words = ['bone','rope','robe','soap','boat','coat','bowl','snow','row'];
 
 //================ESLS=================
 
@@ -27,7 +28,7 @@
 //let words = ['ten','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety','hundred','thousand'];
 //let words = ['stones','bones','sticks','quill','ink','brush','pencil','pen','marker','crayon'];
 //let words = ['mirror','lamp','laptop','wardrobe','chair','rug','football','alarm clock','picture','bed'];
-let words = ['first', 'second', 'third', 'fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth','thirteenth','fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth'];
+//let words = ['first', 'second', 'third', 'fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth','thirteenth','fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth'];
 //let words = ['glue','scissors','notebook','ruler','white-out','eraser','sharpener','pencil','mechanical pencil','pencil case','highlighter'];
 //let words = ['stones','bones','sticks','quill','ink','brush','ancient','pencil','water']
 //let words = ['red','yellow','green','blue','purple','orange','violet','white','black','gray','light','dark','pink'];

@@ -10,8 +10,8 @@
 //let words = ['pie','tie','necktie','bite','nine','kite','hi','climb','blind','fly','cry','sky'];
 //let words = ['sword','storm','morning','corn','hard','jar','star','card','her','spider','runner','dancer','purse','purple','turn','fur'];
 //let words = ['tape','cake','lake','tail','mail','nail','day','hay','pay'];
-let words = ['bone','rope','robe','soap','boat','coat','bowl','snow','row'];
-//let words = ['food','spoon','boots','cook','hook','foot','august','autumn','paul','paw','jaw','saw'];
+//let words = ['bone','rope','robe','soap','boat','coat','bowl','snow','row'];
+let words = ['food','spoon','boots','cook','hook','foot','august','autumn','paul','paw','jaw','saw'];
 
 
 //================ESLS=================
