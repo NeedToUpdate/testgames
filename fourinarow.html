@@ -24,6 +24,14 @@
 <button id="btn6">clear</button>
 <button id="btn7">toggle Disable Mode</button>
 <button id="btn8">help</button>
+<div style="display: none" id="mask_buttons">
+    <button id="mask-circle">circle</button>
+    <button id="mask-triangle">triangle</button>
+    <button id="mask-oval">oval</button>
+    <button id="mask-small">small</button>
+    <button id="mask-cross">cross</button>
+    <button id="mask-pencil">pencil</button>
+</div>
 <h3 style="display: none" id="message">Current Turn: Player <span id="current_turn">1</span></h3>
 <div id="canvas_container">
     <div id="topBtnContainer">
@@ -37,6 +45,7 @@
     </div>
     <div id="bottomBtnContainer">
         <button id="undoBtn">undo</button>
+        <!--<button id="eraserBtn">erase</button>-->
         <button id="clearBtn">clear</button>
     </div>
 </div>
@@ -207,7 +216,7 @@
     let LEFT = width * 0.35;
     let lines = [];
     let titles = [];
-    let rowNum = 10;
+    let rowNum = 10
     let colNum = 18;
     let SMALLEST = ((height - TOP * 1.2) / rowNum < (width - LEFT * 1.2) / colNum ? (height - TOP * 1.2) / rowNum : (width - LEFT * 1.2) / colNum) | 0;
     let SMALLEST_NUM = rowNum < colNum ? rowNum : colNum;
@@ -614,31 +623,74 @@
             id('btn7').childNodes[1].childNodes[1].childNodes[1].style.stroke = '';
         }
     }
+    function disableIntoAShape(shape){
+        let midY = (rowNum/2 |0) -((rowNum+1)%2);
+        let midX = (colNum/2 |0) -((colNum+1)%2);
+        switch(shape){
+            case 'circle':
+                for(let x = 0;x<colNum; x++){
+                    for(let y = 0; y<rowNum;y++){
+                        if(Math.abs(x-midX)**2 + Math.abs(y-midY)**2 > ((Math.min(colNum,rowNum)/2)-((Math.min(colNum,rowNum)+1)%2))**2){
+                            disableSpot(x,y);
+                        }
+                    }
+                }
+                break;
+            case 'oval':
+                for(let x = 0;x<colNum; x++){
+                    for(let y = 0; y<rowNum;y++){
+                        if(Math.abs(x-midX)**1.5 + Math.abs(y-midY)**2 > ((Math.min(colNum,rowNum)/2)-1)**2){
+                            disableSpot(x,y);
+                        }
+                    }
+                }
+                break;
+            case 'cross':
+                for(let x = 0;x<colNum; x++){
+                    for(let y = 0; y<rowNum;y++){
+                        if(Math.abs(x-midX)>=2.5 && Math.abs(y-midY)>=2.5){
+                            disableSpot(x,y);
+                        }
+                    }
+                }
+                break;
+            case 'small':
+                for(let x = 0;x<colNum; x++){
+                    for(let y = 0; y<rowNum;y++){
+                        if(x>5 || y>5){
+                            disableSpot(x,y);
+                        }
+                    }
+                }
+                break;
+            case 'triangle':
+                for(let x = 0;x<colNum; x++){
+                    for(let y = 0; y<rowNum;y++){
+                        if(Math.abs(x-midX)>=y-((colNum+1)%2)){
+                            disableSpot(x,y);
+                        }
+                    }
+                }
+        }
+    }
 
     let UNDO_CLEAR_CACHE = [];
     window.addEventListener('load', () => {
         setup();
-        id('setIconBtn').innerText = '';
+        Array.from(document.getElementsByTagName('button')).forEach(x=>{
+            x.innerText = '';
+        })
         id('setIconBtn').appendChild(id('checkmark').content.cloneNode(true));
-        id('btn2').innerText = '';
         id('btn2').appendChild(id('arrow').content.cloneNode(true));
-        id('btn3').innerText = '';
         id('btn3').appendChild(id('upload').content.cloneNode(true));
-        id('btn4').innerText = '';
         id('btn4').appendChild(id('download').content.cloneNode(true));
-        id('btn5').innerText = '';
         id('btn5').appendChild(id('undo').content.cloneNode(true));
-        id('btn6').innerText = '';
         id('btn6').appendChild(id('cross').content.cloneNode(true));
-        id('undoBtn').innerText = '';
         id('undoBtn').appendChild(id('undo').content.cloneNode(true));
-        id('clearBtn').innerText = '';
         id('clearBtn').appendChild(id('cross').content.cloneNode(true));
-        id('editBtn').innerText = '';
         id('editBtn').appendChild(id('edit').content.cloneNode(true));
-        id('btn7').innerText = '';
+        // id('eraserBtn').appendChild(id('eraser').content.cloneNode(true));
         id('btn7').appendChild(id('lock').content.cloneNode(true));
-        id('btn8').innerText = '';
         id('btn8').appendChild(id('help').content.cloneNode(true));
         id('setIconBtn').addEventListener('click', () => {
             if (PAD.toData().length === 0) return;
@@ -662,6 +714,9 @@
         id('btn6').addEventListener('click', clear);
         id('btn7').addEventListener('click', toggleDisableMode);
         id('btn8').addEventListener('click', fakeload);
+        // id('eraserBtn').addEventListener('click', ()=>{
+        //     PAD.penColor = 'rgba(0,0,0,0)'; //dpnt tin kyou can do this actually
+        // });
         id('undoBtn').addEventListener('click', () => {
             let data = PAD.toData();
             if (data.length <= 0) {
@@ -677,7 +732,7 @@
             PAD.clear();
         });
         id('editBtn').addEventListener('click', () => {
-            PAD.fromDataURL(id('p' + current_turn + 'Icon').src);
+            PAD.fromDataURL(id('p' + current_turn + 'Icon').src,{ratio: 1,width:200,height:200});
         });
         for (let i = 0; i < 4; i++) {
             id('p' + i + 'Icon_container').addEventListener('click', () => {
@@ -777,5 +832,55 @@
         </g>
     </svg>
 </template>
+<template id="eraser">
+    <svg viewBox="0 0 200 200" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <g>
+            <path stroke="#000000" id="svg_13" d="m68.52232,165.12235l94.9537,0l0,0c12.4392,0 22.52315,7.16345 22.52315,16c0,8.83655 -10.08395,16 -22.52315,16l-94.9537,0l0,0c-12.43919,0 -22.52315,-7.16344 -22.52315,-16c0,-8.83656 10.08396,-16 22.52315,-16z" stroke-width="6.5" fill="#ffffff"/>
+            <path stroke="#ff56ff" transform="rotate(116.54476165771484 77.27566528320312,137.20986938476562) " id="svg_7" d="m36.79709,92.20987l40.47858,0l0,0c22.3557,0 40.47858,20.14719 40.47858,45c0,24.85282 -18.12287,45 -40.47858,45l-40.47858,0l0,-90z" stroke-width="1.5" fill="#ffaaff"/>
+            <rect stroke="#7f3f00" transform="rotate(26 125.78558349609379,38.443351745605476) " id="svg_9" height="151.07923" width="96.69552" y="-37.09626" x="77.43782" stroke-width="1.5" fill="#ea903c"/>
+        </g>
+    </svg>
+</template>
+<template id="mask_circle">
+    <svg viewBox="0 0 200 200" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <g>
+            <rect id="svg_14" height="133" width="164" y="34.48438" x="19.5" stroke-width="0" stroke="#f9f9f9" fill="#000000"/>
+            <path stroke="#f9f9f9" id="svg_16" d="m55.11248,101.87667l0,0c0,-27.19191 20.81876,-49.2353 46.50001,-49.2353l0,0c12.33256,0 24.16002,5.18728 32.88046,14.42069c8.72044,9.23341 13.61953,21.7566 13.61953,34.81462l0,0c0,27.1919 -20.81876,49.2353 -46.49999,49.2353l0,0c-25.68125,0 -46.50001,-22.0434 -46.50001,-49.2353zm46.50001,-49.2353l0,98.4706m-46.50001,-49.2353l93,0" stroke-width="0" fill="#ffffff"/>
+        </g>
+    </svg>
+</template>
+<template id="mask_triangle">
+    <svg viewBox="0 0 200 200" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <g>
+            <rect id="svg_14" height="133" width="164" y="34.48438" x="19.5" stroke-width="0" stroke="#f9f9f9" fill="#000000"/>
+            <path id="svg_17" d="m61.1675,136.22509l40,-72.00001l40,72.00001l-80,0z" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#f9f9f9" fill="#ffffff"/>
+        </g>
+    </svg>
+</template>
+<template id="mask_cross">
+    <svg viewBox="0 0 200 200" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <g>
+            <rect id="svg_14" height="133" width="164" y="34.48438" x="19.5" stroke-width="0" stroke="#f9f9f9" fill="#000000"/>
+            <path id="svg_18" d="m60.99844,87.40352l27.76116,0l0,-30.40508l28.47768,0l0,30.40508l27.76116,0l0,31.18984l-27.76116,0l0,30.40508l-28.47768,0l0,-30.40508l-27.76116,0l0,-31.18984z" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#f9f9f9" fill="#ffffff"/>
+        </g>
+    </svg>
+</template>
+<template id="mask_oval">
+    <svg viewBox="0 0 200 200" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <g>
+            <rect id="svg_14" height="133" width="164" y="34.48438" x="19.5" stroke-width="0" stroke="#f9f9f9" fill="#000000"/>
+            <ellipse ry="30.5" rx="62.5" id="svg_19" cy="101.98438" cx="102" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#f9f9f9" fill="#ffffff"/>
+        </g>
+    </svg>
+</template>
+<template id="mask_small">
+    <svg viewBox="0 0 200 200" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <g>
+            <rect id="svg_14" height="133" width="164" y="34.48438" x="19.5" stroke-width="0" stroke="#f9f9f9" fill="#000000"/>
+            <rect id="svg_20" height="38" width="37" y="37.48438" x="21.5" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#f9f9f9" fill="#ffffff"/>
+        </g>
+    </svg>
+</template>
+
 </body>
 </html>
