@@ -17,29 +17,29 @@
 <style type="text/css">
 </style>
 <body class="locked">
-<button id="btn2">next turn</button>
-<button id="btn3">save</button>
-<button id="btn4">load</button>
-<button id="btn5">undo</button>
-<button id="btn6">clear</button>
-<button id="btn7">toggle Disable Mode</button>
-<button id="btn8">help</button>
+<button title="Next turn" id="btn2">next turn</button>
+<button  title="Save" id="btn3">save</button>
+<button  title="Load" id="btn4">load</button>
+<button  title="Undo" id="btn5">undo</button>
+<button  title="Clear Pieces" id="btn6">clear</button>
+<button  title="Disable Areas" id="btn7">toggle Disable Mode</button>
+<button  title="Load Demo" id="btn8">help</button>
 <div id="mask_buttons">
-    <button id="mask-circle">circle</button>
-    <button id="mask-triangle">triangle</button>
-    <button id="mask-oval">oval</button>
-    <button id="mask-small">small</button>
-    <button id="mask-cross">cross</button>
-    <button id="mask-invert">cross</button>
-    <button id="mask-checker">cross</button>
-    <button id="mask-pencil">pencil</button>
-    <button id="mask-erase">pencil</button>
+    <button  title="Circle" id="mask-circle">circle</button>
+    <button  title="Triangle" id="mask-triangle">triangle</button>
+    <button  title="Oval" id="mask-oval">oval</button>
+    <button  title="Small Square (7x7)" id="mask-small">small</button>
+    <button title="Cross (5 wide)" id="mask-cross">cross</button>
+    <button title="Checkerboard" id="mask-checker">checkers</button>
+    <button title="Invert Areas" id="mask-invert">invert</button>
+    <button title="Draw Custom Disable Spots" id="mask-pencil">pencil</button>
+    <button title="Clear Disabled Areas" id="mask-erase">clear</button>
 </div>
 <h3 style="display: none" id="message">Current Turn: Player <span id="current_turn">1</span></h3>
 <div id="canvas_container">
     <div id="topBtnContainer">
-        <button id="editBtn">edit</button>
-        <button id="setIconBtn">set icon</button>
+        <button title="Edit Selected Icon" id="editBtn">edit</button>
+        <button title="Set Icon" id="setIconBtn">set icon</button>
     </div>
     <canvas id="canvas" height="200px" width="200px"></canvas>
     <div id="slider_container">
@@ -47,9 +47,9 @@
         <input id="color_slider" min="-1" max="361" value="0" type="range">
     </div>
     <div id="bottomBtnContainer">
-        <button id="undoBtn">undo</button>
-        <button id="fillBtn">erase</button>
-        <button id="clearBtn">clear</button>
+        <button title="Undo" id="undoBtn">undo</button>
+        <button title="Set Background Color" id="fillBtn">fill</button>
+        <button title="Clear Canvas" id="clearBtn">clear</button>
     </div>
 </div>
 <div id="debugdiv" style="position: absolute; z-index: 9999999; top:40px"></div>
@@ -740,7 +740,8 @@
         id('setIconBtn').addEventListener('click', () => {
             if (PAD.toData().length === 0) return;
             let src = PAD.toDataURL();
-            id('p' + current_turn + 'Icon').src = src
+            id('p' + current_turn + 'Icon').src = src;
+            PAD.backgroundColor = 'rgba(0,0,0,0)'
             PAD.clear();
             imageMatrix.map(x => {
                 if (checkObj(x) && x.player===current_turn){
