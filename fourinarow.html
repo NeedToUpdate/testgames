@@ -24,13 +24,16 @@
 <button id="btn6">clear</button>
 <button id="btn7">toggle Disable Mode</button>
 <button id="btn8">help</button>
-<div style="display: none" id="mask_buttons">
+<div id="mask_buttons">
     <button id="mask-circle">circle</button>
     <button id="mask-triangle">triangle</button>
     <button id="mask-oval">oval</button>
     <button id="mask-small">small</button>
     <button id="mask-cross">cross</button>
+    <button id="mask-invert">cross</button>
+    <button id="mask-checker">cross</button>
     <button id="mask-pencil">pencil</button>
+    <button id="mask-erase">pencil</button>
 </div>
 <h3 style="display: none" id="message">Current Turn: Player <span id="current_turn">1</span></h3>
 <div id="canvas_container">
@@ -181,7 +184,10 @@
         position: relative;
         z-index: 1000;
     }
-
+    #mask_buttons{
+        left: 100px;
+        position: relative;
+    }
 </style>
 <script>
     let DEBUGDIVON = false;
@@ -217,7 +223,7 @@
     let lines = [];
     let titles = [];
     let rowNum = 10
-    let colNum = 15
+    let colNum = 18
     let SMALLEST = ((height - TOP * 1.2) / rowNum < (width - LEFT * 1.2) / colNum ? (height - TOP * 1.2) / rowNum : (width - LEFT * 1.2) / colNum) | 0;
     let SMALLEST_NUM = rowNum < colNum ? rowNum : colNum;
     let background = {};
@@ -616,11 +622,11 @@
     function toggleDisableMode() {
         DISABLE_SPOTS_MODE = !DISABLE_SPOTS_MODE;
         if(DISABLE_SPOTS_MODE){
-            id('btn7').childNodes[1].childNodes[1].childNodes[1].style.strokeWidth = '15';
-            id('btn7').childNodes[1].childNodes[1].childNodes[1].style.stroke = 'green';
+            id('mask-pencil').childNodes[1].childNodes[1].childNodes[1].style.strokeWidth = '15';
+            id('mask-pencil').childNodes[1].childNodes[1].childNodes[1].style.stroke = 'green';
         }else{
-            id('btn7').childNodes[1].childNodes[1].childNodes[1].style.strokeWidth = '0';
-            id('btn7').childNodes[1].childNodes[1].childNodes[1].style.stroke = '';
+            id('mask-pencil').childNodes[1].childNodes[1].childNodes[1].style.strokeWidth = '0';
+            id('mask-pencil').childNodes[1].childNodes[1].childNodes[1].style.stroke = '';
         }
     }
     function disableIntoAShape(shape){
@@ -671,16 +677,54 @@
                         }
                     }
                 }
+                break;
+            case 'invert':
+                for(let x = 0;x<colNum; x++){
+                    for(let y = 0; y<rowNum;y++){
+                            disableSpot(x,y);
+                    }
+                }
+                break;
+            case 'erase':
+                for(let x = 0;x<colNum; x++){
+                    for(let y = 0; y<rowNum;y++){
+                        if(!isValid(x,y)) disableSpot(x,y)
+                    }
+                }
+                break;
+            case 'checker':
+                for(let x = 0;x<colNum; x++){
+                    for(let y = 0; y<rowNum;y++){
+                        if((y%2 && x%2) || (!(y%2) && !(x%2))) disableSpot(x,y)
+                    }
+                }
+                break;
         }
     }
 
     let UNDO_CLEAR_CACHE = [];
-    let BACKGROUND_COLOR_CACHE = [];
+    let DISABLE_MENU_OPEN = false;
     window.addEventListener('load', () => {
         setup();
         Array.from(document.getElementsByTagName('button')).forEach(x=>{
             x.innerText = '';
-        })
+        });
+        ['circle','triangle','oval','small','cross','pencil','invert','erase','checker'].forEach(item=>{
+            id('mask-' + item).appendChild(id(item==='pencil'?'edit':item==='erase'?'eraser':'mask_'+item).content.cloneNode(true));
+            id('mask-' + item).addEventListener('click',()=>{
+                if(item==='pencil'){
+                    if(DISABLE_SPOTS_MODE){
+                        id('mask_buttons').style.display = 'none';
+                        DISABLE_MENU_OPEN = false;
+                    }
+                    toggleDisableMode();
+                }else{
+                    disableIntoAShape(item);
+                    id('mask_buttons').style.display = 'none'
+                    DISABLE_MENU_OPEN = false;
+                }
+            })
+        });
         id('setIconBtn').appendChild(id('checkmark').content.cloneNode(true));
         id('btn2').appendChild(id('arrow').content.cloneNode(true));
         id('btn3').appendChild(id('upload').content.cloneNode(true));
@@ -690,7 +734,7 @@
         id('undoBtn').appendChild(id('undo').content.cloneNode(true));
         id('clearBtn').appendChild(id('cross').content.cloneNode(true));
         id('editBtn').appendChild(id('edit').content.cloneNode(true));
-        id('fillBtn').appendChild(id('eraser').content.cloneNode(true));
+        id('fillBtn').appendChild(id('fill').content.cloneNode(true));
         id('btn7').appendChild(id('lock').content.cloneNode(true));
         id('btn8').appendChild(id('help').content.cloneNode(true));
         id('setIconBtn').addEventListener('click', () => {
@@ -713,21 +757,23 @@
         id('btn4').addEventListener('click', load);
         id('btn5').addEventListener('click', undo);
         id('btn6').addEventListener('click', clear);
-        id('btn7').addEventListener('click', toggleDisableMode);
+        id('btn7').addEventListener('click', ()=>{
+              id('mask_buttons').style.display= DISABLE_MENU_OPEN?'none':'';
+              DISABLE_MENU_OPEN = !DISABLE_MENU_OPEN;
+        });
         id('btn8').addEventListener('click', fakeload);
         id('fillBtn').addEventListener('click', ()=>{
            PAD.backgroundColor = PAD.penColor;
            let data = PAD.toData();
            if (data.length) UNDO_CLEAR_CACHE.push(data);
            PAD.clear();
-           BACKGROUND_COLOR_CACHE.push(PAD.backgroundColor)
+           PAD.fromData(data);
         });
         id('undoBtn').addEventListener('click', () => {
             let data = PAD.toData();
             if (data.length <= 0) {
                 if (UNDO_CLEAR_CACHE.length > 0) {
-                   PAD.backgroundColor = BACKGROUND_COLOR_CACHE.pop()
-                   data = UNDO_CLEAR_CACHE.pop();
+                    data = UNDO_CLEAR_CACHE.pop();
                 }
             } else {
                 data.pop();
@@ -748,6 +794,7 @@
                 setTurn(i)
             })
         }
+        id('mask_buttons').style.display= 'none'
         setTurn(0);
     });
 
@@ -887,6 +934,37 @@
         <g>
             <rect id="svg_14" height="133" width="164" y="34.48438" x="19.5" stroke-width="0" stroke="#f9f9f9" fill="#000000"/>
             <rect id="svg_20" height="38" width="37" y="37.48438" x="21.5" fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#f9f9f9" fill="#ffffff"/>
+        </g>
+    </svg>
+</template>
+<template id="mask_invert">
+    <svg viewBox="0 0 200 200" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <g>
+            <rect id="svg_2" height="120" width="163" y="39.5" x="18.5" stroke-opacity="null" stroke-width="1.5" stroke="#000" fill="#000000"/>
+            <path stroke="#000" id="svg_5" d="m26.7825,150.1325l0,-99l143.99999,99l-143.99999,0z" stroke-opacity="null" stroke-width="1.5" fill="#ffffff"/>
+            <path id="svg_7" d="m-42,299l22,0l0,0c12.15027,0 22,9.84974 22,22.00001c0,12.15027 -9.84973,22.00001 -22,22.00001l-22,0l0,-44.00001z" stroke-opacity="null" stroke-width="1.5" stroke="#000" fill="#ffffff"/>
+            <path stroke="#000" transform="rotate(-55.89008331298828 110.73806762695314,85.1862564086914) " id="svg_8" d="m93.90527,52.72893l16.83279,0l0,0c9.2965,0 16.83279,14.53164 16.83279,32.45733c0,17.92569 -7.5363,32.45733 -16.83279,32.45733l-16.83279,0l0,-64.91466z" stroke-opacity="null" stroke-width="1.5" fill="#ffffff"/>
+            <path stroke="#000" transform="rotate(124 88.73806762695312,118.18625640869142) " id="svg_9" d="m71.90527,85.72893l16.8328,0l0,0c9.2965,0 16.83279,14.53164 16.83279,32.45732c0,17.9257 -7.53629,32.45733 -16.83279,32.45733l-16.8328,0l0,-64.91465z" stroke-opacity="null" stroke-width="1.5" fill="#000000"/>
+        </g>
+    </svg>
+</template>
+<template id="fill">
+    <svg viewBox="0 0 200 200" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <g>
+            <path id="svg_1" d="m9.535,31.36667l0,141l180,0l0,-141l-180,0zm151.66667,128.89751l-123.33333,0l0,-116.79502l123.33333,0l0,116.79502zm-93.33333,-71.024c9.50667,0 17.22,-7.30442 17.22,-16.30711c0,-9.009 -7.71333,-16.30711 -17.22,-16.30711c-9.51333,0 -17.22,7.30442 -17.22,16.30711c0,9.00269 7.70667,16.30711 17.22,16.30711zm86.67333,14.2048l-32.78,-31.04222l-46.11333,43.66871l-12.78,-12.10249l-18.34667,17.37405l0,32.60791l110.02,0l0,-50.50596z" stroke-width="1.5" stroke="#000" fill="#3f007f"/>  </g>
+    </svg>
+</template>
+<template id="mask_checker">
+    <svg viewBox="0 0 200 200" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <g>
+            <rect stroke="#000" id="svg_2" height="122" width="152" y="39.5" x="24.5" stroke-opacity="null" stroke-width="1.5" fill="#000000"/>
+            <path id="svg_7" d="m-42,299l22,0l0,0c12.15027,0 22,9.84974 22,22.00001c0,12.15027 -9.84973,22.00001 -22,22.00001l-22,0l0,-44.00001z" stroke-opacity="null" stroke-width="1.5" stroke="#000" fill="#ffffff"/>
+            <rect stroke="#000" id="svg_10" height="30.93333" width="32" y="44.5" x="28.5" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" fill="#ffffff"/>
+            <rect stroke="#000" id="svg_11" height="30.93333" width="32" y="44.5" x="99.5" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" fill="#ffffff"/>
+            <rect stroke="#000" id="svg_12" height="30.93333" width="32" y="83.5" x="63.5" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" fill="#ffffff"/>
+            <rect stroke="#000" id="svg_13" height="30.93333" width="32" y="84.5" x="138.5" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" fill="#ffffff"/>
+            <rect stroke="#000" id="svg_14" height="30.93333" width="32" y="122.5" x="100.5" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" fill="#ffffff"/>
+            <rect stroke="#000" id="svg_15" height="30.93333" width="32" y="122.5" x="30.5" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" fill="#ffffff"/>
         </g>
     </svg>
 </template>
