@@ -35,7 +35,7 @@
 //let words = ['exercise','body','healthy','stronger','lungs','heart','energy','muscles','stretch'];
 //let words = ['hair','eyebrow','eye','nose','mouth','chest','stomach','leg','knee','foot','toe','head','neck','back','arm','elbow','finger','tongue','shoulder','hand','ankle','heel']
 //let words = ['bedroom','living room','dining room','kitchen','garage','bathroom','bathroom'];
-//let words = ['hat','cap','sunglasses','tie','bowtie','scarf','belt','socks','jacket','coat','vest','suit','sweater','sweatshirt','shirt','jeans','shorts','sweatpants','skirt','sandals','sneakers','flats','heels','slippers','boots']
+let words = ['hat','cap','sunglasses','tie','bowtie','scarf','belt','socks','jacket','coat','vest','suit','sweater','sweatshirt','shirt','jeans','shorts','sweatpants','skirt','sandals','sneakers','flats','heels','slippers','boots']
 //let words = ['bag','cap','doll','frog','girl','apple','elephant','insect','orange','umbrella','airplane','parrot','baby','hat','egg','rabbit','mouse','armchair'];
 //let words = ['projector','whiteboard','marker pen','eraser','desk','light','teacher','floor','wall','door','student','table','window','curtain','computer','mouse','keyboard'];
 //let words = ['red','yellow','green','blue','rabbit','cat','dog','tiger','apple','banana','watermelon','pear','football','basketball'];
@@ -171,6 +171,3 @@
 
 
 let difficulty = 1
-
-
-let words = ['remember','uncomment','needed','words','after','sync'];

@@ -10,7 +10,7 @@
 //let words = ['pie','tie','necktie','bite','nine','kite','hi','climb','blind','fly','cry','sky'];
 //let words = ['sword','storm','morning','corn','hard','jar','star','card','her','spider','runner','dancer','purse','purple','turn','fur'];
 //let words = ['tape','cake','lake','tail','mail','nail','day','hay','pay'];
-let words = ['bone','rope','robe','soap','boat','coat','bowl','snow','row'];
+//let words = ['bone','rope','robe','soap','boat','coat','bowl','snow','row'];
 
 //================ESLS=================
 
@@ -24,7 +24,7 @@ let words = ['bone','rope','robe','soap','boat','coat','bowl','snow','row'];
 //let words = ['parrot','shark','frog','owl','snake','stingray','seagull','elephant','whale','crocodile','crocodile','eel','jellyfish','spider','toad','frog'];
 //let words = ['nutrients','carbohydrates','protein','fat','water','minerals','vitamins','body','healthy','muscles','energy'];
 //let words = ['beak','feathers','fins','pouch','fur','tail','teeth','wings'];
-//let words = ['t-shirt','skirt','tank top','pants','flip flops','dress','swimsuit','sunglasses','trunks','sandals']
+let words = ['t-shirt','skirt','tank top','pants','flip flops','dress','swimsuit','sunglasses','trunks','sandals']
 //let words = ['ten','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety','hundred','thousand'];
 //let words = ['stones','bones','sticks','quill','ink','brush','pencil','pen','marker','crayon'];
 //let words = ['mirror','lamp','laptop','wardrobe','chair','rug','football','alarm clock','picture','bed'];

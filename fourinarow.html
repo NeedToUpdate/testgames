@@ -52,7 +52,7 @@
         <button title="Clear Canvas" id="clearBtn">clear</button>
     </div>
 </div>
-<div id="debugdiv" style="position: absolute; z-index: 9999999; top:40px"></div>
+<div id="debugdiv" style="position: absolute; z-index: 9999999; top:40px; color: white"></div>
 <div class="player_icon_container" id="p0Icon_container"><img class="player_icon" id="p0Icon"
                                                               src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNTAgNTAiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCI+PC9zdmc+==">
 </div>
@@ -190,7 +190,7 @@
     }
 </style>
 <script>
-    let DEBUGDIVON = false;
+    let DEBUGDIVON = true;
     if (DEBUGDIVON) {
         if (typeof console !== 'undefined') {
             if (typeof console.log !== 'undefined') {
