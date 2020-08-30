@@ -8,11 +8,11 @@ body{
     top: 82%;
     height: 40px;
     width: 70px;
-    background-color: #00B7FF;
     border-radius: 20px;
+    background-color: #00B7FF;
     border: blue solid 4px;
-    font-size: 1em;
     color: darkblue;
+    font-size: 1em;
     font-family: "Minion Pro";
 }
 .colourpoint{

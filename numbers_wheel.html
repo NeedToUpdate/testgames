@@ -8,13 +8,20 @@
     <script language="javascript" src="./lib/DomObject.js"></script>
     <script language="javascript" src="./lib/PhysicsObject.js"></script>
     <script language="javascript" src="./lib/eventemitter.js"></script>
-    <script language="javascript" src="./pictures_animals.js"></script>
     <link rel="stylesheet" href="global_styles.css">
 </head>
 
 <body class="locked">
     <button id="spin" class="bluebtn">Spin!</button>
-    <p style="color: white">Speed: <span id="speedspan"></span> deg per second</p>
+    <button id="playpause" class="bluebtn" style="
+    background-color: #4dff8d;
+    border: #009915 solid 4px;
+    color: #185000;">Add!</button>
+    <button id="randomize" class="bluebtn at_top" style="height: 25px; left: 70px;
+            background-color: #f5ff8b;
+            border: #ffc600 solid 4px;
+            color: #808000;">New!</button>
+    <p style="color: white; top: 50px; position: absolute">Speed: <span id="speedspan"></span> deg per second</p>
     <script>
         let background = 'bg' + (getRandom(3,5) | 0).toString() + '.jpg';
         document.body.style.backgroundColor = 'grey';
@@ -22,24 +29,38 @@
         //document.body.style.backgroundSize = width + 'px auto';
         document.body.style.backgroundRepeat = 'no-repeat';
 
-        let animals = ANIMAL_NAMES
+        function createNumber(){
+            let text = '';
+            if (getRandom(5)) {
+                text += getRandom(4) ? '+' : '-';
+                text += (getRandom(2, 10) | 0) * 10
+            } else {
+                text = 'x'
+                text += (getRandom(5) + 2);
+            }
+            if(getRandom(100)<1) text = '+1000';
+            if(getRandom(100)<1) text = 'x100';
+            return text;
+        }
+        let items = Array(50).fill(0).map(x=>createNumber());
         function getRandomArray(num) {
             let nums = [];
             let escape = 0;
             while (nums.length < num && escape < 1000) {
-                let n = Math.floor(Math.random() * animals.length);
+                let n = Math.floor(Math.random() * items.length);
                 if (nums.indexOf(n) === -1) {
                     nums.push(n);
                 }
                 escape++;
             }
-            console.log(nums);
-            return nums.map(x => animals[x]);
+            return nums.map(x => items[x]);
         }
-        let images = getRandomArray(8);
+        let selected_items = getRandomArray(12);
         let imageDivs = [];
 
-        let LOADED_IMAGES = new ImageLoader('../Classes/Animals/pngs/', images);
+
+
+
         let originX = width/2;
         let originY = height/2 + height/3;
         let circleRadius = 250;
@@ -62,23 +83,24 @@
         let lights = [];
         function setup(){
             return new Promise(resolve=>{
-                let total = images.length;
+                let total = selected_items.length;
                 let check = 0;
-                images.forEach((x,i)=>{
+                selected_items.forEach((x,i)=>{
                     let l = Line.fromAngle(originX,originY, 250, (360/total)*i + 180/total ,3);
                     l.color = 'blue';
                     lines.push(l);
                     let r = 150;
-                    let img = new Img(LOADED_IMAGES[images[i]],getX((360/total)*i,r),getY((360/total)*i,r),80,undefined,(360/total)*i +90).fromCenter();
-                    imageDivs.push(img);
-                    img.onLoad(()=>{
-                        check++;
-                        if(check===total){
-                            resolve()
-                        }
-                    })
+                    let p = new P(selected_items[i],getX((360/total)*i,r),getY((360/total)*i,r),'3em',(360/total)*i +90).fromCenter();
+                    p.color = p.string[0] === '-'? 'red' : p.string[0] === 'x'? 'green':'blue';
+                    p.set('textShadow','0 0 5px white')
+                    imageDivs.push(p);
+                    check++;
+                    if(check===total){
+                        resolve()
+                    }
                 });
                 wheelShape.color = 'yellow';
+                wheelShape.set('backgroundImage','radial-gradient(closest-side, black, darkblue, purple, lightblue, lightyellow)')
                 wheelShape.border = 'blue solid 3px';
                 for(let i = 0; i<23; i++){
                     let coords = new Vector(originX,originY);
@@ -127,10 +149,32 @@
             }
         }
 
-
+        id('playpause').addEventListener('click',()=>{
+            imageDivs.forEach(p=>{
+                if(p.string[0]==='x'){
+                    let num = parseInt(p.string.slice(1));
+                    p.string = 'x' + (num+1);
+                }else{
+                    let sign = p.string[0];
+                    let num = parseInt(p.string.slice(1));
+                    p.string = sign + (num+ 10);
+                }
+            })
+        });
+        id('randomize').addEventListener('click',()=>{
+            function change() {
+                imageDivs.forEach(p => {
+                    p.string = createNumber();
+                    p.color = p.string[0] === '-' ? 'red' : p.string[0] === 'x' ? 'green' : 'blue';
+                })
+            }
+            let loop = setInterval(change,100)
+            setTimeout(()=>{
+                clearTimeout(loop);
+            },getRandom(2000,4000)|0)
+        })
 
         let SPINNING = false;
-        let spinInt = 0;
         let main_theta = 1;
         setup().then(()=>{
             requestAnimationFrame(()=>{
