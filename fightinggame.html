@@ -247,9 +247,10 @@
                 img.y += 10
                 circle.attach(img);
             });
+            monsterHP.angle = 180;
             monsterHP.x = circle.x - monsterHP.width //67
             monsterHP.y = circle.y - 42;   //33
-            monsterHP.set('borderRadius','0 0 0 80px/0 0 0 40px');
+            monsterHP.set('borderRadius','0 80px 0 0/0 40px 0 0');
             monsterHP.set('overflow','hidden')
             monsterHP.circle = circle;
         }
