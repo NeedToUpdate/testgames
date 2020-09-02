@@ -67,10 +67,10 @@ body{
 
 }
 #jmpright{
-    left: 150px;
+    left: 143px;
 }
 #jump{
-    left: 75px;
+    left: 71px;
 }
 #hover{
     left: 75px;
@@ -78,16 +78,16 @@ body{
 }
 #powerup {
     background-color: orange;
-    top: 88%;
+    top: 90%;
 }
 #shootright{
     background-color: red;
-    top:88%;
-    left: 75px;
+    top:90%;
+    left: 71px;
 }
 #shield{
-    top:88%;
-    left: 150px;
+    top:90%;
+    left: 143px;
     background-color: green;
 }
 #playpause{

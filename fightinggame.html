@@ -17,15 +17,83 @@
 <body>
 <p style="position: absolute; font-size: 1em; top: 70px; left: 40px; color: deepskyblue; text-shadow: black 0 0 2px; font-weight: bolder" id="playerhp"></p>
 <p style="position: absolute;  font-size: 1em; top: 55px; left: 520px; color: deepskyblue; text-shadow: black 0 0 2px; font-weight: bolder" id="enemyhp"></p>
-<button id="jmpleft" class="bluebtn"><--</button>
+<button id="jmpleft" class="controlBtn"><span class="innerText"><--</span></button>
 <!--<button id="hover" class="bluebtn">hover</button>-->
-<button id="jump" class="bluebtn">jump</button>
-<button id="jmpright" class="bluebtn">--></button>
-<button id="powerup" class="bluebtn">power</button>
-<button id="shootright" class="bluebtn">shoot</button>
-<button id="shield" class="bluebtn">block</button>
-<button id="playpause" class="bluebtn">paused</button>
-<div style="position: absolute;top: 0; left: 0; z-index: 9999; width: 60px; height:70px; background-color:paleturquoise"></div>
+<button id="jump" class="controlBtn"><span class="innerText">jump</span></button>
+<button id="jmpright" class="controlBtn"><span class="innerText">--></span></button>
+<button id="powerup" class="controlBtn"><span id="powerText" class="innerText">power</span></button>
+<button id="shootright" class="controlBtn"><span id="shootText" class="innerText">shoot</span></button>
+<button id="shield" class="controlBtn"><span id="shieldText" class="innerText">block</span></button>
+<button id="playpause" class="controlBtn"><span id="playPauseText" class="innerText">paused</span></button>
+<div style="position: absolute;top: 0; left: 0; z-index: 9; width: 60px; height:70px; background-color:paleturquoise"></div>
+<style>
+    .controlBtn{
+        position: absolute;
+        border-top: #a1a19e solid 3px;
+        border-left: #424242 solid 3px;
+        border-right: #8d8988 solid 3px;
+        border-bottom: #232423 solid 3px;
+        border-radius: 5px;
+        z-index: 100000;
+        left: 0%;
+        top: 81%;
+        height: 40px;
+        width: 70px;
+        background-image: linear-gradient(to bottom right,#eee 0%, #e1e1e1 10%, #ddd 14%, #fff 30%, #ddd 60%, #eee 85%, #ccc 100%);
+        font-size: 1.1em;
+        font-weight: bolder;
+        padding: 0;
+    }
+    .controlBtn:active{
+        border: solid blue 3px;
+    }
+    .innerText{
+        background-color: blue;
+        color: transparent;
+        text-shadow: rgba(255,255,255,0.5) 2px 2px 2px;
+        margin: 0;
+        position: relative;
+        background-clip: text;
+        -moz-background-clip: text;
+        -webkit-background-clip: text;
+    }
+    #powerText{
+        background-color: orange;
+    }
+    #shootText{
+        background-color: red;
+    }
+    #shieldText{
+        background-color: limegreen;
+    }
+    #jmpleft{
+        border-radius: 25px 5px 5px 5px;
+    }
+    #jmpright{
+        border-radius: 5px 25px 5px 5px;
+    }
+    #powerup{
+        border-radius: 5px 5px 5px 20px;
+    }
+    #powerup:active{
+        border: solid orange 3px;
+    }
+    #shield{
+        border-radius: 5px 5px 20px 5px;
+    }
+    #shield:active{
+        border: solid limegreen 3px;
+    }
+    #shootright:active{
+        border: solid red 3px;
+    }
+    #playpause:active{
+        border-top: #a1a19e solid 3px;
+        border-left: #424242 solid 3px;
+        border-right: #8d8988 solid 3px;
+        border-bottom: #232423 solid 3px;
+    }
+</style>
 <script>
 
 
@@ -40,6 +108,7 @@
     document.body.style.backgroundImage = 'url(' + IMAGE_PATH + background.toString() + ')';
     document.body.style.backgroundSize = width + 'px auto';
     document.body.style.backgroundRepeat = 'no-repeat';
+
 
 
 
@@ -78,9 +147,9 @@
             }
             chosen_nums.push(num);
         }
-        let screenx = 200;
+        let screenx = width/2 - 300;
         let screenw = 600;
-        let screeny = 120;
+        let screeny = height/2 - 130;
         let screenh = 200;
         let screen = new Rectangle(screenx, screeny, screenw, screenh);
         let screenstyle = {
@@ -147,10 +216,49 @@
     let projectiles = [];
     let playerHP = {};
     let monsterHP = {};
+
+    function createHPBar(image,isLeftSide){
+        if(isLeftSide){ //TODO simplify this
+            playerHP = new LoadingBar(100,100,360,40,0,100,100);
+            let circle = new Circle(height*0.3,height*0.35,40).fromCenter();
+            circle.color = 'white';
+            circle.border = 'solid blue 3px';
+            circle.zIndex = '10'
+            circle.set('overflow','hidden');
+            let img = new Img(image.cloneNode(),0,0,70).onLoad(x=>{
+                img.set('transform','');
+                img.y += 10;
+                circle.attach(img);
+            });
+            playerHP.x = circle.x //67
+            playerHP.y = circle.y - 42;   //33
+            playerHP.set('borderRadius','0px 0px 80px 0px/0 0 40px 0');
+            playerHP.set('overflow','hidden')
+            playerHP.circle = circle;
+        }else{
+            monsterHP = new LoadingBar(0,0,360,40,0,100,100);
+            let circle = new Circle(width,height*0.35,40).fromCenter();
+            circle.color = 'red';
+            circle.border = 'solid blue 3px';
+            circle.zIndex = '10';
+            circle.set('overflow','hidden');
+            let img = new Img(image.cloneNode(),0,0,80).onLoad(x=>{
+                img.set('transform','scaleX(-1)');
+                img.y += 10
+                circle.attach(img);
+            });
+            monsterHP.x = circle.x - monsterHP.width //67
+            monsterHP.y = circle.y - 42;   //33
+            monsterHP.set('borderRadius','0 0 0 80px/0 0 0 40px');
+            monsterHP.set('overflow','hidden')
+            monsterHP.circle = circle;
+        }
+    }
+
     function setup() {
         //loading bar
         let blur = new Rectangle(0,0,width,height);
-        blur.set('zIndex', '1000');
+        blur.set('zIndex', '99000');
         blur.set('backgroundColor', 'rgba(200,200,200,0.7)');
         let loadingBar = new LoadingBar(width/2 - 100, height/2, 200, 40,0,100,0);
         loadingBar.set('zIndex','1001');
@@ -164,14 +272,12 @@
             loadingText.remove();
         }
 
-        id('playerhp').innerText = " player: ";
-        id('enemyhp').innerText = "monster: ";
         LOADED_IMAGES = new ImageLoader(IMAGE_PATH + 'projectiles/', ['fire', 'shield', monster_char.power + '_projectile', player_char.power + '_projectile']);
+        LOADED_IMAGES.add(['skull','skull_open'],IMAGE_PATH);
         player = new Character(100, 100, player_char.name);
         monster = new Character(width - 200, 100, monster_char.name);
 
-        playerHP = new LoadingBar(100,100,120,20,0,100,100).fromCenter();
-        monsterHP = new LoadingBar(width-400,100,120,20,0,100,100).fromCenter();
+
 
         player.powerType = player_char.power;
         player.hasNoSkyBox = true;
@@ -182,7 +288,8 @@
             player.addShieldImage(LOADED_IMAGES['shield'].cloneNode());
             player.maxbounds.y = (height+100)/2+ player.height/2;
             monster.projectileOffsetHeight = -player.height/3;
-            loadingBar.value+=30
+            loadingBar.value+=30;
+            createHPBar(player.sprite.shape,true)
         });
         player.landing_emitter.subscribe('land', () => {
             player.faceRight();
@@ -198,6 +305,7 @@
             monster.maxbounds.y = (height+100)/2+ monster.height/2;
             monster.faceLeft();
             loadingBar.value+=30
+            createHPBar(monster.sprite.shape,false)
         });
         monster.jumpMult = 20;
         monster.isJumping = true;
@@ -226,14 +334,18 @@
     id('playpause').addEventListener('click', function () {
         PLAYING = !PLAYING;
         if (PLAYING) {
-            id('playpause').innerText = 'playing';
+            id('playPauseText').innerText = 'playing';
         } else {
-            id('playpause').innerText = 'paused';
+            id('playPauseText').innerText = 'paused';
         }
         if (secret) {
-            id('playpause').innerText = 'Playing';
-            PLAYING = true;
-            HARDMODE = true;
+            if(monster.dead && !currentlySpawning){
+                spawnNewMonster(true);
+            }else{
+                id('playPauseText').innerText = 'Playing';
+                PLAYING = true;
+                HARDMODE = true;
+            }
         }
         secret = true;
         secretTO = setTimeout(() => {
@@ -242,18 +354,23 @@
     });
 
     id('jmpleft').addEventListener('click', function () {
+        if(player.dead) return;
         player.jumpLeft();
     });
     id('jump').addEventListener('click', function () {
+        if(player.dead) return;
         player.jumpUp();
         if (getRandom(4) < 1 && !monster.dead) {
             monsterShoot();
         }
     });
     id('powerup').addEventListener('click', function () {
+        if(player.dead) return;
         player.powerUp(7);
+        if(player.isPoweringUp && Object.keys(player.attachments).length>0) player.attachments[player.attachmentList[0]].sprite.zIndex = '100'
     });
     id('shootright').addEventListener('click', function () {
+        if(player.dead) return;
         let projectile = player.shoot();
         if(projectile){
             projectile.owner = 'player';
@@ -272,6 +389,7 @@
 
     });
     id('shield').addEventListener('click', () => {
+        if(player.dead) return;
         if (!player.isShielded) {
             player.shield();
             if (Math.random() * 2 < 1.5) {
@@ -281,10 +399,60 @@
             }
         }
     });
+    let currentlySpawning = false;
+    function spawnNewMonster(isQuick){
+        currentlySpawning = true;
+        monster_char = create_monster();
+        monsterHP.value = 0;
+        let time = isQuick? 500: 2500;
+        setTimeout(()=>{
+            monsterHP.circle.attachments.imgs[0].remove();
+            monsterHP.circle.detach(monsterHP.circle.attachments.imgs[0])
+            let skull = new Img(LOADED_IMAGES.skull_open,0,0,80).onLoad(x=>{
+                monsterHP.circle.attach(skull);
+            })
+        },time)
+        setTimeout(()=> {
+                let interval = setInterval(() => {
+                    monsterHP.value+= isQuick? 3 :1;
+                    if (monsterHP.value >= 100) clearInterval(interval)
+                }, 20);
+        },time);
+        setTimeout(()=>{
+            let sprite = new Img(IMAGE_PATH + monster_char.name + ".png", 0,0, 400).fromCenter().usingNewTransform().onLoad(()=>{
+                monsterHP.circle.remove()
+                monsterHP.remove();
+                createHPBar(sprite.shape,false);
+                monster = new Character(width - 100, -1000, monster_char.name);
+                LOADED_IMAGES.add(monster_char.power + '_projectile');
+                monster.powerType = monster_char.power;
+                monster.hasNoSkyBox = true;
+                monster.addSprite(sprite);
+                monster.jumpMult = 20;
+                monster.isJumping = true;
+                let g= new Vector(0,1);
+                g.constant = true;
+                monster.addForce(g);
+                if(monster.height>height) monster.width *=0.8;
+                monster.maxbounds.y = (height+100)/2+ monster.height/2;
+                monster.addDeathImage(LOADED_IMAGES.fire.cloneNode());
+                monster.addShieldImage(LOADED_IMAGES.shield.cloneNode());
+                monster.projectileOffsetHeight= -10;
+                iconReplaced = false;
+                currentlySpawning = false;
+                monster.landing_emitter.subscribe('land', () => {
+                    monster.faceLeft();
+                });
+
+            });
+        },time*2);
+    }
+
+
     let hopstop = false;
     let monsterisshooting = false;
     let monsterrapidfire = false;
-
+    let iconReplaced = false;
     function monsterShoot() {
         let atk = monster.shoot();
         if (atk) {
@@ -390,42 +558,17 @@
 
         if(!monster.dead) playerHP.value = (player.health | 0 || 0);
 
+        if(monster.dead && !iconReplaced){
+            iconReplaced = true;
+            monsterHP.circle.attachments.imgs[0].remove();
+            monsterHP.circle.detach(monsterHP.circle.attachments.imgs[0])
+            let skull = new Img(LOADED_IMAGES.skull,0,0,80).onLoad(x=>{
+                monsterHP.circle.attach(skull);
+            })
+        }
 
-
-        if (monster.dead && HARDMODE) {
-            monster_char = create_monster();
-            monsterHP.value = 0;
-            setTimeout(()=> {
-                id('enemyhp').innerText = "DANGER";
-                let interval = setInterval(() => {
-                    monsterHP.value++;
-                    if (monsterHP.value >= 100) clearInterval(interval)
-                }, 20);
-            },1000);
-            setTimeout(()=>{
-                let sprite = new Img(IMAGE_PATH + monster_char.name + ".png", 0,0, 400).fromCenter().usingNewTransform().onLoad(()=>{
-                    monster = new Character(width - 100, -1000, monster_char.name);
-                    id('enemyhp').innerText = "monster: ";
-                    LOADED_IMAGES.add(monster_char.power + '_projectile');
-                    monster.powerType = monster_char.power;
-                    monster.hasNoSkyBox = true;
-                    monster.addSprite(sprite);
-                    monster.jumpMult = 20;
-                    monster.isJumping = true;
-                    let g= new Vector(0,1);
-                    g.constant = true;
-                    monster.addForce(g);
-                    if(monster.height>height) monster.width *=0.8;
-                    monster.maxbounds.y = (height+100)/2+ monster.height/2;
-                    monster.addDeathImage(LOADED_IMAGES.fire.cloneNode());
-                    monster.addShieldImage(LOADED_IMAGES.shield.cloneNode());
-                    monster.projectileOffsetHeight= -10;
-                    monster.landing_emitter.subscribe('land', () => {
-                        monster.faceLeft();
-                    });
-
-                });
-            },3000);
+        if (monster.dead && HARDMODE && !currentlySpawning) {
+            spawnNewMonster();
             HARDMODE = false;
         }
     }
