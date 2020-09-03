@@ -34,6 +34,7 @@
 //let words = ['delicious','tasty','yummy','disgusting','salty','sweet','sour','bitter','spicy','stinky','chewy','tough'];
 //let words = ['hat','cap','sunglasses','tie','bowtie','scarf','belt','socks','jacket','coat','vest','suit','sweater','sweatshirt','shirt','jeans','shorts','sweatpants','skirt','sandals','sneakers','flats','heels','slippers','boots']
 //let words = ['dress','shorts','t-shirt','skirt','tank top','pants','flip flops','dress','swimsuit','sunglasses','trunks','sandals','swimming trunks'];
+let words = ['hat','cap','sunglasses','tie','bowtie','scarf','belt','socks','jacket','coat','vest','suit','sweater','sweatshirt','shirt','jeans','shorts','sweatpants','skirt','sandals','sneakers','flats','heels','slippers','boots','dress','shorts','t-shirt','skirt','tank top','pants','flip flops','dress','swimsuit','sunglasses','trunks','sandals','swimming trunks'];
 //let words = ['red','yellow','green','blue','purple','orange','violet','white','black','gray','pink','indigo','dark','light'];
 //let words = ['living room','dining room','bedroom','garage','kitchen','terrace','bathroom','yard']
 //let words = ['mirror','lamp','laptop','wardrobe','chair','rug','football','alarm clock','picture','bed'];
@@ -139,7 +140,4 @@
 //let words = ['hamburger','egg','carrot','hot dog','sausage','tomato','noodle','cookie','candy','dumpling','chip','sandwich','kiwifruit','pineapple','watermelon','grape','peach','strawberry'];
 
 
-let difficulty = 1
-
-
-let words = ['remember','uncomment','needed','words','after','sync'];
+let difficulty = 1;

@@ -25,7 +25,7 @@
 <button id="shootright" class="controlBtn"><span id="shootText" class="innerText">shoot</span></button>
 <button id="shield" class="controlBtn"><span id="shieldText" class="innerText">block</span></button>
 <button id="playpause" class="controlBtn"><span id="playPauseText" class="innerText">paused</span></button>
-<div style="position: absolute;top: 0; left: 0; z-index: 9; width: 60px; height:70px; background-color:paleturquoise"></div>
+<div id="image_blocker" style="position: absolute;top: 0; left: 0; z-index: 9; width: 60px; height:70px; background-color:#26445e"></div>
 <style>
     .controlBtn{
         position: absolute;
@@ -108,6 +108,12 @@
     document.body.style.backgroundImage = 'url(' + IMAGE_PATH + background.toString() + ')';
     document.body.style.backgroundSize = width + 'px auto';
     document.body.style.backgroundRepeat = 'no-repeat';
+
+
+    id('image_blocker').style.backgroundColor = 'grey';
+    id('image_blocker').style.backgroundImage = 'url(' + IMAGE_PATH + background.toString() + ')';
+   id('image_blocker').style.backgroundSize = width + 'px auto';
+    id('image_blocker').style.backgroundRepeat = 'no-repeat';
 
 
 
