@@ -578,11 +578,14 @@
             spawnNewMonster();
             HARDMODE = false;
         }
+        if(LOOPING){
+            requestAnimationFrame(loop)
+        }
     }
     function start() {
-       createFallbackLoopFunction(loop).start()
+       requestAnimationFrame(loop)
     };
-
+    LOOPING = true;
 
     choose_your_fighter();
 

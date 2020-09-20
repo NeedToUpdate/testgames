@@ -222,8 +222,8 @@
     let LEFT = width * 0.35;
     let lines = [];
     let titles = [];
-    let rowNum = 10
-    let colNum = 18
+    let rowNum = 10;
+    let colNum = 18;
     let SMALLEST = ((height - TOP * 1.2) / rowNum < (width - LEFT * 1.2) / colNum ? (height - TOP * 1.2) / rowNum : (width - LEFT * 1.2) / colNum) | 0;
     let SMALLEST_NUM = rowNum < colNum ? rowNum : colNum;
     let background = {};
@@ -270,7 +270,7 @@
             l.color = 'black';
             lines.push(l);
             if (i < colNum) {
-                let p = new P(col_labels[i], LEFT + 15 + i * (SMALLEST), TOP - 10, SMALLEST * SMALLEST_NUM).fromCenter();
+                let p = new P(col_labels[i], LEFT + 15 + i * (SMALLEST), TOP - 10, '1.5em').fromCenter();
                 p.color = 'white';
                 p.size = '1.5em';
                 p.y -= p.height / 2;
@@ -283,7 +283,7 @@
             l.color = 'black';
             lines.push(l);
             if (i < rowNum) {
-                let p = new P(row_labels[i], LEFT - 10, TOP + 15 + i * (SMALLEST), SMALLEST * SMALLEST_NUM).fromCenter();
+                let p = new P(row_labels[i], LEFT - 10, TOP + 15 + i * (SMALLEST), '1.5em').fromCenter();
                 p.color = 'white';
                 p.size = '1.5em';
                 p.x -= p.width / 2;

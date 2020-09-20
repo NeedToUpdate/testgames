@@ -11,7 +11,7 @@
 //let words = ['tape','cake','lake','tail','mail','nail','day','hay','pay'];
 //let words = ['bone','rope','robe','soap','boat','coat','bowl','snow','row'];
 //let words = ['food','spoon','boots','cook','hook','foot','august','autumn','paul','paw','jaw','saw'];
-
+let words = ['cloud','house','mouse','clown','cow','owl','oil','coin','soil','joy','boy','toys']
 //================ESLS=================
 
 //let words = ['projector','whiteboard','marker pen','eraser','desk','light','teacher','floor','wall','door','student','table','window','curtain','computer','mouse','keyboard'];
@@ -28,7 +28,7 @@
 //let words = ['january','february','march','april','may','june','july','august','september','october','november','december'];
 //let words = ['first','second','third','fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth','thirteenth','fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth'];
 //let words = ['birthday','party','amazing','growth','interview','gift','year','special'];
-//let words = ['apple','banana','grape','broccoli','cabbage','bread','rice','cereal','pasta','milk','cheese','meat','chicken','egg'];
+//let words = ['apple','banana','grape','broccoli','cabbage','bread','rice','cereal','pasta','milk','cheese','meat','chicken','egg','strawberry','yogurt','carrot','fish','mushroom'];
 //let words = ['apple','coconut','pomelo','lemon','pineapple','orange','mango','grapes','watermelon','kiwifruit','cherry','durian','eggplant','mushroom','strawberry','cauliflower','carrot','tomato','lettuce','potato','onion','corn','pumpkin'];
 //let words = ['nutrients','carbohydrates','protein','fat','water','minerals','vitamins','body','healthy','muscles','energy'];
 //let words = ['delicious','tasty','yummy','disgusting','salty','sweet','sour','bitter','spicy','stinky','chewy','tough'];
@@ -141,5 +141,3 @@
 
 let difficulty = 1
 
-
-let words = ['remember','uncomment','needed','words','after','sync'];
