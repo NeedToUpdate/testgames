@@ -520,7 +520,7 @@ function introMovie() {
             if (now - time > 3000 && burglar.x > width*0.65 && now - time < 5000) {
                 burglar.jumpFwd(getRandom(0.3,0.4))
             }
-            if (now - time < 10000 && burglar.x < width*0.65 && now - time > 5000 && !burglar.isPoweringUp) {
+            if (now - time < 10000 && now - time > 5000 && !burglar.isPoweringUp) {
                 if (now - time < 7000) {
                     burglar.powerUp();
                 } else if (Math.random() < 0.1) {
