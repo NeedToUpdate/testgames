@@ -1,4 +1,4 @@
-let DAMAGE_PER_TICK = 7;
+ let DAMAGE_PER_TICK = 7;
 let FINAL_SMASH_SCALING = 5;
 let ROUNDS = 3;
 
@@ -1769,16 +1769,17 @@ function floop() {
     for (let i = PROJECTILES.length - 1; i >= 0; i--) {
         let p = PROJECTILES[i];
         p.update();
-        if (!p.dead && p.hasHitbox && p.target.hasHitbox && p.hitbox.contains(p.target.hitbox.vMiddleTall)) {
+        if (!p.dead && p.hasHitbox && p.target.hasHitbox && p.target.hitbox.vMiddleTall.contains(p.hitbox)) {
             p.isHandled = true;
             handleDamage(p.target, p.power);
             p.kill()
         } 
-        // else if (!p.dead && (p.target.team === 'B' && p.hitbox.x2 > p.target.x) || (p.target.team === 'A' && p.hitbox.x2 < p.target.x)) {
-        //     p.isHandled = true;
-        //     handleDamage(p.target, p.power);
-        //     p.kill()
-        // }
+        else if (!p.isHandled && !p.dead && (p.target.team === 'B' && p.hitbox.x2 > p.target.x) || (p.target.team === 'A' && p.hitbox.x2 < p.target.x)) {
+            console.log('this projectile wasnt handled by the hitbox collision. gotta fix that')
+            p.isHandled = true;
+            handleDamage(p.target, p.power);
+            p.kill()
+        }
         if (p.dead) {
             PROJECTILES.splice(i, 1);
         }

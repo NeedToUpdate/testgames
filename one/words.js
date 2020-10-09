@@ -11,7 +11,7 @@
 //let words = ['tape','cake','lake','tail','mail','nail','day','hay','pay'];
 //let words = ['bone','rope','robe','soap','boat','coat','bowl','snow','row'];
 //let words = ['food','spoon','boots','cook','hook','foot','august','autumn','paul','paw','jaw','saw'];
-let words = ['cloud','house','mouse','clown','cow','owl','oil','coin','soil','joy','boy','toys']
+//let words = ['cloud','house','mouse','clown','cow','owl','oil','coin','soil','joy','boy','toys']
 //================ESLS=================
 
 //let words = ['projector','whiteboard','marker pen','eraser','desk','light','teacher','floor','wall','door','student','table','window','curtain','computer','mouse','keyboard'];
@@ -137,7 +137,7 @@ let words = ['cloud','house','mouse','clown','cow','owl','oil','coin','soil','jo
 //let words = ['mother','map','monkey','mouse'];
 //let words = ['star','sun','snail','snake'];
 //let words = ['hamburger','egg','carrot','hot dog','sausage','tomato','noodle','cookie','candy','dumpling','chip','sandwich','kiwifruit','pineapple','watermelon','grape','peach','strawberry'];
-
+let words = ['a a a b','b b b bcb','c c c c c d'];
 
 let difficulty = 1
 
