@@ -32,12 +32,12 @@
 //let words = ['apple','coconut','pomelo','lemon','pineapple','orange','mango','grapes','watermelon','kiwifruit','cherry','durian','eggplant','mushroom','strawberry','cauliflower','carrot','tomato','lettuce','potato','onion','corn','pumpkin'];
 //let words = ['nutrients','carbohydrates','protein','fat','water','minerals','vitamins','body','healthy','muscles','energy'];
 //let words = ['delicious','tasty','yummy','disgusting','salty','sweet','sour','bitter','spicy','stinky','chewy','tough'];
-//let words = ['hat','cap','sunglasses','tie','bowtie','scarf','belt','socks','jacket','coat','vest','suit','sweater','sweatshirt','shirt','jeans','shorts','sweatpants','skirt','sandals','sneakers','flats','heels','slippers','boots']
+let words = ['hat','cap','sunglasses','tie','bowtie','scarf','belt','socks','jacket','coat','vest','suit','sweater','sweatshirt','shirt','jeans','shorts','sweatpants','skirt','sandals','sneakers','flats','heels','slippers','boots']
 //let words = ['dress','shorts','t-shirt','skirt','tank top','pants','flip flops','dress','swimsuit','sunglasses','trunks','sandals','swimming trunks'];
 //let words = ['red','yellow','green','blue','purple','orange','violet','white','black','gray','pink','indigo','dark','light'];
 //let words = ['living room','dining room','bedroom','garage','kitchen','terrace','bathroom','yard']
 //let words = ['mirror','lamp','laptop','wardrobe','chair','rug','football','alarm clock','picture','bed'];
-//let words = ['sort clothes','watch tv','make the bed','take a bath','brush teeth','organize toys','cook food','organize toys','wash the dishes','eat','set the table','clean up the table','mow the lawn','wash the car','walk the dog'];
+//let words = ['sort clothes','watch tv','make the bed','take a bath','brush teeth','organize toys','cook food','make cakes,'wash the dishes','eat','set the table','clean up the table','mow the lawn','wash the car','walk the dog'];
 //let words = ['comfortable','weather','cave','igloo','stilt house','house','place'];
 //let words = ['parrot','shark','frog','owl','snake','stingray','seagull','elephant','whale','crocodile','bat','eel','jellyfish','spider','toad','frog'];
 //let words = ['carnivore','herbivore','omnivore','mammal','bird','amphibian','reptile','fish','vertebrate','invertebrate'];
@@ -137,7 +137,7 @@
 //let words = ['mother','map','monkey','mouse'];
 //let words = ['star','sun','snail','snake'];
 //let words = ['hamburger','egg','carrot','hot dog','sausage','tomato','noodle','cookie','candy','dumpling','chip','sandwich','kiwifruit','pineapple','watermelon','grape','peach','strawberry'];
-let words = ['a a a b','b b b bcb','c c c c c d'];
+
 
 let difficulty = 1
 

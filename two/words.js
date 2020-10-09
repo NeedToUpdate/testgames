@@ -2,7 +2,7 @@
 
 //let words = ['paul','cook','food','spoon','hook','boots','foot','august','autumn','paw','jaw','saw'];
 //let words = ['park','horse','fork','nurse','skirt','singer','farmer','bird','arm','car','turtle'];
-//let words = ['goat','coat','boat','cloak','clock','wall','green','grass','ball'];
+let words = ['goat','coat','boat','cloak','clock','wall','green','grass','ball'];
 //let words = ['flute','luke','prune','sue','blue','glue','fruit','suit','juice','cute','mule','cube'];
 //let words = ['trousers','truck','train','strawberry','trash','tree','draw','drink','dragon','driver','drum','drawer'];
 //let words = ['meat','sea','jeep','seat','green','feet','me','he','we','candy','happy','puppy'];
@@ -11,7 +11,8 @@
 //let words = ['tape','cake','lake','tail','mail','nail','day','hay','pay'];
 //let words = ['bone','rope','robe','soap','boat','coat','bowl','snow','row'];
 //let words = ['food','spoon','boots','cook','hook','foot','august','autumn','paul','paw','jaw','saw'];
-let words = ['cloud','house','mouse','clown','cow','owl','oil','coin','soil','joy','boy','toys']
+//let words = ['cloud','house','mouse','clown','cow','owl','oil','coin','soil','joy','boy','toys'];
+
 //================ESLS=================
 
 //let words = ['projector','whiteboard','marker pen','eraser','desk','light','teacher','floor','wall','door','student','table','window','curtain','computer','mouse','keyboard'];
@@ -37,7 +38,7 @@ let words = ['cloud','house','mouse','clown','cow','owl','oil','coin','soil','jo
 //let words = ['red','yellow','green','blue','purple','orange','violet','white','black','gray','pink','indigo','dark','light'];
 //let words = ['living room','dining room','bedroom','garage','kitchen','terrace','bathroom','yard']
 //let words = ['mirror','lamp','laptop','wardrobe','chair','rug','football','alarm clock','picture','bed'];
-//let words = ['sort clothes','watch tv','make the bed','take a bath','brush teeth','organize toys','cook food','organize toys','wash the dishes','eat','set the table','clean up the table','mow the lawn','wash the car','walk the dog'];
+//let words = ['sort clothes','watch tv','make the bed','take a bath','brush teeth','organize toys','cook food','make cakes,'wash the dishes','eat','set the table','clean up the table','mow the lawn','wash the car','walk the dog'];
 //let words = ['comfortable','weather','cave','igloo','stilt house','house','place'];
 //let words = ['parrot','shark','frog','owl','snake','stingray','seagull','elephant','whale','crocodile','bat','eel','jellyfish','spider','toad','frog'];
 //let words = ['carnivore','herbivore','omnivore','mammal','bird','amphibian','reptile','fish','vertebrate','invertebrate'];
