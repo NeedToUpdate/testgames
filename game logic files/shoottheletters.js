@@ -85,7 +85,7 @@ function reload() {
     if (guntype.backupammo > 0) {
         guntype.backupammo -= guntype.ammocap;
         guntype.ammo = guntype.ammocap;
-        ammoP.string = guntype.ammo + ' : ' + guntype.backupammo;
+        ammoP.string = 'ammo: ' + guntype.ammo + ' | ' + guntype.backupammo;
         let attachment = new Flyer(0, 0, 'loadingbar');
         let health = new LoadingBar(0, 0, 60, 10, 0, 100, 1);
         health.set('zIndex', '100000');
@@ -126,7 +126,7 @@ function shoot() {
     let x = selectedgun.x + cos * 50;
     let y = selectedgun.y + sin * 50;
     let bullet = new Flyer(x, y, 'bullet');
-    let bulletimg = new Img(LOADED_IMAGES.bullet.cloneNode(), x, y, 30, null, angle).fromCenter().usingNewTransform().onLoad(() => {
+    let bulletimg = new Img(LOADED_IMAGES.bullet.cloneNode(), x, y, 30, 0, 0).fromCenter().onLoad(() => {
         bulletimg.set('zIndex', '1000');
         bullet.addSprite(bulletimg);
         bullet.angle = angle
@@ -137,7 +137,7 @@ function shoot() {
         bullets.push(bullet);
     });
     guntype.ammo--;
-    ammoP.string = guntype.ammo + ' : ' + guntype.backupammo;
+    ammoP.string = 'ammo: ' + guntype.ammo + ' | ' + guntype.backupammo;
     if (guntype.ammo <= 0) {
         reload();
     }
@@ -240,7 +240,7 @@ function loop() {
         LOADED_IMAGES.add('fire_projectile', IMAGE_PATH + 'projectiles');
         let promises = buildings.map(bld=>{
             return new Promise(resolve => {
-                let img = new Img(LOADED_IMAGES.fire_projectile.cloneNode(),bld.x,bld.y+bld.height/2 - bld.width/2,bld.width,null,270).fromCenter().onLoad(()=>{
+                let img = new Img(LOADED_IMAGES.fire_projectile.cloneNode(),bld.x,bld.y+bld.height/2 - bld.width/2,bld.width,0,240).fromCenter().onLoad(()=>{
                     img.set('zIndex', '9');
                     bld.fire = img;
                     resolve()
@@ -399,7 +399,7 @@ function setup() {
     for (let i = 0; i < splitletters.length; i++) {
         createAlien();
     }
-    ammoP = new P(guntype.ammo + ' : ' + guntype.backupammo, width * .9, height * 0.01);
+    ammoP = new P('ammo: ' + guntype.ammo + ' | ' + guntype.backupammo, width * .9, height * 0.01);
     ammoP.set('fontSize', '2em')
 }
 

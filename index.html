@@ -35,6 +35,12 @@
     let input = document.getElementById('typewords');
     let button = document.getElementById('submit');
     wordDiv.innerText = 'Words:  ';
+    let els = Array.from(document.getElementsByTagName('a')).filter(x=>x.className === 'with_words');
+        els.forEach(x=>{
+            let orig = x.href.split('?')[0];
+            console.log(orig)
+            x.href =orig + `?words=["${words.join('","')}"]`
+    })
     words.forEach((w,i)=>{
         wordDiv.innerText += ' ' + w + (i===words.length-1?'.':',');
     });
