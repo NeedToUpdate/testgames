@@ -524,7 +524,7 @@
                 } else if (portal_is_open && person.x > width - 200) {
                     // console.log('die')
                     setTimeout(() => {
-                        person.remove();
+                        person.kill();
                         people.splice(people.indexOf(person), 1)
                         close_portal();
                     }, 300);
