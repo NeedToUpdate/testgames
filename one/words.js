@@ -11,7 +11,8 @@
 //let words = ['tape','cake','lake','tail','mail','nail','day','hay','pay'];
 //let words = ['bone','rope','robe','soap','boat','coat','bowl','snow','row'];
 //let words = ['food','spoon','boots','cook','hook','foot','august','autumn','paul','paw','jaw','saw'];
-//let words = ['cloud','house','mouse','clown','cow','owl','oil','coin','soil','joy','boy','toys']
+//let words = ['cloud','house','mouse','clown','cow','owl','oil','coin','soil','joy','boy','toys'];
+
 //================ESLS=================
 
 //let words = ['projector','whiteboard','marker pen','eraser','desk','light','teacher','floor','wall','door','student','table','window','curtain','computer','mouse','keyboard'];
