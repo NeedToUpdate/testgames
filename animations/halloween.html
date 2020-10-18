@@ -184,7 +184,7 @@
                                 targeted: true
                             };
                         }
-                        if (checkObj(target.p) && !target.targeted) {
+                        if (checkObj(target.p) && !target.targeted){
                             haunter.haunting = true;
                             target.targeted = true;
                             haunter.stopHover()
@@ -257,9 +257,6 @@
                             if (getRandom(10) < 1) {
                                 let h = getRandom(getXYpairing(ppl.p.x), 300)
                                 let x = ppl.p.x;
-                                // console.log(ppl.p.x, getXYpairing(ppl.p.x), h, ((310 - h) /
-                                //     500) +
-                                //     0.4)
                                 ppl.jumpUp(((310 - h) / 800) + 0.3);
                                 setTimeout(() => {
                                     let decor = new Img('../images/decor/decor' +
@@ -518,8 +515,7 @@
                 person.isAffectedByForces = true;
                 if (portal_is_open && person.x < width - 200) {
                     close_portal();
-                } else if (portal_is_open && person.x > width - 200) {
-                    // console.log('die')
+                } else if (portal_is_open && person.x > width - 200) {a
                     setTimeout(() => {
                         person.kill();
                         people.splice(people.indexOf(person), 1)

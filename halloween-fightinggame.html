@@ -118,13 +118,17 @@
 
 
 
-        let background = 'background' + (getRandom(24)).toString() + '.jpg';
+        let background = 'background' + (getRandom([1,2,5,14,15,18,21])).toString() + '.jpg';
         document.body.style.backgroundColor = 'grey';
         document.body.style.backgroundImage = 'url(' + IMAGE_PATH + background.toString() + ')';
         document.body.style.backgroundSize = width + 'px auto';
         document.body.style.backgroundRepeat = 'no-repeat';
-
-
+        let leftTreeImg = new Img(IMAGE_PATH + '/halloween/lefttree.png', 0,0,300)
+        let rightTreeImg = new Img(IMAGE_PATH + '/halloween/righttree.png', width-300,0,300)
+        let fenceImg = new Img(IMAGE_PATH + '/halloween/fence.png', 50, height-100, width-100)
+        let batsImg = new Img(IMAGE_PATH + '/halloween/bats.png', width/2, height/7, 100)
+        fenceImg.zIndex = 10000
+        leftTreeImg.zIndex = 4000
         id('image_blocker').style.backgroundColor = 'grey';
         id('image_blocker').style.backgroundImage = 'url(' + IMAGE_PATH + background.toString() + ')';
         id('image_blocker').style.backgroundSize = width + 'px auto';
@@ -135,23 +139,9 @@
 
         function create_monster(num) {
             let mons_num = num || getRandom(NUM_OF_MONSTERS + 2);
-            let mons_name = '';
-            let monster_powr_name = powers[Math.random() * powers.length | 0];
-            if (mons_num > NUM_OF_MONSTERS) {
-                let exception = mons_num - NUM_OF_MONSTERS;
-                if (exception > 1) {
-                    mons_name = 'thanos';
-                    monster_powr_name = 'blackenergy'
-                } else if (exception > 0) {
-                    mons_name = 'venom';
-                    monster_powr_name = 'blackenergy'
-                }
-            } else {
-                mons_name = 'monster' + (Math.random() * NUM_OF_MONSTERS | 0);
-            }
-            if (mons_name.endsWith('15')) {
-                monster_powr_name = 'spaghetti'
-            }
+            let mons_name = getRandom(['vampire0', 'vampire1', 'zombie0', 'zombie1', 'witch0', 'mummy0', 'skeleton0',
+            'skeleton1', 'monster0', 'monster1','ghost0']);
+            monster_powr_name = getRandom(powers)
             return {
                 num: mons_num,
                 name: mons_name,
@@ -182,18 +172,20 @@
                 borderRadius: '10px',
                 border: 'blue solid 5px'
             };
+            screen.zIndex = 100000
             Object.assign(screen.shape.style, screenstyle);
-            let crop = new Rectangle(screenx + 2, screeny + screenh / 3 - 2, screenw, screenh / 3);
+            let crop = new Rectangle(-1, screenh / 3 - 2, screenw, screenh / 3);
+            screen.attach(crop)
             crop.shape.style.overflow = 'hidden';
             crop.shape.style.backgroundColor = 'yellow';
             crop.shape.style.border = 'blue solid 3px';
 
             let images = [];
             let lines = [];
-            let text = new P('Choose Your Fighter', screenx + screenw / 2.5, screeny + 10).fromCenter();
+            let text = new P('Choose Your Fighter', screenw / 2.5, 20).fromCenter();
             let names = [];
             text.shape.style.fontSize = '2em';
-
+            screen.attach(text)
             function start_the_game(num) {
                 crop.remove();
                 lines.forEach(line => {
@@ -210,23 +202,22 @@
             }
 
             chosen_nums.forEach((num, i) => {
-                let img = new Img(IMAGE_PATH + characters[num] + '.png', ((screenw / chosen_nums.length)) * i +
-                    10, 0, (screenw / chosen_nums.length) - 20);
+                let img = new Img(IMAGE_PATH + characters[num] + '.png', ((screenw / chosen_nums.length)) * i, 0, (screenw / chosen_nums.length) - 20);
                 crop.attach(img);
                 if (i !== 0) {
-                    let line = Line.fromPoints(screenx + 5 + (screenw / chosen_nums.length) * i, screeny +
-                        screenh / 1.5, screenx + 5 + (screenw / chosen_nums.length) * i + 20, screeny +
-                        screenh / 3);
+                    let line = Line.fromAngle((screenw / chosen_nums.length) * i - 25,-10, 200, 70);
                     line.shape.style.backgroundColor = 'blue';
                     line.shape.style.height = '4px';
+                    crop.attach(line)
                     lines.push(line);
                 }
                 img.shape.addEventListener('click', () => {
                     start_the_game(num);
                 });
-                let name = new P(characters[num], screenx + (screenw / chosen_nums.length) * (i + .1) + 10, 5 +
-                    screeny + screenh / 1.5);
+                let name = new P(characters[num], (screenw / chosen_nums.length) * (i + .1) + 10, 5 +
+                    screenh / 1.5);
                 name.set('fontSize', '1.5em');
+                screen.attach(name)
                 if (name.width + 20 > screenw / chosen_nums.length) {
                     name.string = characters[num].slice(0, 7) + '..'
                 }
@@ -314,12 +305,15 @@
 
             player.powerType = player_char.power;
             player.hasNoSkyBox = true;
+           
             loadingBar.value += 10;
             let player_sprite = new Img(IMAGE_PATH + player_char.name + ".png", 0, 0, 150).fromCenter()
                 .usingNewTransform().onLoad(() => {
                     player.addSprite(player_sprite);
+                    player_sprite.zIndex = 5000
                     player.addDeathImage(LOADED_IMAGES['fire'].cloneNode());
                     player.addShieldImage(LOADED_IMAGES['shield'].cloneNode());
+                    player.shieldImage.zIndex = 5001
                     player.maxbounds.y = (height + 100) / 2 + player.height / 2;
                     monster.projectileOffsetHeight = -player.height / 3;
                     loadingBar.value += 30;
@@ -330,7 +324,7 @@
             });
             monster.powerType = monster_char.power;
             monster.hasNoSkyBox = true;
-            let monster_sprite = new Img(IMAGE_PATH + monster.name + ".png", 0, 0, 400).fromCenter().usingNewTransform()
+            let monster_sprite = new Img(IMAGE_PATH +'/people/'+ monster.name + ".png", 0, 0, 150).fromCenter().usingNewTransform()
                 .onLoad(() => {
                     monster.addSprite(monster_sprite);
                     monster.projectileOffsetHeight = 1;
@@ -402,13 +396,12 @@
         id('powerup').addEventListener('click', function () {
             if (player.dead) return;
             player.powerUp(7);
-            if (player.isPoweringUp && Object.keys(player.attachments).length > 0) player.attachments[player
-                .attachmentList[0]].sprite.zIndex = '100'
         });
         id('shootright').addEventListener('click', function () {
             if (player.dead) return;
             let projectile = player.shoot();
             if (projectile) {
+                projectile.zIndex = 5002
                 projectile.owner = 'player';
                 projectiles.push(projectile);
                 if (PLAYING && !monster.dead) {
