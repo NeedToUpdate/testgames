@@ -10,7 +10,7 @@ document.body.style.backgroundColor = 'lightgrey';
 
 
 let MAINARENA = new Rectangle(width * .2, height * .2, width * .6 - 5, height * .8).asOutline('black', 5);
-let background = 'background' + getRandom(20).toString() + '.jpg';
+let background = 'background' + getRandom(30).toString() + '.jpg';
 MAINARENA.set('backgroundColor', 'grey');
 MAINARENA.set('backgroundImage', 'url(' + IMAGE_PATH + background.toString() + ')');
 MAINARENA.set('backgroundSize', 'cover');
