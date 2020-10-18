@@ -24,7 +24,7 @@
 
         let portal = {};
         let playing = true;
-        let background = 'background14.jpg'; //TODO add train station background
+        let background = 'background14.jpg';
         document.body.style.backgroundColor = 'grey'
         document.body.style.backgroundImage = 'url(../images/' + background.toString() + ')';
         document.body.style.backgroundSize = width + 'px auto';
@@ -251,7 +251,6 @@
             if (act_decorating && !act_decorating_started && !setup_decorating) {
                 reset().then(x => {
                     people.forEach(ppl => {
-                        console.log('adding emitter')
                         drag(ppl)
                         let unsub = ppl.landing_emitter.subscribe('land', () => {
                             unsubs.push(unsub)
@@ -490,7 +489,6 @@
                 if (x.dragging) {
                     x.y = ev.clientY - x.height / 2;
                     x.x = ev.clientX - x.height / 2;
-                    console.log(x.p.x)
                 }
             })
         }
@@ -520,7 +518,6 @@
                 person.isAffectedByForces = true;
                 if (portal_is_open && person.x < width - 200) {
                     close_portal();
-                    console.log(width - 200, person.x)
                 } else if (portal_is_open && person.x > width - 200) {
                     // console.log('die')
                     setTimeout(() => {
@@ -591,9 +588,6 @@
         function loop(now) {
             people.forEach(x => {
                 x.update();
-                if (x.dragging) {
-                    console.log(x.p.x)
-                }
             });
             haunters.forEach(x => {
                 x.update();
