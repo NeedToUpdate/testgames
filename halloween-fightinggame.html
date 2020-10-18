@@ -298,7 +298,7 @@
                 '_projectile', player_char.power + '_projectile'
             ]);
             LOADED_IMAGES.add(['skull', 'skull_open'], IMAGE_PATH);
-            player = new Character(100, 100, player_char.name);
+            player = new Character(150, 100, player_char.name);
             monster = new Character(width - 200, 100, monster_char.name);
 
 
@@ -314,7 +314,7 @@
                     player.addDeathImage(LOADED_IMAGES['fire'].cloneNode());
                     player.addShieldImage(LOADED_IMAGES['shield'].cloneNode());
                     player.shieldImage.zIndex = 5001
-                    player.maxbounds.y = (height + 100) / 2 + player.height / 2;
+                    player.maxbounds.y = (height + 200) / 2 + player.height / 2;
                     monster.projectileOffsetHeight = -player.height / 3;
                     loadingBar.value += 30;
                     createHPBar(player.sprite.shape, true)
@@ -474,7 +474,6 @@
                         monster.landing_emitter.subscribe('land', () => {
                             monster.faceLeft();
                         });
-
                     });
             }, time * 2);
         }
