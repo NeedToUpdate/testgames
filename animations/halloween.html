@@ -515,7 +515,7 @@
                 person.isAffectedByForces = true;
                 if (portal_is_open && person.x < width - 200) {
                     close_portal();
-                } else if (portal_is_open && person.x > width - 200) {a
+                } else if (portal_is_open && person.x > width - 200) {
                     setTimeout(() => {
                         person.kill();
                         people.splice(people.indexOf(person), 1)
