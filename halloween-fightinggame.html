@@ -33,17 +33,17 @@
     <style>
         .controlBtn {
             position: absolute;
-            border-top: #a1a19e solid 3px;
-            border-left: #424242 solid 3px;
-            border-right: #8d8988 solid 3px;
-            border-bottom: #232423 solid 3px;
+            border-top: #c7a40b solid 3px;
+            border-left: #bb7b03 solid 3px;
+            border-right: #cf8516 solid 3px;
+            border-bottom: #683505 solid 3px;
             border-radius: 5px;
             z-index: 100000;
             left: 0%;
             top: 81%;
             height: 40px;
             width: 70px;
-            background-image: linear-gradient(to bottom right, #eee 0%, #e1e1e1 10%, #ddd 14%, #fff 30%, #ddd 60%, #eee 85%, #ccc 100%);
+            background-image: linear-gradient(to bottom right, rgb(248, 194, 133) 0%, #d39103 10%, rgb(238, 191, 103) 14%, rgb(240, 202, 159) 30%, rgb(226, 158, 95) 60%, rgb(241, 181, 68) 85%, rgb(238, 156, 49) 100%);
             font-size: 1.1em;
             font-weight: bolder;
             padding: 0;
@@ -65,15 +65,15 @@
         }
 
         #powerText {
-            background-color: orange;
+            background-color: black;
         }
 
         #shootText {
-            background-color: red;
+            background-color: black;
         }
 
         #shieldText {
-            background-color: limegreen;
+            background-color: black;
         }
 
         #jmpleft {
@@ -126,7 +126,7 @@
         let leftTreeImg = new Img(IMAGE_PATH + '/halloween/lefttree.png', 0,0,300)
         let rightTreeImg = new Img(IMAGE_PATH + '/halloween/righttree.png', width-300,0,300)
         let fenceImg = new Img(IMAGE_PATH + '/halloween/fence.png', 50, height-100, width-100)
-        let batsImg = new Img(IMAGE_PATH + '/halloween/bats.png', width/2, height/7, 100)
+        let batsImg = new Img(IMAGE_PATH + '/halloween/bats.png', width/3, height/9, 250)
         fenceImg.zIndex = 10000
         leftTreeImg.zIndex = 4000
         id('image_blocker').style.backgroundColor = 'grey';
@@ -168,21 +168,22 @@
             let screenh = 200;
             let screen = new Rectangle(screenx, screeny, screenw, screenh);
             let screenstyle = {
-                backgroundColor: 'grey',
+                backgroundColor: 'black',
                 borderRadius: '10px',
-                border: 'blue solid 5px'
+                border: 'orange solid 5px'
             };
             screen.zIndex = 100000
             Object.assign(screen.shape.style, screenstyle);
             let crop = new Rectangle(-1, screenh / 3 - 2, screenw, screenh / 3);
             screen.attach(crop)
             crop.shape.style.overflow = 'hidden';
-            crop.shape.style.backgroundColor = 'yellow';
-            crop.shape.style.border = 'blue solid 3px';
+            crop.shape.style.backgroundColor = 'darkgrey';
+            crop.shape.style.border = 'orange solid 3px';
 
             let images = [];
             let lines = [];
-            let text = new P('Choose Your Fighter', screenw / 2.5, 20).fromCenter();
+            let text = new P('Choose Your Halloween Fighter', screenw / 3, 20).fromCenter();
+            text.color = 'orange'
             let names = [];
             text.shape.style.fontSize = '2em';
             screen.attach(text)
@@ -206,7 +207,7 @@
                 crop.attach(img);
                 if (i !== 0) {
                     let line = Line.fromAngle((screenw / chosen_nums.length) * i - 25,-10, 200, 70);
-                    line.shape.style.backgroundColor = 'blue';
+                    line.shape.style.backgroundColor = 'orange';
                     line.shape.style.height = '4px';
                     crop.attach(line)
                     lines.push(line);
@@ -217,6 +218,7 @@
                 let name = new P(characters[num], (screenw / chosen_nums.length) * (i + .1) + 10, 5 +
                     screenh / 1.5);
                 name.set('fontSize', '1.5em');
+                name.color = 'yellow'
                 screen.attach(name)
                 if (name.width + 20 > screenw / chosen_nums.length) {
                     name.string = characters[num].slice(0, 7) + '..'
@@ -259,8 +261,8 @@
             } else {
                 monsterHP = new LoadingBar(0, 0, 360, 40, 0, 100, 100);
                 let circle = new Circle(width, height * 0.35, 40).fromCenter();
-                circle.color = 'red';
-                circle.border = 'solid blue 3px';
+                circle.color = 'orange';
+                circle.border = 'solid black 3px';
                 circle.zIndex = '10';
                 circle.set('overflow', 'hidden');
                 let img = new Img(image.cloneNode(), 0, 0, 80).onLoad(x => {
@@ -429,7 +431,7 @@
             }
         });
         let currentlySpawning = false;
-        let monsters_spawned = 0;
+        let monsters_spawned = 1;
         function spawnNewMonster(isQuick) {
             monsters_spawned++
             currentlySpawning = true;
@@ -450,7 +452,7 @@
                 }, 20);
             }, time);
             setTimeout(() => {
-                let sprite = new Img(IMAGE_PATH +'people/'+ monster_char.name + ".png", 0, 0, 100 + (monsters_spawned*100)).fromCenter()
+                let sprite = new Img(IMAGE_PATH +'people/'+ monster_char.name + ".png", 0, 0, 100 + (100*monsters_spawned**1.2)).fromCenter()
                     .usingNewTransform().onLoad(() => {
                         monsterHP.circle.remove()
                         monsterHP.remove();
@@ -556,10 +558,12 @@
                 }
                 if (Math.random() * 2000 < (HARDMODE ? (monster.health > 30 ? 30 : 10) : (monster.health > 30 ? 20 :
                     5))) {
-                    monster.hop();
+                    if(monsters_spawned<2 || !getRandom(20)){
+                        monster.hop();
+                    }
                 }
                 if (Math.random() * 3000 < 2) {
-                    monster.jumpUp();
+                    if(monsters_spawned < 2) monster.jumpUp();
                 }
                 if (Math.random() * 10000 < (HARDMODE ? 3 : 2)) {
                     monsterrapidfire = true;
