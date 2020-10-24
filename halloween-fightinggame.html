@@ -314,8 +314,10 @@
                     player.addSprite(player_sprite);
                     player_sprite.zIndex = 5000
                     player.addDeathImage(LOADED_IMAGES['fire'].cloneNode());
-                    player.addShieldImage(LOADED_IMAGES['shield'].cloneNode());
-                    player.shieldImage.zIndex = 5001
+                    let shield_name = 'shield_' + player_char.color; 
+                    LOADED_IMAGES.add([shield_name], IMAGE_PATH + '/projectiles/');
+                    player.addShieldImage(LOADED_IMAGES[shield_name].cloneNode())
+                    player.shieldImage.zIndex = 6000
                     player.maxbounds.y = (height + 100) / 2 + player.height / 2;
                     monster.projectileOffsetHeight = -player.height / 3;
                     loadingBar.value += 30;
@@ -326,12 +328,15 @@
             });
             monster.powerType = monster_char.power;
             monster.hasNoSkyBox = true;
+            let valid_colors = ['red','yellow','blue','teal','lightblue','purple','pink','orange','white','black']
             let monster_sprite = new Img(IMAGE_PATH +'/people/'+ monster.name + ".png", 0, 0, 150).fromCenter().usingNewTransform()
                 .onLoad(() => {
                     monster.addSprite(monster_sprite);
                     monster.projectileOffsetHeight = 1;
                     monster.addDeathImage(LOADED_IMAGES['fire'].cloneNode());
-                    monster.addShieldImage(LOADED_IMAGES['shield'].cloneNode());
+                    let shield_name = 'shield_' + getRandom(valid_colors)
+                    LOADED_IMAGES.add([shield_name], IMAGE_PATH + '/projectiles/');
+                    monster.addShieldImage(LOADED_IMAGES[shield_name].cloneNode())
                     if (monster.height > height) monster.width *= 0.8;
                     monster.maxbounds.y = (height + 100) / 2 + monster.height / 2;
                     monster.faceLeft();
