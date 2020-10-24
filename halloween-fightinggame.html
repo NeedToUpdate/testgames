@@ -317,7 +317,6 @@
                     let shield_name = 'shield_' + player_char.color; 
                     LOADED_IMAGES.add([shield_name], IMAGE_PATH + '/projectiles/');
                     player.addShieldImage(LOADED_IMAGES[shield_name].cloneNode())
-                    player.shieldImage.zIndex = 6000
                     player.maxbounds.y = (height + 100) / 2 + player.height / 2;
                     monster.projectileOffsetHeight = -player.height / 3;
                     loadingBar.value += 30;

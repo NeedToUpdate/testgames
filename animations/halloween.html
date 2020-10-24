@@ -40,7 +40,7 @@
             let counter = 0;
             return new Promise(resolve => {
                 for (let i = 0; i < NUM_OF_PEOPLE; i++) {
-                    let ppl = new Character(getRandom(50, width - 50), height - 150, getRandom(['man',
+                    let ppl = new Character(getRandom(50, width - 250), height - 150, getRandom(['man',
                         'woman'
                     ]) + (Math.random() * 4 | 0));
                     let pplSprite = new Img('../images/people/' + ppl.name + '.png', 0, 0, 50).onLoad(x => {
@@ -48,6 +48,7 @@
                         ppl.addSprite(pplSprite)
                         ppl.addForce(VECTORS.gravity)
                         ppl.maxbounds.y = height - 100;
+                        getRandom(2)? ppl.faceLeft() : ppl.faceRight()
                         counter++
                         if (counter == NUM_OF_PEOPLE) {
                             resolve()
@@ -121,7 +122,7 @@
                             }
                         }
                     } else {
-                        if (ppl.p.x >= width - 100) {
+                        if (ppl.p.x >= width - 200) {
                             ppl.faceLeft();
                         }
                         if (ppl.p.x <= 50) {
