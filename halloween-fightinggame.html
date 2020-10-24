@@ -116,7 +116,7 @@
         let NUM_OF_MONSTERS = 46;
         let IMAGE_PATH = './images/';
 
-
+        let valid_colors = ['red','yellow','blue','teal','lightblue','purple','pink','orange','white','black']
 
         let background = 'background' + (getRandom([1,2,5,14,15,18,21])).toString() + '.jpg';
         document.body.style.backgroundColor = 'grey';
@@ -327,7 +327,7 @@
             });
             monster.powerType = monster_char.power;
             monster.hasNoSkyBox = true;
-            let valid_colors = ['red','yellow','blue','teal','lightblue','purple','pink','orange','white','black']
+            
             let monster_sprite = new Img(IMAGE_PATH +'/people/'+ monster.name + ".png", 0, 0, 150).fromCenter().usingNewTransform()
                 .onLoad(() => {
                     monster.addSprite(monster_sprite);
@@ -474,7 +474,9 @@
                         if (monster.height > height) monster.width *= 0.8;
                         monster.maxbounds.y = (height + 100) / 2 + monster.height / 2;
                         monster.addDeathImage(LOADED_IMAGES.fire.cloneNode());
-                        monster.addShieldImage(LOADED_IMAGES.shield.cloneNode());
+                        let shield_name = 'shield_' + getRandom(valid_colors)
+                        LOADED_IMAGES.add([shield_name], IMAGE_PATH + '/projectiles/');
+                        monster.addShieldImage(LOADED_IMAGES[shield_name].cloneNode())
                         monster.projectileOffsetHeight = -10;
                         iconReplaced = false;
                         currentlySpawning = false;

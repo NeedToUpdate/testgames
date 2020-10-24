@@ -43,7 +43,7 @@
                     let ppl = new Character(getRandom(50, width - 250), height - 150, getRandom(['man',
                         'woman'
                     ]) + (Math.random() * 4 | 0));
-                    let pplSprite = new Img('../images/people/' + ppl.name + '.png', 0, 0, 50).onLoad(x => {
+                    let pplSprite = new Img('../images/people/' + ppl.name + '.png', 0, 0, 75).onLoad(x => {
                         pplSprite.zIndex = '1000'
                         ppl.addSprite(pplSprite)
                         ppl.addForce(VECTORS.gravity)
@@ -67,7 +67,7 @@
         async function create_haunter() {
             return new Promise(resolve => {
                 let haunter = new Flyer(width - 100, height - 100, getRandom(potential_haunters));
-                let haunterimg = new Img('../images/people/' + haunter.name + '.png', 0, 0, 60).onLoad(
+                let haunterimg = new Img('../images/people/' + haunter.name + '.png', 0, 0, 80).onLoad(
                     () => {
                         haunterimg.zIndex = 1000
                         haunterimg.set('animation', 'fadeIn 1s');
@@ -122,7 +122,7 @@
                             }
                         }
                     } else {
-                        if (ppl.p.x >= width - 200) {
+                        if (ppl.p.x >= width - 250) {
                             ppl.faceLeft();
                         }
                         if (ppl.p.x <= 50) {
@@ -197,10 +197,10 @@
                                             potential_targets.length -
                                             1) ? potential_targets[k] : getRandom(
                                             potential_targets)) + '.png',
-                                        0, 0, 60).onLoad(x => {
+                                        0, 0, 80).onLoad(x => {
                                         k--;
                                         target.replaceSprite(targetimg);
-                                        target.faceRight()
+                                        targetimg.flip(target.isFacingRight? 'right' : 'left')
                                         target.scared = false;
                                         haunter.kill();
                                     })
@@ -282,7 +282,7 @@
         function animate_costumes() {
             if (act_costumes && !act_costumes_started) {
                 people.forEach(ppl => {
-                    let maskimg = new Img('../images/decor/mask' + getRandom(4) + '.png', ppl.p.x, ppl.p.y, 50)
+                    let maskimg = new Img('../images/decor/mask' + getRandom(4) + '.png', ppl.p.x, ppl.p.y, 75)
                         .onLoad(x => {
                             let mask = new Blank(0, 0, 'mask')
                             mask.addSprite(maskimg)
