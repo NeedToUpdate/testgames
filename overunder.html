@@ -96,14 +96,14 @@
 
                 if (key.match(/inside|on|under/)) {
 
-                    character.doFlyTo(new Vector(pos.above || pos.on)).then(() => {
+                    character.doMoveTo(new Vector(pos.above || pos.on)).then(() => {
                         if (key.match(/inside|front/)) after();
-                        character.doFlyTo(new Vector(pos[key])).then(() => {
+                        character.doMoveTo(new Vector(pos[key])).then(() => {
                             after();
                         })
                     })
                 } else {
-                    character.doFlyTo(new Vector(pos[key])).then(() => {
+                    character.doMoveTo(new Vector(pos[key])).then(() => {
                         after();
                     })
                 }
