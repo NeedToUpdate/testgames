@@ -40,7 +40,8 @@ function setup(){
     console.log(letters,actual_letters)
 
     //lines should be bnear the bottom in the middle half of the screen
-    let total_width = width/2
+    let line_width = 80
+    let total_width = actual_letters.length * line_width
     let line_padding = 5;
     let line_len = (total_width)/(actual_letters.length) - line_padding*2;
     let line_height = height*0.9
@@ -57,6 +58,7 @@ function setup(){
         pChar.addSprite(p)
         pChar.y -= p.height;
         pChar.x -= p.width/2;
+        pChar.hasNoBounds = true;
         p.color = 'rgba(255,255,255,0.5)'
         letterDivs.push(pChar)
         decoy_index = i;
@@ -72,6 +74,7 @@ function setup(){
                 pChar.addSprite(p)
                 pChar.y -= p.height;
                 pChar.x -= p.width/2;
+                pChar.hasNoBounds = true;
                 letterDivs.push(pChar);
             }
             setTimeout(resolve,1000)
@@ -134,16 +137,16 @@ function releaseAliens(){
 
 
 function drag(ev) {
-    letterDivs.forEach(x => {
-        if (x.isDragging) {
-            let newY = (ev.clientY -  x.height / 2);
-            let newX = (ev.clientX -  x.width / 2);
-            if(newY>(height- x.height / 2)) newY = (height- x.height / 2);
-            if(newY< x.height / -2) newY = x.height / -2;
-            if(newX>(width- x.width / 2)) newX = (width- x.width / 2);
-            if(newX< x.width / -2) newX =  x.width / -2;
-            x.y = newY;
-            x.x = newX;
+    letterDivs.forEach(letter => {
+        if (letter.isDragging) {
+            let newY = (ev.clientY - letter.height/ 2);
+            let newX = (ev.clientX - letter.width / 2);
+            if(newY>(height - letter.height)) newY = height - letter.height;
+            if(newY<0) newY = 0;
+            if(newX>(width - letter.width)) newX = width - letter.width;
+            if(newX<0) newX = 0 ;
+            letter.y = newY ;
+            letter.x = newX ;
         }
     });
 }
@@ -193,9 +196,7 @@ let speedy_check = {}//will cache the indices here for quicker checks
 
 function checkLetter(letter){
     if(actual_letters.includes(letter.name)){
-        if(Object.keys(speedy_check).includes(letter.name)){
-            //fast check
-        } else {
+        if(!Object.keys(speedy_check).includes(letter.name)){
             let indicies = []
             actual_letters.forEach((x,i)=>{
                 if(x == letter.name){
@@ -205,11 +206,19 @@ function checkLetter(letter){
             speedy_check[letter.name] = indicies;
         }
         let index_to_remove = null;
+        let buffer = 20
+        let y_buffer = 40
         speedy_check[letter.name].forEach((index,i)=>{
-            if(Math.abs(letter.x - lines[index].x) < 10){
-                lines[index].color = 'green'
+            let line = {x:lines[index].x + lines[index].width/2,y: lines[index].y};
+            let pos = {x: letter.x + letter.width/2, y: letter.y + letter.height/2}; 
+            if(Math.abs(line.x-pos.x) < buffer && line.y-pos.y < y_buffer){
                 actual_letters[index] = '#'
-                index_to_remove = i
+                index_to_remove = i;
+                letter.isLocked = true;
+                letter.isDragging = false;
+                letter.sprite.color = 'limegreen';
+                letter.x = line.x - letter.width/2
+                letter.y = line.y - (letter.height)
             }
         })
         if(index_to_remove !== null){
@@ -218,7 +227,11 @@ function checkLetter(letter){
     }
 }
 
-
+let alien = new Flyer(100,100,'test_alien')
+let alien_sprite = new Img('../images/invaders/invaderpurple.png',0,0,50).onLoad(x=>{
+    alien.addSprite(alien_sprite)
+})
+aliens.push(alien)
 
 
 
