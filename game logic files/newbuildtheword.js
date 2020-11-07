@@ -227,15 +227,163 @@ function checkLetter(letter){
     }
 }
 
-let alien = new Flyer(100,100,'test_alien')
+
+
+class Alien extends Flyer{
+    constructor(x,y,name){
+        super(x,y,name);
+        this.behaviour = 'Idle';
+        this.subroutines = this.subroutines.concat(['Chase','Predict','Taunt','Scare','Block', 'Circle', 'Idle', 'Patrol']);
+        this.isDoingChase = false;
+        this.isDoingPredict = false;
+        this.isDoingTaunt = false;
+        this.isDoingScare = false;
+        this.isDoingBlock = false;
+        this.isDoingCircle = false;
+        this.isDoingIdle = false;
+        this.isDoingPatrol = false;
+    }
+
+    doChase(){
+        console.log('doChase isnt implemented yet')
+    }
+    stopChase(){
+        console.log('stopChase isnt implemented yet')
+    }
+    doPredict(){
+        console.log('doPredict isnt implemented yet')
+    }
+    stopPredict(){
+        console.log('stopPredict isnt implemented yet')
+    }
+    doTaunt(){
+        console.log('doTaunt isnt implemented yet')
+    }
+    stopTaunt(){
+        console.log('stopTaunt isnt implemented yet')
+    }
+    doScare(){
+        console.log('doScare isnt implemented yet')
+    }
+    stopScare(){
+        console.log('stopScare isnt implemented yet')
+    }
+    doBlock(){
+        console.log('doBlock isnt implemented yet')
+    }
+    stopBlock(){
+        console.log('stopBlock isnt implemented yet')
+    }
+    doCircle(){
+        console.log('doCircle isnt implemented yet')
+    }
+    stopCircle(){
+        console.log('stopCircle isnt implemented yet')
+    }
+    doIdle(){
+        if(this.isDoingIdle){
+
+        }else{
+            this.isDoingIdle = true;
+            return new Promise(resolve=>{
+                this.doHover();
+                resolve();
+            })
+        }
+    }
+    stopIdle(){
+        if(!this.isDoingIdle) return;
+        this.stopHover();
+        this.v.clear();
+        this.a.clear();
+    }
+    doPatrol(){
+        function randomPosition(pos, excluded){
+            let step_size = 200
+            let poss = [0,1,2,3];
+            if(excluded!== undefined){
+                poss.splice(poss.indexOf(excluded),1);
+            }
+            let dir = getRandom(poss); //0 up, 1 left, 2 down 3 right
+            if(pos.x<step_size){
+                step_size = pos.x -50
+            }
+            if(pos.x>width-step_size){
+                step_size = width - pos.x -50
+            }
+            if(pos.y<step_size){
+                step_size = pos.y - 50
+            }
+            if(pos.y>height-step_size){
+                step_size = height - pos.y -50
+            }
+            if(step_size<0) return randomPosition(pos,dir)
+            switch(dir){
+                case 0:
+                    return pos.copy().add(new Vector(0,-step_size))
+                case 1:
+                    return pos.copy().add(new Vector(-step_size,0))
+                case 2:
+                    return pos.copy().add(new Vector(0,step_size))
+                case 3:
+                    return pos.copy().add(new Vector(step_size,0))
+            }
+        }
+        if(this.isDoingPatrol){
+            //pick a random direction and move that way for a bit
+            if(!this.cache.doPatrol.isPatrolling){
+                this.cache.doPatrol.isPatrolling = true;
+                this.cache.doPatrol.last_pos = this.p.copy();
+                this.cache.doPatrol.target_pos = randomPosition(this.p)
+                this.cache.doPatrol.isPatrolling = true;
+                this.doMoveTo(this.cache.doPatrol.target_pos,1).then(()=>{
+                    this.cache.doPatrol.isPatrolling = false;
+                })
+            }
+        }else{
+            this.isDoingPatrol = true;
+            this.v.clear()
+            this.a.clear()
+            this.cache.doPatrol = {};
+            this.cache.doPatrol.last_pos = this.p.copy();
+            this.cache.doPatrol.target_pos = randomPosition(this.p)
+            this.cache.doPatrol.isPatrolling = true;
+            this.doMoveTo(this.cache.doPatrol.target_pos).then(()=>{
+                this.cache.doPatrol.isPatrolling = false;
+            })
+            return new Promise(resolve=>{
+                resolve()
+            })
+        }
+    }
+    stopPatrol(){
+        console.log('stopPatrol isnt implemented yet')
+    }
+
+    changeBehaviour(behaviour){
+        if(!behaviours.includes(behaviour)){
+            console.error(behaviour + ' is not a valid behaviour');
+            return
+        }
+        behaviour = behaviour[0].toUpperCase() + behaviour.slice(1); //makes sure its in sentence case for the subroutines
+        let old_behaviour = this.behaviour;
+        this.behaviour = behaviour;
+        this['stop' + old_behaviour]();
+        return new Promise(resolve=>{
+            this['do' + this.behaviour]().then(x=>{
+                resolve(x)
+            });
+        })
+       
+    }
+
+}
+
+let alien = new Alien(100,100,'test_alien');
 let alien_sprite = new Img('../images/invaders/invaderpurple.png',0,0,50).onLoad(x=>{
-    alien.addSprite(alien_sprite)
-})
-aliens.push(alien)
-
-
-
-
+    alien.addSprite(alien_sprite);
+});
+aliens.push(alien);
 
 function loop(){
     letterDivs.forEach(x=>{
