@@ -293,31 +293,28 @@ class Alien extends Flyer{
     }
     stopIdle(){
         if(!this.isDoingIdle) return;
+        this.isDoingIdle = false;
         this.stopHover();
         this.v.clear();
         this.a.clear();
     }
     doPatrol(){
-        function randomPosition(pos, excluded){
-            let step_size = 200
+        function randomPosition(pos){
+            let step_size = getRandom(3)*50 + 150
             let poss = [0,1,2,3];
-            if(excluded!== undefined){
-                poss.splice(poss.indexOf(excluded),1);
-            }
-            let dir = getRandom(poss); //0 up, 1 left, 2 down 3 right
             if(pos.x<step_size){
-                step_size = pos.x -50
+                poss.splice(poss.indexOf(1),1)
             }
             if(pos.x>width-step_size){
-                step_size = width - pos.x -50
+                poss.splice(poss.indexOf(3),1)
             }
             if(pos.y<step_size){
-                step_size = pos.y - 50
+                poss.splice(poss.indexOf(0),1)
             }
             if(pos.y>height-step_size){
-                step_size = height - pos.y -50
+                poss.splice(poss.indexOf(2),1)
             }
-            if(step_size<0) return randomPosition(pos,dir)
+            let dir = getRandom(poss); //0 up, 1 left, 2 down 3 right
             switch(dir){
                 case 0:
                     return pos.copy().add(new Vector(0,-step_size))
@@ -336,8 +333,11 @@ class Alien extends Flyer{
                 this.cache.doPatrol.last_pos = this.p.copy();
                 this.cache.doPatrol.target_pos = randomPosition(this.p)
                 this.cache.doPatrol.isPatrolling = true;
+               
                 this.doMoveTo(this.cache.doPatrol.target_pos,1).then(()=>{
-                    this.cache.doPatrol.isPatrolling = false;
+                    this.cache.doPatrol.timeout = setTimeout(()=>{
+                        this.cache.doPatrol.isPatrolling = false;
+                    },1000)
                 })
             }
         }else{
@@ -348,8 +348,10 @@ class Alien extends Flyer{
             this.cache.doPatrol.last_pos = this.p.copy();
             this.cache.doPatrol.target_pos = randomPosition(this.p)
             this.cache.doPatrol.isPatrolling = true;
-            this.doMoveTo(this.cache.doPatrol.target_pos).then(()=>{
-                this.cache.doPatrol.isPatrolling = false;
+            this.doMoveTo(this.cache.doPatrol.target_pos,1).then(()=>{
+                this.cache.doPatrol.timeout = setTimeout(()=>{
+                    this.cache.doPatrol.isPatrolling = false;
+                },1000)
             })
             return new Promise(resolve=>{
                 resolve()
@@ -357,7 +359,15 @@ class Alien extends Flyer{
         }
     }
     stopPatrol(){
-        console.log('stopPatrol isnt implemented yet')
+        if(!this.isDoingPatrol) return;
+        this.isDoingPatrol = false;
+        if(this.isDoingMoveTo){
+            this.stopMoveTo();
+            this.v.clear()
+            this.a.clear()
+        }
+        clearTimeout(this.cache.doPatrol.timeout);
+        delete this.cache.doPatrol
     }
 
     changeBehaviour(behaviour){
@@ -368,6 +378,7 @@ class Alien extends Flyer{
         behaviour = behaviour[0].toUpperCase() + behaviour.slice(1); //makes sure its in sentence case for the subroutines
         let old_behaviour = this.behaviour;
         this.behaviour = behaviour;
+        console.log(behaviour)
         this['stop' + old_behaviour]();
         return new Promise(resolve=>{
             this['do' + this.behaviour]().then(x=>{
