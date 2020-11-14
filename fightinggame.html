@@ -337,6 +337,7 @@
             let monster_sprite = new Img(IMAGE_PATH + monster.name + ".png", 0, 0, 400).fromCenter().usingNewTransform()
                 .onLoad(() => {
                     monster.addSprite(monster_sprite);
+                    monster_sprite.zIndex = 5000
                     monster.projectileOffsetHeight = 1;
                     monster.addDeathImage(LOADED_IMAGES['fire'].cloneNode());
                     let shield_name = 'shield_' + getRandom(valid_colors)
@@ -464,6 +465,7 @@
                     .usingNewTransform().onLoad(() => {
                         monsterHP.circle.remove()
                         monsterHP.remove();
+                        sprite.zIndex = 5000;
                         createHPBar(sprite.shape, false);
                         monster = new Character(width - 100, -1000, monster_char.name);
                         LOADED_IMAGES.add(monster_char.power + '_projectile');
