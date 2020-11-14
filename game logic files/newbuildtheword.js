@@ -1,22 +1,82 @@
 // ghosts chase the letters
 // specific colurs have specific behaviours
 
-let behaviours = ['chase', 'predict', 'taunt', 'scare', 'block', 'circle', 'idle', 'patrol']
+let behaviours = ['chase', 'predict', 'taunt', 'scare', 'idle', 'patrol', 'random']
 
 //chase is default from other game
 //predict will go to where the velocity vector is pointing
 //taunt will follow nearby but never touch
 //scare will run really fast into the letter but stop most of the time
-//block will go in front of the letter, and just move back and forth, never touch 
-//circle will circle around the letter
+//block will go in front of the letter, and just move back and forth, never touch TODO
+//circle will circle around the letter TODO
 //idle is just hover
 //patrol is to fly around the other letters <-- used as default?
+//random is fly to random locations
 
 //maybe start with a bomb? can kill the ghosts before they start chasing.
 //they will show a thinking pattern 
 
 difficulty = 3;
 let NUM_OF_BOMBS = (3 - difficulty) < 0 ? 0 : (3 - difficulty); //can be adjusted
+
+let valid_colors = ['blue','green','orange','pink','purple','red','yellow','rainbow','space','evil'];
+
+let alien_config = {
+    blue: {
+        num: 3,
+        behaviour: 'patrol',
+        difficulty: 1
+    },
+    green: {
+        num:3,
+        behaviour: 'scare',
+        difficulty: 2
+    },
+    orange:{
+        num:3,
+        behaviour: 'taunt',
+        difficulty: 2
+    },
+    pink:{
+        num:3,
+        behaviour: 'chase',
+        difficulty: 1
+    },
+    purple:{
+        num:3,
+        behaviour: 'chase',
+        difficulty: 2
+    },
+    red:{
+        num:3,
+        behaviour: 'random',
+        difficulty: 3
+    },
+    yellow:{
+        num:3,
+        behaviour: 'taunt',
+        difficulty: 2
+    },
+    rainbow:{
+        num:3,
+        behaviour: 'taunt',
+        difficulty: 3
+    },
+    space:{
+        num:3,
+        behaviour: 'predict',
+        difficulty: 4
+    },
+    evil:{
+        num:3,
+        behaviour: 'chase',
+        difficulty: 5,
+    },
+}
+
+
+
+
 let THINGS_ARE_DRAGGABLE = false;
 let chosen_word = getRandom(words)
 let letters = []
@@ -243,7 +303,7 @@ class Alien extends Flyer {
     constructor(x, y, name) {
         super(x, y, name);
         this.behaviour = 'Idle';
-        this.subroutines = this.subroutines.concat(['Chase', 'Predict', 'Taunt', 'Scare', 'Block', 'Circle', 'Idle', 'Patrol']);
+        this.subroutines = this.subroutines.concat(['Chase', 'Predict', 'Taunt', 'Scare', 'Block', 'Circle', 'Idle', 'Patrol', 'Random']);
         this.isDoingChase = false;
         this.isDoingPredict = false;
         this.isDoingTaunt = false;
@@ -252,38 +312,33 @@ class Alien extends Flyer {
         this.isDoingCircle = false;
         this.isDoingIdle = false;
         this.isDoingPatrol = false;
+        this.isDoingRandom = false;
 
         this.targetLetter = {}
     }
     setTarget(target) {
-        if (!checkObj(target)) {
-            console.error(target, 'is not a valid object')
-        }
+        console.assert(checkObj(target), target + 'is not a valid object');
         this.targetLetter = target
     }
     doChase() {
-        if (!this.isDoingChase) {
-            //set target and create cache
+        if (this.isDoingChase) {
+            if(checkObj(this.targetLetter)) this.steerTo(new Vector(this.targetLetter))
+        } else {
             return new Promise(resolve => {
                 this.isDoingChase = true;
                 resolve()
             })
-        } else {
-            if(checkObj(this.targetLetter)) this.steerTo(new Vector(this.targetLetter)) //TODO
         }
     }
     stopChase() {
-        if(!this.isDoingChase) return;
-        this.isDoingChase = false;
-        this.a.clear();
+        if(this.isDoingChase){
+            this.isDoingChase = false;
+            this.v.clear();
+        } 
+        return;
     }
     doPredict() {
-        if(!this.isDoingPredict){
-            return new Promise(resolve=>{
-                this.isDoingPredict = true;              
-                resolve();
-            })
-        }else{
+        if(this.isDoingPredict){
             let letter = this.targetLetter
             if(checkObj(letter)){
                 let last_move = checkObj(letter.last_move)? letter.last_move.copy() : new Vector(0,5) 
@@ -292,22 +347,91 @@ class Alien extends Flyer {
                 this.MAX_F = last_move.mag/40 //trial and error's numbers. maybe better way to figure this out
                 this.pathTo(targetV);
             }
+        }else{
+            return new Promise(resolve=>{
+                this.isDoingPredict = true;              
+                resolve();
+            })
         }
     }
     stopPredict() {
-        console.log('stopPredict isnt implemented yet')
+        if(this.isDoingPredict){
+            this.isDoingPredict = false;
+            this.MAX_V = this._DEFAULT_MAX_V;
+            this.MAX_F = this._DEFAULT_MAX_F;
+            this.v.clear();
+        } 
+        return;
     }
     doTaunt() {
-        console.log('doTaunt isnt implemented yet')
+        if(this.isDoingTaunt){
+            let letter = this.targetLetter
+            if(checkObj(letter)){
+                let last_move = checkObj(letter.last_move)? letter.last_move.copy() : new Vector(0,5) 
+                let targetV = letter.p.copy().add(last_move.mult(20))
+                this.MAX_V = last_move.mag/3
+                this.MAX_F = last_move.mag/30 //trial and error's numbers. maybe better way to figure this out
+                this.pathTo(targetV);
+            }
+        }else{
+            return new Promise(resolve=>{
+                this.isDoingTaunt = true;              
+                resolve();
+            })
+        }
     }
     stopTaunt() {
-        console.log('stopTaunt isnt implemented yet')
+        if(this.isDoingTaunt){
+            this.isDoingTaunt = false;
+            this.MAX_V = this._DEFAULT_MAX_V;
+            this.MAX_F = this._DEFAULT_MAX_F;
+            this.v.clear();
+        } 
+        return;
     }
     doScare() {
-        console.log('doScare isnt implemented yet')
+        if(this.isDoingScare){
+            let letter = this.targetLetter;
+            if(letter.p.copy().sub(this.p).mag > 50 && !this.cache.doScare.running){
+                let targetV = checkObj(letter)? letter.p.copy() : new Vector(width/2,height/2) 
+                this.pathTo(targetV);
+            }else if(!this.cache.doScare.running){
+                this.MAX_V = 100
+                let backwards = letter.p.copy().sub(this.p)
+                backwards.set(this.MAX_F).mult(-1)
+                this.v.clear()
+                this.forces.push(backwards);
+                this.cache.doScare.running  = true;
+            }else if(!this.cache.doScare.resetting){
+                if(letter.p.copy().sub(this.p).mag > width/2){
+                    this.cache.doScare.resetting = true;
+                    this.cache.doScare.timeout = setTimeout(()=>{
+                        this.MAX_V = 30
+                        this.cache.doScare.resetting = false;
+                        this.cache.doScare.running  = false;
+                    },getRandom(2000,3000))
+                }
+            }
+        }else{
+            return new Promise(resolve=>{
+                this.MAX_V = 30
+                this.cache.doScare = {}
+                this.isDoingScare = true;
+                resolve()
+            })
+        }
     }
     stopScare() {
-        console.log('stopScare isnt implemented yet')
+        if(this.isDoingScare){
+            clearTimeout(this.cache.doScare.timeout);
+            delete this.cache.doScare;
+            this.MAX_V = this._DEFAULT_MAX_V;
+            this.MAX_F = this._DEFAULT_MAX_F;
+            this.isDoingScare = false;
+            this.v.clear()
+            this.a.clear();
+        }
+        return;
     }
     doBlock() {
         console.log('doBlock isnt implemented yet')
@@ -321,6 +445,35 @@ class Alien extends Flyer {
     stopCircle() {
         console.log('stopCircle isnt implemented yet')
     }
+    doRandom() {
+        if(this.isDoingRandom){
+            if(!this.cache.doRandom.isFlying){
+                let dir = Vector.random().set(this.MAX_F)
+                this.forces.push(dir);
+                this.cache.doRandom.isFlying = true;
+                this.cache.doRandom.timeout = setTimeout(()=>{
+                    this.v.clear()
+                    this.cache.doRandom.isFlying = false;
+                },getRandom(500,1500))
+            }
+        }else{
+            return new Promise(resolve=>{
+                this.isDoingRandom = true;
+                this.cache.doRandom = {}
+                this.cache.doRandom.isFlying = false
+                resolve()
+            })
+        }
+
+    }
+    stopRandom(){
+        if(this.isDoingRandom){
+            clearTimeout(this.cache.doRandom.timeout)
+            this.v.clear()
+            this.isDoingRandom = false;
+            delete this.cache.doRandom
+        }
+    }
     doIdle() {
         if (this.isDoingIdle) {
 
@@ -333,11 +486,13 @@ class Alien extends Flyer {
         }
     }
     stopIdle() {
-        if (!this.isDoingIdle) return;
-        this.isDoingIdle = false;
-        this.stopHover();
-        this.v.clear();
-        this.a.clear();
+        if (this.isDoingIdle){
+            this.isDoingIdle = false;
+            this.stopHover();
+            this.v.clear();
+            this.a.clear();
+        } 
+        return;
     }
     doPatrol() {
         function randomPosition(pos) {
@@ -400,15 +555,17 @@ class Alien extends Flyer {
         }
     }
     stopPatrol() {
-        if (!this.isDoingPatrol) return;
-        this.isDoingPatrol = false;
-        if (this.isDoingMoveTo) {
-            this.stopMoveTo();
-            this.v.clear()
-            this.a.clear()
-        }
-        clearTimeout(this.cache.doPatrol.timeout);
-        delete this.cache.doPatrol
+        if (this.isDoingPatrol){
+            this.isDoingPatrol = false;
+            if (this.isDoingMoveTo) {
+                this.stopMoveTo();
+                this.v.clear()
+                this.a.clear()
+            }
+            clearTimeout(this.cache.doPatrol.timeout);
+            delete this.cache.doPatrol
+        } 
+        return;
     }
 
     changeBehaviour(behaviour) {
@@ -461,4 +618,4 @@ setup().then(() => {
 
 
 alien.setTarget(letterDivs[2])
-alien.changeBehaviour('predict')
+alien.changeBehaviour('random')
