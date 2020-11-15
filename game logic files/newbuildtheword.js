@@ -92,7 +92,7 @@ function setup() {
 
 
     //pick a random word, and show a transparent figure of it in the final spot. but have extra letters?
-    actual_letters = chosen_word.split('')
+    actual_letters = chosen_word.split('').filter(x=>x!=' ')
     letters = Array.from(actual_letters)
     for (let i = 0; i < difficulty; i++) {
         letters.push(getRandom(alphabet.split('')))
