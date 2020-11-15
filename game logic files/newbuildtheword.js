@@ -493,6 +493,8 @@ class Alien extends Flyer {
         if(this.isDoingRandom){
             if(!this.cache.doRandom.isFlying){
                 let dir = Vector.random().set(this.MAX_F)
+                if(dir.x>=0) this.faceRight();
+                if(dir.x<0) this.faceLeft();
                 this.forces.push(dir);
                 this.cache.doRandom.isFlying = true;
                 this.cache.doRandom.timeout = setTimeout(()=>{
@@ -573,7 +575,8 @@ class Alien extends Flyer {
                 this.cache.doPatrol.last_pos = this.p.copy();
                 this.cache.doPatrol.target_pos = randomPosition(this.p)
                 this.cache.doPatrol.isPatrolling = true;
-
+                if((this.cache.doPatrol.target_pos.x  - this.p.x)>=0) this.faceRight()
+                if((this.cache.doPatrol.target_pos.x  - this.p.x)<0) this.faceLeft()
                 this.doMoveTo(this.cache.doPatrol.target_pos, 1).then(() => {
                     this.cache.doPatrol.timeout = setTimeout(() => {
                         this.cache.doPatrol.isPatrolling = false;
