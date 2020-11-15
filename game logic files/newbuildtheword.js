@@ -1,3 +1,4 @@
+IMAGE_PATH = '../images/'; //just in case needs to be moved
 // ghosts chase the letters
 // specific colurs have specific behaviours
 
@@ -85,12 +86,7 @@ let lines = []
 let aliens = []
 let letterDivs = [];
 
-function setup() {
-    //perhaps get new background images
-    document.body.style.backgroundColor = 'black'
-
-
-
+function setupLetters() {
     //pick a random word, and show a transparent figure of it in the final spot. but have extra letters?
     actual_letters = chosen_word.split('').filter(x=>x!=' ')
     letters = Array.from(actual_letters)
@@ -128,7 +124,7 @@ function setup() {
     async function createDecoyLetters() {
         return new Promise(resolve => {
             for (let i = 0; i < (letters.length - actual_letters.length); i++) {
-                let pChar = new Character(getRandom(50, width - 50), getRandom(50, height / 2), letters[decoy_index + i]);
+                let pChar = new Character(getRandom(50, width - 50), getRandom(150, height / 2), letters[decoy_index + i]);
                 let p = new P(letters[decoy_index + i], 0, 0).fromCenter();
                 p.size = '4em';
                 pChar.addSprite(p)
@@ -193,12 +189,12 @@ function setup() {
 function createAlien(color){
     color = color || getRandom(valid_colors);
     let config = alien_config[color];
-    let alien = new Alien(100, 100, 'alien_' + color + '_' + config.behaviour);
+    let alien = new Alien(getRandom(100, width-100), 100, 'alien_' + color + '_' + config.behaviour);
     let alien_sprite = new Img('../images/ghosts/'+ color + getRandom(config.num) + '.png', 0, 0, 50).onLoad(x => {
         alien.addSprite(alien_sprite);
     });
     alien.setTarget(letterDivs[0])
-    alien.changeBehaviour('random');
+    alien.changeBehaviour('idle');
     alien.defaultBehaviour = config.behaviour;
     alien._DEFAULT_MAX_F = 6*config.difficulty;
     alien._DEFAULT_MAX_V = 8*config.difficulty;
@@ -207,10 +203,69 @@ function createAlien(color){
     aliens.push(alien);
 }
 
+
+let selected_aliens = [];
 function releaseAliens() {
-    for(let i = 0; i<5; i++){
-        createAlien()
-    }
+    selected_aliens.forEach(color=>{
+        createAlien(color);
+    })
+}
+
+let total_difficulty = 0;
+function setupAliens(){
+    let SPRITE_WIDTH = 45;
+    let PADDING = 10;
+    let TOTAL_WIDTH = (SPRITE_WIDTH + PADDING)* valid_colors.length
+    let LEFT = width/2 - TOTAL_WIDTH*0.5;
+    let TOP = height/2;
+    let variety = getRandom(Object.values(valid_colors).map(color=>alien_config[color].num).reduce((a,b)=>Math.min(a,b))) //finds the smallest number of options in the config and chooses a random number at max of the value-1
+    let imgs = []
+    let okBtn = new Rectangle(LEFT + TOTAL_WIDTH/2 - SPRITE_WIDTH/2,TOP + 75, 100,50).fromCenter();
+    let difficultyCounter = new P(0, width/2, 50).fromCenter()
+    difficultyCounter.size = '4em';
+    requestAnimationFrame(()=>{
+        difficultyCounter.x = width/2 - difficultyCounter.width/2;
+        difficultyCounter.y = 50
+    })
+    valid_colors.forEach((color,i)=>{
+        let img = new Img(IMAGE_PATH+ 'ghosts/' + color + variety + '.png', LEFT + (SPRITE_WIDTH+PADDING)*i, TOP,45).fromCenter().onLoad(()=>{
+            okBtn.y =  TOP + imgs[0].height*1.6;
+        });
+        img.config = alien_config[color];
+        img.shape.addEventListener('click',()=>{
+            total_difficulty += img.config.difficulty;
+            difficultyCounter.string = total_difficulty
+            if(total_difficulty<=10) difficultyCounter.color = 'limegreen'
+            if(total_difficulty>10 && total_difficulty<=20) difficultyCounter.color = 'yellow'
+            if(total_difficulty>20) difficultyCounter.color = 'red'
+            console.log(img.config.difficulty, total_difficulty);
+            selected_aliens.push(color)
+        });
+        imgs.push(img)
+    })
+    okBtn.color = 'limegreen';
+    let ok = new P('ok',35,10)
+    ok.size = '2em'
+    okBtn.attach(ok)
+    okBtn.set('borderRadius',15)
+    
+    return new Promise(resolve=>{
+        okBtn.shape.addEventListener('click',()=>{
+            okBtn.remove();
+            imgs.forEach(img=>{
+                img.remove()
+            })
+            difficultyCounter.remove();
+            resolve()
+        })
+    })
+}
+function setupBackground(){
+    return new Promise(resolve=>{
+        //perhaps get new background images
+         document.body.style.backgroundColor = 'black';
+        resolve()
+    })
 }
 
 //=============== DRAGGING FUNCTIONS ================
@@ -660,10 +715,15 @@ function loop() {
 }
 MAINLOOP = setInterval(loop, 1000 / FPS)
 
-
-setup().then(() => {
-    previouslyTouchedLetter = letterDivs[0]
-    releaseAliens()
+setupBackground().then(()=>{
+    setupAliens().then(()=>{
+        setupLetters().then(() => {
+            previouslyTouchedLetter = letterDivs[0]
+            releaseAliens()
+        })
+    })
 })
+
+
 
 
