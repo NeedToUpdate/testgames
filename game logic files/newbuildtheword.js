@@ -40,12 +40,12 @@ let alien_config = {
     pink:{
         num:3,
         behaviour: 'chase',
-        difficulty: 1
+        difficulty: 2
     },
     purple:{
         num:3,
         behaviour: 'chase',
-        difficulty: 2
+        difficulty: 3
     },
     red:{
         num:3,
@@ -129,7 +129,7 @@ function setup() {
         return new Promise(resolve => {
             for (let i = 0; i < (letters.length - actual_letters.length); i++) {
                 let pChar = new Character(getRandom(50, width - 50), getRandom(50, height / 2), letters[decoy_index + i]);
-                let p = new P(letters[decoy_index + i], 0, 0);
+                let p = new P(letters[decoy_index + i], 0, 0).fromCenter();
                 p.size = '4em';
                 pChar.addSprite(p)
                 pChar.y -= p.height;
@@ -165,9 +165,10 @@ function setup() {
 
                                 setTimeout(() => {
                                     letter.sprite.set('transition', '') //need to set it back or else dragging doesnt work
+                                    resolve();
                                 }, 2100);
 
-                                resolve();
+                                
                             }, 300)
                         })
                     }))
@@ -189,8 +190,27 @@ function setup() {
 
 }
 
-function releaseAliens() {
+function createAlien(color){
+    color = color || getRandom(valid_colors);
+    let config = alien_config[color];
+    let alien = new Alien(100, 100, 'alien_' + color + '_' + config.behaviour);
+    let alien_sprite = new Img('../images/ghosts/'+ color + getRandom(config.num) + '.png', 0, 0, 50).onLoad(x => {
+        alien.addSprite(alien_sprite);
+    });
+    alien.setTarget(letterDivs[0])
+    alien.changeBehaviour('random');
+    alien.defaultBehaviour = config.behaviour;
+    alien._DEFAULT_MAX_F = 6*config.difficulty;
+    alien._DEFAULT_MAX_V = 8*config.difficulty;
+    alien.MAX_F = alien._DEFAULT_MAX_F
+    alien.MAX_V = alien._DEFAULT_MAX_V
+    aliens.push(alien);
+}
 
+function releaseAliens() {
+    for(let i = 0; i<5; i++){
+        createAlien()
+    }
 }
 
 //=============== DRAGGING FUNCTIONS ================
@@ -226,6 +246,11 @@ function pickup(letter, ev) {
         letter.y = newY;
         letter.x = newX;
         letter.isDragging = true;
+        aliens.forEach(a=>{
+            a.setTarget(letter);
+            a.changeBehaviour(a.defaultBehaviour);
+        })
+        previouslyTouchedLetter = letter
     }
 }
 
@@ -233,6 +258,11 @@ function drop(letter) {
     if (!letter.isLocked) {
         letter.sprite.color = 'white';
         letter.isDragging = false;
+        aliens.forEach(a=>{
+            if(!['patrol','random','scare','idle'].includes(a.defaultBehaviour.toLowerCase())){
+                a.changeBehaviour(getRandom(['random','patrol','idle']))
+            }
+        })
     }
 }
 
@@ -240,6 +270,18 @@ function dropAll() {
     letterDivs.forEach(x => {
         drop(x)
     })
+}
+
+function resetLetter(letter){
+    drop(letter)
+    letter.isResetting = true;
+    letter.sprite.color = 'red';
+    letter.x = getRandom(50,width-50);
+    letter.y = getRandom(50,height-50);
+    setTimeout(()=>{
+        letter.color = 'white';
+        letter.isResetting = false;
+    },500)
 }
 
 let dragging_offset = new Vector(0, 0);
@@ -315,9 +357,11 @@ class Alien extends Flyer {
         this.isDoingRandom = false;
 
         this.targetLetter = {}
+
+        this.defaultBehaviour = 'random'
     }
     setTarget(target) {
-        console.assert(checkObj(target), target + 'is not a valid object');
+        console.assert(checkObj(target), target + ' is not a valid object');
         this.targetLetter = target
     }
     doChase() {
@@ -589,12 +633,7 @@ class Alien extends Flyer {
 
 }
 
-let alien = new Alien(100, 100, 'test_alien');
-let alien_sprite = new Img('../images/invaders/invaderpurple.png', 0, 0, 50).onLoad(x => {
-    alien.addSprite(alien_sprite);
-});
-aliens.push(alien);
-
+let previouslyTouchedLetter = {}
 function loop() {
     letterDivs.forEach(x => {
         if (THINGS_ARE_DRAGGABLE) {
@@ -604,18 +643,24 @@ function loop() {
         }
         x.update()
     })
-    aliens.forEach(x => {
-        x.update()
+    aliens.forEach(a => {
+        if(!(previouslyTouchedLetter.isResetting || previouslyTouchedLetter.isLocked)){
+            xDiff = Math.abs(previouslyTouchedLetter.p.x - a.x);
+            yDiff = Math.abs(previouslyTouchedLetter.p.y - a.y);
+            if(xDiff<previouslyTouchedLetter.width/2 && yDiff<previouslyTouchedLetter.height/2){
+                resetLetter(previouslyTouchedLetter);
+            }
+        }
+        a.update()
     })
-
+   
 }
 MAINLOOP = setInterval(loop, 1000 / FPS)
 
 
 setup().then(() => {
+    previouslyTouchedLetter = letterDivs[0]
     releaseAliens()
 })
 
 
-alien.setTarget(letterDivs[2])
-alien.changeBehaviour('random')
