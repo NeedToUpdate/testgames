@@ -190,7 +190,7 @@ function createAlien(color){
     color = color || getRandom(valid_colors);
     let config = alien_config[color];
     let alien = new Alien(getRandom(100, width-100), 100, 'alien_' + color + '_' + config.behaviour);
-    let alien_sprite = new Img('../images/ghosts/'+ color + getRandom(config.num) + '.png', 0, 0, 50).onLoad(x => {
+    let alien_sprite = new Img('../images/ghosts/'+ color + getRandom(config.num) + '.png', 0, 0, 50).fromCenter().onLoad(x => {
         alien.addSprite(alien_sprite);
     });
     alien.setTarget(letterDivs[0])
@@ -239,7 +239,7 @@ function setupAliens(){
             if(total_difficulty>10 && total_difficulty<=20) difficultyCounter.color = 'yellow'
             if(total_difficulty>20) difficultyCounter.color = 'red'
             console.log(img.config.difficulty, total_difficulty);
-            selected_aliens.push(color)
+            addAlien(color,variety)
         });
         imgs.push(img)
     })
@@ -256,6 +256,9 @@ function setupAliens(){
                 img.remove()
             })
             difficultyCounter.remove();
+            preview_divs.forEach(x=>{
+                x.remove()
+            })
             resolve()
         })
     })
@@ -265,6 +268,62 @@ function setupBackground(){
         //perhaps get new background images
          document.body.style.backgroundColor = 'black';
         resolve()
+    })
+}
+function addAlien(color,variety){
+    variety = variety || 0;
+    return new Promise((resolve,reject)=>{
+        if(!valid_colors.includes(color)) return reject();
+        selected_aliens.push(color)
+        previewAliens(selected_aliens,variety).then(()=>{
+            resolve();
+        })
+    })
+}
+function removeAlien(index,variety){
+    variety = variety || 0;
+    return new Promise(resolve=>{
+        selected_aliens.splice(index,1)
+        previewAliens(selected_aliens,variety).then(()=>{
+            resolve();
+        })
+    })
+}
+let preview_divs = [];
+function previewAliens(arrayOfAliens,variety){
+    variety = variety || 0;
+    preview_divs.forEach(x=>{
+        x.remove();
+    })
+    preview_divs = [];
+    let TOP = 50;
+    let LEFT = 50;
+    let PADDING = 5;
+    let SPRITE_WIDTH = 25;
+    let PER_ROW = 5;
+    let TOTAL_WIDTH = arrayOfAliens.length*(SPRITE_WIDTH+PADDING);
+    let promises = [];
+    return new Promise(resolve=>{
+        arrayOfAliens.forEach((color,i)=>{
+            console.assert(valid_colors.includes(color), color + ' is not a valid color');
+            let promise = new Promise(resolve=>{
+                let img = new Img(IMAGE_PATH + '/ghosts/' + color + variety + '.png', LEFT + (PADDING+SPRITE_WIDTH)*(i%PER_ROW), TOP + (SPRITE_WIDTH*2*Math.floor(i/PER_ROW)), SPRITE_WIDTH).onLoad(()=>{
+                    img.shape.addEventListener('click',()=>{
+                        preview_divs.forEach(x=>{
+                            x.remove();
+                        })
+                        preview_divs = [];
+                        removeAlien(i,variety);
+                    })
+                    preview_divs.push(img)
+                    resolve();
+                })
+            })
+            promises.push(promise)
+        })
+        Promise.all(promises).then(()=>{
+            resolve()
+        })
     })
 }
 
