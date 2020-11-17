@@ -109,11 +109,10 @@ function setupLetters() {
     let decoy_index = 0;
     actual_letters.forEach((letter, i) => {
         let pChar = new Character(lines[i].x + line_len / 2, line_height, letter);
-        let p = new P(letter, 0, 0);
+        let p = new P(letter, 0, 0).fromCenter();
         p.size = '4em'
         pChar.addSprite(p)
-        pChar.y -= p.height;
-        pChar.x -= p.width / 2;
+        pChar.y -= p.height/2
         pChar.hasNoBounds = true;
         p.color = 'rgba(255,255,255,0.5)'
         letterDivs.push(pChar)
@@ -142,7 +141,7 @@ function setupLetters() {
             let promises = []
             letterDivs.forEach((letter, i) => {
 
-                letter.sprite.shape.addEventListener('click', ev => {
+                letter.sprite.shape.addEventListener('mousedown', ev => {
                     pickup(letter, ev)
                 });
 
@@ -212,43 +211,98 @@ function releaseAliens() {
 }
 
 let total_difficulty = 0;
+let max_difficulty = 10;
+let difficultyCounter = {};
+let difficultyText = {};
 function setupAliens(){
     let SPRITE_WIDTH = 45;
     let PADDING = 10;
     let TOTAL_WIDTH = (SPRITE_WIDTH + PADDING)* valid_colors.length
     let LEFT = width/2 - TOTAL_WIDTH*0.5;
-    let TOP = height/2;
+    let TOP = height/1.5;
     let variety = getRandom(Object.values(valid_colors).map(color=>alien_config[color].num).reduce((a,b)=>Math.min(a,b))) //finds the smallest number of options in the config and chooses a random number at max of the value-1
     let imgs = []
-    let okBtn = new Rectangle(LEFT + TOTAL_WIDTH/2 - SPRITE_WIDTH/2,TOP + 75, 100,50).fromCenter();
-    let difficultyCounter = new P(0, width/2, 50).fromCenter()
-    difficultyCounter.size = '4em';
+    let okBtn = new Rectangle(25,25, 40,40).fromCenter();
+    difficultyCounter = new LoadingBar(width/2,55, width/2,50,0,max_difficulty,total_difficulty).fromCenter();
+    difficultyText = new P('Difficulty: ' + total_difficulty,0,0).fromCenter()
+    let maxDifficultyText = new P('Max: ' + max_difficulty,0,0).fromCenter()
+    difficultyText.size = '2em';
+    maxDifficultyText.size = '2em';
+    let slider = document.createElement('input')
+    slider.setAttribute('type','range');
+    document.body.appendChild(slider)
+    slider.style.position = 'absolute';
+    slider.setAttribute('min','0')
+    slider.setAttribute('max','40')
+    slider.setAttribute('value',max_difficulty)
+    slider.addEventListener('input',()=>{
+        let val = slider.value;
+        if(total_difficulty<=val){
+            max_difficulty = val
+            difficultyCounter.stopVal = max_difficulty;
+            difficultyCounter.value = total_difficulty;
+            maxDifficultyText.string = 'Max: ' + max_difficulty;    
+        }else{
+            slider.value = total_difficulty;
+        }
+        })
     requestAnimationFrame(()=>{
-        difficultyCounter.x = width/2 - difficultyCounter.width/2;
-        difficultyCounter.y = 50
+        difficultyText.x = width/2 - difficultyText.width
+        difficultyText.y = 105;
+        maxDifficultyText.x = width/2 + difficultyText.width
+        maxDifficultyText.y = 105;
+        slider.style.left = maxDifficultyText.x - maxDifficultyText.width/2
+        slider.style.top = 105 + maxDifficultyText.height/2
+        slider.style.width = maxDifficultyText.width
     })
+    difficultyCounter.type = 'range';
+    difficultyCounter.setBar('backgroundColor', 'limegreen') 
+    difficultyCounter.set('border','white solid 3px')
+    difficultyCounter.on('10',()=>{
+        difficultyCounter.setBar('backgroundColor', 'yellow') 
+    })
+    difficultyCounter.on('20',()=>{
+        difficultyCounter.setBar('backgroundColor', 'orange') 
+    })
+    difficultyCounter.on('30',()=>{
+        difficultyCounter.setBar('backgroundColor', 'red') 
+    })
+    difficultyCounter.set('transition','0.2s');
+    difficultyCounter.setBar('transition','0.4s')
+    difficultyCounter.set('borderRadius','20px')
+    difficultyCounter.setBar('borderRadius','20px')
     valid_colors.forEach((color,i)=>{
         let img = new Img(IMAGE_PATH+ 'ghosts/' + color + variety + '.png', LEFT + (SPRITE_WIDTH+PADDING)*i, TOP,45).fromCenter().onLoad(()=>{
-            okBtn.y =  TOP + imgs[0].height*1.6;
+            let p = new P(alien_config[color].difficulty,img.x-3,img.y+img.height/2,'1em')
+            imgs.push(p)
         });
         img.config = alien_config[color];
         img.shape.addEventListener('click',()=>{
-            total_difficulty += img.config.difficulty;
-            difficultyCounter.string = total_difficulty
-            if(total_difficulty<=10) difficultyCounter.color = 'limegreen'
-            if(total_difficulty>10 && total_difficulty<=20) difficultyCounter.color = 'yellow'
-            if(total_difficulty>20) difficultyCounter.color = 'red'
-            console.log(img.config.difficulty, total_difficulty);
-            addAlien(color,variety)
+            if(total_difficulty+img.config.difficulty <= max_difficulty){
+                total_difficulty += img.config.difficulty;
+                difficultyCounter.value = total_difficulty
+                difficultyText.string = 'Difficulty: ' + total_difficulty;
+                console.log(img.config.difficulty, total_difficulty);
+                addAlien(color,variety)
+            }else{
+                difficultyCounter.set('border','red solid 3px')
+                setTimeout(()=>{
+                    difficultyCounter.set('border','white solid 3px')
+                },500)
+            }
         });
         imgs.push(img)
     })
     okBtn.color = 'limegreen';
-    let ok = new P('ok',35,10)
+    let ok = new P('✓',8,0)
     ok.size = '2em'
     okBtn.attach(ok)
-    okBtn.set('borderRadius',15)
-    
+    okBtn.set('borderRadius','50%')
+    okBtn.set('border', 'green solid 4px')
+    let easyText = new P('← Easy',width/2- 180,height-50,'2em').fromCenter()
+    let hardText = new P('Hard →',width/2 + 120,height-50,'2em').fromCenter()
+    easyText.color = 'green'
+    hardText.color = 'orange'
     return new Promise(resolve=>{
         okBtn.shape.addEventListener('click',()=>{
             okBtn.remove();
@@ -259,6 +313,11 @@ function setupAliens(){
             preview_divs.forEach(x=>{
                 x.remove()
             })
+            difficultyText.remove()
+            maxDifficultyText.remove()
+            easyText.remove()
+            hardText.remove()
+            document.body.removeChild(slider)
             resolve()
         })
     })
@@ -283,7 +342,21 @@ function addAlien(color,variety){
 function removeAlien(index,variety){
     variety = variety || 0;
     return new Promise(resolve=>{
-        selected_aliens.splice(index,1)
+        let color = selected_aliens.splice(index,1)
+        total_difficulty-= alien_config[color].difficulty;
+        if(checkObj(difficultyCounter)){
+            difficultyCounter.value = total_difficulty;
+            if(total_difficulty>30){
+                difficultyCounter.setBar('backgroundColor','red')
+            }else if(total_difficulty>20){
+                difficultyCounter.setBar('backgroundColor','orange')
+            }else if(total_difficulty>10){
+                difficultyCounter.setBar('backgroundColor','yellow')
+            }else{
+                difficultyCounter.setBar('backgroundColor','limegreen')
+            }
+            if(checkObj(difficultyText)) difficultyText.string = 'Difficulty: ' + total_difficulty;
+        }
         previewAliens(selected_aliens,variety).then(()=>{
             resolve();
         })
@@ -334,8 +407,8 @@ function drag(ev) {
     letterDivs.forEach(letter => {
         if (letter.isDragging) {
             let old_p = letter.p.copy();
-            let newY = (ev.clientY - letter.height / 2);
-            let newX = (ev.clientX - letter.width / 2);
+            let newY = (ev.clientY);
+            let newX = (ev.clientX);
             if (newY > (height - letter.height)) newY = height - letter.height;
             if (newY < 0) newY = 0;
             if (newX > (width - letter.width)) newX = width - letter.width;
@@ -351,8 +424,8 @@ function drag(ev) {
 function pickup(letter, ev) {
     if (!letter.isLocked && !letter.isResetting) {
         letter.sprite.color = 'blue';
-        let newY = (ev.clientY - letter.height / 2);
-        let newX = (ev.clientX - letter.width / 2);
+        let newY = (ev.clientY );
+        let newX = (ev.clientX );
         if (newY > height) newY = height;
         if (newY < 0) newY = 0;
         if (newX > width) newX = width;
@@ -400,6 +473,7 @@ function resetLetter(letter){
 
 let dragging_offset = new Vector(0, 0);
 
+
 document.addEventListener('mouseup', dropAll);
 document.addEventListener('touchend', dropAll);
 document.addEventListener('mousemove', drag);
@@ -434,8 +508,8 @@ function checkLetter(letter) {
                 y: lines[index].y
             };
             let pos = {
-                x: letter.x + letter.width / 2,
-                y: letter.y + letter.height / 2
+                x: letter.x,
+                y: letter.y
             };
             if (Math.abs(line.x - pos.x) < buffer && line.y - pos.y < y_buffer) {
                 actual_letters[index] = '#'
@@ -443,8 +517,8 @@ function checkLetter(letter) {
                 letter.isLocked = true;
                 letter.isDragging = false;
                 letter.sprite.color = 'limegreen';
-                letter.x = line.x - letter.width / 2
-                letter.y = line.y - (letter.height)
+                letter.x = line.x 
+                letter.y = line.y - (letter.height/2);
             }
         })
         if (index_to_remove !== null) {
@@ -762,8 +836,8 @@ function loop() {
     })
     aliens.forEach(a => {
         if(!(previouslyTouchedLetter.isResetting || previouslyTouchedLetter.isLocked)){
-            xDiff = Math.abs(previouslyTouchedLetter.p.x - a.x);
-            yDiff = Math.abs(previouslyTouchedLetter.p.y - a.y);
+            xDiff = Math.abs(previouslyTouchedLetter.x - a.x);
+            yDiff = Math.abs(previouslyTouchedLetter.y - a.y);
             if(xDiff<previouslyTouchedLetter.width/2 && yDiff<previouslyTouchedLetter.height/2){
                 resetLetter(previouslyTouchedLetter);
             }
