@@ -1,4 +1,6 @@
-IMAGE_PATH = '../images/'; //just in case needs to be moved
+let IMAGE_PATH = '../images/'; //just in case needs to be moved
+let GHOSTS_IMAGE_PATH = PICTURE_CONFIG.ghosts.path;
+let BACKGROUND_IMAGE_PATH = PICTURE_CONFIG.space_backgrounds.path;
 // ghosts chase the letters
 // specific colurs have specific behaviours
 
@@ -20,8 +22,7 @@ let behaviours = ['chase', 'predict', 'taunt', 'scare', 'idle', 'patrol', 'rando
 difficulty = 3;
 let NUM_OF_BOMBS = (3 - difficulty) < 0 ? 0 : (3 - difficulty); //can be adjusted
 
-let valid_colors = ['blue','green','orange','pink','purple','red','yellow','rainbow','space','evil'];
-
+let valid_colors = PICTURE_CONFIG.ghosts.valid_names;
 let alien_config = {
     blue: {
         num: 3,
@@ -109,12 +110,12 @@ function setupLetters() {
     let decoy_index = 0;
     actual_letters.forEach((letter, i) => {
         let pChar = new Character(lines[i].x + line_len / 2, line_height, letter);
-        let p = new P(letter, 0, 0).fromCenter();
-        p.size = '4em'
+        let p = new P(letter, 0, 0, '4em').fromCenter();
         pChar.addSprite(p)
         pChar.y -= p.height/2
         pChar.hasNoBounds = true;
-        p.color = 'rgba(255,255,255,0.5)'
+        p.color = 'rgba(255,255,255,0.5)';
+        p.set('textShadow','black 0 0 4px')
         letterDivs.push(pChar)
         decoy_index = i;
     })
@@ -189,7 +190,7 @@ function createAlien(color){
     color = color || getRandom(valid_colors);
     let config = alien_config[color];
     let alien = new Alien(getRandom(100, width-100), 100, 'alien_' + color + '_' + config.behaviour);
-    let alien_sprite = new Img('../images/ghosts/'+ color + getRandom(config.num) + '.png', 0, 0, 50).fromCenter().onLoad(x => {
+    let alien_sprite = new Img(IMAGE_PATH + GHOSTS_IMAGE_PATH + color + getRandom(config.num) + '.png', 0, 0, 50).fromCenter().onLoad(x => {
         alien.addSprite(alien_sprite);
     });
     alien.setTarget(letterDivs[0])
@@ -211,7 +212,7 @@ function releaseAliens() {
 }
 
 let total_difficulty = 0;
-let max_difficulty = 10;
+let max_difficulty = 5;
 let difficultyCounter = {};
 let difficultyText = {};
 function setupAliens(){
@@ -223,7 +224,7 @@ function setupAliens(){
     let variety = getRandom(Object.values(valid_colors).map(color=>alien_config[color].num).reduce((a,b)=>Math.min(a,b))) //finds the smallest number of options in the config and chooses a random number at max of the value-1
     let imgs = []
     let okBtn = new Rectangle(25,25, 40,40).fromCenter();
-    difficultyCounter = new LoadingBar(width/2,55, width/2,50,0,max_difficulty,total_difficulty).fromCenter();
+    difficultyCounter = new LoadingBar(width/2-10,55, width/2,50,0,max_difficulty,total_difficulty).fromCenter();
     difficultyText = new P('Difficulty: ' + total_difficulty,0,0).fromCenter()
     let maxDifficultyText = new P('Max: ' + max_difficulty,0,0).fromCenter()
     difficultyText.size = '2em';
@@ -271,10 +272,15 @@ function setupAliens(){
     difficultyCounter.setBar('transition','0.4s')
     difficultyCounter.set('borderRadius','20px')
     difficultyCounter.setBar('borderRadius','20px')
+    let easyText = new P('← Easy',width/2- 180,height-50,'2em').fromCenter()
+    let hardText = new P('Hard →',width/2 + 120,height-50,'2em').fromCenter()
+    valid_colors = valid_colors.sort((a,b)=>alien_config[a].difficulty>alien_config[b].difficulty)
     valid_colors.forEach((color,i)=>{
         let img = new Img(IMAGE_PATH+ 'ghosts/' + color + variety + '.png', LEFT + (SPRITE_WIDTH+PADDING)*i, TOP,45).fromCenter().onLoad(()=>{
             let p = new P(alien_config[color].difficulty,img.x-3,img.y+img.height/2,'1em')
             imgs.push(p)
+            easyText.y = img.y+ img.height + 15;
+            hardText.y = img.y+ img.height + 15;
         });
         img.config = alien_config[color];
         img.shape.addEventListener('click',()=>{
@@ -299,10 +305,10 @@ function setupAliens(){
     okBtn.attach(ok)
     okBtn.set('borderRadius','50%')
     okBtn.set('border', 'green solid 4px')
-    let easyText = new P('← Easy',width/2- 180,height-50,'2em').fromCenter()
-    let hardText = new P('Hard →',width/2 + 120,height-50,'2em').fromCenter()
-    easyText.color = 'green'
-    hardText.color = 'orange'
+    easyText.color = 'lightgreen';
+    easyText.set('textShadow','black 0 0 4px');
+    hardText.color = 'orange';
+    hardText.set('textShadow','black 0 0 4px');
     return new Promise(resolve=>{
         okBtn.shape.addEventListener('click',()=>{
             okBtn.remove();
@@ -324,8 +330,12 @@ function setupAliens(){
 }
 function setupBackground(){
     return new Promise(resolve=>{
-        //perhaps get new background images
-         document.body.style.backgroundColor = 'black';
+        let background = 'space' + (getRandom(PICTURE_CONFIG.space_backgrounds.num)) + '.jpg';
+        document.body.style.backgroundColor = 'grey';
+        document.body.style.backgroundImage = 'url(' + IMAGE_PATH + BACKGROUND_IMAGE_PATH + background.toString() + ')';
+        document.body.style.backgroundSize = width + 'px auto';
+        document.body.style.backgroundRepeat = 'no-repeat';
+
         resolve()
     })
 }
@@ -380,7 +390,7 @@ function previewAliens(arrayOfAliens,variety){
         arrayOfAliens.forEach((color,i)=>{
             console.assert(valid_colors.includes(color), color + ' is not a valid color');
             let promise = new Promise(resolve=>{
-                let img = new Img(IMAGE_PATH + '/ghosts/' + color + variety + '.png', LEFT + (PADDING+SPRITE_WIDTH)*(i%PER_ROW), TOP + (SPRITE_WIDTH*2*Math.floor(i/PER_ROW)), SPRITE_WIDTH).onLoad(()=>{
+                let img = new Img(IMAGE_PATH + GHOSTS_IMAGE_PATH + color + variety + '.png', LEFT + (PADDING+SPRITE_WIDTH)*(i%PER_ROW), TOP + (SPRITE_WIDTH*2*Math.floor(i/PER_ROW)), SPRITE_WIDTH).onLoad(()=>{
                     img.shape.addEventListener('click',()=>{
                         preview_divs.forEach(x=>{
                             x.remove();
@@ -409,9 +419,9 @@ function drag(ev) {
             let old_p = letter.p.copy();
             let newY = (ev.clientY);
             let newX = (ev.clientX);
-            if (newY > (height - letter.height)) newY = height - letter.height;
+            if (newY > (height)) newY = height;
             if (newY < 0) newY = 0;
-            if (newX > (width - letter.width)) newX = width - letter.width;
+            if (newX > (width)) newX = width;
             if (newX < 0) newX = 0;
             letter.y = newY;
             letter.x = newX;
@@ -519,6 +529,15 @@ function checkLetter(letter) {
                 letter.sprite.color = 'limegreen';
                 letter.x = line.x 
                 letter.y = line.y - (letter.height/2);
+                if(actual_letters.filter(x=>x!=='#').length==0){
+                    aliens.forEach(alien=>{
+                        alien.hasNoBounds = true;
+                        alien.changeBehaviour('idle').then(()=>{
+                            alien.stopIdle();
+                            alien.doMoveTo(new Vector(width/2,-500))
+                        })
+                    })
+                }
             }
         })
         if (index_to_remove !== null) {
