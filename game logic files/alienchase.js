@@ -37,12 +37,12 @@ let alien_config = {
     },
     orange:{
         num:3,
-        behaviour: 'taunt',
+        behaviour: 'random',
         difficulty: 2
     },
     pink:{
         num:3,
-        behaviour: 'random',
+        behaviour: 'taunt',
         difficulty: 2
     },
     purple:{
