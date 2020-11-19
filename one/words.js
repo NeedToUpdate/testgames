@@ -138,7 +138,10 @@
 //let words = ['mother','map','monkey','mouse'];
 //let words = ['star','sun','snail','snake'];
 //let words = ['hamburger','egg','carrot','hot dog','sausage','tomato','noodle','cookie','candy','dumpling','chip','sandwich','kiwifruit','pineapple','watermelon','grape','peach','strawberry'];
-let words = ['bat','pirate','superhero','dinosaur','robot','monkey']
+//let words = ['bat','pirate','superhero','dinosaur','robot','monkey'];
+
+
+let words = ['a','aa','a a','aaa aaa']
 
 let difficulty = 1
 

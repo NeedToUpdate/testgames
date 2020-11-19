@@ -21,7 +21,7 @@ let behaviours = ['chase', 'predict', 'taunt', 'scare', 'idle', 'patrol', 'rando
 
 difficulty = 3;
 let NUM_OF_BOMBS = (3 - difficulty) < 0 ? 0 : (3 - difficulty); //can be adjusted
-let VICTORY = false; //used to stop functions 
+let IS_VICTORY = false; //used to stop functions 
 
 let valid_colors = PICTURE_CONFIG.ghosts.valid_names;
 let alien_config = {
@@ -444,10 +444,12 @@ function pickup(letter, ev) {
         letter.y = newY;
         letter.x = newX;
         letter.isDragging = true;
-        aliens.forEach(a=>{
-            a.setTarget(letter);
-            a.changeBehaviour(a.defaultBehaviour);
-        })
+        if(!IS_VICTORY){
+            aliens.forEach(a=>{
+                a.setTarget(letter);
+                a.changeBehaviour(a.defaultBehaviour);
+            })
+        }
         previouslyTouchedLetter = letter
     }
 }
@@ -456,11 +458,13 @@ function drop(letter) {
     if (!letter.isLocked) {
         letter.sprite.color = 'white';
         letter.isDragging = false;
-        aliens.forEach(a=>{
-            if(!['patrol','random','scare','idle'].includes(a.defaultBehaviour.toLowerCase())){
-                a.changeBehaviour(getRandom(['random','patrol','idle']))
-            }
-        })
+        if(!IS_VICTORY){
+            aliens.forEach(a=>{
+                if(!['patrol','random','scare','idle'].includes(a.defaultBehaviour.toLowerCase())){
+                    a.changeBehaviour(getRandom(['random','patrol','idle']))
+                }
+            })
+        }
     }
 }
 
@@ -499,7 +503,7 @@ document.addEventListener('touchmove', (ev) => {
 
 let speedy_check = {} //will cache the indices here for quicker checks
 
-function checkLetter(letter) {
+function checkLetter(letter) { //TODO maybe refactor this to jsut check the previously touched letter
     if (actual_letters.includes(letter.name)) {
         if (!Object.keys(speedy_check).includes(letter.name)) {
             let indicies = []
@@ -531,12 +535,22 @@ function checkLetter(letter) {
                 letter.x = line.x 
                 letter.y = line.y - (letter.height/2);
                 if(actual_letters.filter(x=>x!=='#').length==0){
-                    IIS_VICTORY = true;
+                    IS_VICTORY = true;
                     aliens.forEach(alien=>{
                         alien.hasNoBounds = true;
                         alien.changeBehaviour('idle').then(()=>{
                             alien.stopIdle();
-                            alien.doMoveTo(new Vector(width/2,-500))
+                            alien.doSpin(720,10);
+                            alien.doMoveTo(new Vector(width/2,-500),1)
+
+                        })
+                        //last letters that arent locked must be the fake ones, so we can delete them;
+                        letterDivs.forEach(letter=>{
+                            if(!letter.isLocked){
+                                letter.hasNoBounds = true;
+                                letter.doSpin(720, 10);
+                                letter.doMoveTo(new Vector(getRandom(2)? -100: width+100, height/2),1)
+                            }
                         })
                     })
                 }
