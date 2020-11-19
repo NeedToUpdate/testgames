@@ -57,13 +57,13 @@ let alien_config = {
     },
     yellow:{
         num:3,
-        behaviour: 'taunt',
+        behaviour: 'predict',
         difficulty: 2
     },
     rainbow:{
         num:3,
         behaviour: 'taunt',
-        difficulty: 3
+        difficulty: 4
     },
     space:{
         num:3,
