@@ -42,7 +42,7 @@ let alien_config = {
     },
     pink:{
         num:3,
-        behaviour: 'chase',
+        behaviour: 'random',
         difficulty: 2
     },
     purple:{
@@ -52,7 +52,7 @@ let alien_config = {
     },
     red:{
         num:3,
-        behaviour: 'random',
+        behaviour: 'predict',
         difficulty: 3
     },
     yellow:{
@@ -68,7 +68,7 @@ let alien_config = {
     space:{
         num:3,
         behaviour: 'predict',
-        difficulty: 4
+        difficulty: 5
     },
     evil:{
         num:3,
@@ -198,9 +198,10 @@ function createAlien(color){
     alien.changeBehaviour('idle');
     alien.defaultBehaviour = config.behaviour;
     alien._DEFAULT_MAX_F = 6*config.difficulty;
-    alien._DEFAULT_MAX_V = 8*config.difficulty;
+    alien._DEFAULT_MAX_V = 10*config.difficulty;
     alien.MAX_F = alien._DEFAULT_MAX_F
     alien.MAX_V = alien._DEFAULT_MAX_V
+    alien.difficulty = config.difficulty
     aliens.push(alien);
 }
 
@@ -427,7 +428,7 @@ function drag(ev) {
             letter.y = newY;
             letter.x = newX;
             letter.old_p = old_p;
-            letter.last_move = old_p.copy().sub(new Vector(newX,newY));
+            letter.last_move = old_p.copy().sub(new Vector(newX,newY)).limit(25);
         }
     });
 }
