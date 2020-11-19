@@ -566,31 +566,39 @@ function checkLetter(letter) { //TODO maybe refactor this to jsut check the prev
 
 
 let previouslyTouchedLetter = {}
-function loop() {
-    letterDivs.forEach(x => {
-        if (THINGS_ARE_DRAGGABLE) {
-            if (x.y > height / 2) {
-                checkLetter(x);
+let PLAYING = false
+function gameloop() {
+    if(PLAYING){
+        letterDivs.forEach(x => {
+            if (THINGS_ARE_DRAGGABLE) {
+                if (x.y > height / 2) {
+                    checkLetter(x);
+                }
             }
-        }
-        x.update()
-    })
-    aliens.forEach(a => {
-        if(!(previouslyTouchedLetter.isResetting || previouslyTouchedLetter.isLocked)){
-            xDiff = Math.abs(previouslyTouchedLetter.x - a.x);
-            yDiff = Math.abs(previouslyTouchedLetter.y - a.y);
-            if(xDiff<previouslyTouchedLetter.width/2 && yDiff<previouslyTouchedLetter.height/2){
-                resetLetter(previouslyTouchedLetter);
+            x.update()
+        })
+        aliens.forEach(a => {
+            if(!(previouslyTouchedLetter.isResetting || previouslyTouchedLetter.isLocked)){
+                xDiff = Math.abs(previouslyTouchedLetter.x - a.x);
+                yDiff = Math.abs(previouslyTouchedLetter.y - a.y);
+                if(xDiff<previouslyTouchedLetter.width/2 && yDiff<previouslyTouchedLetter.height/2){
+                    resetLetter(previouslyTouchedLetter);
+                }
             }
-        }
-        a.update()
-    })
-   
+            a.update()
+        })
+        requestAnimationFrame(()=>{
+            gameloop()
+        })
+    }
+    
 }
-MAINLOOP = setInterval(loop, 1000 / FPS)
 
 setupBackground().then(()=>{
+    PLAYING = true;
+    gameloop()
     setupAliens().then(()=>{
+        
         setupLetters().then(() => {
             previouslyTouchedLetter = letterDivs[0]
             releaseAliens()
