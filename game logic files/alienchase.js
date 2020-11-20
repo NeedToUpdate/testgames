@@ -77,20 +77,24 @@ let alien_config = {
     },
 }
 
-let MAINTESTER = new TestObj(2,0,1);
+let MAINTESTER = new TestObj(2,0,2);
 MAINTESTER.setButton(0).name('restart');
 MAINTESTER.setButton(0).func(()=>{
     restartGame();
 })
-MAINTESTER.setSlider(0).scale(6,1,10)
-MAINTESTER.setSlider(1).scale(10,1,10)
+MAINTESTER.setButton(1).name('remove bg');
+MAINTESTER.setButton(1).func(()=>{
+    document.body.style.backgroundImage = ''
+})
+MAINTESTER.setSlider(0).scale(6,1,15)
+MAINTESTER.setSlider(1).scale(10,1,15)
 MAINTESTER.setSlider(0).func(()=>{
     aliens.forEach(alien=>{
         alien._DEFAULT_MAX_F = MAINTESTER.getSlider(0).value*alien.difficulty;
         alien.MAX_F = alien._DEFAULT_MAX_F
     })
     console.log('MAX_F: ', aliens[0]._DEFAULT_MAX_F)
-    MAINTESTER.text = 'MAX_F: ' + aliens[0]._DEFAULT_MAX_F + '| MAX_V: ' + aliens[0]._DEFAULT_MAX_V;
+    MAINTESTER.text = 'MAX_F: ' + MAINTESTER.getSlider(0).value + '| MAX_V: ' + MAINTESTER.getSlider(1).value;
 })
 MAINTESTER.setSlider(1).func(()=>{
     aliens.forEach(alien=>{
@@ -98,7 +102,7 @@ MAINTESTER.setSlider(1).func(()=>{
         alien.MAX_V = alien._DEFAULT_MAX_V
     })
     console.log('MAX_V: ', aliens[0]._DEFAULT_MAX_V)
-    MAINTESTER.text = 'MAX_F: ' + aliens[0]._DEFAULT_MAX_F + '| MAX_V: ' + aliens[0]._DEFAULT_MAX_V;
+    MAINTESTER.text = 'MAX_F: ' + MAINTESTER.getSlider(0).value + '| MAX_V: ' + MAINTESTER.getSlider(1).value;
 })
 
 
@@ -622,9 +626,12 @@ function gameloop() {
             }
             a.update()
         })
-        requestAnimationFrame(()=>{
-            gameloop()
-        })    
+        TEMPORARY_PROXY()
+}
+function TEMPORARY_PROXY(){ 
+    requestAnimationFrame(()=>{
+        gameloop()
+    })    
 }
 
 setupBackground().then(()=>{
