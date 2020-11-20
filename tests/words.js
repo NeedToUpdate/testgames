@@ -1,0 +1,1 @@
+let words = ['a','aa','a a','aaaaaaaaaaa']

@@ -77,7 +77,29 @@ let alien_config = {
     },
 }
 
-
+let MAINTESTER = new TestObj(2,0,1);
+MAINTESTER.setButton(0).name('restart');
+MAINTESTER.setButton(0).func(()=>{
+    restartGame();
+})
+MAINTESTER.setSlider(0).scale(6,1,10)
+MAINTESTER.setSlider(1).scale(10,1,10)
+MAINTESTER.setSlider(0).func(()=>{
+    aliens.forEach(alien=>{
+        alien._DEFAULT_MAX_F = MAINTESTER.getSlider(0).value*alien.difficulty;
+        alien.MAX_F = alien._DEFAULT_MAX_F
+    })
+    console.log('MAX_F: ', aliens[0]._DEFAULT_MAX_F)
+    MAINTESTER.text = 'MAX_F: ' + aliens[0]._DEFAULT_MAX_F + '| MAX_V: ' + aliens[0]._DEFAULT_MAX_V;
+})
+MAINTESTER.setSlider(1).func(()=>{
+    aliens.forEach(alien=>{
+        alien._DEFAULT_MAX_V = MAINTESTER.getSlider(1).value*alien.difficulty;
+        alien.MAX_V = alien._DEFAULT_MAX_V
+    })
+    console.log('MAX_V: ', aliens[0]._DEFAULT_MAX_V)
+    MAINTESTER.text = 'MAX_F: ' + aliens[0]._DEFAULT_MAX_F + '| MAX_V: ' + aliens[0]._DEFAULT_MAX_V;
+})
 
 
 let THINGS_ARE_DRAGGABLE = false;
@@ -87,6 +109,20 @@ let actual_letters = []
 let lines = []
 let aliens = []
 let letterDivs = [];
+
+function restartGame(){
+    aliens.forEach(x=>{
+        x.kill()
+    })
+    aliens = []
+    letterDivs.forEach(x=>{
+        x.kill()
+    })
+    letterDivs = []
+    setupLetters().then(()=>{
+        releaseAliens();
+    })
+}
 
 function setupLetters() {
     //pick a random word, and show a transparent figure of it in the final spot. but have extra letters?
@@ -568,7 +604,6 @@ function checkLetter(letter) { //TODO maybe refactor this to jsut check the prev
 let previouslyTouchedLetter = {}
 let PLAYING = false
 function gameloop() {
-    if(PLAYING){
         letterDivs.forEach(x => {
             if (THINGS_ARE_DRAGGABLE) {
                 if (x.y > height / 2) {
@@ -589,13 +624,10 @@ function gameloop() {
         })
         requestAnimationFrame(()=>{
             gameloop()
-        })
-    }
-    
+        })    
 }
 
 setupBackground().then(()=>{
-    PLAYING = true;
     gameloop()
     setupAliens().then(()=>{
         
