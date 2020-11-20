@@ -146,6 +146,7 @@ function setupLetters() {
     for (let i = 0; i < actual_letters.length; i++) {
         let line = Line.fromAngle(line_padding + (width / 2 - total_width / 2) + (line_len + line_padding * 2) * i, line_height, line_len, 0, 4);
         line.color = 'white';
+        line.letter = actual_letters[i];
         lines.push(line);
     }
     let decoy_index = 0;
@@ -168,7 +169,8 @@ function setupLetters() {
                 let pChar = new Character(getRandom(50, width - 50), getRandom(150, height / 2), letters[decoy_index + i]);
                 let p = new P(letters[decoy_index + i], 0, 0).fromCenter();
                 p.size = '4em';
-                pChar.addSprite(p)
+        p.set('textShadow','black 0 0 4px')
+        pChar.addSprite(p)
                 pChar.y -= p.height;
                 pChar.x -= p.width / 2;
                 pChar.hasNoBounds = true;
@@ -330,7 +332,6 @@ function setupAliens(){
                 total_difficulty += img.config.difficulty;
                 difficultyCounter.value = total_difficulty
                 difficultyText.string = 'Difficulty: ' + total_difficulty;
-                console.log(img.config.difficulty, total_difficulty);
                 addAlien(color,variety)
             }else{
                 difficultyCounter.set('border','red solid 3px')
@@ -542,78 +543,63 @@ document.addEventListener('touchmove', (ev) => {
     drag(ev)
 });
 
-let speedy_check = {} //will cache the indices here for quicker checks
-
-function checkLetter(letter) { //TODO maybe refactor this to jsut check the previously touched letter
-    if (actual_letters.includes(letter.name)) {
-        if (!Object.keys(speedy_check).includes(letter.name)) {
-            let indicies = []
-            actual_letters.forEach((x, i) => {
-                if (x == letter.name) {
-                    indicies.push(i);
-                }
-            })
-            speedy_check[letter.name] = indicies;
-        }
-        let index_to_remove = null;
-        let buffer = 20
-        let y_buffer = 40
-        speedy_check[letter.name].forEach((index, i) => {
-            let line = {
-                x: lines[index].x + lines[index].width / 2,
-                y: lines[index].y
-            };
-            let pos = {
-                x: letter.x,
-                y: letter.y
-            };
-            if (Math.abs(line.x - pos.x) < buffer && line.y - pos.y < y_buffer) {
-                actual_letters[index] = '#'
-                index_to_remove = i;
-                letter.isLocked = true;
-                letter.isDragging = false;
-                letter.sprite.color = 'limegreen';
-                letter.x = line.x 
-                letter.y = line.y - (letter.height/2);
-                if(actual_letters.filter(x=>x!=='#').length==0){
-                    IS_VICTORY = true;
-                    aliens.forEach(alien=>{
-                        alien.hasNoBounds = true;
-                        alien.changeBehaviour('idle').then(()=>{
-                            alien.stopIdle();
-                            alien.doSpin(720,10);
-                            alien.doMoveTo(new Vector(width/2,-500),1)
-
-                        })
-                        //last letters that arent locked must be the fake ones, so we can delete them;
-                        letterDivs.forEach(letter=>{
-                            if(!letter.isLocked){
-                                letter.hasNoBounds = true;
-                                letter.doSpin(720, 10);
-                                letter.doMoveTo(new Vector(getRandom(2)? -100: width+100, height/2),1)
-                            }
-                        })
+function checkLetter(){
+    if(!actual_letters.includes(previouslyTouchedLetter.name) || previouslyTouchedLetter.isLocked) return;
+    let letter = previouslyTouchedLetter;
+    let buffer = 20
+    let y_buffer = 40
+    console.log(letter.name)
+    let potential_lines = lines.filter(x=>x.letter == letter.name)
+    potential_lines.forEach(l=>{
+        line = {
+            x: l.x + l.width / 2,
+            y: l.y
+        };
+        let pos = {
+            x: letter.x,
+            y: letter.y
+        };
+        if (Math.abs(line.x - pos.x) < buffer && line.y - pos.y < y_buffer) {
+            let index = lines.indexOf(l);
+            l.name = ''
+            console.log(index)
+            actual_letters[index] = '#'
+            letter.isLocked = true;
+            letter.isDragging = false;
+            letter.sprite.color = 'limegreen';
+            letter.x = line.x 
+            letter.y = line.y - (letter.height/2);
+            if(actual_letters.filter(x=>x!=='#').length==0){
+                IS_VICTORY = true;
+                aliens.forEach(alien=>{
+                    alien.hasNoBounds = true;
+                    alien.changeBehaviour('idle').then(()=>{
+                        alien.stopIdle();
+                        alien.doSpin(720,10);
+                        alien.doMoveTo(new Vector(width/2,-500),1)
+    
                     })
-                }
+                    //last letters that arent locked must be the fake ones, so we can delete them
+                })
+                letterDivs.forEach(letter=>{
+                    if(!letter.isLocked){
+                        letter.hasNoBounds = true;
+                        letter.doSpin(720, 10);
+                        letter.doMoveTo(new Vector(getRandom(2)? -100: width+100, height/2),1)
+                    }
+                })
             }
-        })
-        if (index_to_remove !== null) {
-            speedy_check[letter.name].splice(index_to_remove, 1);
         }
-    }
+    
+    })
 }
 
 
 
 let previouslyTouchedLetter = {}
-let PLAYING = false
+let FRAME = 0;
 function gameloop() {
         letterDivs.forEach(x => {
-            if (THINGS_ARE_DRAGGABLE) {
-                if (x.y > height / 2) {
-                    checkLetter(x);
-                }
-            }
             x.update()
         })
         aliens.forEach(a => {
@@ -626,6 +612,10 @@ function gameloop() {
             }
             a.update()
         })
+        if (THINGS_ARE_DRAGGABLE && (FRAME%4==0)) {
+            checkLetter()
+        }
+        FRAME++
         TEMPORARY_PROXY()
 }
 function TEMPORARY_PROXY(){ 
