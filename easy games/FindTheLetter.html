@@ -18,7 +18,7 @@
 <button id="playpause" class="bluebtn">again</button>
 <script>
     let LEFT_PADDING = width * 0.1;
-    let TOP_PADDING = height /2;
+    let TOP_PADDING = height * 0.05;
     let LETTER_WIDTH = 80;
     let RUNNING_LETTERS = true;
     let PLAYABLE_CHARS = ['peppapig','ultraman','spiderman','shark','cat','rabbit','sofia','elsa','superman'];
@@ -184,7 +184,7 @@
         let letterDivs = [];
         LETTER_WIDTH = 120;
         let BUTTON_WIDTH = width/(1.5*num);
-        TOP_PADDING =   (BUTTON_WIDTH+25);
+        TOP_PADDING =   height - BUTTON_WIDTH;
         LEFT_PADDING = width - (BUTTON_WIDTH+25)*num;
         COL_NUM = calcColNum();
         let highestIndex = alphabet.toUpperCase().indexOf(letters.reduce((a, b) => alphabet.toUpperCase().indexOf(a) > alphabet.toUpperCase().indexOf(b) ? a : b));
@@ -214,7 +214,7 @@
                     selectLetter(letter,num)
                 }
             });
-            letterChar.p = new Vector(LEFT_PADDING + (BUTTON_WIDTH + 25) * (i % COL_NUM), TOP_PADDING + (BUTTON_WIDTH+25) * (i / COL_NUM | 0));
+            letterChar.p = new Vector(LEFT_PADDING + (BUTTON_WIDTH + 25) * (i % COL_NUM), TOP_PADDING - (BUTTON_WIDTH+25) * (i / COL_NUM | 0));
             letterChar.width = BUTTON_WIDTH;
             letterChar.height = BUTTON_WIDTH;
             letterChar.maxbounds = {x: width, y: height};
