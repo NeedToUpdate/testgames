@@ -10,6 +10,7 @@
     <script language="javascript" src="./lib/PhysicsObject.js"></script>
     <script language="javascript" src="./lib/DomObject.js"></script>
     <script language="javascript" src="./lib/Character.js"></script>
+    <script language="javascript" src="./lib/PlayerImages.js"></script>
     <title>Artem's Over Under</title>
     <link rel="stylesheet" href="global_styles.css">
 </head>
@@ -17,14 +18,6 @@
 <body>
 <button class="bluebtn" id="jmpleft">random</button>
 <script>
-    let allnames = [
-        'cat', 'dog',
-        'spiderman', 'ultraman', 'ironman',
-        'peppapig', 'spongebob', 'monkey',
-        'tiger', 'shark', 'cinderella',
-        'elsa', 'ariel', 'deadfish', 'mrkrabs', 'thanos', 'drstrange', 'sailormoon',
-        'genie', 'captainmarvel', 'simba', 'pikachu', 'spider', 'monster22', 'venom', 'thor', 'banana', 'olaf', 'hulk'
-    ];
 
     let bw = 250;
     let iw = 75;
@@ -33,7 +26,7 @@
     let yy = bp.y + bw / 2 - iw / 2;
 
     let character = new Flyer(50, 50, 'div');
-    let div = new Img('./images/' + getRandom(allnames) + '.png', 50, 50, iw).onLoad(() => {
+    let div = new Img('./images/' + getRandom(characters) + '.png', 50, 50, iw).onLoad(() => {
         character.addSprite(div);
         character.MAX_V = 10
     });
@@ -80,6 +73,7 @@
                 }
                 if (currentPos.match(/behind|under/)) {
                     character.sprite.set('transform', '');
+                    character.angle = 0
                     console.log('leaving ' + key)
                 }
 
@@ -89,6 +83,11 @@
                             let inst = data.split(' ');
                             character.sprite.set(inst[0], inst[1]);
                             console.log(inst[0], character.sprite.shape.style[inst[0]])
+                            if(key === 'under'){
+                                character.doSpin(90,50)
+                            }else if(key === 'behind'){
+                                character.doSpin(45,50)
+                            }
                         });
 
                     }
@@ -96,14 +95,14 @@
 
                 if (key.match(/inside|on|under/)) {
 
-                    character.doMoveTo(new Vector(pos.above || pos.on)).then(() => {
+                    character.doFlyTo(new Vector(pos.above || pos.on)).then(() => {
                         if (key.match(/inside|front/)) after();
-                        character.doMoveTo(new Vector(pos[key])).then(() => {
+                        character.doFlyTo(new Vector(pos[key])).then(() => {
                             after();
                         })
                     })
                 } else {
-                    character.doMoveTo(new Vector(pos[key])).then(() => {
+                    character.doFlyTo(new Vector(pos[key])).then(() => {
                         after();
                     })
                 }
