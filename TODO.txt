@@ -29,12 +29,24 @@
 - add save function for players as a base64 string <- haha lol idk
 - check how many desks per row and load turn order array dynamically
 - add move desk position
-- add "add to all" function
+- [DONE] add "add to all" function
 - add 'get a hint' functionality
+- make desk available to be re-added later
+
+//ALIEN CHASE
+
+- add timer
+- add challenges
 
 //DRAWBASE
 
-- add checks for imports and dont
+- add checks for imports 
+
+//MAIN STUFF
+
+- add a main background process that will load the games into the right shape, like a canvas or something
+
+
 
 
 //==== NEW GAMES ===

@@ -19,8 +19,8 @@ let behaviours = ['chase', 'predict', 'taunt', 'scare', 'idle', 'patrol', 'rando
 //maybe start with a bomb? can kill the ghosts before they start chasing.
 //they will show a thinking pattern 
 
-difficulty = 3;
-let NUM_OF_BOMBS = (3 - difficulty) < 0 ? 0 : (3 - difficulty); //can be adjusted
+//DEFAULT DIFFICULTY SETTING
+let max_difficulty = 7;
 let IS_VICTORY = false; //used to stop functions 
 
 let valid_colors = PICTURE_CONFIG.ghosts.valid_names;
@@ -127,7 +127,7 @@ function restartGame(){
         releaseAliens();
     })
 }
-
+difficulty = 3;
 function setupLetters() {
     //pick a random word, and show a transparent figure of it in the final spot. but have extra letters?
     actual_letters = chosen_word.split('').filter(x=>x!=' ')
@@ -239,8 +239,8 @@ function createAlien(color){
     alien.setTarget(letterDivs[0])
     alien.changeBehaviour('idle');
     alien.defaultBehaviour = config.behaviour;
-    alien._DEFAULT_MAX_F = 3.5*config.difficulty;
-    alien._DEFAULT_MAX_V = 4*config.difficulty;
+    alien._DEFAULT_MAX_F = 4*config.difficulty;
+    alien._DEFAULT_MAX_V = 5*config.difficulty;
     alien.MAX_F = alien._DEFAULT_MAX_F
     alien.MAX_V = alien._DEFAULT_MAX_V
     alien.difficulty = config.difficulty
@@ -256,9 +256,9 @@ function releaseAliens() {
 }
 
 let total_difficulty = 0;
-let max_difficulty = 5;
 let difficultyCounter = {};
 let difficultyText = {};
+let sliderIsHidden = true;
 function setupAliens(){
     let SPRITE_WIDTH = 45;
     let PADDING = 10;
@@ -273,6 +273,14 @@ function setupAliens(){
     let maxDifficultyText = new P('Max: ' + max_difficulty,0,0).fromCenter()
     difficultyText.size = '2em';
     maxDifficultyText.size = '2em';
+    maxDifficultyText.shape.addEventListener('click',()=>{
+        if(sliderIsHidden){
+            slider.style.display = ''
+        }else{
+            slider.style.display = 'none'
+        }
+        sliderIsHidden = !sliderIsHidden;
+    })
     let slider = document.createElement('input')
     slider.setAttribute('type','range');
     document.body.appendChild(slider)
@@ -280,6 +288,7 @@ function setupAliens(){
     slider.setAttribute('min','0')
     slider.setAttribute('max','40')
     slider.setAttribute('value',max_difficulty)
+    slider.style.display = 'none';
     slider.addEventListener('input',()=>{
         let val = slider.value;
         if(total_difficulty<=val){
@@ -374,7 +383,7 @@ function setupAliens(){
 function setupBackground(){
     return new Promise(resolve=>{
         let background = 'space' + (getRandom(PICTURE_CONFIG.space_backgrounds.num)) + '.jpg';
-        document.body.style.backgroundColor = 'grey';
+        document.body.style.backgroundColor = 'black';
         document.body.style.backgroundImage = 'url(' + IMAGE_PATH + BACKGROUND_IMAGE_PATH + background.toString() + ')';
         document.body.style.backgroundSize = width + 'px auto';
         document.body.style.backgroundRepeat = 'no-repeat';
