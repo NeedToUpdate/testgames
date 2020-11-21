@@ -9,6 +9,7 @@
     <script language="javascript" src="./lib/collisioncontainer.js"></script>
     <script language="javascript" src="./lib/PhysicsObject.js"></script>
     <script language="javascript" src="./lib/DomObject.js"></script>
+    <script language="javascript" src="./picture_config.js"></script>
     <script language="javascript" src="./lib/Character.js"></script>
     <script language="javascript" src="./lib/PlayerImages.js"></script>
     <title>Artem's Over Under</title>
@@ -18,6 +19,11 @@
 <body>
 <button class="bluebtn" id="jmpleft">random</button>
 <script>
+    let background = 'background' + getRandom(PICTURE_CONFIG.battle_backgrounds.num) + '.jpg'
+    document.body.style.backgroundColor = 'grey';
+    document.body.style.backgroundImage = 'url(./images/' + background.toString() + ')';
+    document.body.style.backgroundSize = width + 'px auto';
+    document.body.style.backgroundRepeat = 'no-repeat';
 
     let bw = 250;
     let iw = 75;
