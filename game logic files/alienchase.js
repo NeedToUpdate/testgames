@@ -630,51 +630,15 @@ function gameloop() {
         FRAME++
         TEMPORARY_PROXY()
 }
-let lasttime = 0;
-let low_performace_count = 0;
-let low_performace_multiplier = 1;
 function TEMPORARY_PROXY(){ 
-    let delta = window.performance.now() - lasttime;
-    lasttime = window.performance.now();
-    if(delta>17){
         requestAnimationFrame(()=>{
             gameloop()
-        })    
-        if(low_performace_count<50){
-            low_performace_count++
-        }else{
-            let mult = delta/17;
-            if(mult>low_performace_multiplier){
-                aliens.forEach(a=>{
-                    a._DEFAULT_MAX_F /= low_performace_multiplier;
-                    a._DEFAULT_MAX_F *= mult;
-                    a._DEFAULT_MAX_V /= low_performace_multiplier;
-                    a._DEFAULT_MAX_V *= mult;
-                    a.MAX_F = a._DEFAULT_MAX_F;
-                    a.MAX_V = a._DEFAULT_MAX_V; 
-                })
-                low_performace_multiplier = mult;
-                MAINTESTER.text += ' multipier: ' + low_performace_multiplier;
-            }
-        }
-    }else{
-        low_performace_count = 0;
-        low_performace_multiplier = 1;
-        setTimeout(()=>{
-            requestAnimationFrame(()=>{
-                gameloop()
-            })    
-        },17-delta)
-    }
-    
-    
+        })        
 }
 
 setupBackground().then(()=>{
-    lasttime = window.performance.now()
     gameloop()
     setupAliens().then(()=>{
-        
         setupLetters().then(() => {
             previouslyTouchedLetter = letterDivs[0]
             releaseAliens()
