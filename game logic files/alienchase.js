@@ -223,7 +223,6 @@ function setupLetters() {
     return new Promise(resolve => {
         createDecoyLetters().then(() => {
             scatterRealLetters().then(() => {
-                THINGS_ARE_DRAGGABLE = true;
                 resolve()
             })
         })
@@ -233,28 +232,36 @@ function setupLetters() {
 }
 
 function createAlien(color){
-    color = color || getRandom(valid_colors);
-    let config = alien_config[color];
-    let alien = new Alien(getRandom(100, width-100), 100, 'alien_' + color + '_' + config.behaviour);
-    let alien_sprite = new Img(IMAGE_PATH + GHOSTS_IMAGE_PATH + color + getRandom(config.num) + '.png', 0, 0, 50).fromCenter().onLoad(x => {
-        alien.addSprite(alien_sprite);
-    });
-    alien.setTarget(letterDivs[0])
-    alien.changeBehaviour('idle');
-    alien.defaultBehaviour = config.behaviour;
-    alien._DEFAULT_MAX_F = 4*config.difficulty;
-    alien._DEFAULT_MAX_V = 5*config.difficulty;
-    alien.MAX_F = alien._DEFAULT_MAX_F
-    alien.MAX_V = alien._DEFAULT_MAX_V
-    alien.difficulty = config.difficulty
-    aliens.push(alien);
+    return new Promise(resolve=>{
+        color = color || getRandom(valid_colors);
+        let config = alien_config[color];
+        let alien = new Alien(getRandom(100, width-100), 100, 'alien_' + color + '_' + config.behaviour);
+        let alien_sprite = new Img(IMAGE_PATH + GHOSTS_IMAGE_PATH + color + getRandom(config.num) + '.png', 0, 0, 50).fromCenter().onLoad(x => {
+            alien.addSprite(alien_sprite);
+            alien.setTarget(letterDivs[0])
+            alien.changeBehaviour('idle');
+            alien.defaultBehaviour = config.behaviour;
+            alien._DEFAULT_MAX_F = 3.5*config.difficulty;
+            alien._DEFAULT_MAX_V = 4*config.difficulty;
+            alien.MAX_F = alien._DEFAULT_MAX_F
+            alien.MAX_V = alien._DEFAULT_MAX_V
+            alien.difficulty = config.difficulty
+            aliens.push(alien);
+            resolve()
+        });
+    })
+   
 }
 
 
 let selected_aliens = [];
 function releaseAliens() {
-    selected_aliens.forEach(color=>{
-        createAlien(color);
+    return new Promise(resolve=>{
+        let promises = []
+        selected_aliens.forEach(color=>{
+           promises.push(createAlien(color)) 
+        })
+        Promise.all(promises).then(resolve)
     })
 }
 
@@ -487,6 +494,7 @@ function drag(ev) {
 }
 
 function pickup(letter, ev) {
+    if(!THINGS_ARE_DRAGGABLE) return
     if (!letter.isLocked && !letter.isResetting) {
         letter.sprite.color = 'blue';
         let newY = (ev.clientY );
@@ -641,7 +649,9 @@ setupBackground().then(()=>{
     setupAliens().then(()=>{
         setupLetters().then(() => {
             previouslyTouchedLetter = letterDivs[0]
-            releaseAliens()
+            releaseAliens().then(()=>{
+                THINGS_ARE_DRAGGABLE = true;
+            })
         })
     })
 })
