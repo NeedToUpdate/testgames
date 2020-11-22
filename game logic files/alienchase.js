@@ -130,7 +130,7 @@ function restartGame(){
 difficulty = 3;
 function setupLetters() {
     //pick a random word, and show a transparent figure of it in the final spot. but have extra letters?
-    actual_letters = chosen_word.split('').filter(x=>x!=' ')
+    actual_letters = chosen_word.split('').map(x=>x===' '?'#':x);
     letters = Array.from(actual_letters)
     for (let i = 0; i < difficulty; i++) {
         letters.push(getRandom(alphabet.split('')))
@@ -144,13 +144,15 @@ function setupLetters() {
     let line_len = (total_width) / (actual_letters.length) - line_padding * 2;
     let line_height = height * 0.9
     for (let i = 0; i < actual_letters.length; i++) {
-        let line = Line.fromAngle(line_padding + (width / 2 - total_width / 2) + (line_len + line_padding * 2) * i, line_height, line_len, 0, 4);
-        line.color = 'white';
-        line.letter = actual_letters[i];
-        lines.push(line);
+            let line = Line.fromAngle(line_padding + (width / 2 - total_width / 2) + (line_len + line_padding * 2) * i, line_height, line_len, 0, 4);
+            line.color = 'white';
+            line.letter = actual_letters[i];
+            lines.push(line);
+            if(actual_letters[i]==='#') line.set('display','none')
     }
     let decoy_index = 0;
     actual_letters.forEach((letter, i) => {
+        if(letter!=='#'){
         let pChar = new Character(lines[i].x + line_len / 2, line_height, letter);
         let p = new P(letter, 0, 0, '4em').fromCenter();
         pChar.addSprite(p)
@@ -160,6 +162,7 @@ function setupLetters() {
         p.set('textShadow','black 0 0 4px')
         letterDivs.push(pChar)
         decoy_index = i;
+        }
     })
 
     //decoy letters should appear outside the screen and fly in afterwards

@@ -56,7 +56,7 @@
 
 //================ESL1=================
 
-//let words = ['car','robot','doll','bike','teddy bear'];
+let words = ['car','robot','doll','bike','teddy bear'];
 //let words = ['january','february','march','april','may','june','july','august','september','october','november','december'];
 //let words = ['festival','harvest','leaves','crops','mooncake','dragon','meal','celebrate']
 //let words = ['we read books before bed','then we hug goodnight','my bed is soft a cozy','my cat sleeps with me','the sky has turned dark','my eyes close'];
@@ -141,7 +141,6 @@
 //let words = ['bat','pirate','superhero','dinosaur','robot','monkey'];
 
 
-let words = ['a','aa','a a','aaa aaa']
 
 let difficulty = 1
 
