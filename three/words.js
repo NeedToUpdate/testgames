@@ -11,7 +11,8 @@
 //let words = ['tape','cake','lake','tail','mail','nail','day','hay','pay'];
 //let words = ['bone','rope','robe','soap','boat','coat','bowl','snow','row'];
 //let words = ['food','spoon','boots','cook','hook','foot','august','autumn','paul','paw','jaw','saw'];
-//let words = ['cloud','house','mouse','clown','cow','owl','oil','coin','soil','joy','boy','toys']
+//let words = ['cloud','house','mouse','clown','cow','owl','oil','coin','soil','joy','boy','toys'];
+
 //================ESLS=================
 
 //let words = ['projector','whiteboard','marker pen','eraser','desk','light','teacher','floor','wall','door','student','table','window','curtain','computer','mouse','keyboard'];
@@ -58,7 +59,7 @@
 //let words = ['car','robot','doll','bike','teddy bear'];
 //let words = ['january','february','march','april','may','june','july','august','september','october','november','december'];
 //let words = ['festival','harvest','leaves','crops','mooncake','dragon','meal','celebrate']
-//let words = ['we read books before bed','then we hug goodnight','my bed is soft a cozy','my cat sleeps with me','the sky has turned dark','my eyes close'];
+//let words = ['we read books before bed','then we hug goodnight','my bed is soft and cozy','my cat sleeps with me','the sky has turned dark','my eyes close'];
 //let words = ['hotel','movie theater','zoo','swimming pool','cafe','hospital','mall','library','park'];
 //let words = ['movie theater','zoo','swimming pool','cafe','hospital','mall','hotel','library','park','east','west','north','south'];
 //let words = ['truck','taxi','van','motorcycle','bus','car']
@@ -137,6 +138,8 @@
 //let words = ['mother','map','monkey','mouse'];
 //let words = ['star','sun','snail','snake'];
 //let words = ['hamburger','egg','carrot','hot dog','sausage','tomato','noodle','cookie','candy','dumpling','chip','sandwich','kiwifruit','pineapple','watermelon','grape','peach','strawberry'];
+//let words = ['bat','pirate','superhero','dinosaur','robot','monkey'];
+
 
 
 let difficulty = 1

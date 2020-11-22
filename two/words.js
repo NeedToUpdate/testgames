@@ -2,7 +2,7 @@
 
 //let words = ['paul','cook','food','spoon','hook','boots','foot','august','autumn','paw','jaw','saw'];
 //let words = ['park','horse','fork','nurse','skirt','singer','farmer','bird','arm','car','turtle'];
-let words = ['goat','coat','boat','cloak','clock','wall','green','grass','ball'];
+//let words = ['goat','coat','boat','cloak','clock','wall','green','grass','ball'];
 //let words = ['flute','luke','prune','sue','blue','glue','fruit','suit','juice','cute','mule','cube'];
 //let words = ['trousers','truck','train','strawberry','trash','tree','draw','drink','dragon','driver','drum','drawer'];
 //let words = ['meat','sea','jeep','seat','green','feet','me','he','we','candy','happy','puppy'];
@@ -59,7 +59,7 @@ let words = ['goat','coat','boat','cloak','clock','wall','green','grass','ball']
 //let words = ['car','robot','doll','bike','teddy bear'];
 //let words = ['january','february','march','april','may','june','july','august','september','october','november','december'];
 //let words = ['festival','harvest','leaves','crops','mooncake','dragon','meal','celebrate']
-//let words = ['we read books before bed','then we hug goodnight','my bed is soft a cozy','my cat sleeps with me','the sky has turned dark','my eyes close'];
+//let words = ['we read books before bed','then we hug goodnight','my bed is soft and cozy','my cat sleeps with me','the sky has turned dark','my eyes close'];
 //let words = ['hotel','movie theater','zoo','swimming pool','cafe','hospital','mall','library','park'];
 //let words = ['movie theater','zoo','swimming pool','cafe','hospital','mall','hotel','library','park','east','west','north','south'];
 //let words = ['truck','taxi','van','motorcycle','bus','car']
@@ -138,6 +138,8 @@ let words = ['goat','coat','boat','cloak','clock','wall','green','grass','ball']
 //let words = ['mother','map','monkey','mouse'];
 //let words = ['star','sun','snail','snake'];
 //let words = ['hamburger','egg','carrot','hot dog','sausage','tomato','noodle','cookie','candy','dumpling','chip','sandwich','kiwifruit','pineapple','watermelon','grape','peach','strawberry'];
+//let words = ['bat','pirate','superhero','dinosaur','robot','monkey'];
+
 
 
 let difficulty = 1
