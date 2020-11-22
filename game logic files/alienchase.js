@@ -560,8 +560,7 @@ function checkLetter(){
     let letter = previouslyTouchedLetter;
     let buffer = 20
     let y_buffer = 40
-    console.log(letter.name)
-    let potential_lines = lines.filter(x=>x.letter == letter.name)
+    let potential_lines = lines.filter(x=>(x.letter == letter.name && x.letter !== ''))
     potential_lines.forEach(l=>{
         line = {
             x: l.x + l.width / 2,
@@ -573,12 +572,13 @@ function checkLetter(){
         };
         if (Math.abs(line.x - pos.x) < buffer && line.y - pos.y < y_buffer) {
             let index = lines.indexOf(l);
-            l.name = ''
+            l.letter = ''
             console.log(index)
             actual_letters[index] = '#'
             letter.isLocked = true;
             letter.isDragging = false;
             letter.sprite.color = 'limegreen';
+            letter.sprite.zIndex = -1;
             letter.x = line.x 
             letter.y = line.y - (letter.height/2);
             if(actual_letters.filter(x=>x!=='#').length==0){
@@ -630,13 +630,48 @@ function gameloop() {
         FRAME++
         TEMPORARY_PROXY()
 }
+let lasttime = 0;
+let low_performace_count = 0;
+let low_performace_multiplier = 1;
 function TEMPORARY_PROXY(){ 
-    requestAnimationFrame(()=>{
-        gameloop()
-    })    
+    let delta = window.performance.now() - lasttime;
+    lasttime = window.performance.now();
+    if(delta>17){
+        requestAnimationFrame(()=>{
+            gameloop()
+        })    
+        if(low_performace_count<50){
+            low_performace_count++
+        }else{
+            let mult = delta/17;
+            if(mult>low_performace_multiplier){
+                aliens.forEach(a=>{
+                    a._DEFAULT_MAX_F /= low_performace_multiplier;
+                    a._DEFAULT_MAX_F *= mult;
+                    a._DEFAULT_MAX_V /= low_performace_multiplier;
+                    a._DEFAULT_MAX_V *= mult;
+                    a.MAX_F = a._DEFAULT_MAX_F;
+                    a.MAX_V = a._DEFAULT_MAX_V; 
+                })
+                low_performace_multiplier = mult;
+                MAINTESTER.text += ' multipier: ' + low_performace_multiplier;
+            }
+        }
+    }else{
+        low_performace_count = 0;
+        low_performace_multiplier = 1;
+        setTimeout(()=>{
+            requestAnimationFrame(()=>{
+                gameloop()
+            })    
+        },17-delta)
+    }
+    
+    
 }
 
 setupBackground().then(()=>{
+    lasttime = window.performance.now()
     gameloop()
     setupAliens().then(()=>{
         
