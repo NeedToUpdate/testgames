@@ -20,7 +20,12 @@ let behaviours = ['chase', 'predict', 'taunt', 'scare', 'idle', 'patrol', 'rando
 //they will show a thinking pattern 
 
 //DEFAULT DIFFICULTY SETTING
-let max_difficulty = 7;
+let max_difficulty = 10;
+let DEFAULT_MAX_V_MULTIPLIER = 4.5;
+let DEFAULT_MAX_F_MULTIPLIER = 4;
+
+
+
 let IS_VICTORY = false; //used to stop functions 
 
 let valid_colors = PICTURE_CONFIG.ghosts.valid_names;
@@ -86,8 +91,8 @@ MAINTESTER.setButton(1).name('remove bg');
 MAINTESTER.setButton(1).func(()=>{
     document.body.style.backgroundImage = ''
 })
-MAINTESTER.setSlider(0).scale(6,1,15)
-MAINTESTER.setSlider(1).scale(10,1,15)
+MAINTESTER.setSlider(0).scale(DEFAULT_MAX_V_MULTIPLIER,1,15)
+MAINTESTER.setSlider(1).scale(DEFAULT_MAX_F_MULTIPLIER,1,15)
 MAINTESTER.setSlider(0).func(()=>{
     aliens.forEach(alien=>{
         alien._DEFAULT_MAX_F = MAINTESTER.getSlider(0).value*alien.difficulty;
@@ -241,8 +246,8 @@ function createAlien(color){
             alien.setTarget(letterDivs[0])
             alien.changeBehaviour('idle');
             alien.defaultBehaviour = config.behaviour;
-            alien._DEFAULT_MAX_F = 3.5*config.difficulty;
-            alien._DEFAULT_MAX_V = 4*config.difficulty;
+            alien._DEFAULT_MAX_F = DEFAULT_MAX_F_MULTIPLIER*config.difficulty;
+            alien._DEFAULT_MAX_V = DEFAULT_MAX_V_MULTIPLIER*config.difficulty;
             alien.MAX_F = alien._DEFAULT_MAX_F
             alien.MAX_V = alien._DEFAULT_MAX_V
             alien.difficulty = config.difficulty
