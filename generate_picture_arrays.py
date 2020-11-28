@@ -4,19 +4,19 @@ import glob
 from datetime import datetime
 import re
 
-old_file = open('./image_config.js')
+old_file = open(os.getcwd() + '//image_config.js','r')
 old_lines = old_file.read().split('\n')
-external_lines = [];
+external_lines = []
 
-extrnal_part = False
+external_part = False
 for line in old_lines:
-	if extrnal_part:
+	if external_part:
 		external_lines.append(line)
 		if 'END EXTERNAL PICTURES' in line:
 			break
 	else:
 		if 'BEGIN EXTERNAL PICTURES' in line:
-			extrnal_part = True
+			external_part = True
 			external_lines.append(line)
 
 main_dir = str(Path(os.getcwd())) + '\\images'
