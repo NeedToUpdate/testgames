@@ -25,7 +25,7 @@ dirs = {
 "ghosts": '/ghosts/',
 "invaders": '/invaders/',
 "projectiles": '/projectiles/',
-"space_bgs": '/space_bg/',
+"space_bgs": '/space_bgs/',
 "backgrounds": '/',
 "old_space_bg": '/',
 "monsters": '/',
