@@ -1,6 +1,6 @@
 let IMAGE_PATH = '../images/'; //just in case needs to be moved
-let GHOSTS_IMAGE_PATH = PICTURE_CONFIG.ghosts.path;
-let BACKGROUND_IMAGE_PATH = PICTURE_CONFIG.space_backgrounds.path;
+let GHOSTS_IMAGE_PATH = IMAGE_CONFIG.ghosts.path;
+let BACKGROUND_IMAGE_PATH = IMAGE_CONFIG.space_bgs.path;
 // ghosts chase the letters
 // specific colurs have specific behaviours
 
@@ -28,7 +28,7 @@ let DEFAULT_MAX_F_MULTIPLIER = 4;
 
 let IS_VICTORY = false; //used to stop functions 
 
-let valid_colors = PICTURE_CONFIG.ghosts.valid_names;
+let valid_colors = IMAGE_CONFIG.ghosts.valid_names;
 let alien_config = {
     blue: {
         num: 3,
@@ -397,7 +397,7 @@ function setupAliens(){
 }
 function setupBackground(){
     return new Promise(resolve=>{
-        let background = 'space' + (getRandom(PICTURE_CONFIG.space_backgrounds.num)) + '.jpg';
+        let background = 'space' + (getRandom(IMAGE_CONFIG.space_bgs.num)) + '.jpg';
         document.body.style.backgroundColor = 'black';
         document.body.style.backgroundImage = 'url(' + IMAGE_PATH + BACKGROUND_IMAGE_PATH + background.toString() + ')';
         document.body.style.backgroundSize = width + 'px auto';

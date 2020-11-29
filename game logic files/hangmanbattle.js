@@ -5,14 +5,15 @@ let ROUNDS = 3;
 let HELP_A_TEAM = 'none';
 
 let IMAGE_PATH = '../images/';
+let BACKGROUND_CONFIG = IMAGE_CONFIG.backgrounds
 
 document.body.style.backgroundColor = 'lightgrey';
 
 
 let MAINARENA = new Rectangle(width * .2, height * .2, width * .6 - 5, height * .8).asOutline('black', 5);
-let background = 'background' + getRandom(30).toString() + '.jpg';
+let background = 'background' + getRandom(BACKGROUND_CONFIG.num).toString() + '.jpg';
 MAINARENA.set('backgroundColor', 'grey');
-MAINARENA.set('backgroundImage', 'url(' + IMAGE_PATH + background.toString() + ')');
+MAINARENA.set('backgroundImage', 'url(' + IMAGE_PATH + BACKGROUND_CONFIG.path + background + ')');
 MAINARENA.set('backgroundSize', 'cover');
 MAINARENA.set('backgroundRepeat', 'no-repeat');
 MAINARENA.set('backgroundPosition', 'center');

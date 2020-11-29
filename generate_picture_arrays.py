@@ -21,31 +21,31 @@ for line in old_lines:
 
 main_dir = str(Path(os.getcwd())) + '\\images'
 dirs = {
-"buildings": '/buildings/',
-"ghosts": '/ghosts/',
-"invaders": '/invaders/',
-"projectiles": '/projectiles/',
-"space_bgs": '/space_bgs/',
-"backgrounds": '/',
-"old_space_bg": '/',
-"monsters": '/',
-"old_ghosts": '/'
+	"buildings": '/buildings/',
+	"ghosts": '/ghosts/',
+	"invaders": '/invaders/',
+	"projectiles": '/projectiles/',
+	"space_bgs": '/space_bgs/',
+	"backgrounds": '/',
+	"old_space_bg": '/',
+	"monsters": '/',
+	"old_ghosts": '/'
 }
 syntax = {
-"buildings": 'skyscraper{num}.png',
-"ghosts": '{valid_name}{num}.png',
-"invaders": 'invader{valid_name}.png',
-"projectiles": '{valid_name}_projectile.png',
-"space_bgs": 'space{num}.jpg',
-"backgrounds": 'background{num}.jpg',
-"old_space_bg": 'bg{num}.jpg',
-"monsters": 'monster{num}.png',
-"old_ghosts": 'ghost{num}.png'
+	"buildings": 'skyscraper{num}.png',
+	"ghosts": '{valid_name}{num}.png',
+	"invaders": 'invader{valid_name}.png',
+	"projectiles": '{valid_name}_projectile.png',
+	"space_bgs": 'space{num}.jpg',
+	"backgrounds": 'background{num}.jpg',
+	"old_space_bg": 'bg{num}.jpg',
+	"monsters": 'monster{num}.png',
+	"old_ghosts": 'ghost{num}.png'
 }
 
 lines = []
 
-lines.append('let PICTURE_CONFIG = {')
+lines.append('let IMAGE_CONFIG = {')
 
 for key in dirs.keys():
 	lines.append('\t'+ key + ': {')
@@ -64,13 +64,20 @@ for key in dirs.keys():
 			word = search.group()
 			if 'valid_name' in syntax[key]:
 				to_remove = syntax[key].replace('{valid_name}','').split('.')
-				list_of_names.append(word.replace(to_remove[0],'').replace('.' + to_remove[1],''))
-	if 'valid_name' in syntax[key]:
-		lines.append(f'\t\tvalid_names: {list_of_names},')
-				
+				word = word.replace(to_remove[0],'').replace('.' + to_remove[1],'')
+				print(word,re.findall(r"\d+",word)) #TODO wtf
+				if len(re.findall(r"\d+",word)):
+					num = re.findall(r"\d+",word)[0]
+					print(num)
+					word = word.replace(num,'')
+				list_of_names.append(word)
+	
 
 	lines.append(f'\t\tnum: {num_of_images},')
 	lines.append(f'\t\tsyntax: "{syntax[key]}",')
+	if 'valid_name' in syntax[key]:
+		lines.append(f'\t\tvalid_names: {list(set(list_of_names))},')
+				
 	lines.append('\t},')
 
 lines.append('}')

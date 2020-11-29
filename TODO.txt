@@ -45,7 +45,7 @@
 //MAIN STUFF
 
 - add a main background process that will load the games into the right shape, like a canvas or something
-
+- remove all reference to the old space bgs and move all bgs to a new folder
 
 
 

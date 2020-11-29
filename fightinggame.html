@@ -2,6 +2,7 @@
 
 <head>
     <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
+    <script language="javascript" type="text/javascript" src="../image_config.js"></script>
     <script language="javascript" src="lib/vector.js"></script>
     <script language="javascript" src="lib/drawbase.js"></script>
     <script language="javascript" src="lib/PhysicsObject.js"></script>
@@ -113,21 +114,22 @@
     </style>
     <script>
         let HARDMODE = false;
-        let NUM_OF_MONSTERS = 46;
         let IMAGE_PATH = './images/';
-
+        let BACKGROUND_CONFIG = IMAGE_CONFIG.backgrounds
+        let MONSTER_CONFIG = IMAGE_CONFIG.monsters 
+        let NUM_OF_MONSTERS = MONSTER_CONFIG.num;
 
         let valid_colors = ['red','yellow','blue','teal','lightblue','purple','pink','orange','white','black']
 
-        let background = 'background' + (getRandom(30)).toString() + '.jpg';
+        let background = 'background' + (getRandom(BACKGROUND_CONFIG.num)).toString() + '.jpg';
         document.body.style.backgroundColor = 'grey';
-        document.body.style.backgroundImage = 'url(' + IMAGE_PATH + background.toString() + ')';
+        document.body.style.backgroundImage = 'url(' + IMAGE_PATH + BACKGROUND_CONFIG.path + background.toString() + ')';
         document.body.style.backgroundSize = width + 'px auto';
         document.body.style.backgroundRepeat = 'no-repeat';
 
 
         id('image_blocker').style.backgroundColor = 'grey';
-        id('image_blocker').style.backgroundImage = 'url(' + IMAGE_PATH + background.toString() + ')';
+        id('image_blocker').style.backgroundImage = 'url(' + IMAGE_PATH + BACKGROUND_CONFIG.path + background.toString() + ')';
         id('image_blocker').style.backgroundSize = width + 'px auto';
         id('image_blocker').style.backgroundRepeat = 'no-repeat';
 
@@ -140,10 +142,10 @@
             let monster_powr_name = powers[Math.random() * powers.length | 0];
             if (mons_num > NUM_OF_MONSTERS) {
                 let exception = mons_num - NUM_OF_MONSTERS;
-                if (exception > 1) {
+                if (exception == 2) {
                     mons_name = 'thanos';
                     monster_powr_name = 'blackenergy'
-                } else if (exception > 0) {
+                } else if (exception == 1) {
                     mons_name = 'venom';
                     monster_powr_name = 'blackenergy'
                 }
@@ -240,8 +242,7 @@
         }
 
 
-        let
-        LOADED_IMAGES; // = new ImageLoader('./images/', ['fire', 'shield', monster_char.power + 'ball', player_char.power + 'ball']);
+        let LOADED_IMAGES; // = new ImageLoader('./images/', ['fire', 'shield', monster_char.power + 'ball', player_char.power + 'ball']);
         let player; // = new Character(25, 100, player_char.name);
         let monster; // = new Character(width - 300, 100, monster_char.name);
         let projectiles = [];
@@ -461,7 +462,7 @@
                 }, 20);
             }, time);
             setTimeout(() => {
-                let sprite = new Img(IMAGE_PATH + monster_char.name + ".png", 0, 0, 400).fromCenter()
+                let sprite = new Img(IMAGE_PATH + MONSTER_CONFIG.path + monster_char.name + ".png", 0, 0, 400).fromCenter()
                     .usingNewTransform().onLoad(() => {
                         monsterHP.circle.remove()
                         monsterHP.remove();

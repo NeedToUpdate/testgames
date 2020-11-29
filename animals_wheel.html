@@ -2,6 +2,7 @@
 
 <head>
     <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
+    <script language="javascript" type="text/javascript" src="../image_config.js"></script>
     <script language="javascript" src="./lib/vector.js"></script>
     <script language="javascript" src="./lib/matrix.js"></script>
     <script language="javascript" src="./lib/drawbase.js"></script>
@@ -16,13 +17,13 @@
     <button id="spin" class="bluebtn">Spin!</button>
     <p style="color: white">Speed: <span id="speedspan"></span> deg per second</p>
     <script>
-        let background = 'bg' + (getRandom(3,5) | 0).toString() + '.jpg';
+        let background = 'bg' + (getRandom(3,5) | 0).toString() + '.jpg'; //TODO fix this
         document.body.style.backgroundColor = 'grey';
         document.body.style.backgroundImage = 'url(' + './images/' + background.toString() + ')';
         //document.body.style.backgroundSize = width + 'px auto';
         document.body.style.backgroundRepeat = 'no-repeat';
 
-        let animals = ANIMAL_NAMES
+        let animals = IMAGE_CONFIG.animals.valid_names
         function getRandomArray(num) {
             let nums = [];
             let escape = 0;
