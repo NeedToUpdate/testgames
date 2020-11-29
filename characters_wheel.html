@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
     <script language="javascript" type="text/javascript" src="./image_config.js"></script>
+    <script language="javascript" type="text/javascript" src="./lib/PlayerImages.js"></script>
     <script language="javascript" src="./lib/vector.js"></script>
     <script language="javascript" src="./lib/matrix.js"></script>
     <script language="javascript" src="./lib/drawbase.js"></script>
@@ -17,7 +18,7 @@
     <button id="spin" class="bluebtn">Spin!</button>
     <p style="color: white">Speed: <span id="speedspan"></span> deg per second</p>
     <script>
-        let IMAGE_PATH = './images'
+        let IMAGE_PATH = './images/'
         let BACKGROUND_CONFIG = IMAGE_CONFIG.space_bgs
         let background = 'space' + getRandom(BACKGROUND_CONFIG.num) + '.jpg'; //TODO fix this
         document.body.style.backgroundColor = 'grey';
@@ -25,24 +26,23 @@
         //document.body.style.backgroundSize = width + 'px auto';
         document.body.style.backgroundRepeat = 'no-repeat';
 
-        let animals = IMAGE_CONFIG.animals.valid_names
         function getRandomArray(num) {
             let nums = [];
             let escape = 0;
             while (nums.length < num && escape < 1000) {
-                let n = Math.floor(Math.random() * animals.length);
+                let n = Math.floor(Math.random() * characters.length);
                 if (nums.indexOf(n) === -1) {
                     nums.push(n);
                 }
                 escape++;
             }
             console.log(nums);
-            return nums.map(x => animals[x]);
+            return nums.map(x => characters[x]);
         }
         let images = getRandomArray(8);
         let imageDivs = [];
 
-        let LOADED_IMAGES = new ImageLoader('../Classes/Animals/pngs/', images);
+        let LOADED_IMAGES = new ImageLoader(IMAGE_PATH, images);
         let originX = width/2;
         let originY = height/2 + height/3;
         let circleRadius = 250;
