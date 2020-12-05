@@ -60,7 +60,7 @@ let override = [
 //['car','robot','doll','bike','teddy bear'],
 //['january','february','march','april','may','june','july','august','september','october','november','december'],
 //['festival','harvest','leaves','crops','mooncake','dragon','meal','celebrate'],
-//['we read books before bed','then we hug goodnight','my bed is soft and cozy','my cat sleeps with me','the sky has turned dark','my eyes close'],
+['we read books before bed','then we hug goodnight','my bed is soft and cozy','my cat sleeps with me','the sky has turned dark','my eyes close'],
 //['hotel','movie theater','zoo','swimming pool','cafe','hospital','mall','library','park'],
 //['movie theater','zoo','swimming pool','cafe','hospital','mall','hotel','library','park','east','west','north','south'],
 //['truck','taxi','van','motorcycle','bus','car'],
@@ -117,7 +117,7 @@ let override = [
 
 //['sliding','swinging','riding','hiding','skating','jumping','climbing','flying','throwing','singing','kicking'],
 //['went','saw','drank','put','had','bought','caught','ate','flew','drove','knew','made','ran','sang','slept','spoke','swam'],
-//['go','meet','stay','play','listen','draw','dance','read','sleep','learn','write','eat','drink','have','see','watch','like','get','take'],
+['go','meet','stay','play','listen','draw','dance','read','sleep','learn','write','eat','drink','have','see','watch','like','get','take'],
 //['coke','juice','meat','cheese','ice cream','chocolate'],
 //['star','snake','snail','sun','telephone','tent','tiger','taxi', 'tennis','sausage','umbrella'],
 //['xenon','xerox','xylem'],
