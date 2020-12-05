@@ -1,3 +1,5 @@
+setupBody(id("MAIN_SCREEN"))
+
 difficulty = 0;
 let chosen = words[Math.random() * words.length | 0];
 let IMAGE_PATH = '../images/';

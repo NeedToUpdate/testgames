@@ -1,4 +1,6 @@
- let DAMAGE_PER_TICK = 7;
+setupBody(id("MAIN_SCREEN"))
+
+let DAMAGE_PER_TICK = 7;
 let FINAL_SMASH_SCALING = 5;
 let ROUNDS = 3;
 

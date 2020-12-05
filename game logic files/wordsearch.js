@@ -1,3 +1,5 @@
+setupBody(id("MAIN_SCREEN"))
+
 difficulty = 1;
 
 let topofsearch = height * .1;

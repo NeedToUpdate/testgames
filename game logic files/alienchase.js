@@ -81,7 +81,7 @@ let alien_config = {
         difficulty: 5,
     },
 }
-
+setupBody(id("MAIN_SCREEN"))
 let MAINTESTER = new TestObj(2,0,2);
 MAINTESTER.setButton(0).name('restart');
 MAINTESTER.setButton(0).func(()=>{

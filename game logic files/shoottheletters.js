@@ -1,3 +1,5 @@
+setupBody(id("MAIN_SCREEN"))
+
 let guntype = {
     name: 'handgun',
     delay: 2000,

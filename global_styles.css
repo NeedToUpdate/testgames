@@ -1,5 +1,16 @@
 body{
-    background-size: cover;
+    overflow: hidden;
+}
+#MAIN_SCREEN{
+    position: absolute;
+    overflow: hidden;
+    height: calc(44.9vw + 1px);
+    width: calc(100vw + 1px);
+    border: black solid 1px;
+    margin:0;
+    padding: 0;
+    top: -1px;
+    left: -1px;
 }
 .bluebtn {
     z-index: 100000;

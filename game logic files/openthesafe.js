@@ -1,3 +1,5 @@
+setupBody(id("MAIN_SCREEN"))
+
 words = Array.from(words); //just in case
 difficulty = 0;
 

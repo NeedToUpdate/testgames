@@ -1,3 +1,5 @@
+setupBody(id("MAIN_SCREEN"))
+
 difficulty = 2;
 
 let extras = ['fire'];
