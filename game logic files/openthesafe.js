@@ -1,4 +1,3 @@
-setupBody(id("MAIN_SCREEN"))
 
 words = Array.from(words); //just in case
 difficulty = 0;
@@ -410,31 +409,37 @@ function setupkeypad() {
 
 }
 
-let background = 'background12.jpg';
-document.body.style.backgroundColor = 'grey';
-document.body.style.backgroundImage = 'url(' + IMAGE_PATH + background.toString() + ')';
-document.body.style.backgroundRepeat = 'no-repeat';
+function setupBackground(){
+    return new Promise(resolve=>{
+        let background = 'background12.jpg';
+        DOMObjectGlobals.body.style.backgroundColor = 'grey';
+        DOMObjectGlobals.body.style.backgroundImage = 'url(' + IMAGE_PATH + background.toString() + ')';
+        DOMObjectGlobals.body.style.backgroundRepeat = 'no-repeat';
+        DOMObjectGlobals.body.style.backgroundSize = width + 'px auto';
+        
+    let extras = ['fire', 'stars', 'brokenhole', 'safe'];
+        LOADED_IMAGES = new ImageLoader(IMAGE_PATH, extras);
+        LOADED_IMAGES.add('dynamite_projectile', IMAGE_PATH + 'projectiles');
+        resolve()
+    })
+}
 
-//words = ['singing','playing','barking','learning','watching','sleeping','drawing','doing','sitting','swimming','getting','running','stopping','putting','cutting','dancing','writing','coming','closing','riding','drixving'];
 let letterCount = [];
 let allLetters = [];
 let dim = [];
 let lettersM = {};
-
-let extras = ['fire', 'stars', 'brokenhole', 'safe'];
-LOADED_IMAGES = new ImageLoader(IMAGE_PATH, extras);
-LOADED_IMAGES.add('dynamite_projectile', IMAGE_PATH + 'projectiles');
+let LOADED_IMAGES = {};
 
 
 function introMovie() {
-    let bank = new Img(IMAGE_PATH + '/bank.png', width * .1, height - 370, 500);
+    let bank = new Img(IMAGE_PATH + '/bank.png', width * .1, height/7, width/1.922);
     let burglars = [];
     for (let i = 0; i < 5; i++) {
-        let burglar = new Character(width * .8 + (25 + (Math.random() * 10 | 0)) * i, height - 50, 'burglar');
-        burglar.maxbounds.y = height - 20;
+        let burglar = new Character(width * .8 + (width/35 + (Math.random() * 10 | 0)) * i, height - height/8, 'burglar');
+        burglar.maxbounds.y = height - height/20;
         burglar.maxbounds.x = width;
-        burglar.MAX_V = 50;
-        burglar.MAX_F = 50;
+        burglar.MAX_V = width/20;
+        burglar.MAX_F = width/20;
         burglar.powerType = 'dynamite';
         burglar.addForce(VECTORS.gravity);
         burglars.push(burglar);
@@ -446,7 +451,7 @@ function introMovie() {
 
     bank.shape.onload = function () {
         burglars.forEach(b => {
-            let sprite = new Img(IMAGE_PATH + b.name + '.png', 100, 100, 90).fromCenter();
+            let sprite = new Img(IMAGE_PATH + b.name + '.png', 100, 100, width/10).fromCenter();
             sprite.onLoad(() => {
                 bsloaded++;
                 if (bsloaded === burglars.length) {
@@ -467,11 +472,11 @@ function introMovie() {
         playbtn.setAttribute('class', 'bluebtn');
         playbtn.style.top = height * 0.2 + 'px';
         playbtn.style.left = width * 0.8 + 'px';
-        document.body.appendChild(playbtn);
+        DOMObjectGlobals.body.appendChild(playbtn);
         playbtn.onclick = () => {
             playmovie = true;
-            document.body.removeChild(playbtn);
-            document.body.removeChild(diffbtn);
+            DOMObjectGlobals.body.removeChild(playbtn);
+            DOMObjectGlobals.body.removeChild(diffbtn);
             requestAnimationFrame(startmovie)
         };
 
@@ -493,7 +498,7 @@ function introMovie() {
         diffbtn.setAttribute('class', 'bluebtn');
         diffbtn.style.top = height * 0.3 + 'px';
         diffbtn.style.left = width * 0.8 + 'px';
-        document.body.appendChild(diffbtn);
+        DOMObjectGlobals.body.appendChild(diffbtn);
     };
 
     function startmovie() {
@@ -502,7 +507,7 @@ function introMovie() {
     }
 
     let time = 0;
-    let empty = new Character(width * 0.1 + 450, height - 60, 'empty');
+    let empty = new Character(width * 0.6, height - height/7, 'empty');
     empty.addDeathImage(LOADED_IMAGES.fire.cloneNode());
     let movieending = false;
     let hole = {};
@@ -583,14 +588,14 @@ function introMovie() {
     function cleanup() {
         hole.shape.style.animationFillMode = 'forwards';
         bank.shape.style.animationFillMode = 'forwards';
-        document.body.style.animationFillMode = 'forwards';
+        DOMObjectGlobals.body.style.animationFillMode = 'forwards';
 
         hole.shape.style.animationName = 'grow2';
         hole.shape.style.animationDuration = '3s';
         bank.shape.style.animationName = 'grow';
         bank.shape.style.animationDuration = '3s';
-        document.body.style.animationName = 'zoombg';
-        document.body.style.animationDuration = '3s';
+        DOMObjectGlobals.body.style.animationName = 'zoombg';
+        DOMObjectGlobals.body.style.animationDuration = '3s';
 
         id('black_square').style.backgroundColor = '#1a343f';
         setTimeout(() => {
@@ -644,7 +649,10 @@ function introMovie() {
     }
 }
 
-
-introMovie();
+setupBody(id("MAIN_SCREEN")).then(()=>{
+    setupBackground().then(()=>{
+        introMovie();
+    })
+})
 
 //setupkeypad();
