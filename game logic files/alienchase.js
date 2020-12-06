@@ -81,34 +81,7 @@ let alien_config = {
         difficulty: 5,
     },
 }
-setupBody(id("MAIN_SCREEN"))
-let MAINTESTER = new TestObj(2,0,2);
-MAINTESTER.setButton(0).name('restart');
-MAINTESTER.setButton(0).func(()=>{
-    restartGame();
-})
-MAINTESTER.setButton(1).name('remove bg');
-MAINTESTER.setButton(1).func(()=>{
-    document.body.style.backgroundImage = ''
-})
-MAINTESTER.setSlider(0).scale(DEFAULT_MAX_V_MULTIPLIER,1,15)
-MAINTESTER.setSlider(1).scale(DEFAULT_MAX_F_MULTIPLIER,1,15)
-MAINTESTER.setSlider(0).func(()=>{
-    aliens.forEach(alien=>{
-        alien._DEFAULT_MAX_F = MAINTESTER.getSlider(0).value*alien.difficulty;
-        alien.MAX_F = alien._DEFAULT_MAX_F
-    })
-    console.log('MAX_F: ', aliens[0]._DEFAULT_MAX_F)
-    MAINTESTER.text = 'MAX_F: ' + MAINTESTER.getSlider(0).value + '| MAX_V: ' + MAINTESTER.getSlider(1).value;
-})
-MAINTESTER.setSlider(1).func(()=>{
-    aliens.forEach(alien=>{
-        alien._DEFAULT_MAX_V = MAINTESTER.getSlider(1).value*alien.difficulty;
-        alien.MAX_V = alien._DEFAULT_MAX_V
-    })
-    console.log('MAX_V: ', aliens[0]._DEFAULT_MAX_V)
-    MAINTESTER.text = 'MAX_F: ' + MAINTESTER.getSlider(0).value + '| MAX_V: ' + MAINTESTER.getSlider(1).value;
-})
+let MAIN_TESTER = {};
 
 
 let THINGS_ARE_DRAGGABLE = false;
@@ -143,13 +116,13 @@ function setupLetters() {
     console.log(letters, actual_letters)
 
     //lines should be bnear the bottom in the middle half of the screen
-    let line_width = 80
+    let line_width = r(width/12)
     let total_width = actual_letters.length * line_width
-    let line_padding = 5;
+    let line_padding = r(width/192);
     let line_len = (total_width) / (actual_letters.length) - line_padding * 2;
     let line_height = height * 0.9
     for (let i = 0; i < actual_letters.length; i++) {
-            let line = Line.fromAngle(line_padding + (width / 2 - total_width / 2) + (line_len + line_padding * 2) * i, line_height, line_len, 0, 4);
+            let line = Line.fromAngle(line_padding + (width / 2 - total_width / 2) + (line_len + line_padding * 2) * i, line_height, line_len, 0, r(width/240));
             line.color = 'white';
             line.letter = actual_letters[i];
             lines.push(line);
@@ -159,12 +132,13 @@ function setupLetters() {
     actual_letters.forEach((letter, i) => {
         if(letter!=='#'){
         let pChar = new Character(lines[i].x + line_len / 2, line_height, letter);
-        let p = new P(letter, 0, 0, '4em').fromCenter();
+        let p = new P(letter, 0, 0, r(width/15) + 'px').fromCenter();
         pChar.addSprite(p)
         pChar.y -= p.height/2
         pChar.hasNoBounds = true;
         p.color = 'rgba(255,255,255,0.5)';
-        p.set('textShadow','black 0 0 4px')
+        p.set('textShadow','black 0 0 ' + r(width/240) + 'px')
+        p.zIndex = 10
         letterDivs.push(pChar)
         decoy_index = i;
         }
@@ -174,11 +148,11 @@ function setupLetters() {
     async function createDecoyLetters() {
         return new Promise(resolve => {
             for (let i = 0; i < (letters.length - actual_letters.length); i++) {
-                let pChar = new Character(getRandom(50, width - 50), getRandom(150, height / 2), letters[decoy_index + i]);
-                let p = new P(letters[decoy_index + i], 0, 0).fromCenter();
-                p.size = '4em';
-        p.set('textShadow','black 0 0 4px')
-        pChar.addSprite(p)
+                let pChar = new Character(getRandom(width*0.05,width*0.95), getRandom(height*0.25, height / 2), letters[decoy_index + i]);
+                let p = new P(letters[decoy_index + i], 0, 0,r(width/15) + 'px').fromCenter();
+                p.set('textShadow','black 0 0 ' + r(width/240) + 'px')
+                p.zIndex = 10
+                pChar.addSprite(p)
                 pChar.y -= p.height;
                 pChar.x -= p.width / 2;
                 pChar.hasNoBounds = true;
@@ -204,7 +178,7 @@ function setupLetters() {
 
                 if (i < actual_letters.length) {
                     promises.push(new Promise(resolve => {
-                        letter.doMoveTo(new Vector(getRandom(50, width - 50), getRandom(50, height / 2)), 2).then(x => {
+                        letter.doMoveTo(new Vector(getRandom(width*0.05,width*0.95), getRandom(height*0.1, height / 2)), 2).then(x => {
                             setTimeout(() => {
 
                                 letter.sprite.set('transition', '2s');
@@ -240,8 +214,8 @@ function createAlien(color){
     return new Promise(resolve=>{
         color = color || getRandom(valid_colors);
         let config = alien_config[color];
-        let alien = new Alien(getRandom(100, width-100), 100, 'alien_' + color + '_' + config.behaviour);
-        let alien_sprite = new Img(IMAGE_PATH + GHOSTS_IMAGE_PATH + color + getRandom(config.num) + '.png', 0, 0, 50).fromCenter().onLoad(x => {
+        let alien = new Alien(getRandom(width*0.1, width*0.9), width/10, 'alien_' + color + '_' + config.behaviour);
+        let alien_sprite = new Img(IMAGE_PATH + GHOSTS_IMAGE_PATH + color + getRandom(config.num) + '.png', 0, 0, width/20).fromCenter().onLoad(x => {
             alien.addSprite(alien_sprite);
             alien.setTarget(letterDivs[0])
             alien.changeBehaviour('idle');
@@ -275,19 +249,19 @@ let difficultyCounter = {};
 let difficultyText = {};
 let sliderIsHidden = true;
 function setupAliens(){
-    let SPRITE_WIDTH = 45;
-    let PADDING = 10;
+    let SPRITE_WIDTH = width/20;
+    let PADDING = width/160;
     let TOTAL_WIDTH = (SPRITE_WIDTH + PADDING)* valid_colors.length
     let LEFT = width/2 - TOTAL_WIDTH*0.5;
     let TOP = height/1.5;
     let variety = getRandom(Object.values(valid_colors).map(color=>alien_config[color].num).reduce((a,b)=>Math.min(a,b))) //finds the smallest number of options in the config and chooses a random number at max of the value-1
     let imgs = []
-    let okBtn = new Rectangle(25,25, 40,40).fromCenter();
-    difficultyCounter = new LoadingBar(width/2-10,55, width/2,50,0,max_difficulty,total_difficulty).fromCenter();
+    let okBtn = new Rectangle(width/40,width/40, width/25,width/25).fromCenter();
+    difficultyCounter = new LoadingBar(width/2- width/100,height/8, width/2,width/20,0,max_difficulty,total_difficulty).fromCenter();
     difficultyText = new P('Difficulty: ' + total_difficulty,0,0).fromCenter()
     let maxDifficultyText = new P('Max: ' + max_difficulty,0,0).fromCenter()
-    difficultyText.size = '2em';
-    maxDifficultyText.size = '2em';
+    difficultyText.size = r(width/32) + 'px';
+    maxDifficultyText.size =  r(width/32) + 'px';
     maxDifficultyText.shape.addEventListener('click',()=>{
         if(sliderIsHidden){
             slider.style.display = ''
@@ -298,7 +272,7 @@ function setupAliens(){
     })
     let slider = document.createElement('input')
     slider.setAttribute('type','range');
-    document.body.appendChild(slider)
+    DOMObjectGlobals.body.appendChild(slider)
     slider.style.position = 'absolute';
     slider.setAttribute('min','0')
     slider.setAttribute('max','40')
@@ -317,11 +291,11 @@ function setupAliens(){
         })
     requestAnimationFrame(()=>{
         difficultyText.x = width/2 - difficultyText.width
-        difficultyText.y = 105;
+        difficultyText.y = height/4;
         maxDifficultyText.x = width/2 + difficultyText.width
-        maxDifficultyText.y = 105;
+        maxDifficultyText.y = height/4;
         slider.style.left = maxDifficultyText.x - maxDifficultyText.width/2
-        slider.style.top = 105 + maxDifficultyText.height/2
+        slider.style.top = height/4 + maxDifficultyText.height/2
         slider.style.width = maxDifficultyText.width
     })
     difficultyCounter.type = 'range';
@@ -338,17 +312,17 @@ function setupAliens(){
     })
     difficultyCounter.set('transition','0.2s');
     difficultyCounter.setBar('transition','0.4s')
-    difficultyCounter.set('borderRadius','20px')
-    difficultyCounter.setBar('borderRadius','20px')
-    let easyText = new P('← Easy',width/2- 180,height-50,'2em').fromCenter()
-    let hardText = new P('Hard →',width/2 + 120,height-50,'2em').fromCenter()
+    difficultyCounter.set('borderRadius', r(width/50) + 'px')
+    difficultyCounter.setBar('borderRadius',r(width/50) + 'px')
+    let easyText = new P('← Easy',width/2- width/5,height*0.95,r(width/32) + 'px').fromCenter()
+    let hardText = new P('Hard →',width/2 + width/5,height*0.95,r(width/32) + 'px').fromCenter()
     valid_colors = valid_colors.sort((a,b)=>alien_config[a].difficulty>alien_config[b].difficulty)
     valid_colors.forEach((color,i)=>{
-        let img = new Img(IMAGE_PATH+ 'ghosts/' + color + variety + '.png', LEFT + (SPRITE_WIDTH+PADDING)*i, TOP,45).fromCenter().onLoad(()=>{
-            let p = new P(alien_config[color].difficulty,img.x-3,img.y+img.height/2,'1em')
+        let img = new Img(IMAGE_PATH+ 'ghosts/' + color + variety + '.png', LEFT + (SPRITE_WIDTH+PADDING)*i, TOP,width/20).fromCenter().onLoad(()=>{
+            let p = new P(alien_config[color].difficulty,img.x-3,img.y+img.height/2,r(width/64) + 'px')
             imgs.push(p)
-            easyText.y = img.y+ img.height + 15;
-            hardText.y = img.y+ img.height + 15;
+            easyText.y = img.y+ img.height + r(width/64);
+            hardText.y = img.y+ img.height + r(width/64);
         });
         img.config = alien_config[color];
         img.shape.addEventListener('click',()=>{
@@ -367,15 +341,15 @@ function setupAliens(){
         imgs.push(img)
     })
     okBtn.color = 'limegreen';
-    let ok = new P('✓',8,0)
-    ok.size = '2em'
+    let ok = new P('✓',r(width/128),0)
+    ok.size = r(width/32) + 'px'
     okBtn.attach(ok)
     okBtn.set('borderRadius','50%')
-    okBtn.set('border', 'green solid 4px')
+    okBtn.set('border', 'green solid '+ r(width/240) +'px')
     easyText.color = 'lightgreen';
-    easyText.set('textShadow','black 0 0 4px');
+    easyText.set('textShadow','black 0 0 '+ r(width/240) +'px');
     hardText.color = 'orange';
-    hardText.set('textShadow','black 0 0 4px');
+    hardText.set('textShadow','black 0 0 '+ r(width/240) +'px');
     return new Promise(resolve=>{
         okBtn.shape.addEventListener('click',()=>{
             okBtn.remove();
@@ -390,7 +364,7 @@ function setupAliens(){
             maxDifficultyText.remove()
             easyText.remove()
             hardText.remove()
-            document.body.removeChild(slider)
+            DOMObjectGlobals.body.removeChild(slider)
             resolve()
         })
     })
@@ -398,10 +372,10 @@ function setupAliens(){
 function setupBackground(){
     return new Promise(resolve=>{
         let background = 'space' + (getRandom(IMAGE_CONFIG.space_bgs.num)) + '.jpg';
-        document.body.style.backgroundColor = 'black';
-        document.body.style.backgroundImage = 'url(' + IMAGE_PATH + BACKGROUND_IMAGE_PATH + background.toString() + ')';
-        document.body.style.backgroundSize = width + 'px auto';
-        document.body.style.backgroundRepeat = 'no-repeat';
+        DOMObjectGlobals.body.style.backgroundColor = 'black';
+        DOMObjectGlobals.body.style.backgroundImage = 'url(' + IMAGE_PATH + BACKGROUND_IMAGE_PATH + background.toString() + ')';
+        DOMObjectGlobals.body.style.backgroundSize = width + 'px auto';
+        DOMObjectGlobals.body.style.backgroundRepeat = 'no-repeat';
 
         resolve()
     })
@@ -446,11 +420,11 @@ function previewAliens(arrayOfAliens,variety){
         x.remove();
     })
     preview_divs = [];
-    let TOP = 50;
-    let LEFT = 50;
-    let PADDING = 5;
-    let SPRITE_WIDTH = 25;
-    let PER_ROW = 5;
+    let TOP = r(width/19.22);
+    let LEFT = r(width/19.22);
+    let PADDING = r(width/280);
+    let SPRITE_WIDTH = r(width/40);
+    let PER_ROW = 5
     let TOTAL_WIDTH = arrayOfAliens.length*(SPRITE_WIDTH+PADDING);
     let promises = [];
     return new Promise(resolve=>{
@@ -545,8 +519,8 @@ function resetLetter(letter){
     drop(letter)
     letter.isResetting = true;
     letter.sprite.color = 'red';
-    letter.x = getRandom(50,width-50);
-    letter.y = getRandom(50,height-50);
+    letter.x = getRandom(width*0.05, width*0.95);
+    letter.y = getRandom(height*0.05,height*0.95);
     setTimeout(()=>{
         letter.color = 'white';
         letter.isResetting = false;
@@ -571,8 +545,8 @@ document.addEventListener('touchmove', (ev) => {
 function checkLetter(){
     if(!actual_letters.includes(previouslyTouchedLetter.name) || previouslyTouchedLetter.isLocked) return;
     let letter = previouslyTouchedLetter;
-    let buffer = 20
-    let y_buffer = 40
+    let buffer = width/48
+    let y_buffer = height/10
     let potential_lines = lines.filter(x=>(x.letter == letter.name && x.letter !== ''))
     potential_lines.forEach(l=>{
         line = {
@@ -591,7 +565,7 @@ function checkLetter(){
             letter.isLocked = true;
             letter.isDragging = false;
             letter.sprite.color = 'limegreen';
-            letter.sprite.zIndex = -1;
+            letter.sprite.zIndex = 1;
             letter.x = line.x 
             letter.y = line.y - (letter.height/2);
             if(actual_letters.filter(x=>x!=='#').length==0){
@@ -649,16 +623,50 @@ function TEMPORARY_PROXY(){
         })        
 }
 
-setupBackground().then(()=>{
-    gameloop()
-    setupAliens().then(()=>{
-        setupLetters().then(() => {
-            previouslyTouchedLetter = letterDivs[0]
-            releaseAliens().then(()=>{
-                THINGS_ARE_DRAGGABLE = true;
+function tester(){
+    MAINTESTER = new TestObj(2,0,2);
+    MAINTESTER.setButton(0).name('restart');
+    MAINTESTER.setButton(0).func(()=>{
+        restartGame();
+    })
+    MAINTESTER.setButton(1).name('remove bg');
+    MAINTESTER.setButton(1).func(()=>{
+        document.body.style.backgroundImage = ''
+    })
+    MAINTESTER.setSlider(0).scale(DEFAULT_MAX_V_MULTIPLIER,1,15)
+    MAINTESTER.setSlider(1).scale(DEFAULT_MAX_F_MULTIPLIER,1,15)
+    MAINTESTER.setSlider(0).func(()=>{
+        aliens.forEach(alien=>{
+            alien._DEFAULT_MAX_F = MAINTESTER.getSlider(0).value*alien.difficulty;
+            alien.MAX_F = alien._DEFAULT_MAX_F
+        })
+        console.log('MAX_F: ', aliens[0]._DEFAULT_MAX_F)
+        MAINTESTER.text = 'MAX_F: ' + MAINTESTER.getSlider(0).value + '| MAX_V: ' + MAINTESTER.getSlider(1).value;
+    })
+    MAINTESTER.setSlider(1).func(()=>{
+        aliens.forEach(alien=>{
+            alien._DEFAULT_MAX_V = MAINTESTER.getSlider(1).value*alien.difficulty;
+            alien.MAX_V = alien._DEFAULT_MAX_V
+        })
+        console.log('MAX_V: ', aliens[0]._DEFAULT_MAX_V)
+        MAINTESTER.text = 'MAX_F: ' + MAINTESTER.getSlider(0).value + '| MAX_V: ' + MAINTESTER.getSlider(1).value;
+    })
+}
+
+setupBody(id("MAIN_SCREEN")).then(()=>{
+    setupBackground().then(()=>{
+        tester()
+        gameloop()
+        setupAliens().then(()=>{
+            setupLetters().then(() => {
+                previouslyTouchedLetter = letterDivs[0]
+                releaseAliens().then(()=>{
+                    THINGS_ARE_DRAGGABLE = true;
+                })
             })
         })
     })
+    
 })
 
 
