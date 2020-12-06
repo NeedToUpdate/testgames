@@ -251,8 +251,8 @@ let sliderIsHidden = true;
 function setupAliens(){
     let SPRITE_WIDTH = width/20;
     let PADDING = width/160;
-    let TOTAL_WIDTH = (SPRITE_WIDTH + PADDING)* valid_colors.length
-    let LEFT = width/2 - TOTAL_WIDTH*0.5;
+    let TOTAL_WIDTH = (SPRITE_WIDTH + PADDING)* valid_colors.length -PADDING
+    let LEFT = width/2 - TOTAL_WIDTH*0.5 + PADDING;
     let TOP = height/1.5;
     let variety = getRandom(Object.values(valid_colors).map(color=>alien_config[color].num).reduce((a,b)=>Math.min(a,b))) //finds the smallest number of options in the config and chooses a random number at max of the value-1
     let imgs = []
