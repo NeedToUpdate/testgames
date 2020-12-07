@@ -550,7 +550,7 @@ function introMovie() {
                 if (Math.random() < 0.5) {
                     let projectile = burglar.shoot();
                     if(projectile){
-                        projectile.minbounds.x = 500;
+                        projectile.minbounds.x = width/2;
                         projectile.hasNoBounds = false;
                         projectile.isFragile = true;
                         things_to_update.push(projectile)
