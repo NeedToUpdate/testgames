@@ -1,4 +1,4 @@
-setupBody(id("MAIN_SCREEN"))
+
 
 difficulty = 0;
 let chosen = words[Math.random() * words.length | 0];
@@ -6,15 +6,24 @@ let IMAGE_PATH = '../images/';
 let letters = chosen.split('');
 let colors = ['darkred', 'darkgreen', 'darkgoldenrod', 'purple', 'darkblue', 'darkorange', 'darkcyan', 'darkslategray'];
 let extras = ['fire', 'stars'];
-let LOADED_IMAGES = new ImageLoader(IMAGE_PATH, extras);
+let LOADED_IMAGES = {}
+let timep = {}
+let timer = {}
 
-let background = 'bg' + (Math.random() * 8 | 0).toString() + '.jpg';
-document.body.style.backgroundColor = 'grey';
-document.body.style.backgroundImage = 'url(' + IMAGE_PATH + background.toString() + ')';
-document.body.style.backgroundRepeat = 'no-repeat';
-let timep = id('time');
-let timer = 10.00 + letters.length + (20.00 - difficulty * 10);
-id('time').innerText = timer.toPrecision(4);
+function setupBackground(){
+    return new Promise(resolve=>{
+        LOADED_IMAGES = new ImageLoader(IMAGE_PATH, extras);
+        let background = 'bg' + (Math.random() * 8 | 0).toString() + '.jpg';
+        DOMObjectGlobals.body.style.backgroundColor = 'grey';
+        DOMObjectGlobals.body.style.backgroundImage = 'url(' + IMAGE_PATH + background.toString() + ')';
+        DOMObjectGlobals.body.style.backgroundRepeat = 'no-repeat';
+        timep = id('time');
+        timep.style.fontSize = r(width/15) + 'px'
+        timer = 10.00 + letters.length + (20.00 - difficulty * 10);
+        id('time').innerText = timer.toPrecision(4);
+        resolve()
+    })
+}
 
 
 id('jmpright').addEventListener('click', () => {
@@ -46,17 +55,17 @@ function play(){
 
 
 let setupletters = function () {
-    let w = 50; //line width
-    let space = 5; //space
-    let button_w = 80;
-    let button_space = 10;
+    let w = width/19.22; //line width
+    let space = width/192.2; //space
+    let button_w = width/12;
+    let button_space = width/96;
     let y_calc = height * .35;
     let num = letters.length;
 
-    gamearea = new Rectangle(width / 2 - ((button_w + button_space) * grid[0].length / 2) - 15, pos2xy(0, 0)[1] - button_space - 55, (button_w + button_space) * grid[0].length + 30, (button_w + button_space) * grid.length+ 30);
+    gamearea = new Rectangle(width / 2 - ((button_w + button_space) * grid[0].length / 2) - width/64, pos2xy(0, 0)[1] - button_space - width/17, (button_w + button_space) * grid[0].length + width/32, (button_w + button_space) * grid.length+ width/32);
     gamearea.set('backgroundImage', 'linear-gradient(to top left, #59c173, #a17fe0, #5d26c1)');
     gamearea.set('borderRadius', '20px');
-    gamearea.set('border', 'solid 3px white');
+    gamearea.set('border', 'solid '+r(width/210)+'px white');
     gamearea.set('boxShadow', 'rgba(255,255,255,0.5) 0px 0px 5px 5px');
 
     grid = grid.map((row, y) => {
@@ -90,12 +99,12 @@ let max_num_of_letters = 12;
 
 function addStartGameTrigger(btn, letter) {
     if (letter === chosen[0]) {
-        btn.div.set('border', 'blue 5px solid');
+        btn.div.set('border', 'blue '+ r(width/180) +'px solid');
         btn.div.shape.addEventListener('click', () => {
             if (!LOOPING) {
                 grid.forEach(row => {
                     row.forEach((x) => {
-                         x.div.set('border', 'white 5px solid');
+                         x.div.set('border', 'white '+ r(width/180) +'px solid');
                 })});
                 play();
             }
@@ -144,7 +153,7 @@ function genButton(string, x, y) {
     [x, y] = pos2xy(x, y);
     g.x = x;
     g.y = y;
-    g.maxbounds.y = y + 35;
+    g.maxbounds.y = y + g.height/2;
     g.addForce(VECTORS.gravity);
     g.sprite.shape.addEventListener('click', () => {
         if (Math.random() < 0.05) {
@@ -163,8 +172,8 @@ function genButton(string, x, y) {
 
 function pos2xy(xpos, ypos) {
     let top = height * 0.4;
-    let left = width / 2 - 70 * grid[0].length / 2;
-    return [left + xpos * 85, top + 30 + ypos * 85]
+    let left = width / 2 - width/13 * grid[0].length / 2;
+    return [left + xpos * width/11, top + width/32 + ypos * width/11]
 }
 
 let final_word = "";
@@ -201,7 +210,7 @@ function clickHandler(string, pos) {
     }
     let currentLine = lines[final_word.length];
     let temp_p = new P(string, currentLine.x, currentLine.y).usingNewTransform().setColor('white');
-    temp_p.set('fontSize', '4em');
+    temp_p.set('fontSize', r(width/15) +'px');
     temp_p.x += temp_p.width/3;
     temp_p.y -= (temp_p.height)-14;
     let temp = final_word + string;
@@ -238,7 +247,7 @@ function clickHandler(string, pos) {
 
 function win() {
     winner = true;
-    setAll('border', 'limegreen solid 5px');
+    setAll('border', 'limegreen solid '+ r(width/180) +'px');
     setAllLetters('color', 'limegreen');
     stop();
 }
@@ -265,7 +274,7 @@ let draw = function () {
         if (timer <= 0) {
             timer = 0;
             id('timep').style.color = "red";
-            setAll('border', 'red solid 5px');
+            setAll('border', 'red solid '+ r(width/180) +'px');
             grid.forEach(row => {
                 row.forEach((x) => {
                     x.kill();
@@ -302,4 +311,9 @@ loop = function () {
     draw();
     if (LOOPING) requestAnimationFrame(loop)
 };
-setupletters();
+
+setupBody(id("MAIN_SCREEN")).then(()=>{
+    setupBackground().then(()=>{
+        setupletters();
+    })
+})

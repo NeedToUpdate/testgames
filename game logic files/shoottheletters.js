@@ -1,4 +1,3 @@
-setupBody(id("MAIN_SCREEN"))
 
 let guntype = {
     name: 'handgun',
@@ -11,25 +10,44 @@ let guntype = {
 let ammoP = {};
 
 let gun = {};
-let selectedgun = new Character(0, 0, guntype.name);
-
+let selectedgun = {} 
 let IMAGE_PATH = '../images/';
-selectedgun.hasNoBounds = true;
-document.body.style.backgroundImage = 'url(' + IMAGE_PATH + 'bg3.jpg)';
-document.body.style.pointerEvents = 'none';
-
-let city = new Img(IMAGE_PATH + 'city.png', 0, 0, width);
+let city = {} 
 //creates empty array, maps it to 0-n, shuffles it, maps again to have x be a random int from 0 to n
 let buildings = [];
 let invadercolors = ['red', 'green', 'purple', 'blue', 'pink', 'white', 'yellow', 'orange'];
-let invaders = new ImageLoader(IMAGE_PATH + 'invaders/', invadercolors.map(x => 'invader' + x));
+let invaders = {} 
 let aliens = [];
 
-let aliendeathimg = new ImageLoader(IMAGE_PATH + 'projectiles/', ['electric_projectile']);
+let aliendeathimg = {} 
 
+let LOADED_IMAGES = {}
+let LEFT_OFFSET = 0;
+function setupBackground(){
+    return new Promise(resolve=>{
+        let extras = ['bullet', 'fire'];
+        LOADED_IMAGES = new ImageLoader(IMAGE_PATH + 'projectiles/', extras);
+        aliendeathimg = new ImageLoader(IMAGE_PATH + 'projectiles/', ['electric_projectile']);
+        invaders = new ImageLoader(IMAGE_PATH + 'invaders/', invadercolors.map(x => 'invader' + x));
+        
+        document.body.style.backgroundImage = 'url(' + IMAGE_PATH + 'bg3.jpg)';
+        document.body.style.pointerEvents = 'none';
+        selectedgun = new Character(0, 0, guntype.name);
+        selectedgun.hasNoBounds = true;
+        LEFT_OFFSET = DOMObjectGlobals.body.offsetLeft;
 
-let extras = ['bullet', 'fire'];
-let LOADED_IMAGES = new ImageLoader(IMAGE_PATH + 'projectiles/', extras);
+                
+        id('jmpleft').style.pointerEvents = 'all';
+        id('jmpleft').style.zIndex = '9999999';
+        id('jmpleft').style.width = width/14 + 'px';
+        id('jmpleft').style.height = height/10 + 'px';
+        id('jmpleft').style.fontSize = width/60 + 'px';
+        city = new Img(IMAGE_PATH + 'city.png', 0, 0, width).onLoad(()=>{
+            resolve()
+        });
+    })
+}
+
 
 let dragging_disabled = false;
 let dragging = false;
@@ -42,7 +60,7 @@ function disableDragging() {
 function dragStart(ev) {
     if (!dragging_disabled) {
         dragging = true;
-        startpos.x = ev.clientX;
+        startpos.x = ev.clientX - LEFT_OFFSET;
         startpos.y = ev.clientY;
     }
 
@@ -54,15 +72,16 @@ function dragStop() {
 
 function drag(ev) {
     if (dragging && !dragging_disabled) {
+        let x = ev.clientX - LEFT_OFFSET
         let n = selectedgun.x;
-        if (n + ev.clientX - startpos.x < 0) {
+        if (n + x - startpos.x < 0) {
             return
         }
-        if (n + ev.clientX - startpos.x > width - selectedgun.width/2) {
+        if (n + x - startpos.x > width - selectedgun.width/2) {
             return
         }
-        selectedgun.p.x += ev.clientX - startpos.x;
-        startpos.x = ev.clientX;
+        selectedgun.p.x += x - startpos.x;
+        startpos.x = x;
     }
 
 
@@ -89,11 +108,11 @@ function reload() {
         guntype.ammo = guntype.ammocap;
         ammoP.string = 'ammo: ' + guntype.ammo + ' | ' + guntype.backupammo;
         let attachment = new Flyer(0, 0, 'loadingbar');
-        let health = new LoadingBar(0, 0, 60, 10, 0, 100, 1);
+        let health = new LoadingBar(0, 0, width/16, width/96, 0, 100, 1);
         health.set('zIndex', '100000');
         health.setBar('zIndex', '100001');
         attachment.addSprite(health);
-        selectedgun.addAttachment(attachment, new Vector(-20, -20));
+        selectedgun.addAttachment(attachment, new Vector(-width/181, -width/181));
         gun.reloading = true;
         let interval = setInterval(() => {
             health.value++;
@@ -125,10 +144,10 @@ function shoot() {
     let sin = Math.sin(angle * (Math.PI / 180));
     let w = selectedgun.width;
     let h = selectedgun.height;
-    let x = selectedgun.x + cos * 50;
-    let y = selectedgun.y + sin * 50;
+    let x = selectedgun.x + cos * width/19.2;
+    let y = selectedgun.y + sin * width/19.2;
     let bullet = new Flyer(x, y, 'bullet');
-    let bulletimg = new Img(LOADED_IMAGES.bullet.cloneNode(), x, y, 30, 0, 0).fromCenter().onLoad(() => {
+    let bulletimg = new Img(LOADED_IMAGES.bullet.cloneNode(), x, y, width/32, 0, 0).fromCenter().onLoad(() => {
         bulletimg.set('zIndex', '1000');
         bullet.addSprite(bulletimg);
         bullet.angle = angle
@@ -310,9 +329,9 @@ let things_to_update = [];
 
 
 function createAlien(target) {
-    let alien = new Flyer(10, 100, 'invader' + getRandom(invadercolors));
-    let sprite = new Img(invaders[alien.name].cloneNode(), 10, 100, 50).fromCenter().usingNewTransform().onLoad(() => {
-        sprite.set('zIndex', '1');
+    let alien = new Flyer(10, height/4, 'invader' + getRandom(invadercolors));
+    let sprite = new Img(invaders[alien.name].cloneNode(), 0,0, width/19.22).fromCenter().usingNewTransform().onLoad(() => {
+        sprite.zIndex = 3;
         alien.addSprite(sprite);
         alien.addDeathImage(aliendeathimg.electric_projectile.cloneNode());
     });
@@ -337,13 +356,13 @@ function createAlien(target) {
 }
 let buildingHandler = {};
 function setup() {
-    let gunsprite = new Rectangle(width / 2 - 50, height - 70, 75, 76, 0).fromCenter();
+    let gunsprite = new Rectangle(width / 2, height - width/24, width/12.8, width/12.7, 0).fromCenter();
     gunsprite.set('backgroundImage', 'url("' + IMAGE_PATH + 'gun.png")');
     gunsprite.set('backgroundSize', 'cover');
     gunsprite.set('backgroundColor', 'transparent');
     gunsprite.set('zIndex', '9999');
-    selectedgun.x = width / 2 - 50;
-    selectedgun.y = height - 35;
+    selectedgun.x = width / 2 ;
+    selectedgun.y = height - width/24;
     selectedgun.addSprite(gunsprite);
     gunsprite.shape.style.pointerEvents = 'all';
     gunsprite.shape.addEventListener('click', shoot);
@@ -352,20 +371,19 @@ function setup() {
     selectedgun.update();
 
     let y_calc = height * 0.15;
-    let space = 15;
+    let space = width/64;
     chosenletters = getRandom(GRAMMAR_MODE ? sentences : words);
     if (!GRAMMAR_MODE) chosenletters = chosenletters.replace(' ', '');
     splitletters = chosenletters.split(GRAMMAR_MODE ? ' ' : '');
     splitletters.forEach((word, i) => {
         let letter = new Character(0, 0, word);
-        let p = new P(word, 0, y_calc).fromCenter();
-        p.set('fontSize', '4em');
+        let p = new P(word, 0, y_calc, width/15).fromCenter();
         let leftOffset = allletters.reduce((tot, item) => tot + item.width + space, 0);
         letter.addSprite(p);
         letter.x = leftOffset + p.width / 2;
         letter.y = y_calc - p.height / 3;
         letter.hasNoBounds = true;
-        p.set('zIndex', '3');
+        p.set('zIndex', '4');
         p.set('textShadow', 'black 0 0 1px');
         letter.cache.origXY = new Vector(letter.x, letter.y);
         allletters.push(letter);
@@ -391,7 +409,7 @@ function setup() {
 
     });
     buildings = shuffle(Array(splitletters.length).fill('').map((x, i) => i)).map((x, i) => {
-        let img = new Img(IMAGE_PATH + 'buildings/skyscraper' + getRandom(6) + '.png', 100 + ((width-100) / (splitletters.length + 1)) * i + getRandom(-40, 40), 0, 50,).fromCenter().onLoad(() => {
+        let img = new Img(IMAGE_PATH + 'buildings/skyscraper' + getRandom(6) + '.png', width*.1 + (width*.9 / (splitletters.length + 1)) * i + getRandom(-40, 40), 0, width/19.22,).fromCenter().onLoad(() => {
             img.y = height - img.height / 2;
         });
         img.set('zIndex', '10');
@@ -401,8 +419,7 @@ function setup() {
     for (let i = 0; i < splitletters.length; i++) {
         createAlien();
     }
-    ammoP = new P('ammo: ' + guntype.ammo + ' | ' + guntype.backupammo, width * .9, height * 0.01);
-    ammoP.set('fontSize', '2em')
+    ammoP = new P('ammo: ' + guntype.ammo + ' | ' + guntype.backupammo, width * .9, height * 0.01, width/30);
 }
 
 let started = false;
@@ -424,8 +441,6 @@ id('jmpleft').addEventListener('click', () => {
         play();
     }
 });
-id('jmpleft').style.pointerEvents = 'all';
-id('jmpleft').style.zIndex = '9999999';
 
 class BuildingHandler{
     constructor(array){
@@ -456,5 +471,8 @@ function play() {
     createFallbackLoopFunction(loop).start()
 }
 
-//
-setup();
+setupBody(id("MAIN_SCREEN")).then(()=>{
+    setupBackground().then(()=>{
+        setup();
+    })
+})

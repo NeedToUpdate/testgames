@@ -15,9 +15,8 @@ body{
     left: -1px;
     max-width: 222vh;
     max-height: 100vh;
-    align-self: baseline;
 }
-#demo_wrapper{
+#MAIN_WRAPPER{
     display: flex;
     align-content: center;
     justify-content: center;

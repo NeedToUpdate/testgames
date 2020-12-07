@@ -369,6 +369,8 @@ function setupAliens(){
         })
     })
 }
+
+let LEFT_OFFSET = 0;
 function setupBackground(){
     return new Promise(resolve=>{
         let background = 'space' + (getRandom(IMAGE_CONFIG.space_bgs.num)) + '.jpg';
@@ -376,7 +378,7 @@ function setupBackground(){
         DOMObjectGlobals.body.style.backgroundImage = 'url(' + IMAGE_PATH + BACKGROUND_IMAGE_PATH + background.toString() + ')';
         DOMObjectGlobals.body.style.backgroundSize = width + 'px auto';
         DOMObjectGlobals.body.style.backgroundRepeat = 'no-repeat';
-
+        LEFT_OFFSET = DOMObjectGlobals.body.offsetLeft;
         resolve()
     })
 }
@@ -459,7 +461,7 @@ function drag(ev) {
         if (letter.isDragging) {
             let old_p = letter.p.copy();
             let newY = (ev.clientY);
-            let newX = (ev.clientX);
+            let newX = (ev.clientX) - LEFT_OFFSET;
             if (newY > (height)) newY = height;
             if (newY < 0) newY = 0;
             if (newX > (width)) newX = width;
@@ -477,7 +479,7 @@ function pickup(letter, ev) {
     if (!letter.isLocked && !letter.isResetting) {
         letter.sprite.color = 'blue';
         let newY = (ev.clientY );
-        let newX = (ev.clientX );
+        let newX = (ev.clientX - LEFT_OFFSET);
         if (newY > height) newY = height;
         if (newY < 0) newY = 0;
         if (newX > width) newX = width;
