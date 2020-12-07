@@ -17,10 +17,20 @@ function setupBackground(){
         DOMObjectGlobals.body.style.backgroundColor = 'grey';
         DOMObjectGlobals.body.style.backgroundImage = 'url(' + IMAGE_PATH + background.toString() + ')';
         DOMObjectGlobals.body.style.backgroundRepeat = 'no-repeat';
-        timep = id('time');
+        timep = id('timep');
         timep.style.fontSize = r(width/15) + 'px'
         timer = 10.00 + letters.length + (20.00 - difficulty * 10);
         id('time').innerText = timer.toPrecision(4);
+        id('time').style.fontSize = r(width/15) + 'px'
+        id('jump').style.width = width/12 + 'px'
+        id('jump').style.height = height/10 + 'px'
+        id('jump').style.left = width*2/11 + 'px'
+        id('jmpleft').style.width = width/12 + 'px'
+        id('jmpleft').style.height = height/10 + 'px'
+        id('jmpleft').style.left =  '0px'
+        id('jmpright').style.width = width/12 + 'px'
+        id('jmpright').style.height = height/10 + 'px'
+        id('jmpright').style.left = width/11 + 'px'
         resolve()
     })
 }
@@ -212,7 +222,7 @@ function clickHandler(string, pos) {
     let temp_p = new P(string, currentLine.x, currentLine.y).usingNewTransform().setColor('white');
     temp_p.set('fontSize', r(width/15) +'px');
     temp_p.x += temp_p.width/3;
-    temp_p.y -= (temp_p.height)-14;
+    temp_p.y -= (temp_p.height)*0.95;
     let temp = final_word + string;
     if (chosen.startsWith(temp)) {
         //CORRECT
@@ -282,7 +292,7 @@ let draw = function () {
             });
             stop();
         }
-        timep.innerText = timer;
+        id('time').innerText = timer;
     }
     grid.forEach(row => {
         row.forEach((x) => {
