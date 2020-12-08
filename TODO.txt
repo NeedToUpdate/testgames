@@ -61,3 +61,27 @@
 - catch the letter
 
 
+//================== POLISH AND SPARKLES ===============
+
+
+// build the word
+
+black square is too small when teh screen is very big
+buttons are too big when the screen is very small
+
+//ivader shoot
+
+button is weird sized on large screen
+
+//open the safe
+
+image blocker is too thin in large screen sizes
+
+//time trial 
+
+buttons weirdly sized on large screen
+
+//fourinarow 
+
+weird shaped buttons on large screen
+pen too thick on small screen
