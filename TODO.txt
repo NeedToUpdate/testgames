@@ -80,8 +80,18 @@ image blocker is too thin in large screen sizes
 //time trial 
 
 buttons weirdly sized on large screen
+font on buttons too big with small screen
 
 //fourinarow 
 
 weird shaped buttons on large screen
 pen too thick on small screen
+
+//wordtrain
+
+font for power select is too big on small screen and too spaced out
+
+//general
+
+
+need to add scaling for the main update class
