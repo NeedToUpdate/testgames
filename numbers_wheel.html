@@ -12,24 +12,76 @@
 </head>
 
 <body class="locked">
-    <button id="spin" class="bluebtn">Spin!</button>
-    <button id="playpause" class="bluebtn" style="
+
+    <div id="MAIN_WRAPPER">
+        <div id="MAIN_SCREEN">
+            <button id="spin" class="bluebtn">Spin!</button>
+            <button id="playpause" class="bluebtn" style="
     background-color: #4dff8d;
     border: #009915 solid 4px;
     color: #185000;">Add!</button>
-    <button id="randomize" class="bluebtn at_top" style="height: 25px; left: 70px;
+            <button id="randomize" class="bluebtn at_top" style="height: 25px; left: 70px;
             background-color: #f5ff8b;
             border: #ffc600 solid 4px;
             color: #808000;">New!</button>
-    <p style="color: white; top: 50px; position: absolute">Speed: <span id="speedspan"></span> deg per second</p>
+            <p style="color: white; top: 50px; position: absolute">Speed: <span id="speedspan"></span> deg per second
+            </p>
+        </div>
+    </div>
     <script>
-        let background = 'bg' + (getRandom(3,5) | 0).toString() + '.jpg';
-        document.body.style.backgroundColor = 'grey';
-        document.body.style.backgroundImage = 'url(' + './images/' + background.toString() + ')';
-        //document.body.style.backgroundSize = width + 'px auto';
-        document.body.style.backgroundRepeat = 'no-repeat';
+        let items = [];
+        let selected_items = [];
+        let imageDivs = [];
+        let originX = 0;
+        let originY = 0;
+        let circleRadius = 0;
+        let wheelShape = {};
+        let radius = 0;
+        let lastcheck = 0;
 
-        function createNumber(){
+
+        let LEFT_OFFSET = 0;
+        function setupBackground() {
+            return new Promise(resolve => {
+                let background = 'bg' + (getRandom(3, 5) | 0).toString() + '.jpg';
+                DOMObjectGlobals.body.style.backgroundColor = 'grey';
+                DOMObjectGlobals.body.style.backgroundImage = 'url(' + './images/' + background.toString() +
+                    ')';
+                DOMObjectGlobals.body.style.backgroundSize = width + 'px auto';
+                DOMObjectGlobals.body.style.backgroundRepeat = 'no-repeat';
+
+                items = Array(50).fill(0).map(x => createNumber());
+                selected_items = getRandomArray(12);
+                imageDivs = [];
+                originX = width / 2;
+                originY = height / 2 + height / 3;
+                circleRadius = width/4;
+                wheelShape = new Circle(originX, originY, circleRadius);
+                lines = [];
+                rSqrd = circleRadius ** 2;
+                radius = width/6;
+
+                DOMObjectGlobals.body.addEventListener('touchend', e => {
+                    clickUp(e.touches[0])
+                });
+                DOMObjectGlobals.body.addEventListener('mouseup', clickUp);
+                DOMObjectGlobals.body.addEventListener('mousedown', clickDown);
+                DOMObjectGlobals.body.addEventListener('touchstart', e => {
+                    clickDown(e.touches[0])
+                });
+                DOMObjectGlobals.body.addEventListener('mousemove', dragWheel);
+                DOMObjectGlobals.body.addEventListener('touchmove', e => {
+                    dragWheel(e.touches[0])
+                });
+
+                LEFT_OFFSET = DOMObjectGlobals.body.offsetLeft
+
+
+                resolve()
+            })
+        }
+
+        function createNumber() {
             let text = '';
             if (getRandom(5)) {
                 text += getRandom(4) ? '+' : '-';
@@ -38,11 +90,11 @@
                 text = 'x'
                 text += (getRandom(5) + 2);
             }
-            if(getRandom(100)<1) text = '+1000';
-            if(getRandom(100)<1) text = 'x100';
+            if (getRandom(100) < 1) text = '+1000';
+            if (getRandom(100) < 1) text = 'x100';
             return text;
         }
-        let items = Array(50).fill(0).map(x=>createNumber());
+
         function getRandomArray(num) {
             let nums = [];
             let escape = 0;
@@ -55,233 +107,224 @@
             }
             return nums.map(x => items[x]);
         }
-        let selected_items = getRandomArray(12);
-        let imageDivs = [];
 
 
-
-
-        let originX = width/2;
-        let originY = height/2 + height/3;
-        let circleRadius = 250;
-        let wheelShape = new Circle(originX,originY, circleRadius);
-        let lines = [];
-        let radius = 150;
 
         function getX(angle, customRadius) {
             if (customRadius) {
-                return originX + customRadius * Math.cos(angle/180*Math.PI);
+                return originX + customRadius * Math.cos(angle / 180 * Math.PI);
             }
             return originX + radius * Math.cos(angle);
         }
+
         function getY(angle, customRadius) {
             if (customRadius) {
-                return originY + customRadius * Math.sin(angle/180*Math.PI);
+                return originY + customRadius * Math.sin(angle / 180 * Math.PI);
             }
             return originY + radius * Math.sin(angle);
         }
         let lights = [];
-        function setup(){
-            return new Promise(resolve=>{
+
+        function setup() {
+            return new Promise(resolve => {
+                triangle = new Square(0);
+                triangle.color = 'red';
+                triangle.border = '';
+                triangle.set('borderRadius', '');
+                triangle.set('borderBottom', 'none');
+                triangle.set('borderTop', r(width/43) + 'px solid red');
+                triangle.set('borderLeft', r(width/96)+'px solid black');
+                triangle.set('borderRight', r(width/96)+'px solid black');
+                triangle.set('width', '0');
+                triangle.set('fontSize', '0px');
+                triangle.set('lineHeight', '0px');
+                triangle.x = originX
+                triangle.y = originY - circleRadius*1.05
+
+
                 let total = selected_items.length;
                 let check = 0;
-                selected_items.forEach((x,i)=>{
-                    let l = Line.fromAngle(originX,originY, 250, (360/total)*i + 180/total ,3);
+                selected_items.forEach((x, i) => {
+                    let l = Line.fromAngle(originX, originY, width/4, (360 / total) * i + 180 / total, r(width/310));
                     l.color = 'blue';
                     lines.push(l);
-                    let r = 150;
-                    let p = new P(selected_items[i],getX((360/total)*i,r),getY((360/total)*i,r),'3em',(360/total)*i +90).fromCenter();
-                    p.color = p.string[0] === '-'? 'red' : p.string[0] === 'x'? 'green':'blue';
-                    p.set('textShadow','0 0 5px white')
+                    let radi = width/6;
+                    let p = new P(selected_items[i], getX((360 / total) * i, r), getY((360 / total) * i,
+                        radi), width/18, (360 / total) * i + 90).fromCenter();
+                    p.color = p.string[0] === '-' ? 'red' : p.string[0] === 'x' ? 'green' : 'blue';
+                    p.set('textShadow', '0 0 5px white')
                     imageDivs.push(p);
                     check++;
-                    if(check===total){
+                    if (check === total) {
                         resolve()
                     }
                 });
                 wheelShape.color = 'yellow';
-                wheelShape.set('backgroundImage','radial-gradient(closest-side, black, darkblue, purple, lightblue, lightyellow)')
+                wheelShape.set('backgroundImage',
+                    'radial-gradient(closest-side, black, darkblue, purple, lightblue, lightyellow)')
                 wheelShape.border = 'blue solid 3px';
-                for(let i = 0; i<23; i++){
-                    let coords = new Vector(originX,originY);
-                    coords.sub(Vector.fromAngle(70 + 10*i).mult(radius*2));
-                    let col = new Array(3).fill(0).map(()=>getRandom(180,255)|0);
-                    if(getRandom(3)===0){
-                        col[getRandom(0,3)|0] = 0;
-                        col[getRandom(0,3)|0] = 0;
-                    }else{
-                        col[getRandom(0,3)|0] = 0;
+                for (let i = 0; i < 23; i++) {
+                    let coords = new Vector(originX, originY);
+                    coords.sub(Vector.fromAngle(70 + 10 * i).mult(radius * 2));
+                    let col = new Array(3).fill(0).map(() => getRandom(180, 255) | 0);
+                    if (getRandom(3) === 0) {
+                        col[getRandom(0, 3) | 0] = 0;
+                        col[getRandom(0, 3) | 0] = 0;
+                    } else {
+                        col[getRandom(0, 3) | 0] = 0;
                     }
-                    let l = new Light(coords.x,coords.y,5,col);
+                    let l = new Light(coords.x, coords.y, 5, col);
                     l.toggle();
                     lights.push(l)
                 }
             })
         }
+
         function spinTo(angle) {
-            imageDivs.forEach(image=>{
-                image.x = getX(image.angle - angle,200);
-                image.y = getY(image.angle - angle,200);
-                image.rotateTo(image.angle - angle +90);
+            imageDivs.forEach(image => {
+                image.x = getX(image.angle - angle, width/5);
+                image.y = getY(image.angle - angle, width/5);
+                image.rotateTo(image.angle - angle + 90);
             });
-            lines.forEach(line=>{
-                line.rotateTo(line.angle-angle);
+            lines.forEach(line => {
+                line.rotateTo(line.angle - angle);
             })
         }
         let BLINKINGLIGHTS = false;
         let lightBlinkInt = 0;
-        function toggleBlinking(){
-            if(BLINKINGLIGHTS) {
+
+        function toggleBlinking() {
+            if (BLINKINGLIGHTS) {
                 BLINKINGLIGHTS = false;
                 clearInterval(lightBlinkInt);
-                lights.forEach(x=>{
+                lights.forEach(x => {
                     x.toggle(false)
                 })
-            }else{
+            } else {
                 BLINKINGLIGHTS = true;
-                lightBlinkInt =  setInterval(()=>{
-                    lights.forEach(x=>{
-                        if(getRandom(2)){
+                lightBlinkInt = setInterval(() => {
+                    lights.forEach(x => {
+                        if (getRandom(2)) {
                             x.toggle();
                         }
                     })
-                },100)
+                }, 100)
             }
         }
 
-        id('playpause').addEventListener('click',()=>{
-            imageDivs.forEach(p=>{
-                if(p.string[0]==='x'){
+        id('playpause').addEventListener('click', () => {
+            imageDivs.forEach(p => {
+                if (p.string[0] === 'x') {
                     let num = parseInt(p.string.slice(1));
-                    p.string = 'x' + (num+1);
-                }else{
+                    p.string = 'x' + (num + 1);
+                } else {
                     let sign = p.string[0];
                     let num = parseInt(p.string.slice(1));
-                    p.string = sign + (num+ 10);
+                    p.string = sign + (num + 10);
                 }
             })
         });
-        id('randomize').addEventListener('click',()=>{
+        id('randomize').addEventListener('click', () => {
             function change() {
                 imageDivs.forEach(p => {
                     p.string = createNumber();
                     p.color = p.string[0] === '-' ? 'red' : p.string[0] === 'x' ? 'green' : 'blue';
                 })
             }
-            let loop = setInterval(change,100)
-            setTimeout(()=>{
+            let loop = setInterval(change, 100)
+            setTimeout(() => {
                 clearTimeout(loop);
-            },getRandom(2000,4000)|0)
+            }, getRandom(2000, 4000) | 0)
         })
 
         let SPINNING = false;
         let main_theta = 1;
-        setup().then(()=>{
-            requestAnimationFrame(()=>{
-                toggleRoundFlash();
-                spinTo(0)
-            });
-        });
         let DRAGGING = false;
         let event = {};
-        let rSqrd = circleRadius**2;
-        function withinBorders(x,y){
+        let rSqrd = 0;
+
+        function withinBorders(x, y) {
             //check if distance from origin point isnt more than the circle radius
-            let unsqd = (originX-x)**2 + (originY-y)**2;
-            return unsqd<rSqrd;
+            console.log(x,y)
+            let unsqd = (originX + LEFT_OFFSET - x) ** 2 + (originY - y) ** 2;
+            console.log(originX,)
+            return unsqd < rSqrd;
         }
-        function clickDown(e){
-            if(withinBorders(e.clientX,e.clientY)){
+
+        function clickDown(e) {
+            if (withinBorders(e.clientX, e.clientY)) {
+                console.log('ok')
                 DRAGGING = true;
                 event = e;
             }
         }
-        function clickUp(e){
+
+        function clickUp(e) {
             DRAGGING = false;
             event = e;
             spinWithSpeed()
         }
         let stopBuffer = [];
-        function dragWheel(e){
-                if(DRAGGING && withinBorders(e.clientX,e.clientY) && window.performance.now()-lastcheck > 17){
-                    let dist = Math.sqrt((originX-e.clientX)**2 + (originY-e.clientY)**2);
-                    let speed = mapNum(dist,0,radius,0.3,2.5);
-                    let deltaX = (e.clientX - event.clientX)/speed;
-                    let deltaY = (e.clientY - event.clientY)/speed;
-                    let xmid = wheelShape.x + wheelShape.width/2;
-                    let ymid = wheelShape.y + wheelShape.height/2;
-                    event = e;
-                    let deltaV =  Math.abs(deltaX)>Math.abs(deltaY)? e.clientY<ymid?deltaX : deltaX*-1 : e.clientX>xmid?deltaY:deltaY*-1;
-                    main_theta -= deltaV;
-                    spinTo(main_theta);
-                    if(Math.sign(currSpeed)+Math.sign(deltaV*-1)===0){
-                        stopBuffer.push('blah');
-                        if(stopBuffer.length>7){
-                            //opposite directions;
-                            clearInterval(speedSpinInt);
-                            let l = thetaHist.length;
-                            thetaHist.splice(0,l/2 |0);
-                            thetaHist = thetaHist.concat(new Array(l/2).fill(0));
-                        }
-                    }else{
-                        stopBuffer.pop();
-                    }
 
-                    lastcheck = window.performance.now()
-                }else if(DRAGGING && window.performance.now()-lastcheck > 17){
-                    spinWithSpeed()
+        function dragWheel(e) {
+            let clientX = e.clientX;
+            if (DRAGGING && withinBorders(clientX, e.clientY) && window.performance.now() - lastcheck > 17) {
+                let dist = Math.sqrt((originX + LEFT_OFFSET - clientX) ** 2 + (originY - e.clientY) ** 2) /(width/960);
+                let speed = mapNum(dist, 0, radius, 0.3, 2.5);
+                let deltaX = (clientX - event.clientX) / speed;
+                let deltaY = (e.clientY - event.clientY) / speed;
+                let xmid = wheelShape.x + wheelShape.width / 2 + LEFT_OFFSET;
+                let ymid = wheelShape.y + wheelShape.height / 2;
+                event = e;
+                let deltaV = Math.abs(deltaX) > Math.abs(deltaY) ? e.clientY < ymid ? deltaX : deltaX * -1 : clientX >
+                    xmid ? deltaY : deltaY * -1;
+                main_theta -= deltaV;
+                spinTo(main_theta);
+                if (Math.sign(currSpeed) + Math.sign(deltaV * -1) === 0) {
+                    stopBuffer.push('blah');
+                    if (stopBuffer.length > 7) {
+                        //opposite directions;
+                        clearInterval(speedSpinInt);
+                        let l = thetaHist.length;
+                        thetaHist.splice(0, l / 2 | 0);
+                        thetaHist = thetaHist.concat(new Array(l / 2).fill(0));
+                    }
+                } else {
+                    stopBuffer.pop();
                 }
+
+                lastcheck = window.performance.now()
+            } else if (DRAGGING && window.performance.now() - lastcheck > 17) {
+                spinWithSpeed()
+            }
 
         }
 
-        document.body.addEventListener('touchend',e=>{
-            clickUp(e.touches[0])
-        });
-        document.body.addEventListener('mouseup',clickUp);
-        document.body.addEventListener('mousedown',clickDown);
-        document.body.addEventListener('touchstart',e=>{
-            clickDown(e.touches[0])
-        });
-        let lastcheck = 0;
-        document.body.addEventListener('mousemove',dragWheel);
-        document.body.addEventListener('touchmove',e=>{
-            dragWheel(e.touches[0])
-        });
 
-        let triangle = new Square(0);
-        triangle.color = 'red';
-        triangle.border = '';
-        triangle.set('borderRadius', '');
-        triangle.set('borderBottom', 'none');
-        triangle.set('borderTop', '20px solid red');
-        triangle.set('borderLeft', '10px solid black');
-        triangle.set('borderRight', '10px solid black');
-        triangle.set('width', '0');
-        triangle.set('fontSize', '0px');
-        triangle.set('lineHeight', '0px');
-        triangle.x = originX
-        triangle.y = originY - radius*1.75
+
+        let triangle = {}
         let thetaHist = [];
         let lastTheta = 1;
         let want_check = false;
         let currSpeed = 0;
         let lightsAreOn = false;
-        function speedCheck(){
-            if(thetaHist.length>=200) thetaHist.shift();
-            thetaHist.push(main_theta-lastTheta);
+
+        function speedCheck() {
+            if (thetaHist.length >= 200) thetaHist.shift();
+            thetaHist.push(main_theta - lastTheta);
             lastTheta = main_theta;
-            if(thetaHist.length===200){
-                currSpeed = thetaHist.reduce((a,b)=>a+b);
+            if (thetaHist.length === 200) {
+                currSpeed = thetaHist.reduce((a, b) => a + b);
                 id('speedspan').innerText = Math.abs(currSpeed).toPrecision(4);
-                if(want_check){
+                if (want_check) {
                     console.log('speed is ' + currSpeed + ' degrees per second');
                     want_check = false;
                 }
-                if(Math.abs(currSpeed)>1000 && !lightsAreOn){
+                if (Math.abs(currSpeed) > 1000 && !lightsAreOn) {
                     lightsAreOn = true;
                     toggleBlinking()
                     toggleRoundFlash();
-                }else if(lightsAreOn && Math.abs(currSpeed)<300){
+                } else if (lightsAreOn && Math.abs(currSpeed) < 300) {
                     lightsAreOn = false;
                     toggleBlinking()
                     toggleRoundFlash();
@@ -289,71 +332,82 @@
                 }
             }
         }
-        let checkerInt = setInterval(speedCheck,5);
+        let checkerInt = setInterval(speedCheck, 5);
 
         let speedSpinInt = 0;
-        function spinWithSpeed(speed){
-                let del = speed/200 || currSpeed/200;
-                clearInterval(speedSpinInt);
-                speedSpinInt = setInterval(()=>{
-                    main_theta += del;
-                    let drag = 0.03;
-                    if(del<0){
-                        del += drag
-                    }else if(del>0){
-                        del -= drag
-                    }
-                    if(Math.abs(del)<0.1){
-                        clearInterval(speedSpinInt);
-                        speedSpinInt = 0;
-                    }
-                    spinTo(main_theta)
-                },5)
+
+        function spinWithSpeed(speed) {
+            let del = speed / 200 || currSpeed / 200;
+            clearInterval(speedSpinInt);
+            speedSpinInt = setInterval(() => {
+                main_theta += del;
+                let drag = 0.03;
+                if (del < 0) {
+                    del += drag
+                } else if (del > 0) {
+                    del -= drag
+                }
+                if (Math.abs(del) < 0.1) {
+                    clearInterval(speedSpinInt);
+                    speedSpinInt = 0;
+                }
+                spinTo(main_theta)
+            }, 5)
         }
 
         button = document.getElementById('spin');
         button.addEventListener('click', function () {
-           if(SPINNING){
-               clearInterval(speedSpinInt)
-           }else{
-               spinWithSpeed(-3000)
-           }
-           SPINNING = !SPINNING
+            if (SPINNING) {
+                clearInterval(speedSpinInt)
+            } else {
+                spinWithSpeed(-3000)
+            }
+            SPINNING = !SPINNING
         });
 
-        function darken(array,val){
-            return array.map(x=>x-val<0?0:x-val);
+        function darken(array, val) {
+            return array.map(x => x - val < 0 ? 0 : x - val);
         }
 
         let LIGHTSGOINGROUND = false;
         let lightsRoundInt = 0;
         let lightsRoundCurr = 1;
-        function toggleRoundFlash(){
-           if(LIGHTSGOINGROUND){
-               LIGHTSGOINGROUND = false;
-               clearInterval(lightsRoundInt);
-               lights.forEach(x=>{
-                   x.toggle(false)
-               })
-               lightsRoundCurr = 1;
-           }else{
-               LIGHTSGOINGROUND = true;
-               lights[0].toggle();
-               lights[11].toggle();
-               lightsRoundInt = setInterval(()=>{
-                   let index = Math.abs(lightsRoundCurr%lights.length);
-                   let prev = [Math.abs((lightsRoundCurr-1)%lights.length), Math.abs((lightsRoundCurr+11)%lights.length), Math.abs((lightsRoundCurr+10)%lights.length), ];
-                   lights[index].toggle();
-                   prev.forEach(x=>{
-                       lights[x].toggle()
-                   })
-                   lightsRoundCurr = index +1;
-               },100)
-           }
+
+        function toggleRoundFlash() {
+            if (LIGHTSGOINGROUND) {
+                LIGHTSGOINGROUND = false;
+                clearInterval(lightsRoundInt);
+                lights.forEach(x => {
+                    x.toggle(false)
+                })
+                lightsRoundCurr = 1;
+            } else {
+                LIGHTSGOINGROUND = true;
+                lights[0].toggle();
+                lights[11].toggle();
+                lightsRoundInt = setInterval(() => {
+                    let index = Math.abs(lightsRoundCurr % lights.length);
+                    let prev = [Math.abs((lightsRoundCurr - 1) % lights.length), Math.abs((lightsRoundCurr +
+                        11) % lights.length), Math.abs((lightsRoundCurr + 10) % lights.length), ];
+                    lights[index].toggle();
+                    prev.forEach(x => {
+                        lights[x].toggle()
+                    })
+                    lightsRoundCurr = index + 1;
+                }, 100)
+            }
         }
 
-
-
+        setupBody(id('MAIN_SCREEN')).then(() => {
+            setupBackground().then(() => {
+                setup().then(() => {
+                    requestAnimationFrame(() => {
+                        toggleRoundFlash();
+                        spinTo(0)
+                    });
+                });
+            })
+        })
     </script>
 </body>
 
