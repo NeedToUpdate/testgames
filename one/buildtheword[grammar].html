@@ -2,7 +2,6 @@
 
 <head>
     <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
-    <script language="javascript" type="text/javascript" src="../image_config.js"></script>
     <script language="javascript" type="text/javascript"  src="../lib/vector.js"></script>
     <script language="javascript"  type="text/javascript" src="../lib/matrix.js"></script>
     <script language="javascript"  type="text/javascript" src="../lib/DomObject.js"></script>
@@ -18,8 +17,14 @@
 </head>
 
 <body class="locked">
-<button style="z-index:2" class="bluebtn at_top" id="jmpleft">loading...</button>
-<button style="z-index:2" class="bluebtn at_top" id="jump"></button><script language="javascript" type="text/javascript">
+    <div id="MAIN_WRAPPER">
+        <div id="MAIN_SCREEN">
+            <!-- Everything for the game should be here -->
+            <button style="z-index:2" class="bluebtn at_top" id="jmpleft">loading...</button>
+            <button style="z-index:2" class="bluebtn at_top" id="jump"></button>
+            </div>
+            </div>
+<script language="javascript" type="text/javascript">
     //needs to be global
     let GRAMMAR_MODE = true;
 </script>

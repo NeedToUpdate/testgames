@@ -1,6 +1,6 @@
 //===============PHONICS===============
 
-let words = ['paul','cook','food','spoon','hook','boots','foot','august','autumn','paw','jaw','saw'];
+//let words = ['paul','cook','food','spoon','hook','boots','foot','august','autumn','paw','jaw','saw'];
 //let words = ['park','horse','fork','nurse','skirt','singer','farmer','bird','arm','car','turtle'];
 //let words = ['goat','coat','boat','cloak','clock','wall','green','grass','ball'];
 //let words = ['flute','luke','prune','sue','blue','glue','fruit','suit','juice','cute','mule','cube'];

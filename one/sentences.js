@@ -15,20 +15,8 @@
 
 //let sentences = ['open your book','listen to your teacher','raise your hand','take out your pen','don\'t talk loud','put away your toys','stand up','sit down','close your book','open your book'];
 
-//let sentences = ['I go to bed at night','I go to school in March','I get up in the morning','I dance on Easter',"I eat dinner at five o'clock", 'I eat ice-cream in the summer','I fly on Monday','I play games on Sunday']
+let sentences = ['sort clothes','watch tv','make the bed','take a bath','brush teeth','organize toys','cook food','organize toys','wash the dishes','eat','set the table','clean up the table','mow the lawn','wash the car','walk the dog'];
 
-let sentences = ['clap your hands','touch your nose','stretch up high','spin around','stomp your feet','shake your body','jump up and down','wave your arms','bend down'];
-
-//let sentences = ['sort clothes','watch tv','make the bed','take a bath','brush teeth','organize toys','cook food','organize toys','wash the dishes','eat','set the table','clean up the table','mow the lawn','wash the car','walk the dog'];
-//let nouns = ['shoe','chair','book','lamp','backpack','computer','desk','teddy bear','toy']
-//let sentences = nouns.map(noun=>{
-//	if(Math.random() <0.5){
-//		return 'there is a ' + noun + ' in my room';
-//	}
-//	else{
-//		return 'there are ' + noun + 's' + ' in my room';
-//	}
-//});
 //let sentences = ['I like to dance on sunday mornings','I like to sleep on saturday mornings','I like to watch tv on friday evenings',
 //    'I like to stay home on sunday afternoons','Do you read on monday nights','Do you play tennis on wednesdays'];
 
@@ -63,6 +51,6 @@ let sentences = ['clap your hands','touch your nose','stretch up high','spin aro
 //     return getRandom(ans);
 // });
 
-//let sentences = ['My name is Connor','What\'s your name','nice to meet you','how old are you','I\'m from China','I am six years old'];
+//let sentences = ['My name is Connor','What\'s your name','nice to meet you','how old are you','I\'m from China','I am siz years old'];
 
 //let sentences = words.map(x=>'the word is ' +x);

@@ -2,29 +2,36 @@
 
 <head>
     <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
-    <script language="javascript" type="text/javascript"  src="../lib/vector.js"></script>
-    <script language="javascript"  type="text/javascript" src="../lib/matrix.js"></script>
-    <script language="javascript"  type="text/javascript" src="../lib/DomObject.js"></script>
-    <script language="javascript"  type="text/javascript" src="../lib/PhysicsObject.js"></script>
-    <script language="javascript"  type="text/javascript" src="../lib/Character.js"></script>
-    <script language="javascript"  type="text/javascript" src="../lib/collisioncontainer.js"></script>
+    <script language="javascript" type="text/javascript" src="../lib/vector.js"></script>
+    <script language="javascript" type="text/javascript" src="../lib/matrix.js"></script>
+    <script language="javascript" type="text/javascript" src="../lib/DomObject.js"></script>
+    <script language="javascript" type="text/javascript" src="../lib/PhysicsObject.js"></script>
+    <script language="javascript" type="text/javascript" src="../lib/Character.js"></script>
+    <script language="javascript" type="text/javascript" src="../lib/collisioncontainer.js"></script>
     <script language="javascript" type="text/javascript" src="../lib/eventemitter.js"></script>
-       <script language="javascript" src="../lib/drawbase.js"></script>
-    <script language="javascript" type="text/javascript"  src="words.js"></script>
+    <script language="javascript" src="../lib/drawbase.js"></script>
+    <script language="javascript" type="text/javascript" src="words.js"></script>
     <title>Artem's Word Builder</title>
     <link rel="stylesheet" type="text/css" href="../global_styles.css">
     <img src="../images/blacksquare.png" style="position: absolute;top: 0; left: 0; z-index: 1; width: 50px;">
 </head>
 
 <body class="locked">
-<button style="z-index:2" class="bluebtn at_top" id="jmpleft">loading...</button>
-<button style="z-index:2" class="bluebtn at_top" id="jump"></button><script language="javascript" type="text/javascript">
-    //needs to be global
-    let GRAMMAR_MODE = false;
-</script>
-<script language="javascript"  type="text/javascript" src="../game%20logic%20files/buildtheword.js">
+    <div id="MAIN_WRAPPER">
+        <div id="MAIN_SCREEN">
+            <!-- Everything for the game should be here -->
+            <button style="z-index:2" class="bluebtn at_top" id="jmpleft">loading...</button>
+            <button style="z-index:2" class="bluebtn at_top" id="jump"></button>
+        </div>
+    </div>
+    <script language="javascript" type="text/javascript">
+        //needs to be global
+        let GRAMMAR_MODE = false;
+    </script>
+    <script language="javascript" type="text/javascript" src="../game%20logic%20files/buildtheword.js">
 
 
-</script>
+    </script>
 </body>
+
 </html>
