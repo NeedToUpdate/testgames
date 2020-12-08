@@ -50,7 +50,6 @@
             height: 10%;
             width: 7%;
             background-image: linear-gradient(to bottom right, #eee 0%, #e1e1e1 10%, #ddd 14%, #fff 30%, #ddd 60%, #eee 85%, #ccc 100%);
-            font-size: 1.1em;
             font-weight: bolder;
             padding: 0;
         }
@@ -141,6 +140,9 @@
         
         function setupBackground(){
             return new Promise(resolve=>{
+                Array.from(document.getElementsByClassName('controlBtn')).forEach(x=>{
+                    x.style.fontSize = width/60 + 'px';
+                })
                 let background = 'background' + (getRandom(BACKGROUND_CONFIG.num)).toString() + '.jpg';
                 DOMObjectGlobals.body.style.backgroundColor = 'grey';
                 DOMObjectGlobals.body.style.backgroundImage = 'url(' + IMAGE_PATH + BACKGROUND_CONFIG.path + background.toString() + ')';
@@ -269,37 +271,37 @@
 
         function createHPBar(image, isLeftSide) {
             if (isLeftSide) { //TODO simplify this
-                playerHP = new LoadingBar(100, 100, 360, 40, 0, 100, 100);
-                let circle = new Circle(height * 0.3, height * 0.35, 40).fromCenter();
+                playerHP = new LoadingBar(width*0.1, height/4, width/3, width/30, 0, 100, 100);
+                let circle = new Circle(width * 0.2, height * 0.35, width/24).fromCenter();
                 circle.color = 'white';
                 circle.border = 'solid blue 3px';
                 circle.zIndex = '10'
                 circle.set('overflow', 'hidden');
-                let img = new Img(image.cloneNode(), 0, 0, 70).onLoad(x => {
+                let img = new Img(image.cloneNode(), 0, 0, width/12).onLoad(x => {
                     img.set('transform', '');
-                    img.y += 10;
+                    img.y += circle.height/4;
                     circle.attach(img);
                 });
-                playerHP.x = circle.x //67
-                playerHP.y = circle.y - 42; //33
+                playerHP.x = circle.x 
+                playerHP.y = circle.y - circle.height/2; 
                 playerHP.set('borderRadius', '0px 0px 80px 0px/0 0 40px 0');
                 playerHP.set('overflow', 'hidden')
                 playerHP.circle = circle;
             } else {
-                monsterHP = new LoadingBar(0, 0, 360, 40, 0, 100, 100);
-                let circle = new Circle(width, height * 0.35, 40).fromCenter();
+                monsterHP = new LoadingBar(0, 0, width/3, width/30, 0, 100, 100);
+                let circle = new Circle(width, height * 0.35, width/24).fromCenter();
                 circle.color = 'red';
                 circle.border = 'solid blue 3px';
                 circle.zIndex = '10';
                 circle.set('overflow', 'hidden');
-                let img = new Img(image.cloneNode(), 0, 0, 80).onLoad(x => {
+                let img = new Img(image.cloneNode(), 0, 0, width/12).onLoad(x => {
                     img.set('transform', 'scaleX(-1)');
                     img.y += 10
                     circle.attach(img);
                 });
                 monsterHP.angle = 180;
                 monsterHP.x = circle.x - monsterHP.width //67
-                monsterHP.y = circle.y - 42; //33
+                monsterHP.y = circle.y - circle.height/2 ; //33
                 monsterHP.set('borderRadius', '0 80px 0 0/0 40px 0 0');
                 monsterHP.set('overflow', 'hidden')
                 monsterHP.circle = circle;
@@ -311,11 +313,10 @@
             let blur = new Rectangle(0, 0, width, height);
             blur.set('zIndex', '99000');
             blur.set('backgroundColor', 'rgba(200,200,200,0.7)');
-            let loadingBar = new LoadingBar(width / 2 - 100, height / 2, 200, 40, 0, 100, 0);
+            let loadingBar = new LoadingBar(width / 2 - width/4, height / 2, width/2, width/17, 0, 100, 0);
             loadingBar.set('zIndex', '1001');
-            let loadingText = new P('Loading...', width / 2 - 100, height / 2 - 50);
+            let loadingText = new P('Loading...', width / 2, height/2 + width/34 , width/30).fromCenter();
             loadingText.set('zIndex', '1001');
-            loadingText.set('fontSize', '3em');
 
             function clearLoad() {
                 blur.remove();
@@ -327,15 +328,15 @@
                 '_projectile', player_char.power + '_projectile'
             ]);
             LOADED_IMAGES.add(['skull', 'skull_open'], IMAGE_PATH);
-            player = new Character(100, 100, player_char.name);
-            monster = new Character(width - 200, 100, monster_char.name);
+            player = new Character(width*0.1, height/4, player_char.name);
+            monster = new Character(width*0.9, height/4, monster_char.name);
 
 
 
             player.powerType = player_char.power;
             player.hasNoSkyBox = true;
             loadingBar.value += 10;
-            let player_sprite = new Img(IMAGE_PATH + player_char.name + ".png", 0, 0, 150).fromCenter()
+            let player_sprite = new Img(IMAGE_PATH + player_char.name + ".png", 0, 0, width/6.4).fromCenter()
                 .usingNewTransform().onLoad(() => {
                     player.addSprite(player_sprite);
                     player_sprite.zIndex = 5000
@@ -343,7 +344,7 @@
                     let shield_name = 'shield_' + player_char.color; 
                     LOADED_IMAGES.add([shield_name], IMAGE_PATH + '/projectiles/');
                     player.addShieldImage(LOADED_IMAGES[shield_name].cloneNode())
-                    player.maxbounds.y = (height + 100) / 2 + player.height / 2;
+                    player.maxbounds.y = (height*1.1) / 2 + player.height / 2;
                     monster.projectileOffsetHeight = -player.height / 3;
                     loadingBar.value += 30;
                     createHPBar(player.sprite.shape, true)
@@ -353,7 +354,7 @@
             });
             monster.powerType = monster_char.power;
             monster.hasNoSkyBox = true;
-            let monster_sprite = new Img(IMAGE_PATH + monster.name + ".png", 0, 0, 400).fromCenter().usingNewTransform()
+            let monster_sprite = new Img(IMAGE_PATH + monster.name + ".png", 0, 0, width/2.2).fromCenter().usingNewTransform()
                 .onLoad(() => {
                     monster.addSprite(monster_sprite);
                     monster_sprite.zIndex = 5000
@@ -363,7 +364,7 @@
                     LOADED_IMAGES.add([shield_name], IMAGE_PATH + '/projectiles/');
                     monster.addShieldImage(LOADED_IMAGES[shield_name].cloneNode())
                     if (monster.height > height) monster.width *= 0.8;
-                    monster.maxbounds.y = (height + 100) / 2 + monster.height / 2;
+                    monster.maxbounds.y = (height*1.1) / 2 + monster.height / 2;
                     monster.faceLeft();
                     loadingBar.value += 30
                     createHPBar(monster.sprite.shape, false)
@@ -469,7 +470,7 @@
             setTimeout(() => {
                 monsterHP.circle.attachments.imgs[0].remove();
                 monsterHP.circle.detach(monsterHP.circle.attachments.imgs[0])
-                let skull = new Img(LOADED_IMAGES.skull_open, 0, 0, 80).onLoad(x => {
+                let skull = new Img(LOADED_IMAGES.skull_open, 0, 0, width/12).onLoad(x => {
                     monsterHP.circle.attach(skull);
                 })
             }, time)
@@ -480,29 +481,29 @@
                 }, 20);
             }, time);
             setTimeout(() => {
-                let sprite = new Img(IMAGE_PATH + MONSTER_CONFIG.path + monster_char.name + ".png", 0, 0, 400).fromCenter()
+                let sprite = new Img(IMAGE_PATH + MONSTER_CONFIG.path + monster_char.name + ".png", 0, 0, width/2.4).fromCenter()
                     .usingNewTransform().onLoad(() => {
                         monsterHP.circle.remove()
                         monsterHP.remove();
                         sprite.zIndex = 5000;
                         createHPBar(sprite.shape, false);
-                        monster = new Character(width - 100, -1000, monster_char.name);
+                        monster = new Character(width*0.9, -height*2, monster_char.name);
                         LOADED_IMAGES.add(monster_char.power + '_projectile');
                         monster.powerType = monster_char.power;
                         monster.hasNoSkyBox = true;
                         monster.addSprite(sprite);
-                        monster.jumpMult = 20;
+                        monster.jumpMult = 20*width/960;
                         monster.isJumping = true;
                         let g = new Vector(0, 1);
                         g.constant = true;
                         monster.addForce(g);
                         if (monster.height > height) monster.width *= 0.8;
-                        monster.maxbounds.y = (height + 100) / 2 + monster.height / 2;
+                        monster.maxbounds.y = (height*1.1) / 2 + monster.height / 2;
                         monster.addDeathImage(LOADED_IMAGES.fire.cloneNode());
                         let shield_name = 'shield_' + getRandom(valid_colors)
                         LOADED_IMAGES.add([shield_name], IMAGE_PATH + '/projectiles/');
                         monster.addShieldImage(LOADED_IMAGES[shield_name].cloneNode())
-                        monster.projectileOffsetHeight = -10;
+                        monster.projectileOffsetHeight = -height/43;
                         iconReplaced = false;
                         currentlySpawning = false;
                         monster.landing_emitter.subscribe('land', () => {
