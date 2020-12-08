@@ -17,20 +17,43 @@ function setupBackground(){
         DOMObjectGlobals.body.style.backgroundColor = 'grey';
         DOMObjectGlobals.body.style.backgroundImage = 'url(' + IMAGE_PATH + background.toString() + ')';
         DOMObjectGlobals.body.style.backgroundRepeat = 'no-repeat';
+        DOMObjectGlobals.body.style.backgroundSize = width + 'px auto';
         timep = id('timep');
         timep.style.fontSize = r(width/15) + 'px'
         timer = 10.00 + letters.length + (20.00 - difficulty * 10);
+
         id('time').innerText = timer.toPrecision(4);
         id('time').style.fontSize = r(width/15) + 'px'
         id('jump').style.width = width/12 + 'px'
         id('jump').style.height = height/10 + 'px'
-        id('jump').style.left = width*2/11 + 'px'
+        id('jump').style.fontSize =  (r(width/30)> 24 ? 24 : r(width/30))  + 'px'
+        id('jmpright').style.fontSize =  (r(width/30)> 24 ? 24 : r(width/30))  + 'px'
+        id('jmpleft').style.fontSize =  (r(width/30)> 24 ? 24 : r(width/30))  + 'px'
+        id('jump').style.border = 'blue solid ' + width/310 + 'px'
+        id('jmpright').style.border = 'blue solid ' + width/310 + 'px'
+        id('jmpleft').style.border = 'blue solid ' + width/310 + 'px'
         id('jmpleft').style.width = width/12 + 'px'
         id('jmpleft').style.height = height/10 + 'px'
         id('jmpleft').style.left =  '0px'
         id('jmpright').style.width = width/12 + 'px'
         id('jmpright').style.height = height/10 + 'px'
-        id('jmpright').style.left = width/11 + 'px'
+        id('jump').style.left = id('jump').clientWidth*2.2  + 'px'
+        id('jmpright').style.left = id('jump').clientWidth*1.1 + 'px'
+
+        //to block out images that are preloaded into the game, to avoid loading times
+        let imgBlk = id('image_blocker')
+        imgBlk.style.width = width / 16 + 'px';
+        imgBlk.style.height = width / 16 + 'px';
+        imgBlk.style.backgroundColor = 'grey'
+        imgBlk.style.zIndex = '1'
+        imgBlk.style.position = 'absolute'
+        imgBlk.style.left = '0'
+        imgBlk.style.top = '0'
+        imgBlk.style.backgroundImage = 'url(' + IMAGE_PATH + background.toString() + ')';
+        imgBlk.style.backgroundSize = width + 'px auto';
+        imgBlk.style.backgroundRepeat = 'no-repeat';
+
+
         resolve()
     })
 }
@@ -64,7 +87,7 @@ function play(){
 }
 
 
-let setupletters = function () {
+function setupLetters() {
     let w = width/19.22; //line width
     let space = width/192.2; //space
     let button_w = width/12;
@@ -324,6 +347,6 @@ loop = function () {
 
 setupBody(id("MAIN_SCREEN")).then(()=>{
     setupBackground().then(()=>{
-        setupletters();
+        setupLetters();
     })
 })

@@ -66,21 +66,24 @@
 
 // build the word
 
-black square is too small when teh screen is very big
-buttons are too big when the screen is very small
+[DONE] black square is too small when teh screen is very big
+[DONE] buttons are too big when the screen is very small
 
 //ivader shoot
 
-button is weird sized on large screen
+[DONE} button is weird sized on large screen
 
 //open the safe
 
-image blocker is too thin in large screen sizes
+[DONE] image blocker is too thin in large screen sizes
+[DONE] text is too large on buttons
 
 //time trial 
 
-buttons weirdly sized on large screen
-font on buttons too big with small screen
+[DONE] buttons weirdly sized on large screen
+[DONE] font on buttons too big with small screen
+[DONE] fix image blocker
+[DONE] fix background size
 
 //fourinarow 
 

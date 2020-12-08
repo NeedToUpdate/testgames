@@ -13,22 +13,21 @@
     <script language="javascript" type="text/javascript" src="words.js"></script>
     <link rel="stylesheet" type="text/css" href="../global_styles.css">
     <title>Artem's Time Trial</title>
-    <img src="../images/blacksquare.png" style="position: absolute;top: 0; left: 0; z-index: 9999; width: 50px;">
 </head>
 
 <body>
     <div id="MAIN_WRAPPER">
         <div id="MAIN_SCREEN">
             <!-- Everything for the game should be here -->
+            <div id="image_blocker"></div>
             <p id="timep"
                 style="position: absolute; margin: 0; top:0; right: 10%;  color: greenyellow; text-shadow: white 2px 2px 2px">
                 Time Left: <span id="time">10.00</span>s</p>
             <button class="bluebtn at_top" id="jump">-</button>
             <button class="bluebtn at_top" id="jmpright">+</button>
             <button class="bluebtn at_top" id="jmpleft">0</button>
+
         </div>
-    </div>
-    <div id="MAIN_SCREEN">
     </div>
     <script language="javascript" type="text/javascript" src="../game%20logic%20files/timetrial.js"></script>
 </body>

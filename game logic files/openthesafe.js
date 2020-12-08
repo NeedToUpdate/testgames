@@ -419,6 +419,7 @@ function setupBackground(){
             
         id('black_square').style.backgroundColor = SKY_COLOR;
         id('black_square').style.height = (height/7 |0) + 'px';
+        id('black_square').style.width = (height/7 |0) + 'px';
         id('black_square').style.border = '';
         id('black_square').style.zIndex = '10';
 
@@ -479,7 +480,7 @@ function introMovie() {
         playbtn.style.left = width * 0.8 + 'px';
         playbtn.style.width = width/12 + 'px';
         playbtn.style.height = width/24 + 'px';
-        playbtn.style.fontSize = width/50 + 'px';
+        playbtn.style.fontSize= (width / 50 > 24? 24 : width/50 ) + 'px';
         DOMObjectGlobals.body.appendChild(playbtn);
         playbtn.onclick = () => {
             playmovie = true;
@@ -507,7 +508,7 @@ function introMovie() {
         diffbtn.style.top = height * 0.3 + 'px';
         diffbtn.style.width = width/12 + 'px';
         diffbtn.style.height = width/24 + 'px';
-        diffbtn.style.fontSize = width/50 + 'px';
+        diffbtn.style.fontSize= (width / 50 > 24? 24 : width/50 ) + 'px';
         diffbtn.style.left = width * 0.8 + 'px';
         DOMObjectGlobals.body.appendChild(diffbtn);
     };

@@ -28,6 +28,26 @@ function setupBackground() {
         let extras = ['fire'];
         LOADED_IMAGES = new ImageLoader(IMAGE_PATH, extras);
         LEFT_OFFSET = DOMObjectGlobals.body.offsetLeft;
+
+        //to block out images that are preloaded into the game, to avoid loading times
+        let imgBlk = id('image_blocker')
+        imgBlk.style.width = width/16 + 'px';
+        imgBlk.style.height = width/16 + 'px';
+        imgBlk.style.backgroundColor = 'grey'
+        imgBlk.style.zIndex = '1'
+        imgBlk.style.position = 'absolute'
+        imgBlk.style.left = '0'
+        imgBlk.style.top = '0'
+        imgBlk.style.backgroundImage = 'url(' + IMAGE_PATH + background.toString() + ')';
+        imgBlk.style.backgroundSize = width + 'px auto';
+        imgBlk.style.backgroundRepeat = 'no-repeat';
+
+        id('jmpleft').style.fontSize = (width / 60 > 24? 24 : width/60 ) + 'px';
+        id('jmpleft').style.border = 'solid blue ' + (width/310 ) + 'px';
+        id('jump').style.border = 'solid blue ' + (width/310 ) + 'px';
+        id('jump').style.fontSize = (width / 60 > 24? 24 : width/60 ) + 'px';
+        id('jump').style.left = id('jmpleft').clientWidth + 'px';
+        
         resolve();
     })
 }
@@ -127,7 +147,6 @@ function dropAll() {
 let dragging_offset = new Vector(0, 0);
 
 function drag(ev) {
-    console.log(ev.clientX)
     ps.forEach(x => {
         if (x.dragging) {
             let newY = (ev.clientY - x.shape.offsetHeight / 2);
