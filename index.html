@@ -7,6 +7,7 @@
     <script language="javascript" type="text/javascript" src="./todays_words.js"></script>
     <script language="javascript" src="./lib/words.js"></script>
     <title>Artem's Games</title>
+    <link rel="stylesheet" type="text/css" href="../global_styles.css">
     <link rel='icon' type='image/x-icon' href='./favicon.ico' />
     <style>
         body {
@@ -25,14 +26,14 @@
         }
 
         #main_gameboard {
-            height: 100vh;
-            width: 100vw;
+            height: 100%;
+            width: 100%;
             display: grid;
             padding: 0;
             margin: 0;
             background-image: url('./images/bg1.jpg');
-            grid-template-columns: 20vw 20vw 20vw 20vw 20vw;
-            grid-template-rows: 33vh 33vh 33vh;
+            grid-template-columns: 20% 20% 20% 20% 20%;
+            grid-template-rows: 33% 33% 33%;
             grid-template-areas: "game1 game2 game3 game4 game5"
                 "game12 wordbox wordbox wordbox game6"
                 "game11 game10 game9 game8 game7";
@@ -48,14 +49,13 @@
 
         .game_text {
             color: white;
-            font-size: 2em;
             font-family: Arial, Helvetica, sans-serif;
             font-style: normal;
             text-decoration: none;
             text-shadow: black 3px 3px 4px;
             text-align: center;
             position: absolute;
-            width: 17vw;
+            width: 17%;
             margin: 0;
             justify-self: center;
             align-self: center;
@@ -123,13 +123,12 @@
             border-radius: 15px;
             grid-area: wordbox;
             color: white;
-            font-size: 2em;
             font-family: Arial, Helvetica, sans-serif;
             font-style: normal;
             text-decoration: none;
             text-shadow: black 3px 3px 4px;
             text-align: left;
-            padding: 10px;
+            padding: 2%;
         }
 
         #worddiv {
@@ -187,66 +186,72 @@
 </head>
 
 <body>
-    <div id="main_gameboard">
-        <div id="wordbox">
-            <p id='worddiv'>Words: </p>
-            <input type="text" id="typewords" style="display:none" placeholder="type words separated by one space">
-            <button id="submit" style="display:none;">OK!</button>
-            <label for="word_select">Choose Wordlist: </label>
-            <select name="words" id="word_select">
-                <option value="0,0">None</option>
-            </select>
-        </div>
-        <a href="./custom/buildtheword.html" id="buildtheword" class="with_words">
-            <p class="game_text">Build The Word</p>
-            <div class="game_link" id="buildtheword_div"></div>
-        </a>
-        <a href="./custom/wordsearch.html" id="wordsearch" class="with_words">
-            <p class="game_text">Word Search</p>
-            <div class="game_link" id="wordsearch_div"></div>
-        </a>
-        <a href="./custom/shoottheletters.html" id="shoottheletters" class="with_words">
-            <p class="game_text">Invader Shoot</p>
-            <div class="game_link" id="shoottheletters_div"></div>
-        </a>
-        <a href="./custom/openthesafe.html" id="openthesafe" class="with_words">
-            <p class="game_text">Open The Safe</p>
-            <div class="game_link" id="openthesafe_div"></div>
-        </a>
-        <a href="./custom/timetrial.html" id="timetrial" class="with_words">
-            <p class="game_text">Time Trial</p>
-            <div class="game_link" id="timetrial_div"></div>
-        </a>
-        <a href="./fightinggame.html" id="fightinggame">
-            <p class="game_text">Fighting Game</p>
-            <div class="game_link" id="fightinggame_div"></div>
-        </a>
-        <a href="./custom/hangmanbattle.html" id="hangmanbattle" class="with_words">
-            <p class="game_text">Hangman Fight</p>
-            <div class="game_link" id="hangmanbattle_div"></div>
-        </a>
-        <a href="./numbers_wheel.html" id="numberwheel">
-            <p class="game_text">Number Wheel</p>
-            <div class="game_link" id="numberwheel_div"></div>
-        </a>
-        <a href="./fourinarow.html" id="fourinarow">
-            <p class="game_text">Four In A Row</p>
-            <div class="game_link" id="fourinarow_div"></div>
-        </a>
-        <a href="./wordtrain.html" id="wordtrain">
-            <p class="game_text">Word Train</p>
-            <div class="game_link" id="wordtrain_div"></div>
-        </a>
-        <a href="./custom/alienchase.html" id="alienchase" class="with_words">
-            <p class="game_text">Alien Chase</p>
-            <div class="game_link" id="alienchase_div"></div>
-        </a>
-        <a href="./custom/alienchase.html" id="empty1" class="with_words">
-            <p class="game_text"></p>
-            <div class="game_link" id="empty1_div"></div>
-        </a>
+    <div id="MAIN_WRAPPER">
+        <div id="MAIN_SCREEN">
+            <div id="main_gameboard">
+                <div id="wordbox">
+                    <p id='worddiv'>Words: </p>
+                    <input type="text" id="typewords" style="display:none"
+                        placeholder="type words separated by one space">
+                    <button id="submit" style="display:none;">OK!</button>
+                    <label for="word_select">Choose Wordlist: </label>
+                    <select name="words" id="word_select">
+                        <option value="0,0">None</option>
+                    </select>
+                </div>
+                <a href="./custom/buildtheword.html" id="buildtheword" class="with_words">
+                    <p class="game_text">Build The Word</p>
+                    <div class="game_link" id="buildtheword_div"></div>
+                </a>
+                <a href="./custom/wordsearch.html" id="wordsearch" class="with_words">
+                    <p class="game_text">Word Search</p>
+                    <div class="game_link" id="wordsearch_div"></div>
+                </a>
+                <a href="./custom/shoottheletters.html" id="shoottheletters" class="with_words">
+                    <p class="game_text">Invader Shoot</p>
+                    <div class="game_link" id="shoottheletters_div"></div>
+                </a>
+                <a href="./custom/openthesafe.html" id="openthesafe" class="with_words">
+                    <p class="game_text">Open The Safe</p>
+                    <div class="game_link" id="openthesafe_div"></div>
+                </a>
+                <a href="./custom/timetrial.html" id="timetrial" class="with_words">
+                    <p class="game_text">Time Trial</p>
+                    <div class="game_link" id="timetrial_div"></div>
+                </a>
+                <a href="./fightinggame.html" id="fightinggame">
+                    <p class="game_text">Fighting Game</p>
+                    <div class="game_link" id="fightinggame_div"></div>
+                </a>
+                <a href="./custom/hangmanbattle.html" id="hangmanbattle" class="with_words">
+                    <p class="game_text">Hangman Fight</p>
+                    <div class="game_link" id="hangmanbattle_div"></div>
+                </a>
+                <a href="./numbers_wheel.html" id="numberwheel">
+                    <p class="game_text">Number Wheel</p>
+                    <div class="game_link" id="numberwheel_div"></div>
+                </a>
+                <a href="./fourinarow.html" id="fourinarow">
+                    <p class="game_text">Four In A Row</p>
+                    <div class="game_link" id="fourinarow_div"></div>
+                </a>
+                <a href="./wordtrain.html" id="wordtrain">
+                    <p class="game_text">Word Train</p>
+                    <div class="game_link" id="wordtrain_div"></div>
+                </a>
+                <a href="./custom/alienchase.html" id="alienchase" class="with_words">
+                    <p class="game_text">Alien Chase</p>
+                    <div class="game_link" id="alienchase_div"></div>
+                </a>
+                <a href="./custom/alienchase.html" id="empty1" class="with_words">
+                    <p class="game_text"></p>
+                    <div class="game_link" id="empty1_div"></div>
+                </a>
 
+            </div>
+        </div>
     </div>
+
 </body>
 <script type="text/javascript">
     //OVERRIDE
@@ -271,88 +276,99 @@
         })
     }
 
-    //POPULATE SELECT FIELD
-    let MAIN_SELECT = document.getElementById('word_select')
-    if (override.length) {
-        let temp_override = [];
-        override.forEach((section,index) => {
-            if (section.length) {
-                if (section.length == 2 && typeof section[0] == 'number' && typeof section[1] == "number") {
-                    temp_override.push(ALL_WORDS[section[0]][section[1]])
-                    override[index] = ALL_WORDS[section[0]][section[1]]
-                } else {
-                    let list = []
-                    section.forEach(x => {
-                        list.push(x.toString())
+    function setupBackground() {
+        return new Promise(resolve => {
+            //POPULATE SELECT FIELD
+            let MAIN_SELECT = document.getElementById('word_select')
+            if (override.length) {
+                let temp_override = [];
+                override.forEach((section, index) => {
+                    if (section.length) {
+                        if (section.length == 2 && typeof section[0] == 'number' && typeof section[1] ==
+                            "number") {
+                            temp_override.push(ALL_WORDS[section[0]][section[1]])
+                            override[index] = ALL_WORDS[section[0]][section[1]]
+                        } else {
+                            let list = []
+                            section.forEach(x => {
+                                list.push(x.toString())
+                            })
+                            temp_override.push(list);
+                        }
+                    }
+                })
+                if (temp_override.length > 0) {
+                    let group = document.createElement('optgroup')
+                    group.setAttribute('label', 'Today\'s Words');
+                    temp_override.forEach((list, i) => {
+                        let value = [777, i]
+                        let text = list.join(', ').slice(0, 20) + '...'
+                        let option = document.createElement('option')
+                        option.setAttribute('value', value)
+                        option.innerText = text;
+                        group.append(option)
                     })
-                    temp_override.push(list);
+                    MAIN_SELECT.append(group)
                 }
             }
-        })
-        if (temp_override.length > 0) {
-            let group = document.createElement('optgroup')
-            group.setAttribute('label', 'Today\'s Words');
-            temp_override.forEach((list, i) => {
-                let value = [777, i]
-                let text = list.join(', ').slice(0, 20) + '...'
-                let option = document.createElement('option')
-                option.setAttribute('value', value)
-                option.innerText = text;
-                group.append(option)
+            ALL_WORDS.forEach((wordlist, i) => {
+                let optgroup = document.createElement('optgroup')
+                switch (i) {
+                    case 0:
+                        optgroup.setAttribute('label', 'Super Reader')
+                        break;
+                    case 1:
+                        optgroup.setAttribute('label', 'Treasure Hunt 1')
+                        break;
+                    case 2:
+                        optgroup.setAttribute('label', 'Treasure Hunt 2')
+                        break;
+                    case 3:
+                        optgroup.setAttribute('label', 'Treasure Hunt 3')
+                        break;
+                    case 4:
+                        optgroup.setAttribute('label', 'Treasure Hunt 4')
+                        break;
+                    case 5:
+                        optgroup.setAttribute('label', 'MEB')
+                        break;
+                    case 6:
+                        optgroup.setAttribute('label', 'Extras')
+                        break;
+                }
+                MAIN_SELECT.append(optgroup)
+                wordlist.forEach((list, j) => {
+                    let value = [i, j];
+                    let text = list.join(', ').slice(0, 20) + '...'
+                    let option = document.createElement('option')
+                    option.setAttribute('value', value)
+                    option.innerText = text;
+                    optgroup.append(option)
+                })
             })
-            MAIN_SELECT.append(group)
-        }
+            MAIN_SELECT.addEventListener('input', () => {
+                let value = MAIN_SELECT.value.split(',');
+                let wordlist = []
+                console.log(value)
+                if (value[0] === "777") {
+                    wordlist = override[value[1]]
+                } else {
+                    wordlist = ALL_WORDS[value[0]][value[1]]
+                }
+                words = wordlist
+                console.log(wordlist)
+                update_links()
+            })
+            Array.from(document.getElementsByClassName('game_text')).forEach(el=>{
+                el.style.fontSize = width/32 + 'px'
+            })
+            document.getElementById('wordbox').style.fontSize = width/32 + 'px'
+            resolve();
+        })
     }
 
-
-    ALL_WORDS.forEach((wordlist, i) => {
-        let optgroup = document.createElement('optgroup')
-        switch (i) {
-            case 0:
-                optgroup.setAttribute('label', 'Super Reader')
-                break;
-            case 1:
-                optgroup.setAttribute('label', 'Treasure Hunt 1')
-                break;
-            case 2:
-                optgroup.setAttribute('label', 'Treasure Hunt 2')
-                break;
-            case 3:
-                optgroup.setAttribute('label', 'Treasure Hunt 3')
-                break;
-            case 4:
-                optgroup.setAttribute('label', 'Treasure Hunt 4')
-                break;
-            case 5:
-                optgroup.setAttribute('label', 'MEB')
-                break;
-            case 6:
-                optgroup.setAttribute('label', 'Extras')
-                break;
-        }
-        MAIN_SELECT.append(optgroup)
-        wordlist.forEach((list, j) => {
-            let value = [i, j];
-            let text = list.join(', ').slice(0, 20) + '...'
-            let option = document.createElement('option')
-            option.setAttribute('value', value)
-            option.innerText = text;
-            optgroup.append(option)
-        })
-    })
-    MAIN_SELECT.addEventListener('input', () => {
-        let value = MAIN_SELECT.value.split(',');
-        let wordlist = []
-        console.log(value)
-        if (value[0] === "777") {
-            wordlist = override[value[1]]
-        } else {
-            wordlist = ALL_WORDS[value[0]][value[1]]
-        }
-        words = wordlist
-        console.log(wordlist)
-        update_links()
-    })
+    let width = 0;
+    let height = 0;
     let words = ['click', 'here', 'to', 'change'];
     let wordDiv = document.getElementById('worddiv');
     let input = document.getElementById('typewords');
@@ -378,6 +394,21 @@
         words = input.value.split(' ');
         update_links()
     })
+    function setupBody(object){
+    return new Promise(resolve=>{
+        requestAnimationFrame(()=>{
+            requestAnimationFrame(()=>{
+                width = object.clientWidth;
+                height = object.clientHeight;
+                resolve(object);
+            })
+        })
+    })
+}
+    setupBody(document.getElementById('MAIN_SCREEN')).then(()=>{
+        setupBackground()
+    })
+
 </script>
 
 </html>

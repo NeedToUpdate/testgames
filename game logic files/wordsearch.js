@@ -1,17 +1,24 @@
+
 difficulty = 1;
 
 let topofsearch = height * .1;
 let leftofsearch = width * .25;
 let boardWidth = 0;
 let boardHeight = 0;
+let LEFT_OFFSET = 0;
+function setupBackground(){
+    return new Promise(resolve=>{
+        let backgroundimage = 'bg' + (Math.random() * 8 | 0).toString() + '.jpg';
+        DOMObjectGlobals.body.style.backgroundColor = 'grey';
+        DOMObjectGlobals.body.style.backgroundImage = 'url(../images/' + backgroundimage.toString() + ')';
+        DOMObjectGlobals.body.style.backgroundRepeat = 'no-repeat';
+        DOMObjectGlobals.body.style.backgroundSize = width + 'px auto';
+        LEFT_OFFSET = DOMObjectGlobals.body.offsetLeft;
+        resolve()
+    })    
 
 
-let backgroundimage = 'bg' + (Math.random() * 8 | 0).toString() + '.jpg';
-document.body.style.backgroundColor = 'grey';
-document.body.style.backgroundImage = 'url(../images/' + backgroundimage.toString() + ')';
-document.body.style.backgroundRepeat = 'no-repeat';
-
-
+}
 let colors = ['red', 'yellow', 'teal', 'grey', 'black', 'purple', 'blue', 'green', 'orange',];
 
 let TIMEOUT1 = 10;
@@ -291,8 +298,8 @@ function setupBoard() {
     if (!logicSetUp) setupLogic(7 + 3 * difficulty, 7 + 3 * difficulty);
     background = new Rectangle(wordM.startx, wordM.starty, wordM.width, wordM.height);
     background.set('backgroundImage', 'linear-gradient(to top left, #59c173, #a17fe0, #5d26c1)');
-    background.set('borderRadius', '20px');
-    background.set('border', 'solid 3px white');
+    background.set('borderRadius', r(width/40) + 'px');
+    background.set('border', 'solid '+r(width/280)+'px white');
     background.set('boxShadow', 'rgba(255,255,255,0.5) 0px 0px 5px 5px');
     wordM.reveal();
     wordM.drawEmpty();
@@ -301,16 +308,15 @@ function setupBoard() {
     newwordsP = [];
     let heightLimit = 0
     newwords.forEach((word, i) => {
-        let x = leftofsearch + wordM.col_size * wordM.cols + 10 + 20;
-        let y = topofsearch + i * 35;
+        let x = leftofsearch + wordM.col_size * wordM.cols + width/30;
+        let y = topofsearch + i * height/14;
         if (y > height * .9) {
             if(!heightLimit) heightLimit = i
-            x += 70;
-            y = topofsearch + (i%heightLimit) * 35
+            x += width/10;
+            y = topofsearch + (i%heightLimit) * height/14
             console.log(x,y)
         }
-        let w = new P(word, x, y).usingNewTransform();
-        w.set('fontSize', '2em');
+        let w = new P(word, x, y, width/25).usingNewTransform();
         w.set('color', 'white');
         newwordsP.push(w)
     });
@@ -322,12 +328,13 @@ function setupBoard() {
     });
     document.body.addEventListener('touchmove', ev => {
         let touch = ev.touches[0];
-        let x = Math.floor((touch.clientX - leftofsearch) / (wordM.col_size));
+        touch.clientX -= LEFT_OFFSET;
+        let x = Math.floor((touch.clientX - LEFT_OFFSET - leftofsearch) / (wordM.col_size));
         let y = Math.floor((touch.clientY - topofsearch) / (wordM.row_size));
         drag(touch, y, x)
     });
     document.body.addEventListener('mousemove', (ev) => {
-        let x = Math.floor((ev.clientX - leftofsearch) / (wordM.col_size));
+        let x = Math.floor((ev.clientX - LEFT_OFFSET - leftofsearch) / (wordM.col_size));
         let y = Math.floor((ev.clientY - topofsearch) / (wordM.row_size));
         drag(ev, y, x)
     });
@@ -344,8 +351,8 @@ function setupBoard() {
         });
         // p.shape.addEventListener('touchmove', ev => {
         //     ev = ev.touches[0];
-        //     let r = wordM.row_size;
-        //     let x = Math.floor((ev.clientX - leftofsearch + r / 5) / (wordM.col_size));
+        //     let radius = wordM.row_size;
+        //     let x = Math.floor((ev.clientX - leftofsearch + radius / 5) / (wordM.col_size));
         //     let y = Math.floor((ev.clientY - topofsearch) / (r));
         //     drag(ev, x, y)
         // });
@@ -365,23 +372,24 @@ let startcoords = {};
 
 function startdrag(ev, i, j) {
     if (!dragging) {
-        let r = wordM.row_size > wordM.col_size ? wordM.col_size : wordM.row_size;
+        let radius = wordM.row_size > wordM.col_size ? wordM.col_size : wordM.row_size;
+        let borderSize = r(wordM.divsM.values[0][0].width/5) || 1;
         startpos = {i: i, j: j};
         startcoords = {
             x: wordM.divsM.values[i][j].x - wordM.col_size/4,
             y: wordM.divsM.values[i][j].y + wordM.row_size/8,
         };
-        dragger = new Rectangle(startcoords.x , startcoords.y, r / 1.5, r / 1.5).asOutline('blue');
+        dragger = new Rectangle(startcoords.x , startcoords.y, radius / 1.5, radius / 1.5).asOutline('blue',borderSize);
         //minus 4 for the border size
-        overlayDragger = new Rectangle(startcoords.x -4, startcoords.y -4, r / 1.5, r / 1.5).asOutline('blue');
-        dragger.set('borderRadius', r / 2 + 'px');
-        dragger.set('transformOrigin', r / 2 + 'px 50%');
+        overlayDragger = new Rectangle(startcoords.x -borderSize, startcoords.y -borderSize, radius / 1.5, radius / 1.5).asOutline('blue',borderSize);
+        dragger.set('borderRadius', radius / 2 + 'px');
+        dragger.set('transformOrigin', radius / 2 + 'px 50%');
         dragger.set('zIndex', 0);
         dragger.set('display', 'none');
-        overlayDragger.set('borderRadius', r / 2 + 'px');
-        overlayDragger.set('transformOrigin', r / 2 + 'px 50%');
+        overlayDragger.set('borderRadius', radius / 2 + 'px');
+        overlayDragger.set('transformOrigin', radius / 2 + 'px 50%');
         overlayDragger.set('zIndex', 10);
-        overlayDragger.set('border', 'red solid 4px')
+        overlayDragger.set('border', 'red solid '+ borderSize +'px')
         dragging = true;
     }
 }
@@ -397,11 +405,12 @@ function stopdrag() {
     });
     let isright = false;
     let correct = (word) => {
+        let borderSize = r(wordM.divsM.values[0][0].width/5) || 1;
         dragger.set('display', '');
-        dragger.set('border', 'lightgreen solid 4px');
+        dragger.set('border', 'lightgreen solid '+borderSize+'px');
        // dragger.mod('left', 0);
         //due to border width it needs to be adjusted;
-        dragger.mod('top', -4);
+        dragger.mod('top', -borderSize);
         //dragger.mod('left' -4);
         circles.push(dragger);
         overlayDragger.remove();
@@ -446,30 +455,31 @@ function stopdrag() {
 
 function drag(ev, i, j) {
     if (dragging) {
+        let borderSize = r(wordM.divsM.values[0][0].width/5) || 1;
         if (!i) i = (ev.clientY - topofsearch) / wordM.row_size | 0;
-        if (!j) j = (ev.clientX - leftofsearch) / wordM.col_size | 0;
-        let r = wordM.row_size > wordM.col_size ? wordM.col_size : wordM.row_size;
+        if (!j) j = (ev.clientX - LEFT_OFFSET - leftofsearch) / wordM.col_size | 0;
+        let radius = wordM.row_size > wordM.col_size ? wordM.col_size : wordM.row_size;
         //overlay
-        let coord_dx = ev.clientX - startcoords.x - wordM.col_size / 3;
+        let coord_dx = ev.clientX - LEFT_OFFSET- startcoords.x - wordM.col_size / 3;
         let coord_dy = ev.clientY - startcoords.y - wordM.row_size / 3;
         //real dragger logic
         let dy = -(startpos.i - i) * wordM.row_size;
         let dx = -(startpos.j - j) * wordM.col_size;
 
-        let xDiff = j * wordM.col_size + leftofsearch - ev.clientX + wordM.col_size / 3;
+        let xDiff = j * wordM.col_size + leftofsearch - ev.clientX - LEFT_OFFSET + wordM.col_size / 3;
         let yDiff = i * wordM.row_size + topofsearch - ev.clientY + wordM.row_size / 3;
         let distanceToReal = Math.sqrt(xDiff ** 2 + yDiff ** 2);
 
         if (distanceToReal < 25 && (startpos.i === i || startpos.j === j || startpos.i - i === startpos.j - j)) {
-            overlayDragger.set('border', 'blue solid 4px')
+            overlayDragger.set('border', 'blue solid '+borderSize+'px')
         } else {
-            overlayDragger.set('border', 'red solid 4px')
+            overlayDragger.set('border', 'red solid '+borderSize+'px')
         }
 
         let width = Math.sqrt(dy ** 2 + dx ** 2);
         let coordWidth = Math.sqrt(coord_dx ** 2 + coord_dy ** 2);
-        dragger.set('width', width + r + 'px');
-        overlayDragger.set('width', coordWidth + r + 'px');
+        dragger.set('width', width + radius + 'px');
+        overlayDragger.set('width', coordWidth + radius + 'px');
         dragger.angle = Math.atan2(dy, dx) * 180 / Math.PI;
         overlayDragger.angle = Math.atan2(coord_dy, coord_dx) * 180 / Math.PI;
         endpos = {i: i, j: j};
@@ -538,12 +548,12 @@ function setupScreen() {
     boardWidth = width * 0.4;
     boardHeight = height * 0.5;
     setupbg = new Rectangle(startx, starty, boardWidth, boardHeight);
-    setupbg.set('border', 'solid blue 3px');
-    setupbg.set('borderRadius', '10px');
+    setupbg.set('border', 'solid blue '+r(width/180)+'px');
+    setupbg.set('borderRadius', r(width/96) + 'px');
     setupbg.set('backgroundColor', 'lightblue');
 
     let buttonstyle = {
-        fontSize: '2em',
+        fontSize: width/30 + 'px',
         color: 'black',
         weight: 'bold',
         textShadow: 'white 2px',
@@ -569,14 +579,14 @@ function setupScreen() {
     goBtn = new P('GO!', startx + width * 0.18, starty + height * 0.4);
     Object.assign(numofwords.shape.style, {
         color: 'green',
-        fontSize: '2em',
+        fontSize: width/30 + 'px',
         textShadow: 'white 2px',
         margin: '0px',
         padding: '0px'
     });
     Object.assign(goBtn.shape.style, {
         color: 'red',
-        fontSize: '2em',
+        fontSize: width/30 + 'px',
         textShadow: 'white 2px',
         margin: '0px',
         padding: '0px'
@@ -650,5 +660,11 @@ function setupScreen() {
 }
 
 
-setupScreen();
+setupBody(id("MAIN_SCREEN")).then(()=>{
+    setupBackground().then(()=>{
+        setupScreen();
+    })
+})
+
+
 //setup();

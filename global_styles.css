@@ -1,5 +1,27 @@
 body{
-    background-size: cover;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+}
+#MAIN_SCREEN{
+    position: relative;
+    overflow: hidden;
+    height: calc(44.9vw + 1px);
+    width: calc(100vw + 1px);
+    border: black solid 1px;
+    margin:0;
+    padding: 0;
+    top: -1px;
+    left: -1px;
+    max-width: 222vh;
+    max-height: 100vh;
+}
+#MAIN_WRAPPER{
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
 }
 .bluebtn {
     z-index: 100000;
@@ -114,33 +136,33 @@ body{
 
 @keyframes grow {
     to{
-        left: -500px;
-        top: -300px;
-        width: 1000px;
+        left: -50vw;
+        top: -30vw;
+        width: 100vw;
     }
 }
 @keyframes grow2 {
     to {
-        left: 100px;
+        left: 10vw;
         top: 0px;
-        width: 300px;
+        width: 33vw;
     }
 }
 @keyframes grow3 {
     to{
-        left: -1000px;
-        top: -500px;
-        width:2000px;
+        left: -100vw;
+        top: -50vw;
+        width: 200vw;
     }
 }
 @keyframes zoombg {
     from{
         background-position: 0 0;
-        background-size: 100vw 100vh;
+        background-size: 100% 100%;
     }
    to{
-       background-position: -50vw -100vh;
-       background-size: 200vw 200vh;
+       background-position: -50vw 100%;
+       background-size: 200% 200%;
    }
 }
 @keyframes fadeOut {

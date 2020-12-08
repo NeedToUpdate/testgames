@@ -1,16 +1,10 @@
+
 words = Array.from(words); //just in case
 difficulty = 0;
 
 let SKY_COLOR = '#01b7e9';
 
 let IMAGE_PATH = '../images/';
-
-id('black_square').style.backgroundColor = SKY_COLOR;
-id('black_square').style.height = '65px';
-id('black_square').style.border = '';
-id('black_square').style.zIndex = '10';
-
-
 
 
 function getAllLetters(arrayofwords) {
@@ -58,7 +52,7 @@ function findClosestSquare(num) {
 function pos2xy(xpos, ypos, size,padding) {
     let top = height * (0.2 - difficulty*0.05)  ;
     let left = width * 0.05;
-    padding = padding || 15;
+    padding = padding || width/65;
     return [left + xpos * (size + padding), top + ypos  * (size + padding)]
 }
 
@@ -104,7 +98,7 @@ function clickHandler(string) {
             typedword += string;
             let xy = ind2xy(wordarchive.length);
             let newword = new P(string, xy[0], xy[1]);
-            newword.set('font-size', '2em');
+            newword.set('font-size', (width/30 |0) + 'px');
             newword.set('textShadow', 'blue 1px 1px 2px');
             newword.set('fontFamily', 'quikhand');
             newword.set('color', 'darkblue');
@@ -112,7 +106,7 @@ function clickHandler(string) {
             wordarchive.push(newword)
         } else {
             typedword = '';
-            keypad.set('boxShadow', 'red 0px 0px 5px 5px');
+            keypad.set('boxShadow', 'red 0px 0px '+ r(width/180) +'px '+ r(width/180) +'px');
             setTimeout(reset, 500);
         }
     } else {
@@ -137,7 +131,7 @@ function clickHandler(string) {
                 l.set('backgroundImage', 'radial-gradient(#f00 0%, #b00 100%)');
                 l.set('boxShadow', 'rgba(255,0,0,0.3) 0px 0px 2px 2px');
                 setAll('boxShadow', 'red 2px 2px 3px');
-                keypad.set('boxShadow', 'red 0px 0px 5px 5px');
+                keypad.set('boxShadow', 'red 0px 0px '+ r(width/180) +'px '+ r(width/180) +'px');
                 mistakes = 0;
                 typedword = '';
                 currentWords = [];
@@ -145,7 +139,7 @@ function clickHandler(string) {
                 wordarchive.splice(wordarchive.length - 1);
                 setTimeout(reset, 500);
             } else {
-                keypad.set('boxShadow', 'red 0px 0px 5px 5px');
+                keypad.set('boxShadow', 'red 0px 0px '+ r(width/180) +'px '+ r(width/180) +'px');
                 let l = lights[mistakes - 1];
                 l.set('backgroundImage', 'radial-gradient(#f00 0%, #b00 100%)');
                 l.set('boxShadow', 'rgba(255,0,0,0.3) 0px 0px 2px 2px');
@@ -197,7 +191,7 @@ function reset() {
 
 function correctword() {
     setAll('boxShadow', '#0f0 2px 2px 2px');
-    keypad.set('boxShadow', '#0f0 0px 0px 5px 5px');
+    keypad.set('boxShadow', '#0f0 0px 0px '+ r(width/180) +'px '+ r(width/180) +'px');
     setTimeout(() => {
             setAll('boxShadow', 'blue 2px 2px 2px');
             keypad.set('boxShadow', '')
@@ -237,10 +231,10 @@ function win() {
                     let prom = new Promise(resolve => {
                         for (let i = 0; i < charnum; i++) {
                             let char = new Character(width/2, height - safe.height/2, 'treasure' + (Math.random() * 7 | 0));
-                            char.maxbounds.y = 400;
+                            char.maxbounds.y = height*0.9;
                             char.hasBounce = true;
                             char.bounce_coeff = 1;
-                            let img = new Img(IMAGE_PATH + char.name + '.png', 420, 400, 50).fromCenter().usingNewTransform();
+                            let img = new Img(IMAGE_PATH + char.name + '.png', width/2, height*0.95, r(width/19)).fromCenter().usingNewTransform();
                             img.onLoad(() => {
                                 img.set('zIndex', '110')
                                     char.addSprite(img);
@@ -344,29 +338,29 @@ function setupkeypad() {
     }
     let colors = ['darkred', 'darkgreen', 'darkgoldenrod', 'purple', 'darkblue', 'darkorange', 'darkcyan', 'darkslategray'];
     colors = colors.splice(Math.random() * colors.length | 0, 1);
-    let size = 70 - dim[0] * 4 +8;
-    let padding = 8;
+    let size = width/12 - dim[0] * 4 + width/120;
+    let padding = width/150;
 
 
-    keypad = new Rectangle(pos2xy(0, 0, size,padding)[0] -padding, pos2xy(0, 0, size,padding)[1] - 25, dim[0] * (size + padding) + padding*2, dim[1] * (size + padding) +65)//.asOutline('darkgrey',4);
-    keypad.border = 'darkgrey solid 4px ';
+    keypad = new Rectangle(pos2xy(0, 0, size,padding)[0] -padding, pos2xy(0, 0, size,padding)[1] - r(width/28.5), dim[0] * (size + padding) + padding*2, dim[1] * (size + padding) + r(width/14.7))//.asOutline('darkgrey',4);
+    keypad.border = 'darkgrey solid '+ r(width/200) +'px ';
     keypad.set('backgroundImage', 'linear-gradient(to bottom right, ' +
         '#eee 0%, #aaa 10%, #ddd 14%, #fff 30%, #999 44%, #ddd 55%, #999 60%, #eee 85%, #ccc 100%' +
         ')');
-    keypad.set('borderRadius', '10px');
+    keypad.set('borderRadius', r(width/90) +'px');
     keypad.set('zIndex', '100');
-    keypad.set('borderBottom', '#655 solid 4px ');
-    keypad.set('borderRight', '#766 solid 4px ');
-    paper = new Img(IMAGE_PATH + 'tornpaper.png', keypad.x+ keypad.width + padding*2, -16, 600);
+    keypad.set('borderBottom', '#655 solid '+ r(width/200) +'px ');
+    keypad.set('borderRight', '#766 solid '+ r(width/200) +' ');
+    paper = new Img(IMAGE_PATH + 'tornpaper.png', keypad.x+ keypad.width + padding*2, -16, width/1.6);
     lights = new Array(3).fill('').map((x, i) => {
-        let l = new Circle(pos2xy(0, 0, 0)[0] + dim[0] * (size + padding) / 2 +padding - 20 + 20*i, pos2xy(0, 0, 0)[1] - 8, 5);
+        let l = new Circle(pos2xy(0, 0, 0)[0] + dim[0] * (size + padding) / 2 +padding - r(width/48) + r(width/48)*i, pos2xy(0, 0, 0)[1] - width/230, r(width/180));
         l.set('backgroundImage', 'radial-gradient(#0f0 0%, #0b0 100%)');
         l.set('boxShadow', 'rgba(0,255,0,0.3) 0px 0px 2px 2px');
         l.set('zIndex', '110');
         return l
     });
     wordlights = new Array(words.length).fill('').map((x, i) => {
-        let l = new Circle(pos2xy(0, 0, 0)[0] + dim[0] * (size + padding) / 2 +padding - (14 * words.length / 2)+7 + i * 14,  pos2xy(0,dim[1],size,padding)[1] + size/2, 5);
+        let l = new Circle(pos2xy(0, 0, 0)[0] + dim[0] * (size + padding) / 2 + padding - (r(width/70) * words.length / 2) + i * r(width/70),  pos2xy(0,dim[1],size,padding)[1] + size/3, r(width/180));
         l.set('backgroundImage', 'radial-gradient(#544 0%, #655 100%)');
         l.set('boxShadow', 'rgba(0,0,0,0.3) 0px 0px 2px 2px');
         l.set('zIndex', '110');
@@ -376,11 +370,13 @@ function setupkeypad() {
         let [xx, yy] = pos2xy(i,j, size,padding);
         let p = new StaticGameButton(allLetters[i * dim[1] + j], 0,0);
         //p.sprite.asOutline('lightgrey',4)
-        p.sprite.width = size-8;
-        p.sprite.height = size-8;
+        p.sprite.width = size- r(width/120);
+        p.sprite.height = size- r(width/120);
+        p.sprite.set('border', 'grey solid ' + r(width/240) + 'px')
+        p.sprite.set('borderRadius', '10%')
         p.x = xx +size/2 + padding;
         p.y = yy +size/2 + padding;
-        p.pDiv.set('fontSize', (size*0.8 | 0 )+ 'px');
+        p.pDiv.set('fontSize', r(size*0.8) + 'px');
         p.sprite.set('backgroundImage', 'linear-gradient(to bottom right, ' +
             '#eee 0%, #e1e1e1 10%, #ddd 14%, #fff 30%, #ddd 60%, #eee 85%, #ccc 100%' +
             ')');
@@ -408,31 +404,47 @@ function setupkeypad() {
 
 }
 
-let background = 'background12.jpg';
-document.body.style.backgroundColor = 'grey';
-document.body.style.backgroundImage = 'url(' + IMAGE_PATH + background.toString() + ')';
-document.body.style.backgroundRepeat = 'no-repeat';
+function setupBackground(){
+    return new Promise(resolve=>{
+        let background = 'background12.jpg';
+        DOMObjectGlobals.body.style.backgroundColor = 'grey';
+        DOMObjectGlobals.body.style.backgroundImage = 'url(' + IMAGE_PATH + background.toString() + ')';
+        DOMObjectGlobals.body.style.backgroundRepeat = 'no-repeat';
+        DOMObjectGlobals.body.style.backgroundSize = width + 'px auto';
+        
+        let extras = ['fire', 'stars', 'brokenhole', 'safe'];
+        LOADED_IMAGES = new ImageLoader(IMAGE_PATH, extras);
+        LOADED_IMAGES.add('dynamite_projectile', IMAGE_PATH + 'projectiles');
 
-//words = ['singing','playing','barking','learning','watching','sleeping','drawing','doing','sitting','swimming','getting','running','stopping','putting','cutting','dancing','writing','coming','closing','riding','drixving'];
+            
+        id('black_square').style.backgroundColor = SKY_COLOR;
+        id('black_square').style.height = (height/7 |0) + 'px';
+        id('black_square').style.border = '';
+        id('black_square').style.zIndex = '10';
+
+
+
+
+        resolve()
+    })
+}
+
 let letterCount = [];
 let allLetters = [];
 let dim = [];
 let lettersM = {};
-
-let extras = ['fire', 'stars', 'brokenhole', 'safe'];
-LOADED_IMAGES = new ImageLoader(IMAGE_PATH, extras);
-LOADED_IMAGES.add('dynamite_projectile', IMAGE_PATH + 'projectiles');
+let LOADED_IMAGES = {};
 
 
 function introMovie() {
-    let bank = new Img(IMAGE_PATH + '/bank.png', width * .1, height - 370, 500);
+    let bank = new Img(IMAGE_PATH + '/bank.png', width * .1, height/7, width/1.922);
     let burglars = [];
     for (let i = 0; i < 5; i++) {
-        let burglar = new Character(width * .8 + (25 + (Math.random() * 10 | 0)) * i, height - 50, 'burglar');
-        burglar.maxbounds.y = height - 20;
+        let burglar = new Character(width * .8 + (width/35 + (Math.random() * 10 | 0)) * i, height - height/8, 'burglar');
+        burglar.maxbounds.y = height - height/20;
         burglar.maxbounds.x = width;
-        burglar.MAX_V = 50;
-        burglar.MAX_F = 50;
+        burglar.MAX_V = width/20;
+        burglar.MAX_F = width/20;
         burglar.powerType = 'dynamite';
         burglar.addForce(VECTORS.gravity);
         burglars.push(burglar);
@@ -444,7 +456,7 @@ function introMovie() {
 
     bank.shape.onload = function () {
         burglars.forEach(b => {
-            let sprite = new Img(IMAGE_PATH + b.name + '.png', 100, 100, 90).fromCenter();
+            let sprite = new Img(IMAGE_PATH + b.name + '.png', 0, 0, width/10).fromCenter();
             sprite.onLoad(() => {
                 bsloaded++;
                 if (bsloaded === burglars.length) {
@@ -465,11 +477,14 @@ function introMovie() {
         playbtn.setAttribute('class', 'bluebtn');
         playbtn.style.top = height * 0.2 + 'px';
         playbtn.style.left = width * 0.8 + 'px';
-        document.body.appendChild(playbtn);
+        playbtn.style.width = width/12 + 'px';
+        playbtn.style.height = width/24 + 'px';
+        playbtn.style.fontSize = width/50 + 'px';
+        DOMObjectGlobals.body.appendChild(playbtn);
         playbtn.onclick = () => {
             playmovie = true;
-            document.body.removeChild(playbtn);
-            document.body.removeChild(diffbtn);
+            DOMObjectGlobals.body.removeChild(playbtn);
+            DOMObjectGlobals.body.removeChild(diffbtn);
             requestAnimationFrame(startmovie)
         };
 
@@ -490,8 +505,11 @@ function introMovie() {
         diffbtn.append(text2);
         diffbtn.setAttribute('class', 'bluebtn');
         diffbtn.style.top = height * 0.3 + 'px';
+        diffbtn.style.width = width/12 + 'px';
+        diffbtn.style.height = width/24 + 'px';
+        diffbtn.style.fontSize = width/50 + 'px';
         diffbtn.style.left = width * 0.8 + 'px';
-        document.body.appendChild(diffbtn);
+        DOMObjectGlobals.body.appendChild(diffbtn);
     };
 
     function startmovie() {
@@ -500,7 +518,7 @@ function introMovie() {
     }
 
     let time = 0;
-    let empty = new Character(width * 0.1 + 450, height - 60, 'empty');
+    let empty = new Character(width * 0.5, height - height/7, 'empty');
     empty.addDeathImage(LOADED_IMAGES.fire.cloneNode());
     let movieending = false;
     let hole = {};
@@ -532,7 +550,7 @@ function introMovie() {
                 if (Math.random() < 0.5) {
                     let projectile = burglar.shoot();
                     if(projectile){
-                        projectile.minbounds.x = 500;
+                        projectile.minbounds.x = width/2;
                         projectile.hasNoBounds = false;
                         projectile.isFragile = true;
                         things_to_update.push(projectile)
@@ -551,7 +569,7 @@ function introMovie() {
                 }
             });
             movieending = true;
-            hole = new Img(LOADED_IMAGES.brokenhole.cloneNode(), width * 0.1 + 350, height - 150, 100);
+            hole = new Img(LOADED_IMAGES.brokenhole.cloneNode(), width * .5, height*0.8, width/8).fromCenter();
             setTimeout(() => {
                 playending = true;
             }, 2000);
@@ -560,10 +578,10 @@ function introMovie() {
         if (playending) {
             burglars.forEach(burglar => {
                 if (!burglar.dead) {
-                    if (burglar.p.x > 500) {
+                    if (burglar.p.x > width/2) {
                         burglar.jumpFwd(0.3);
                     }
-                    if (burglar.p.x < 500) {
+                    if (burglar.p.x < width/2) {
                         burglar.fragile = true;
                         burglar.kill();
                         bsloaded--
@@ -581,19 +599,19 @@ function introMovie() {
     function cleanup() {
         hole.shape.style.animationFillMode = 'forwards';
         bank.shape.style.animationFillMode = 'forwards';
-        document.body.style.animationFillMode = 'forwards';
+        DOMObjectGlobals.body.style.animationFillMode = 'forwards';
 
         hole.shape.style.animationName = 'grow2';
         hole.shape.style.animationDuration = '3s';
         bank.shape.style.animationName = 'grow';
         bank.shape.style.animationDuration = '3s';
-        document.body.style.animationName = 'zoombg';
-        document.body.style.animationDuration = '3s';
+        DOMObjectGlobals.body.style.animationName = 'zoombg';
+        DOMObjectGlobals.body.style.animationDuration = '3s';
 
         id('black_square').style.backgroundColor = '#1a343f';
         setTimeout(() => {
-                safe = new Character(200, 200, 'safe');
-                let safeimg = new Img(LOADED_IMAGES.safe.cloneNode(),0,0, 200).fromCenter().onLoad(() => {
+                safe = new Character(width/5, height/2, 'safe');
+                let safeimg = new Img(LOADED_IMAGES.safe.cloneNode(),0,0, width/5).fromCenter().onLoad(() => {
                     safe.addSprite(safeimg);
                     safe.maxbounds.y = height*0.9;
                     safe.addForce(VECTORS.gravity);
@@ -605,12 +623,12 @@ function introMovie() {
                         bank.shape.style.animationName = 'fadeOut';
                         hole.shape.style.animationDuration = '1s';
                         bank.shape.style.animationDuration = '1s';
-                        bank.shape.style.left = "-500px";
-                        bank.shape.style.top = "-300px";
-                        bank.shape.style.width = "1000px";
-                        hole.shape.style.left = "100px";
+                        bank.shape.style.left = "-" + r(width/2) +"px";
+                        bank.shape.style.top = "-" + r(width/3) +"px";
+                        bank.shape.style.width =  width +"px";
+                        hole.shape.style.left = r(width/9.6) +"px";
                         hole.shape.style.top = " 0px";
-                        hole.shape.style.width = "300px";
+                        hole.shape.style.width = r(width/3) +"px";
                         safeimg.shape.style.animationFillMode = 'forwards';
                         safeimg.shape.style.animationName = 'grow3';
                         safeimg.shape.style.animationDuration = '3s';
@@ -642,7 +660,9 @@ function introMovie() {
     }
 }
 
-
-introMovie();
-
-//setupkeypad();
+setupBody(id("MAIN_SCREEN")).then(()=>{
+    setupBackground().then(()=>{
+        introMovie();
+        //setupkeypad();
+    })
+})
