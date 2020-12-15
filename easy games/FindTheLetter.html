@@ -15,15 +15,19 @@
     <link rel="stylesheet" type="text/css" href="../global_styles.css">
 </head>
 <body>
-<button id="playpause" class="bluebtn">again</button>
+    <div id="MAIN_WRAPPER">
+        <div id="MAIN_SCREEN">
+            <button id="playpause" class="bluebtn">again</button>
+        </div>
+    </div>
 <script>
     let LEFT_PADDING = width * 0.1;
     let TOP_PADDING = height * 0.05;
-    let LETTER_WIDTH = 80;
+    let LETTER_WIDTH = width/12;
     let RUNNING_LETTERS = true;
     let PLAYABLE_CHARS = ['peppapig','ultraman','spiderman','shark','cat','rabbit','sofia','elsa','superman'];
 
-    let LOADED_IMAGES = new ImageLoader('../images/',PLAYABLE_CHARS);
+    let LOADED_IMAGES = {};
     function calcColNum() {
         return ((width - LEFT_PADDING * 2) / LETTER_WIDTH | 0) + 1;
     }
@@ -55,6 +59,7 @@
         document.body.style.backgroundColor = 'grey';
         document.body.style.backgroundImage = 'url(../images/' + backgroundimage.toString() + ')';
         document.body.style.backgroundRepeat = 'no-repeat';
+        document.body.style.backgroundSize =  width + 'px auto';
         return new Promise(resolve => {
             let selectedletters = '';
             let selectednumber =  0;
@@ -230,11 +235,7 @@
 
 
     let saved_num_and_letters = {};
-    createKeyboard().then(x => {
-        x.removeFn();
-        saved_num_and_letters = x;
-        createFewButtons(x.letters.split(''),x.num)
-    });
+  
 
     let THINGS_TO_UPDATE = [];
     function playAgain(){
@@ -259,7 +260,15 @@
     function start() {
         createFallbackLoopFunction(loop).start();
     }
-    start();
+    setupBody(id('MAIN_SCREEN')).then(()=>{
+        LOADED_IMAGES = new ImageLoader('../images/',PLAYABLE_CHARS);
+        start();
+    createKeyboard().then(x => {
+        x.removeFn();
+        saved_num_and_letters = x;
+        createFewButtons(x.letters.split(''),x.num)
+    });
+    })
 
 </script>
 
