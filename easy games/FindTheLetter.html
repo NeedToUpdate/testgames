@@ -148,10 +148,10 @@
         let count = num_of_letters;
         let chars = shuffle(PLAYABLE_CHARS);
         for(let i = 0; i<num_of_letters; i++){
-            let char = new Character(-200, 0, chars.pop());
-            char.maxbounds = {x: width+300, y: height};
+            let char = new Character(-width/10, 0, chars.pop());
+            char.maxbounds = {x: width*1.1, y: height};
             char.hasNoSkyBox = true;
-            char.minbounds = {x: -300, y: 100};
+            char.minbounds = {x: -300, y: height};
             char.addForce(VECTORS.gravity);
             let sprite = new Img(LOADED_IMAGES[char.name], 50,50, char_w).fromCenter().usingNewTransform().usingDumbPermanance().onLoad(()=>{
                 char.addSprite(sprite);
@@ -171,7 +171,7 @@
                             showLetters()
                         }
                     } else {
-                        char.jumpFwd(0.5);
+                        char.jumpFwd(0.6);
                     }
                 },getRandom(30,60))
             })
@@ -219,14 +219,14 @@
                     selectLetter(letter,num)
                 }
             });
-            letterChar.p = new Vector(LEFT_PADDING + (BUTTON_WIDTH + 25) * (i % COL_NUM), TOP_PADDING - (BUTTON_WIDTH+25) * (i / COL_NUM | 0));
+            letterChar.p = new Vector(LEFT_PADDING + (BUTTON_WIDTH*1.1) * (i % COL_NUM), TOP_PADDING - (BUTTON_WIDTH*1.1) * (i / COL_NUM | 0));
             letterChar.width = BUTTON_WIDTH;
             letterChar.height = BUTTON_WIDTH;
             letterChar.maxbounds = {x: width, y: height};
             letterChar.hasFriction = true;
             letterChar.friction_coeff = 0.01;
             letterChar.hasBounce = true;
-            letterChar.pDiv.size = 11- num + 'em';
+            letterChar.pDiv.size = BUTTON_WIDTH/1.5 + 'px';
             letterChar.update();
             THINGS_TO_UPDATE.push(letterChar);
         })
