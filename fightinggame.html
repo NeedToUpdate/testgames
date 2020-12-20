@@ -386,10 +386,8 @@
             monster.landing_emitter.subscribe('land', () => {
                 monster.faceLeft();
             });
-            let gravity = new Vector(0, 1);
-            gravity.constant = true;
-            player.addForce(gravity);
-            monster.addForce(gravity);
+            player.addForce(VECTORS.gravity);
+            monster.addForce(VECTORS.gravity);
             setInterval(() => {
                 loadingBar.value += 1;
             }, 5)
@@ -400,9 +398,6 @@
         }
 
         let PLAYING = false;
-        id('jump_right').addEventListener('click', function () {
-            player.jumpRight();
-        });
         let secret = false; //for the hardmode double click
         let secretTO; //timeout needed for doubleclick
         id('play_pause').addEventListener('click', function () {
@@ -426,14 +421,18 @@
                 secret = false;
             }, 1000);
         });
-
+        
+        id('jump_right').addEventListener('click', function () {
+            if (player.dead) return;
+            player.jumpRight(4);
+        });
         id('jump_left').addEventListener('click', function () {
             if (player.dead) return;
-            player.jumpLeft();
+            player.jumpLeft(4);
         });
         id('jump_up').addEventListener('click', function () {
             if (player.dead) return;
-            player.jumpUp();
+            player.jumpUp(4);
             if (getRandom(4) < 1 && !monster.dead) {
                 monsterShoot();
             }
@@ -538,12 +537,15 @@
             }
         }
         let PLAYERJUMP = false;
-
+        let currentTime = window.performance.now()
         function loop() {
-            player.update();
-            monster.update();
+            let newTime = window.performance.now()
+            let deltaT = newTime - currentTime;
+            currentTime = newTime;
+            player.update(deltaT);
+            monster.update(deltaT);
             if (PLAYING && !PLAYERJUMP && !monster.dead) {
-                player.sparHop(0.5);
+                player.sparHop(3);
                 PLAYERJUMP = true;
                 setTimeout(() => PLAYERJUMP = false, 1000)
             }
@@ -604,14 +606,14 @@
                     monster.hop();
                 }
                 if (Math.random() * 3000 < 2) {
-                    monster.jumpUp();
+                    monster.jumpUp(6);
                 }
                 if (Math.random() * 10000 < (HARDMODE ? 3 : 2)) {
                     monsterrapidfire = true;
                     console.log('rapid fire!')
                 }
                 if (monster.health > 80 && Math.random() * 1000 < 5 && !hopstop) {
-                    monster.sparHop().then(() => {
+                    monster.sparHop(4).then(() => {
                         hopstop = false
                     });
                     hopstop = true;
@@ -637,7 +639,7 @@
                     monsterShoot();
                 }
                 if (Math.random() * 100 < 2) {
-                    monster.jumpUp(20);
+                    monster.jumpUp(10);
                 }
             }
 
