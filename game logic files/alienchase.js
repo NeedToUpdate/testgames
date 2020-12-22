@@ -21,8 +21,8 @@ let behaviours = ['chase', 'predict', 'taunt', 'scare', 'idle', 'patrol', 'rando
 
 //DEFAULT DIFFICULTY SETTING
 let max_difficulty = 10;
-let DEFAULT_MAX_V_MULTIPLIER = 4.5;
-let DEFAULT_MAX_F_MULTIPLIER = 4;
+let DEFAULT_MAX_V_MULTIPLIER = 9;
+let DEFAULT_MAX_F_MULTIPLIER = 9;
 
 
 
@@ -42,7 +42,7 @@ let alien_config = {
     },
     orange:{
         num:3,
-        behaviour: 'random',
+        behaviour: 'predict',
         difficulty: 2
     },
     pink:{
@@ -62,7 +62,7 @@ let alien_config = {
     },
     yellow:{
         num:3,
-        behaviour: 'predict',
+        behaviour: 'random',
         difficulty: 2
     },
     rainbow:{
@@ -598,8 +598,11 @@ function checkLetter(){
 
 
 let previouslyTouchedLetter = {}
-let FRAME = 0;
+let currentTime = window.performance.now();
 function gameloop() {
+        let newTime = window.performance.now();
+        let deltaT = newTime - currentTime;
+        currentTime = newTime;
         letterDivs.forEach(x => {
             x.update()
         })
@@ -611,18 +614,14 @@ function gameloop() {
                     resetLetter(previouslyTouchedLetter);
                 }
             }
-            a.update()
+            a.update(deltaT)
         })
-        if (THINGS_ARE_DRAGGABLE && (FRAME%4==0)) {
+        if (THINGS_ARE_DRAGGABLE && (currentTime%4==0)) {
             checkLetter()
         }
-        FRAME++
-        TEMPORARY_PROXY()
-}
-function TEMPORARY_PROXY(){ 
         requestAnimationFrame(()=>{
             gameloop()
-        })        
+        })  
 }
 
 function tester(){

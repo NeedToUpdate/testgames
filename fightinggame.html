@@ -375,7 +375,7 @@
                     let shield_name = 'shield_' + getRandom(valid_colors)
                     LOADED_IMAGES.add([shield_name], IMAGE_PATH + '/projectiles/');
                     monster.addShieldImage(LOADED_IMAGES[shield_name].cloneNode())
-                    if (monster.height > height) monster.width *= 0.8;
+                    if (monster.height > height) monster.width *= height/monster.height;
                     monster.maxbounds.y = (height*1.1) / 2 + monster.height / 2;
                     monster.faceLeft();
                     loadingBar.value += 30
@@ -424,15 +424,15 @@
         
         id('jump_right').addEventListener('click', function () {
             if (player.dead) return;
-            player.jumpRight(4);
+            player.jumpRight(1.2);
         });
         id('jump_left').addEventListener('click', function () {
             if (player.dead) return;
-            player.jumpLeft(4);
+            player.jumpLeft(1.2);
         });
         id('jump_up').addEventListener('click', function () {
             if (player.dead) return;
-            player.jumpUp(4);
+            player.jumpUp(1.4);
             if (getRandom(4) < 1 && !monster.dead) {
                 monsterShoot();
             }
@@ -451,7 +451,7 @@
                     let n = Math.random() * 10;
                     if (n > 9) {
                         if (monster.health > 90) {
-                            monster.jumpUp();
+                            monster.jumpUp(1.7);
                         }
                     } else if (n > 8) {
                         monster.shield();
@@ -506,7 +506,7 @@
                         monster.jumpMult = 20*width/960;
                         monster.isJumping = true;
                         monster.addForce(VECTORS.gravity);
-                        if (monster.height > height) monster.width *= 0.8;
+                        if (monster.height > height) monster.width *= height/monster.height;
                         monster.maxbounds.y = (height*1.1) / 2 + monster.height / 2;
                         monster.addDeathImage(LOADED_IMAGES.fire.cloneNode());
                         let shield_name = 'shield_' + getRandom(valid_colors)
@@ -545,7 +545,7 @@
             player.update(deltaT);
             monster.update(deltaT);
             if (PLAYING && !PLAYERJUMP && !monster.dead) {
-                player.sparHop(3);
+                player.sparHop(.5);
                 PLAYERJUMP = true;
                 setTimeout(() => PLAYERJUMP = false, 1000)
             }
@@ -606,14 +606,14 @@
                     monster.hop();
                 }
                 if (Math.random() * 3000 < 2) {
-                    monster.jumpUp(6);
+                    monster.jumpUp(1.5);
                 }
                 if (Math.random() * 10000 < (HARDMODE ? 3 : 2)) {
                     monsterrapidfire = true;
                     console.log('rapid fire!')
                 }
                 if (monster.health > 80 && Math.random() * 1000 < 5 && !hopstop) {
-                    monster.sparHop(4).then(() => {
+                    monster.sparHop(.5).then(() => {
                         hopstop = false
                     });
                     hopstop = true;
