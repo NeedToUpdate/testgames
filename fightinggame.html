@@ -144,10 +144,11 @@
         let valid_colors = ['red','yellow','blue','teal','lightblue','purple','pink','orange','white','black']
 
        
-
+        let scaleMultiplier = 1;
         
         function setupBackground(){
             return new Promise(resolve=>{
+                scaleMultiplier = width/960;
                 Array.from(document.getElementsByClassName('controlBtn')).forEach(x=>{
                     x.style.fontSize = width/60 + 'px';
                 })
@@ -161,10 +162,10 @@
                 id('image_blocker').style.backgroundSize = width + 'px auto';
                 id('image_blocker').style.backgroundRepeat = 'no-repeat';
                 id('image_blocker').style.width = width/12 + 'px'
-                id('image_blocker').style.height = width/12 + 'px'
+                id('image_blocker').style.height = width/12 + 'px';
+                VECTORS.gravity.y *= scaleMultiplier;
                 resolve()
             })
-
         }
 
 

@@ -371,14 +371,18 @@ function setupAliens(){
 }
 
 let LEFT_OFFSET = 0;
+let scaleMultiplier = 1;
 function setupBackground(){
     return new Promise(resolve=>{
+        scaleMultiplier = width/960;
         let background = 'space' + (getRandom(IMAGE_CONFIG.space_bgs.num)) + '.jpg';
         DOMObjectGlobals.body.style.backgroundColor = 'black';
         DOMObjectGlobals.body.style.backgroundImage = 'url(' + IMAGE_PATH + BACKGROUND_IMAGE_PATH + background.toString() + ')';
         DOMObjectGlobals.body.style.backgroundSize = width + 'px auto';
         DOMObjectGlobals.body.style.backgroundRepeat = 'no-repeat';
         LEFT_OFFSET = DOMObjectGlobals.body.offsetLeft;
+        DEFAULT_MAX_F_MULTIPLIER *= scaleMultiplier;
+        DEFAULT_MAX_V_MULTIPLIER *= scaleMultiplier;
         resolve()
     })
 }
