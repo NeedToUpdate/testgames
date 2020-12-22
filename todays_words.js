@@ -57,7 +57,7 @@ let override = [
 
 //================ESL1=================
 
-//['car','robot','doll','bike','teddy bear'],
+//['car','robot','doll','bike','teddy bear','ball'],
 //['january','february','march','april','may','june','july','august','september','october','november','december'],
 //['festival','harvest','leaves','crops','mooncake','dragon','meal','celebrate'],
 //['we read books before bed','then we hug goodnight','my bed is soft and cozy','my cat sleeps with me','the sky has turned dark','my eyes close'],
