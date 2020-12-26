@@ -623,10 +623,23 @@ function gameloop() {
         if (THINGS_ARE_DRAGGABLE && (currentTime%4==0)) {
             checkLetter()
         }
-        requestAnimationFrame(()=>{
-            gameloop()
-        })  
+        if(LOOPING) requestAnimationFrame(gameloop)  
 }
+
+
+let FPSLOCK = 0;
+let FPSLOOP = 0;
+function setFPS(num){
+    LOOPING = false;
+    clearInterval(FPSLOOP)
+    FPSLOCK = num;
+    if(FPSLOCK>0){
+        FPSLOOP = setInterval(gameloop,1000/FPSLOCK)
+    }else{
+        requestAnimationFrame(gameloop);
+    }
+}
+
 
 function tester(){
     MAINTESTER = new TestObj(2,0,2);
@@ -661,6 +674,7 @@ function tester(){
 setupBody(id("MAIN_SCREEN")).then(()=>{
     setupBackground().then(()=>{
         tester()
+        LOOPING = true;
         gameloop()
         setupAliens().then(()=>{
             setupLetters().then(() => {

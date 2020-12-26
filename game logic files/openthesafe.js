@@ -537,7 +537,7 @@ function introMovie() {
                 burglar.hop();
             }
             if (now - time > 3000 && burglar.x > width*0.65 && now - time < 5000) {
-                burglar.jumpFwd(getRandom(0.3,0.4))
+                burglar.doJump(getRandom(0.3,0.4))
             }
             if (now - time < 10000 && now - time > 5000 && !burglar.isPoweringUp) {
                 if (now - time < 7000) {
@@ -580,7 +580,7 @@ function introMovie() {
             burglars.forEach(burglar => {
                 if (!burglar.dead) {
                     if (burglar.p.x > width/2) {
-                        burglar.jumpFwd(0.3);
+                        burglar.doJump(0.3);
                     }
                     if (burglar.p.x < width/2) {
                         burglar.fragile = true;
@@ -616,7 +616,7 @@ function introMovie() {
                     safe.addSprite(safeimg);
                     safe.maxbounds.y = height*0.9;
                     safe.addForce(VECTORS.gravity);
-                    safe.jumpFwd(3);
+                    safe.doJump(3);
                     safeimg.shape.setAttribute("id", 'safeimg');
                     animateSafe();
                     safe.landing_emitter.subscribe('land', () => {

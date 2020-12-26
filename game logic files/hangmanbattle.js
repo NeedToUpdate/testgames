@@ -1706,11 +1706,11 @@ let timeSinceCheckB = 0;
 function subroutines() {
     let time = window.performance.now();
     if (playerAState === 'idle' && time - timeSinceCheckA > 810) {
-        addAction(1, 'sparHop', 0.5);
+        addAction(1, 'sparHop', 0.25);
         timeSinceCheckA = time;
     }
     if (playerBState === 'idle' && time - timeSinceCheckB > 700) {
-        addAction(0, 'sparHop', 0.5);
+        addAction(0, 'sparHop', 0.25);
         timeSinceCheckB = time;
     }
     if (playerAState === 'winner' && time - timeSinceCheckA > 810) {

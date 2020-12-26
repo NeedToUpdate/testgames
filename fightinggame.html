@@ -559,7 +559,7 @@
                             monster.health -= projectile.power;
                             //console.log(monster.health)
                             monsterHP.value = monster.health <= 0 ? 0 : monster.health | 0;
-                            monster.jumpFwd(-0.5 + projectile.power / 1000);
+                            monster.doJump(-0.5 + projectile.power / 1000);
                             let unsub = monster.landing_emitter.subscribe('land', () => {
                                 setTimeout(() => monster.jumpFwd(0.6 + projectile.power / 1000), 500);
                                 unsub();
@@ -640,7 +640,7 @@
                     monsterShoot();
                 }
                 if (Math.random() * 100 < 2) {
-                    monster.jumpUp(10);
+                    monster.jumpUp(3);
                 }
             }
 
