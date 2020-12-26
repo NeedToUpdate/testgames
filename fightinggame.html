@@ -16,6 +16,7 @@
 </head>
 
 <body>
+    <div id="debugdiv" style="position: absolute; left: 0; top: 0; color: white; z-index: 999999999;"></div>
     <div id="MAIN_WRAPPER">
         <div id="MAIN_SCREEN">
             <!-- Everything for the game should be here -->
@@ -135,6 +136,29 @@
         }
     </style>
     <script>
+
+        //=============  DEBUG WITHOUT CONSOLE STUFF =====================
+        if (typeof console !== 'undefined') {
+            if (typeof console.log !== 'undefined') {
+                console.olog = console.log;
+            } else {
+                console.olog = function () {};
+            }
+            console.log = function (message) {
+                console.olog(message);
+                id('debugdiv').append(`\n` + message)
+            }
+            console.error = console.exception = console.debug = console.info = console.log;
+        }
+        window.addEventListener('error', e => {
+            id('debugdiv').append(`\n` + e.message)
+        });
+        id('debugdiv').addEventListener('click', () => {
+            id('debugdiv').innerText = ''
+        })
+        //=============  END DEBUG WITHOUT CONSOLE STUFF ==================
+
+
         let HARDMODE = false;
         let IMAGE_PATH = './images/';
         let BACKGROUND_CONFIG = IMAGE_CONFIG.backgrounds
@@ -669,11 +693,13 @@
             requestAnimationFrame(loop)
         };
         let FPSLOCK = 0;
+        let FPSLOOP = 0;
         function setFPS(num){
             stop()
+            clearInterval(FPSLOOP)
             FPSLOCK = num;
             if(FPSLOCK>0){
-                setInterval(loop,1000/FPSLOCK)
+                FPSLOOP = setInterval(loop,1000/FPSLOCK)
             }else{
                 requestAnimationFrame(loop);
             }
