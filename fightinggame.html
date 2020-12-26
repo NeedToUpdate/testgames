@@ -138,24 +138,24 @@
     <script>
 
         //=============  DEBUG WITHOUT CONSOLE STUFF =====================
-        if (typeof console !== 'undefined') {
-            if (typeof console.log !== 'undefined') {
-                console.olog = console.log;
-            } else {
-                console.olog = function () {};
-            }
-            console.log = function (message) {
-                console.olog(message);
-                id('debugdiv').append(`\n` + message)
-            }
-            console.error = console.exception = console.debug = console.info = console.log;
-        }
-        window.addEventListener('error', e => {
-            id('debugdiv').append(`\n` + e.message)
-        });
-        id('debugdiv').addEventListener('click', () => {
-            id('debugdiv').innerText = ''
-        })
+        // if (typeof console !== 'undefined') {
+        //     if (typeof console.log !== 'undefined') {
+        //         console.olog = console.log;
+        //     } else {
+        //         console.olog = function () {};
+        //     }
+        //     console.log = function (message) {
+        //         console.olog(message);
+        //         id('debugdiv').append(`\n` + message)
+        //     }
+        //     console.error = console.exception = console.debug = console.info = console.log;
+        // }
+        // window.addEventListener('error', e => {
+        //     id('debugdiv').append(`\n` + e.message)
+        // });
+        // id('debugdiv').addEventListener('click', () => {
+        //     id('debugdiv').innerText = ''
+        // })
         //=============  END DEBUG WITHOUT CONSOLE STUFF ==================
 
 
@@ -575,6 +575,7 @@
             }
             //projectiles hit calcs
             projectiles.forEach(projectile => {
+                projectile.v.y = 0;
                 projectile.update();
                 if (projectile.owner === 'player') {
                     if (projectile.hitbox.contains(monster.hitbox.vMiddle)) {
