@@ -21,8 +21,8 @@ let behaviours = ['chase', 'predict', 'taunt', 'scare', 'idle', 'patrol', 'rando
 
 //DEFAULT DIFFICULTY SETTING
 let max_difficulty = 10;
-let DEFAULT_MAX_V_MULTIPLIER = 9;
-let DEFAULT_MAX_F_MULTIPLIER = 9;
+let DEFAULT_MAX_V_MULTIPLIER = 4;
+let DEFAULT_MAX_F_MULTIPLIER = 3.5;
 
 
 

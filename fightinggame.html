@@ -407,7 +407,7 @@
                     createHPBar(monster.sprite.shape, false)
                 });
             monster.jumpMult = 20;
-            monster.isJumping = true;
+            monster.isCurrentlyJumping = true;
             monster.landing_emitter.subscribe('land', () => {
                 monster.faceLeft();
             });
@@ -529,7 +529,7 @@
                         monster.hasNoSkyBox = true;
                         monster.addSprite(sprite);
                         monster.jumpMult = 20*width/960;
-                        monster.isJumping = true;
+                        monster.isCurrentlyJumping = true;
                         monster.addForce(VECTORS.gravity);
                         if (monster.height > height) monster.width *= height/monster.height;
                         monster.maxbounds.y = (height*1.1) / 2 + monster.height / 2;
@@ -563,16 +563,15 @@
         }
         let PLAYERJUMP = false;
         let currentTime = window.performance.now()
-        function loop() {
-            let newTime = window.performance.now()
-            let deltaT = newTime - currentTime;
-            currentTime = newTime;
+        function loop(time) {
+            let deltaT = time - currentTime;
+            currentTime = time;
             player.update(deltaT);
             monster.update(deltaT);
-            if (PLAYING && !PLAYERJUMP && !monster.dead) {
+            if (PLAYING && !PLAYERJUMP && !player.isCurrentlyJumping && !monster.dead) {
                 player.sparHop(.5);
                 PLAYERJUMP = true;
-                setTimeout(() => PLAYERJUMP = false, 1000)
+                setTimeout(() => PLAYERJUMP = false, 1500)
             }
             //projectiles hit calcs
             projectiles.forEach(projectile => {
@@ -614,7 +613,7 @@
             //monster's movements
             if (PLAYING && !monster.dead && !player.dead) {
                 if (Math.random() * 1000 < (HARDMODE ? 30 : 10)) {
-                    if (!monsterisshooting && !monster.isJumping) {
+                    if (!monsterisshooting && !monster.isCurrentlyJumping) {
                         monster.powerUp(2);
                     }
                 }
@@ -699,7 +698,7 @@
             clearInterval(FPSLOOP)
             FPSLOCK = num;
             if(FPSLOCK>0){
-                FPSLOOP = setInterval(loop,1000/FPSLOCK)
+                FPSLOOP = setInterval(()=>loop(window.performance.now()),1000/FPSLOCK)
             }else{
                 requestAnimationFrame(loop);
             }
