@@ -21,8 +21,8 @@ let behaviours = ['chase', 'predict', 'taunt', 'scare', 'idle', 'patrol', 'rando
 
 //DEFAULT DIFFICULTY SETTING
 let max_difficulty = 10;
-let DEFAULT_MAX_V_MULTIPLIER = 4;
-let DEFAULT_MAX_F_MULTIPLIER = 3.5;
+let DEFAULT_MAX_V_MULTIPLIER = 3;
+let DEFAULT_MAX_F_MULTIPLIER = 2.5;
 
 
 
@@ -525,10 +525,10 @@ function resetLetter(letter){
     drop(letter)
     letter.isResetting = true;
     letter.sprite.color = 'red';
-    letter.x = getRandom(width*0.05, width*0.95);
-    letter.y = getRandom(height*0.05,height*0.95);
     setTimeout(()=>{
-        letter.color = 'white';
+        letter.x = getRandom(width*0.05, width*0.95);
+        letter.y = getRandom(height*0.05,height*0.95);
+        letter.sprite.color = 'white';
         letter.isResetting = false;
     },500)
 }
@@ -603,10 +603,9 @@ function checkLetter(){
 
 let previouslyTouchedLetter = {}
 let currentTime = window.performance.now();
-function gameloop() {
-        let newTime = window.performance.now();
-        let deltaT = newTime - currentTime;
-        currentTime = newTime;
+function gameloop(time) {
+        let deltaT = time - currentTime;
+        currentTime = time;
         letterDivs.forEach(x => {
             x.update()
         })
@@ -649,10 +648,10 @@ function tester(){
     })
     MAINTESTER.setButton(1).name('remove bg');
     MAINTESTER.setButton(1).func(()=>{
-        document.body.style.backgroundImage = ''
+        DOMObjectGlobals.body.style.backgroundImage = ''
     })
-    MAINTESTER.setSlider(0).scale(DEFAULT_MAX_V_MULTIPLIER,1,15)
-    MAINTESTER.setSlider(1).scale(DEFAULT_MAX_F_MULTIPLIER,1,15)
+    MAINTESTER.setSlider(0).scale(DEFAULT_MAX_V_MULTIPLIER,0,15)
+    MAINTESTER.setSlider(1).scale(DEFAULT_MAX_F_MULTIPLIER,0,15)
     MAINTESTER.setSlider(0).func(()=>{
         aliens.forEach(alien=>{
             alien._DEFAULT_MAX_F = MAINTESTER.getSlider(0).value*alien.difficulty;
