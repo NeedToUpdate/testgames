@@ -29,7 +29,8 @@ dirs = {
 	"backgrounds": '/',
 	"old_space_bg": '/',
 	"monsters": '/',
-	"old_ghosts": '/'
+	"old_ghosts": '/',
+	"weapons": '/weapons/'
 }
 syntax = {
 	"buildings": 'skyscraper{num}.png',
@@ -40,7 +41,8 @@ syntax = {
 	"backgrounds": 'background{num}.jpg',
 	"old_space_bg": 'bg{num}.jpg',
 	"monsters": 'monster{num}.png',
-	"old_ghosts": 'ghost{num}.png'
+	"old_ghosts": 'ghost{num}.png',
+	"weapons": '{valid_name}.png'
 }
 
 lines = []
@@ -54,7 +56,6 @@ for key in dirs.keys():
 	img_path = str(Path(main_dir + dirs[key]))+ '\\*'
 	num_of_images = 0
 	list_of_names = []
-	print(img_path)
 	for image in glob.iglob(img_path):
 		img_name = image.split('\\')[-1]
 		regex = syntax[key].replace('{num}', '\d+').replace('{valid_name}','\w+').replace('.','\.')
@@ -65,10 +66,8 @@ for key in dirs.keys():
 			if 'valid_name' in syntax[key]:
 				to_remove = syntax[key].replace('{valid_name}','').split('.')
 				word = word.replace(to_remove[0],'').replace('.' + to_remove[1],'')
-				print(word,re.findall(r"\d+",word)) #TODO wtf
 				if len(re.findall(r"\d+",word)):
 					num = re.findall(r"\d+",word)[0]
-					print(num)
 					word = word.replace(num,'')
 				list_of_names.append(word)
 	
