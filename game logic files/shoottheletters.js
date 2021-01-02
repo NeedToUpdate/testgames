@@ -93,7 +93,6 @@ function setupBackground() {
         selectedgun = new Character(0, 0, gunStats.name);
         selectedgun.hasNoBounds = true;
         LEFT_OFFSET = DOMObjectGlobals.body.offsetLeft;
-
         //to block out images that are preloaded into the game, to avoid loading times
         let imgBlk = id('image_blocker')
         imgBlk.style.width = width / 16 + 'px';
