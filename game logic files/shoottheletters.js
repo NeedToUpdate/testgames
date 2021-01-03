@@ -323,6 +323,24 @@ function reload() {
 
 }
 
+function shakeScreen(){
+    id('MAIN_SCREEN').style.left = '-5px'
+    setTimeout(()=>{
+        id('MAIN_SCREEN').style.left = '5px'
+        setTimeout(()=>{
+            id('MAIN_SCREEN').style.left = '-5px'
+            setTimeout(()=>{
+                id('MAIN_SCREEN').style.left = '5px'
+                setTimeout(()=>{
+                    id('MAIN_SCREEN').style.left = '-5px'
+                    setTimeout(()=>{
+                        id('MAIN_SCREEN').style.left = ''
+                    },50)
+                },50)
+            },50)
+        },50)
+    },50)
+}
 
 let IS_SHOOTING = false;
 let GUN_CHANGE_QUEUE = 'none'
@@ -349,6 +367,8 @@ function shoot() {
                 killAlien(x);
             }
             gunStats.ammo--;
+            setAmmoText(gunStats.ammo,gunStats.backupammo)
+            shakeScreen();
         })
     }else{
         for(let i = 1; i<=shotsRemaining; i++){
