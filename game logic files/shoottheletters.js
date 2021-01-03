@@ -132,7 +132,7 @@ let gunConfigs = {
         rarity: 'rare'
     },
     'remington':{
-        name: 'Gauntlet',
+        name: 'Remington',
         delay: 400,
         ammo: 2,
         backupammo: 10,
@@ -294,7 +294,7 @@ function reload() {
     if (gunStats.backupammo > 0) {
         gunStats.backupammo -= gunStats.ammocap;
         gunStats.ammo = gunStats.ammocap;
-        ammoP.string = 'ammo: ' + gunStats.ammo + ' | ' + gunStats.backupammo;
+        
         let attachment = new Flyer(0, 0, 'loadingbar');
         let health = new LoadingBar(0, 0, width / 16, width / 96, 0, 100, 1);
         health.set('zIndex', '100000');
@@ -764,7 +764,7 @@ function setup() {
     for (let i = 0; i < splitletters.length; i++) {
         createAlien();
     }
-    ammoP = new P('ammo: ' + gunConfigs[currentGun].ammo + ' | ' + gunConfigs[currentGun].backupammo, width * .9, height * 0.01, width / 30);
+    ammoP = new P('Pistol: ' + gunConfigs[currentGun].ammo + ' | ' + gunConfigs[currentGun].backupammo, width * .9, height * 0.01, width / 30);
 
     
 }
@@ -801,7 +801,7 @@ function createItemDrop(x,y,name){
 }
 
 function setAmmoText(ammo,backupammo){
-    ammoP.string = 'ammo: ' + ammo + ' | ' + backupammo;
+    ammoP.string = gunStats.name + ': ' + ammo + ' | ' + backupammo;
 }
 
 function changeGun(name){
