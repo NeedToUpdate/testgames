@@ -8,6 +8,7 @@ let gunConfigs = {
         reloadTime: 2000,
         perShot: 1,
         bulletSpeed: 30,
+        rarity: 'common'
     },
     'ak47':{
         name: 'AK-47',
@@ -18,6 +19,7 @@ let gunConfigs = {
         reloadTime: 2000,
         perShot: 3,
         bulletSpeed: 30,
+        rarity: 'uncommon'
     },
     'alienblaster':{
         name: 'Alien Blaster',
@@ -28,6 +30,7 @@ let gunConfigs = {
         reloadTime: 200,
         perShot: 1,
         bulletSpeed: 7,
+        rarity: 'legendary'
     },
     'rpg':{
         name: 'RPG',
@@ -38,6 +41,7 @@ let gunConfigs = {
         reloadTime: 2000,
         perShot: 1,
         bulletSpeed: 3,
+        rarity: 'rare'
     },
     'uzi':{
         name: 'Uzi',
@@ -48,6 +52,117 @@ let gunConfigs = {
         reloadTime: 2000,
         perShot: 5,
         bulletSpeed: 30,
+        rarity: 'uncommon'
+    },
+    'infinitygauntlet':{
+        name: 'Gauntlet',
+        delay: 200,
+        ammo: 1,
+        backupammo: 3,
+        ammocap: 1,
+        reloadTime: 4000,
+        perShot: 0,
+        bulletSpeed: 0,
+        rarity: 'legendary'
+    },
+    'awm':{
+        name: 'AWM',
+        delay: 300,
+        ammo: 4,
+        backupammo: 8,
+        ammocap: 4,
+        reloadTime: 2000,
+        perShot: 1,
+        bulletSpeed: 200,
+        rarity: 'rare'
+    },
+    'deagle':{
+        name: 'Desert Eagle',
+        delay: 100,
+        ammo: 5,
+        backupammo: 20,
+        ammocap: 5,
+        reloadTime: 1000,
+        perShot: 1,
+        bulletSpeed: 40,
+        rarity: 'uncommon'
+    },
+    'glock':{
+        name: 'Glock',
+        delay: 20,
+        ammo: 8,
+        backupammo: 32,
+        ammocap: 8,
+        reloadTime: 200,
+        perShot: 2,
+        bulletSpeed: 30,
+        rarity: 'uncommon'
+    },
+    'm16':{
+        name: 'M-16',
+        delay: 200,
+        ammo: 20,
+        backupammo: 60,
+        ammocap: 20,
+        reloadTime: 2000,
+        perShot: 4,
+        bulletSpeed: 35,
+        rarity: 'uncommon'
+    },
+    'mp5':{
+        name: 'MP5',
+        delay: 50,
+        ammo: 15,
+        backupammo: 60,
+        ammocap: 15,
+        reloadTime: 1500,
+        perShot: 3,
+        bulletSpeed: 25,
+        rarity: 'uncommon'
+    },
+    'p90':{
+        name: 'HK P90',
+        delay: 40,
+        ammo: 30,
+        backupammo: 90,
+        ammocap: 30,
+        reloadTime: 1500,
+        perShot: 5,
+        bulletSpeed: 60,
+        rarity: 'rare'
+    },
+    'remington':{
+        name: 'Gauntlet',
+        delay: 400,
+        ammo: 2,
+        backupammo: 10,
+        ammocap: 2,
+        reloadTime: 2500,
+        perShot: 1,
+        bulletSpeed: 40,
+        rarity: 'rare'
+    },
+    'revolver':{
+        name: 'Revolver',
+        delay: 200,
+        ammo: 6,
+        backupammo: 30,
+        ammocap: 6,
+        reloadTime: 1000,
+        perShot: 1,
+        bulletSpeed: 35,
+        rarity: 'uncommon'
+    },
+    'rpd':{
+        name: 'RPD',
+        delay: 50,
+        ammo: 20,
+        backupammo: 100,
+        ammocap: 20,
+        reloadTime: 3000,
+        perShot: 10,
+        bulletSpeed: 30,
+        rarity: 'rare'
     },
 };
 
@@ -71,6 +186,7 @@ let city = {}
 //creates empty array, maps it to 0-n, shuffles it, maps again to have x be a random int from 0 to n
 let buildings = [];
 let invadercolors = ['red', 'green', 'purple', 'blue', 'pink', 'white', 'yellow', 'orange'];
+let validGunNames = ['gun','ak47','alienblaster','rpg','uzi','infinitygauntlet'];
 let invaders = {}
 let aliens = [];
 let guns ={};
@@ -88,7 +204,6 @@ function setupBackground() {
         LOADED_IMAGES = new ImageLoader(IMAGE_PATH + 'projectiles/', extras.concat(['electric','bullet','nuke','whitemagic'].map(x=>x+'_projectile')));
         aliendeathimg = LOADED_IMAGES.electric_projectile
         invaders = new ImageLoader(IMAGE_PATH + 'invaders/', invadercolors.map(x => 'invader' + x));
-        guns = new ImageLoader(IMAGE_PATH + GUN_IMG_CONFIG.path, ['gun','ak47','alienblaster','rpg','uzi']);
         DOMObjectGlobals.body.style.backgroundImage = 'url(' + IMAGE_PATH + 'bg3.jpg)';
         selectedgun = new Character(0, 0, gunStats.name);
         selectedgun.hasNoBounds = true;
@@ -210,6 +325,7 @@ function reload() {
 
 
 let IS_SHOOTING = false;
+let GUN_CHANGE_QUEUE = 'none'
 function shoot() {
     if (!started) return
     if (gunStats.ammo <= 0) {
@@ -227,21 +343,69 @@ function shoot() {
     let x = selectedgun.x + cos * width / 19.2;
     let y = selectedgun.y + sin * width / 19.2;
     let shotsRemaining = gunStats.perShot - gunStats.ammo >0? gunStats.ammo : gunStats.perShot; //if less than the burst is in the chamber, only shoot the remaining
-    for(let i = 1; i<=shotsRemaining; i++){
-        //starts from 1 so its easier to do the configs
-        let projectileName = 'bullet'
-        if(currentGun == 'rpg') projectileName = 'nuke'
-        if(currentGun == 'alienblaster') projectileName = 'whitemagic'
-        setTimeout(()=>{           
-            if(currentGun === 'alienblaster'){
-                for(let i = 0; i<5; i++){
+    if(currentGun === 'infinitygauntlet'){
+        aliens.forEach((x,i)=>{
+            if(!(i%2)){
+                killAlien(x);
+            }
+            gunStats.ammo--;
+        })
+    }else{
+        for(let i = 1; i<=shotsRemaining; i++){
+            //starts from 1 so its easier to do the configs
+            let projectileName = 'bullet'
+            if(currentGun == 'rpg') projectileName = 'nuke'
+            if(currentGun == 'alienblaster') projectileName = 'whitemagic'
+            setTimeout(()=>{           
+                if(currentGun === 'alienblaster'){
+                    for(let i = 0; i<5; i++){
+                        let bullet = new Flyer(x, y, 'bullet');
+                        let bulletimgScatter = new Img(LOADED_IMAGES[projectileName + '_projectile'].cloneNode(), x, y, width / 32, 0, 0).fromCenter().onLoad(() => {
+                            bulletimgScatter.set('zIndex', '1000');
+                            bullet.addSprite(bulletimgScatter);
+                            bullet.angle = angle - 35 + 18*i
+                            cos = Math.cos(bullet.angle  * (Math.PI / 180));
+                            sin = Math.sin(bullet.angle * (Math.PI / 180));
+                            let vec = new Vector(cos, sin);
+                            bullet.addForce(vec.set(gunStats.bulletSpeed));
+                            bullet.maxbounds = {
+                                x: width,
+                                y: height
+                            };
+                            bullet.isFragile = true;
+                            bullets.push(bullet);
+                            setAmmoText(gunStats.ammo,gunStats.backupammo)
+                        });
+                    }
+                }else if(currentGun === 'remington'){
+                    for(let i = 0; i<8; i++){
+                        let bullet = new Flyer(x, y, 'bullet');
+                        let bulletimgScatter = new Img(LOADED_IMAGES[projectileName + '_projectile'].cloneNode(), x, y, width / 64, 0, 0).fromCenter().onLoad(() => {
+                            bulletimgScatter.set('zIndex', '1000');
+                            bullet.addSprite(bulletimgScatter);
+                            bullet.angle = angle - 25 + 5.6*i
+                            cos = Math.cos(bullet.angle  * (Math.PI / 180));
+                            sin = Math.sin(bullet.angle * (Math.PI / 180));
+                            let vec = new Vector(cos, sin);
+                            bullet.addForce(vec.set(gunStats.bulletSpeed));
+                            bullet.maxbounds = {
+                                x: width,
+                                y: height
+                            };
+                            bullet.isFragile = true;
+                            bullets.push(bullet);
+                            setAmmoText(gunStats.ammo,gunStats.backupammo)
+                        });
+                    }
+                }else{
                     let bullet = new Flyer(x, y, 'bullet');
-                    let bulletimgScatter = new Img(LOADED_IMAGES[projectileName + '_projectile'].cloneNode(), x, y, width / 32, 0, 0).fromCenter().onLoad(() => {
-                        bulletimgScatter.set('zIndex', '1000');
-                        bullet.addSprite(bulletimgScatter);
-                        bullet.angle = angle - 35 + 18*i
-                        cos = Math.cos(bullet.angle  * (Math.PI / 180));
-                        sin = Math.sin(bullet.angle * (Math.PI / 180));
+                    let bulletimg = new Img(LOADED_IMAGES[projectileName + '_projectile'].cloneNode(), x, y, currentGun === 'rpg'? width/8 : width / 32, 0, 0).fromCenter().onLoad(() => {
+                        bulletimg.set('zIndex', '1000');
+                        bullet.addSprite(bulletimg);
+                        if(currentGun === 'rpg'){
+                            bullet.addDeathImage(LOADED_IMAGES.fire)
+                        }
+                        bullet.angle = angle
                         let vec = new Vector(cos, sin);
                         bullet.addForce(vec.set(gunStats.bulletSpeed));
                         bullet.maxbounds = {
@@ -253,32 +417,18 @@ function shoot() {
                         setAmmoText(gunStats.ammo,gunStats.backupammo)
                     });
                 }
-            }else{
-                let bullet = new Flyer(x, y, 'bullet');
-                let bulletimg = new Img(LOADED_IMAGES[projectileName + '_projectile'].cloneNode(), x, y, currentGun === 'rpg'? width/8 : width / 32, 0, 0).fromCenter().onLoad(() => {
-                    bulletimg.set('zIndex', '1000');
-                    bullet.addSprite(bulletimg);
-                    if(currentGun === 'rpg'){
-                        bullet.addDeathImage(LOADED_IMAGES.fire)
-                    }
-                    bullet.angle = angle
-                    let vec = new Vector(cos, sin);
-                    bullet.addForce(vec.set(gunStats.bulletSpeed));
-                    bullet.maxbounds = {
-                        x: width,
-                        y: height
-                    };
-                    bullet.isFragile = true;
-                    bullets.push(bullet);
-                    setAmmoText(gunStats.ammo,gunStats.backupammo)
-                });
-            }
-        },(i-1)*50)
-        gunStats.ammo--;
-        
+            },(i-1)*50)
+            gunStats.ammo--;
+            
+        }
     }
+    
     setTimeout(()=>{
         IS_SHOOTING = false;
+        if(GUN_CHANGE_QUEUE !== 'none'){
+            changeGun(GUN_CHANGE_QUEUE);
+            GUN_CHANGE_QUEUE = 'none'
+        }
     },gunStats.delay)
     if (gunStats.ammo <= 0) {
         reload();
@@ -411,23 +561,23 @@ function killAlien(alien){
     }
     alien.kill();
     let roll = spinWheel();
+    if((chosenletters.length/2 | 0) == aliens.length && currentGun === 'gun') roll = 'uncommon'
     if(roll !== 'none'){
         let name = 'gun'
-        switch(roll){
-            case 'uncommon':
-                name = getRandom(['uzi','ak47'])
-                break;
-            case 'rare':
-                name =  getRandom(['rpg'])
-                break;
-            case 'legendary':
-                name = getRandom(['alienblaster'])
-                break;
-        }
+        let chosen = getArrayOfGuns().filter(x=>x.rarity == roll);
+        name = getRandom(chosen).key 
         createItemDrop(alien.x,alien.y,name)
     }
 }
 
+function getArrayOfGuns(){
+    //returns a neat array of the guns with a new property called 'key'
+    return Object.keys(gunConfigs).map(x=>{
+        let config = gunConfigs[x]
+        config.key = x;
+        return config;
+    })
+}
 
 function spinWheel(){
     if(getRandom(1,10)<oddsOfDrop){
@@ -622,24 +772,21 @@ function setup() {
 function createItemDrop(x,y,name){
     let faller = new FallingImg(x,y,name,getRandom(1,3),true)
     let color = 'blue'
-    switch(name){
-        case 'ak47': 
-            color = 'green';
-            break;
-        case 'gun':
+    switch(gunConfigs[name].rarity){
+        case 'common': 
             color = 'blue';
             break;
-        case 'uzi':
+        case 'uncommon':
             color = 'green';
             break;
-        case 'rpg': 
-            color = 'yellow';
-            break;
-        case 'alienblaster':
+        case 'rare':
             color = 'purple';
             break;
+        case 'legendary': 
+            color = 'yellow';
+            break;
     }
-    FallingImg.createIcon(guns[name].cloneNode(), 75,75,color).then(spriteFaller=>{
+    FallingImg.createIcon(IMAGE_PATH + GUN_IMG_CONFIG.path + name + '.png', 75,75,color).then(spriteFaller=>{
         spriteFaller.zIndex = 1000000
         faller.addSprite(spriteFaller)
         faller.maxbounds.y = height;
@@ -658,6 +805,10 @@ function setAmmoText(ammo,backupammo){
 }
 
 function changeGun(name){
+    if(IS_SHOOTING){
+        GUN_CHANGE_QUEUE = name;
+        return;
+    }
     if(name == 'rpg' || name == 'ak47'){
         gunSprite.width = width/7
         gunSprite.set('backgroundSize', width / 7 + 'px');
