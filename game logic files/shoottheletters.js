@@ -121,7 +121,7 @@ let gunConfigs = {
         rarity: 'uncommon'
     },
     'p90':{
-        name: 'HK P90',
+        name: 'P90',
         delay: 40,
         ammo: 30,
         backupammo: 90,
@@ -764,7 +764,7 @@ function setup() {
     for (let i = 0; i < splitletters.length; i++) {
         createAlien();
     }
-    ammoP = new P('Pistol: ' + gunConfigs[currentGun].ammo + ' | ' + gunConfigs[currentGun].backupammo, width * .9, height * 0.01, width / 30);
+    ammoP = new P('Pistol: ' + gunConfigs[currentGun].ammo + ' | ' + gunConfigs[currentGun].backupammo, width * .8, height * 0.01, width / 30);
 
     
 }
