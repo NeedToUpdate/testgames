@@ -5,8 +5,11 @@
 
 //SHOOT THE LETTERS
 
-- add more guns
-- remove blacksquare
+[DONE] - add more guns
+[DONE] - remove blacksquare
+- add level system
+- add dynamic dificulty
+- add attacking aliens
 
 //WORD SEARCH
 
@@ -37,7 +40,10 @@
 //ALIEN CHASE
 
 - add timer
-- add challenges
+[DONE] - add challenges
+- rescale challenges
+- add dynamic scaling
+- add bomb (kill aliens when losing too much)
 
 //DRAWBASE
 
@@ -45,12 +51,13 @@
 
 //MAIN STUFF
 
+[DONE] - add main body element to scale screen
 - add a main background process that will load the games into the right shape, like a canvas or something
 - remove all reference to the old space bgs and move all bgs to a new folder
 
 //TIMETRIAL
 
--remove blacksquare
+[DONE] - remove blacksquare
 
 //==== NEW GAMES ===
 
@@ -60,6 +67,11 @@
 - where is the letter
 - catch the letter
 
+//FALLING IMAGES
+- touch the right images
+- dont touch bombs
+- tag in mechanic (next person tries)
+- use finger, use gun, use sword
 
 //================== POLISH AND SPARKLES ===============
 
@@ -69,16 +81,16 @@
 [DONE] black square is too small when teh screen is very big
 [DONE] buttons are too big when the screen is very small
 
-//ivader shoot
+// invader shoot
 
-[DONE} button is weird sized on large screen
+[DONE] button is weird sized on large screen
 
-//open the safe
+// open the safe
 
 [DONE] image blocker is too thin in large screen sizes
 [DONE] text is too large on buttons
 
-//time trial 
+// time trial 
 
 [DONE] buttons weirdly sized on large screen
 [DONE] font on buttons too big with small screen
@@ -96,5 +108,5 @@ font for power select is too big on small screen and too spaced out
 
 //general
 
-
+[DONE] - add time based update loop
 need to add scaling for the main update class
