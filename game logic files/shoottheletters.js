@@ -1,5 +1,5 @@
 let gunConfigs = {
-    'gun':{
+    'gun': {
         name: 'Pistol',
         delay: 750,
         ammo: 5,
@@ -12,7 +12,7 @@ let gunConfigs = {
         spread: 0,
         isLarge: false,
     },
-    'ak47':{
+    'ak47': {
         name: 'AK-47',
         delay: 50,
         ammo: 30,
@@ -25,11 +25,11 @@ let gunConfigs = {
         spread: 10,
         isLarge: true,
     },
-    'alienblaster':{
+    'alienblaster': {
         name: 'Alien Blaster',
         delay: 2000,
         ammo: 3,
-        backupammo: 100, 
+        backupammo: 9,
         ammocap: 3,
         reloadTime: 200,
         perShot: 1,
@@ -38,7 +38,7 @@ let gunConfigs = {
         spread: 0,
         isLarge: false,
     },
-    'rpg':{
+    'rpg': {
         name: 'RPG',
         delay: 3000,
         ammo: 1,
@@ -51,7 +51,7 @@ let gunConfigs = {
         spread: 0,
         isLarge: true,
     },
-    'uzi':{
+    'uzi': {
         name: 'Uzi',
         delay: 20,
         ammo: 16,
@@ -64,7 +64,7 @@ let gunConfigs = {
         spread: 15,
         isLarge: false,
     },
-    'infinitygauntlet':{
+    'infinitygauntlet': {
         name: 'Gauntlet',
         delay: 200,
         ammo: 1,
@@ -77,7 +77,7 @@ let gunConfigs = {
         spread: 0,
         isLarge: false,
     },
-    'awm':{
+    'awm': {
         name: 'AWM',
         delay: 300,
         ammo: 4,
@@ -85,12 +85,12 @@ let gunConfigs = {
         ammocap: 4,
         reloadTime: 2000,
         perShot: 1,
-        bulletSpeed: 200,
+        bulletSpeed: 60,
         rarity: 'uncommon',
         spread: 0,
         isLarge: true,
     },
-    'deagle':{
+    'deagle': {
         name: 'Desert Eagle',
         delay: 100,
         ammo: 5,
@@ -103,7 +103,7 @@ let gunConfigs = {
         spread: 3,
         isLarge: false,
     },
-    'glock':{
+    'glock': {
         name: 'Glock',
         delay: 20,
         ammo: 8,
@@ -116,7 +116,7 @@ let gunConfigs = {
         spread: 5,
         isLarge: false,
     },
-    'm16':{
+    'm16': {
         name: 'M-16',
         delay: 200,
         ammo: 20,
@@ -129,7 +129,7 @@ let gunConfigs = {
         spread: 10,
         isLarge: true,
     },
-    'mp5':{
+    'mp5': {
         name: 'MP5',
         delay: 50,
         ammo: 15,
@@ -142,7 +142,7 @@ let gunConfigs = {
         spread: 15,
         isLarge: false,
     },
-    'p90':{
+    'p90': {
         name: 'P90',
         delay: 40,
         ammo: 30,
@@ -155,7 +155,7 @@ let gunConfigs = {
         spread: 1,
         isLarge: false,
     },
-    'remington':{
+    'remington': {
         name: 'Remington',
         delay: 400,
         ammo: 2,
@@ -168,7 +168,7 @@ let gunConfigs = {
         spread: 15,
         isLarge: true,
     },
-    'revolver':{
+    'revolver': {
         name: 'Revolver',
         delay: 200,
         ammo: 6,
@@ -181,7 +181,7 @@ let gunConfigs = {
         spread: 4,
         isLarge: false,
     },
-    'rpd':{
+    'rpd': {
         name: 'RPD',
         delay: 50,
         ammo: 20,
@@ -194,7 +194,7 @@ let gunConfigs = {
         spread: 20,
         isLarge: true,
     },
-    'minigun':{
+    'minigun': {
         name: 'Minigun',
         delay: 10,
         ammo: 50,
@@ -218,7 +218,7 @@ let remingtonShots = 8;
 let GUN_IMG_CONFIG = IMAGE_CONFIG.weapons;
 
 let currentGun = 'gun';
-let gunStats = Object.assign({},gunConfigs[currentGun])
+let gunStats = Object.assign({}, gunConfigs[currentGun])
 let ammoP = {};
 let gunSprite = {}
 
@@ -230,10 +230,9 @@ let city = {}
 //creates empty array, maps it to 0-n, shuffles it, maps again to have x be a random int from 0 to n
 let buildings = [];
 let invadercolors = ['red', 'green', 'purple', 'blue', 'pink', 'white', 'yellow', 'orange'];
-let validGunNames = ['gun','ak47','alienblaster','rpg','uzi','infinitygauntlet'];
 let invaders = {}
 let aliens = [];
-let guns ={};
+let guns = {};
 
 let aliendeathimg = {}
 
@@ -245,7 +244,7 @@ let ALL_FALLERS = [];
 function setupBackground() {
     return new Promise(resolve => {
         let extras = ['fire'];
-        LOADED_IMAGES = new ImageLoader(IMAGE_PATH + 'projectiles/', extras.concat(['electric','bullet','nuke','whitemagic'].map(x=>x+'_projectile')));
+        LOADED_IMAGES = new ImageLoader(IMAGE_PATH + 'projectiles/', extras.concat(['electric', 'bullet', 'nuke', 'whitemagic'].map(x => x + '_projectile')));
         aliendeathimg = LOADED_IMAGES.electric_projectile
         invaders = new ImageLoader(IMAGE_PATH + 'invaders/', invadercolors.map(x => 'invader' + x));
         DOMObjectGlobals.body.style.backgroundImage = 'url(' + IMAGE_PATH + 'bg3.jpg)';
@@ -270,7 +269,7 @@ function setupBackground() {
         id('jmpleft').style.zIndex = '9999999';
         id('jmpleft').style.width = width / 14 + 'px';
         id('jmpleft').style.height = height / 10 + 'px';
-        id('jmpleft').style.fontSize = (width / 60 > 24? 24 : width/60 ) + 'px';
+        id('jmpleft').style.fontSize = (width / 60 > 24 ? 24 : width / 60) + 'px';
         city = new Img(IMAGE_PATH + 'city.png', 0, 0, width).onLoad(() => {
             resolve()
         });
@@ -334,14 +333,16 @@ document.addEventListener('touchstart', (ev) => {
 
 let bullets = [];
 let GUN_IS_RELOADNG = false;
-function endReload(){
+
+function endReload() {
     return;
 }
+
 function reload() {
     if (gunStats.backupammo > 0) {
         gunStats.backupammo -= gunStats.ammocap;
         gunStats.ammo = gunStats.ammocap;
-        
+
         let attachment = new Flyer(0, 0, 'loadingbar');
         let health = new LoadingBar(0, 0, width / 16, width / 96, 0, 100, 1);
         health.set('zIndex', '100000');
@@ -349,12 +350,12 @@ function reload() {
         attachment.addSprite(health);
         selectedgun.addAttachment(attachment, new Vector(-width / 181, -width / 181));
         GUN_IS_RELOADNG = true;
-        endReload = ()=>{
+        endReload = () => {
             let attachment = selectedgun.detachAttachment('loadingbar');
             attachment.kill();
             GUN_IS_RELOADNG = false;
             clearInterval(interval);
-            setAmmoText(gunStats.ammo,gunStats.backupammo)
+            setAmmoText(gunStats.ammo, gunStats.backupammo)
         }
         let interval = setInterval(() => {
             health.value++;
@@ -363,41 +364,59 @@ function reload() {
             }
         }, gunStats.delay / 100)
     } else {
-        if(oldGuns.length){
+        if (oldGuns.length) {
             resetLastGun()
-        }else{
+        } else {
             disableDragging();
             lose();
         }
     }
-    
+
 
 }
 
-function shakeScreen(){
+function shakeScreen() {
     id('MAIN_SCREEN').style.left = '-5px'
-    setTimeout(()=>{
+    setTimeout(() => {
         id('MAIN_SCREEN').style.left = '5px'
-        setTimeout(()=>{
+        setTimeout(() => {
             id('MAIN_SCREEN').style.left = '-5px'
-            setTimeout(()=>{
+            setTimeout(() => {
                 id('MAIN_SCREEN').style.left = '5px'
-                setTimeout(()=>{
+                setTimeout(() => {
                     id('MAIN_SCREEN').style.left = '-5px'
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         id('MAIN_SCREEN').style.left = ''
-                    },50)
-                },50)
-            },50)
-        },50)
-    },50)
+                    }, 50)
+                }, 50)
+            }, 50)
+        }, 50)
+    }, 50)
+}
+
+function fadeScreen(color) {
+    return new Promise(resolve => {
+        let white = new Rectangle(0, 0, width, height);
+        white.color = 'transparent';
+        white.addClass('slowsmoothed');
+        white.set('zIndex', '3001');
+        setTimeout(() => {
+            white.color = color || 'black';
+            setTimeout(() => {
+                resolve(function(){
+                    white.remove();
+                })
+            }, 3100)
+        }, 100);
+    })
 }
 
 let IS_SHOOTING = false;
 let GUN_CHANGE_QUEUE = 'none'
 let BULLETS_ARE_FLYING = false;
+
 function shoot() {
-    if (!started) return
+    if (!GAME_HAS_STARTED) return
     if (gunStats.ammo <= 0) {
         reload();
         return;
@@ -412,77 +431,51 @@ function shoot() {
     let h = selectedgun.height;
     let x = selectedgun.x + cos * width / 19.2;
     let y = selectedgun.y + sin * width / 19.2;
-    let shotsRemaining = gunStats.perShot - gunStats.ammo >0? gunStats.ammo : gunStats.perShot; //if less than the burst is in the chamber, only shoot the remaining
-    function actuallyShoot(){
+    let shotsRemaining = gunStats.perShot - gunStats.ammo > 0 ? gunStats.ammo : gunStats.perShot; //if less than the burst is in the chamber, only shoot the remaining
+    function actuallyShoot() {
         BULLETS_ARE_FLYING = true;
-        return new Promise(resolve=>{
-            if(currentGun === 'infinitygauntlet'){
-                aliens.forEach((x,i)=>{
-                    if(!(i%2)){
+        return new Promise(resolve => {
+            if (currentGun === 'infinitygauntlet') {
+                aliens.forEach((x, i) => {
+                    if (!(i % 2)) {
                         killAlien(x);
                     }
                 })
                 shakeScreen();
                 gunStats.ammo--;
-                setAmmoText(gunStats.ammo,gunStats.backupammo)
+                setAmmoText(gunStats.ammo, gunStats.backupammo)
                 resolve();
-            }else{
-                for(let i = 1; i<=shotsRemaining; i++){
+            } else {
+                for (let i = 1; i <= shotsRemaining; i++) {
                     //starts from 1 so its easier to do the configs
                     let projectileName = 'bullet'
-                    if(currentGun == 'rpg') projectileName = 'nuke'
-                    if(currentGun == 'alienblaster') projectileName = 'whitemagic'
-                    setTimeout(()=>{           
-                        if(currentGun === 'alienblaster'){
-                            for(let j = 0; j<alienBlasterShots; j++){
-                                let bullet = new Flyer(x, y, 'bullet');
-                                let bulletimgScatter = new Img(LOADED_IMAGES[projectileName + '_projectile'].cloneNode(), x, y, width / 32, 0, 0).fromCenter().onLoad(() => {
-                                    bulletimgScatter.set('zIndex', '1000');
-                                    bullet.addSprite(bulletimgScatter);
-                                    bullet.angle = angle - 25 + (60/alienBlasterShots)*j
-                                    cos = Math.cos(bullet.angle  * (Math.PI / 180));
-                                    sin = Math.sin(bullet.angle * (Math.PI / 180));
-                                    let vec = new Vector(cos, sin);
-                                    bullet.addForce(vec.set(gunStats.bulletSpeed));
-                                    bullet.maxbounds = {
-                                        x: width,
-                                        y: height
-                                    };
-                                    bullet.isFragile = true;
-                                    bullets.push(bullet);
-                                    setAmmoText(gunStats.ammo,gunStats.backupammo)
-                                });
-                            }
-                        }else if(currentGun === 'remington'){
-                            for(let j = 0; i<remingtonShots; j++){
-                                let bullet = new Flyer(x, y, 'bullet');
-                                let bulletimgScatter = new Img(LOADED_IMAGES[projectileName + '_projectile'].cloneNode(), x, y, width / 120, 0, 0).fromCenter().onLoad(() => {
-                                    bulletimgScatter.set('zIndex', '1000');
-                                    bullet.addSprite(bulletimgScatter);
-                                    bullet.angle = angle - 25 + (60/remingtonShots)*j + getRandom(-gunStats.spread,gunStats.spread)
-                                    cos = Math.cos(bullet.angle  * (Math.PI / 180));
-                                    sin = Math.sin(bullet.angle * (Math.PI / 180));
-                                    let vec = new Vector(cos, sin);
-                                    bullet.addForce(vec.set(gunStats.bulletSpeed));
-                                    bullet.maxbounds = {
-                                        x: width,
-                                        y: height
-                                    };
-                                    bullet.isFragile = true;
-                                    bullets.push(bullet);
-                                    setAmmoText(gunStats.ammo,gunStats.backupammo)
-                                });
-                            }
-                        }else{
+                    let gunShots = 1;
+                    let bulletDim = 60;
+                    if (currentGun == 'rpg') {
+                        projectileName = 'nuke'
+                        bulletDim = 6
+                    }
+                    if (currentGun == 'alienblaster') {
+                        projectileName = 'whitemagic'
+                        gunShots = alienBlasterShots
+                        bulletDim = 30;
+                    }
+                    if (currentGun == 'remington') {
+                        gunShots = remingtonShots
+                        bulletDim = 120
+                    }
+                    setTimeout(() => {
+                        for (let j = 0; j < gunShots; j++) {
                             let bullet = new Flyer(x, y, 'bullet');
-                            let bulletimg = new Img(LOADED_IMAGES[projectileName + '_projectile'].cloneNode(), x, y, currentGun === 'rpg'? width/12 : width / 64, 0, 0).fromCenter().onLoad(() => {
-                                bulletimg.set('zIndex', '1000');
-                                bullet.addSprite(bulletimg);
-                                if(currentGun === 'rpg'){
-                                    bullet.addDeathImage(LOADED_IMAGES.fire)
+                            let bulletimgScatter = new Img(LOADED_IMAGES[projectileName + '_projectile'].cloneNode(), x, y, width / bulletDim, 0, 0).fromCenter().onLoad(() => {
+                                bulletimgScatter.set('zIndex', '1000');
+                                bullet.addSprite(bulletimgScatter);
+                                bullet.angle = angle + getRandom(-gunStats.spread, gunStats.spread)
+                                if (gunShots > 1) {
+                                    bullet.angle -= currentGun=== 'remington'? 15 : 25
+                                    bullet.angle += ((currentGun=== 'remington'? 40 : 60) / gunShots) * j
                                 }
-                                bullet.angle = angle + getRandom(-gunStats.spread,gunStats.spread)
-                                cos = Math.cos(bullet.angle  * (Math.PI / 180));
+                                cos = Math.cos(bullet.angle * (Math.PI / 180));
                                 sin = Math.sin(bullet.angle * (Math.PI / 180));
                                 let vec = new Vector(cos, sin);
                                 bullet.addForce(vec.set(gunStats.bulletSpeed));
@@ -490,41 +483,40 @@ function shoot() {
                                     x: width,
                                     y: height
                                 };
+                                bullet.minbounds.y = -100
                                 bullet.isFragile = true;
                                 bullets.push(bullet);
-                                setAmmoText(gunStats.ammo,gunStats.backupammo)
+                                setAmmoText(gunStats.ammo, gunStats.backupammo)
                             });
                         }
-                        if(i === shotsRemaining){
-                            console.log(i,shotsRemaining)
+                        if (i === shotsRemaining) {
                             BULLETS_ARE_FLYING = false;
                             resolve()
                         }
-                    },(i-1)*50)
+                    }, (i - 1) * 50)
                     gunStats.ammo--;
-                   
+
                 }
             }
         });
     }
-    
-    actuallyShoot().then(()=>{
-        
-        setTimeout(()=>{
+
+    actuallyShoot().then(() => {
+        setTimeout(() => {
             IS_SHOOTING = false;
             if (gunStats.ammo <= 0) {
                 reload();
             }
-            if(GUN_CHANGE_QUEUE !== 'none'){
+            if (GUN_CHANGE_QUEUE !== 'none') {
                 changeGun(GUN_CHANGE_QUEUE);
                 GUN_CHANGE_QUEUE = 'none'
             }
-        },gunStats.delay)
+        }, gunStats.delay)
     })
 }
 
 let rescuedletters = '';
-let rescued_num = 0;
+let NUM_OF_LETTERS_RESCUED = 0;
 
 function countHoveringAliens() {
     return aliens.reduce((a, b) => a + (b.isDoingHover ? 1 : 0), 0);
@@ -532,18 +524,17 @@ function countHoveringAliens() {
 
 function loop() {
     selectedgun.update();
-    if (Math.random() < 0.01 && countHoveringAliens() === aliens.length && aliens.length > 2) {
-        let randoms = shuffle(aliens).slice(0, 3);
+    if (Math.random() < getLevelStats().oddsOfFlying && countHoveringAliens() === aliens.length && aliens.length > getLevelStats().changingAliens-1) {
+        //CHANGE PLACES!!!
+        let randoms = shuffle(aliens).slice(0, getLevelStats().changingAliens);
         let randomBlds = randoms.map(x => x.bld);
         randoms.forEach((alien, i) => {
             alien.stopHover();
-            alien.bld = randomBlds[(i + 1) % 3];
+            alien.bld = randomBlds[(i + 1) % getLevelStats().changingAliens];
             alien.doFlyTo(Vector.random(width, height * 0.5)).then(() => {
                 alien.doFlyTo(alien.bld.p.copy().add(new Vector(alien.bld.width / 2, alien.bld.height / -2))).then(() => {
                     alien.doHover();
                 });
-
-
             })
         })
     }
@@ -571,10 +562,10 @@ function loop() {
         for (let j = bullets.length - 1; j >= 0; j--) {
             if (!bullets[j].dead && !aliens[i].dead && aliens[i].hasHitbox && bullets[j].hasHitbox && aliens[i].hitbox.contains(bullets[j].hitbox)) {
                 killAlien(aliens[i])
-                if(currentGun === 'rpg'){
-                    aliens.forEach(alien=>{
-                        if(alien !== aliens[i] && !alien.dead){
-                            if(Math.abs(alien.x - aliens[i].x)<width/4 && Math.abs(alien.y - aliens[i].y)<width/4){
+                if (currentGun === 'rpg') {
+                    aliens.forEach(alien => {
+                        if (alien !== aliens[i] && !alien.dead) {
+                            if (Math.abs(alien.x - aliens[i].x) < width / 4 && Math.abs(alien.y - aliens[i].y) < width / 4) {
                                 killAlien(alien)
                             }
                         }
@@ -586,32 +577,17 @@ function loop() {
         }
 
     }
-    if (rescuedletters === (chosenletters + (GRAMMAR_MODE ? ' ' : '')) && allletters.filter(l => l.isDoingMoveTo).length < 1) {
-        LOOPING = false;
+    if (rescuedletters === (chosenletters + (GRAMMAR_MODE ? ' ' : '')) && allletters.filter(l => l.isDoingMoveTo).length < 1 && !HAS_WON) {
         allletters.forEach(x => {
             x.sprite.color = 'limegreen'
         });
-        LOADED_IMAGES.add('fire_projectile', IMAGE_PATH + 'projectiles');
-        let promises = buildings.map(bld => {
-            return new Promise(resolve => {
-                let img = new Img(LOADED_IMAGES.fire_projectile.cloneNode(), bld.x, bld.y + bld.height / 2 - bld.width / 2, bld.width, 0, 240).fromCenter().onLoad(() => {
-                    img.set('zIndex', '9');
-                    bld.fire = img;
-                    resolve()
-                });
-            })
-        });
-        ALL_FALLERS.forEach(x=>{
-            x.kill()
-        })
-        stop();
-        Promise.all(promises).then(() => {
-            win();
-        })
+        HAS_WON = true;
+        win()
     }
 };
+let HAS_WON = false; //needed for the last bit of a check in the loop
 
-function killAlien(alien){
+function killAlien(alien) {
     buildingHandler.unOccupy(alien.bld)
     if (alien.attachmentList.length > 0) {
         //if the alien is holding something, then kill it and deal with the letter
@@ -619,11 +595,11 @@ function killAlien(alien){
         letter.sprite.set('zIndex', '999999')
         //find the letter
         let remainder = chosenletters.replace(rescuedletters, '');
-        let letterThatsNeeded = allletters.slice(rescued_num).filter(x => x.name === splitletters[rescued_num])[0];
+        let letterThatsNeeded = allletters.slice(NUM_OF_LETTERS_RESCUED).filter(x => x.name === splitletters[NUM_OF_LETTERS_RESCUED])[0];
         //find the letter that is needed
         if (remainder.startsWith(letter.name)) { //its the right letter
             rescuedletters += letter.name + (GRAMMAR_MODE ? ' ' : '');
-            rescued_num++; //add it to rescued letters, now we know the next letter
+            NUM_OF_LETTERS_RESCUED++; //add it to rescued letters, now we know the next letter
             letter.MAX_V = 5;
             letter.doMoveTo(letterThatsNeeded.cache.origXY.copy()).then(() => {
                 letter.angle = 0;
@@ -648,75 +624,150 @@ function killAlien(alien){
 
     }
     alien.kill();
+    TOTAL_KILLS++
+    setKillsText(TOTAL_KILLS)
     let roll = spinWheel();
-    if((chosenletters.length/2 | 0) == aliens.length && currentGun === 'gun') roll = 'uncommon'
-    if(roll !== 'none'){
+    if ((chosenletters.length / 2 | 0) == aliens.length && currentGun === 'gun') roll = 'uncommon'
+    if (roll !== 'none') {
         let name = 'gun'
-        let chosen = getArrayOfGuns().filter(x=>x.rarity == roll);
-        name = getRandom(chosen).key 
-        createItemDrop(alien.x,alien.y,name)
+        let chosen = getArrayOfGuns().filter(x => x.rarity == roll);
+        name = getRandom(chosen).key
+        createItemDrop(alien.x, alien.y, name)
     }
 }
 
-function getArrayOfGuns(){
+function getArrayOfGuns() {
     //returns a neat array of the guns with a new property called 'key'
-    return Object.keys(gunConfigs).map(x=>{
+    return Object.keys(gunConfigs).map(x => {
         let config = gunConfigs[x]
         config.key = x;
         return config;
     })
 }
 
-function spinWheel(){
-    if(getRandom(1,10)<oddsOfDrop){
+function spinWheel() {
+    if (getRandom(1, 10) < oddsOfDrop) {
         let wheel = oddsOfUncommon + oddsOfRare + oddsOfLegendary
-        let roll = getRandom(1,wheel);
-        if(roll<oddsOfUncommon){
+        let roll = getRandom(1, wheel);
+        if (roll < oddsOfUncommon) {
             //uncommon
             return 'uncommon'
-        }roll
-        if(roll >= oddsOfUncommon && roll < oddsOfUncommon+oddsOfRare){
+        }
+        roll
+        if (roll >= oddsOfUncommon && roll < oddsOfUncommon + oddsOfRare) {
             //rare
             return 'rare'
         }
-        if(roll >= oddsOfRare+oddsOfUncommon && roll<= wheel){
+        if (roll >= oddsOfRare + oddsOfUncommon && roll <= wheel) {
             //legendary
             return 'legendary'
         }
-    }else{
+    } else {
         return 'none'
     }
 }
 
-function testWheel(){
+function testWheel() {
     let allRolls = []
     let rolls = 1000
-    for(let i = 0; i<=rolls; i++){
+    for (let i = 0; i <= rolls; i++) {
         allRolls.push(spinWheel())
     }
-    let none = allRolls.filter(x=>x==='none').length
-    let rare = allRolls.filter(x=>x==='rare').length
-    let uncommon = allRolls.filter(x=>x==='uncommon').length
-    let legendary = allRolls.filter(x=>x==='legendary').length
-    console.log(none/rolls,uncommon/rolls,rare/rolls,legendary/rolls,allRolls)
+    let none = allRolls.filter(x => x === 'none').length
+    let rare = allRolls.filter(x => x === 'rare').length
+    let uncommon = allRolls.filter(x => x === 'uncommon').length
+    let legendary = allRolls.filter(x => x === 'legendary').length
+    console.log(none / rolls, uncommon / rolls, rare / rolls, legendary / rolls, allRolls)
+}
+
+function releaseAliens(){
+    aliens.forEach((alien, i) => {
+        alien.target = allletters[i];
+        alien.doFlyTo(allletters[i].p.copy()).then(() => {
+            alien.addAttachment(allletters[i], new Vector(0, -alien.height/2));
+            let bld = buildingHandler.occupy();
+            alien.bld = bld;
+            bld.occupied = true;
+            alien.doFlyTo(bld.vector.copy().add(new Vector(0, bld.height / -2))).then(() => {
+                alien.doHover()
+            });
+        })
+    });
 }
 
 function win() {
-    buildings.forEach(bld => {
-        let val = Math.random() * 5;
-        bld.y -= val * 1.05;
-        bld.fire.y -= val;
-    });
-    bullets.forEach(x => {
-        x.update();
-    });
-    selectedgun.update();
-    requestAnimationFrame(win)
+    CURRENT_LEVEL ++;
+    setTimeout(()=>{
+        resetAll()
+        fadeScreen('black').then(fadeOut => {
+            setup(); //fadescreen takes 3sec
+            fadeOut()
+            setLevelText(CURRENT_LEVEL)
+            doCountdown().then(() => {
+                setTimeout(() => {
+                   releaseAliens()
+                }, 500)
+            })
+        });
+    }, 2000);
 }
+
+function resetAll() {
+    ammoP.remove();
+    levelP.remove();
+    timeP.remove();
+    killsP.remove();
+    allletters.forEach(x => {
+        x.kill();
+    })
+    allletters = [];
+    lines.forEach(x => {
+        x.remove();
+    })
+    lines = []
+    buildings.forEach(x => {
+        x.remove();
+    })
+    buildings = [];
+    aliens.forEach(x => {
+        x.kill()
+    })
+    aliens = [];
+    NUM_OF_LETTERS_RESCUED = 0;
+    rescuedletters = ''
+    HAS_WON = false;
+}
+
+function doCountdown() {
+    let time = getLevelStats().countdownTime
+    return new Promise(resolve => {
+        for (let i = 0; i < time; i++) {
+            setTimeout(() => {
+                setTimeText(time-i,true)
+                if (i === time - 1) {
+                    setTimeText(0,true,true)
+                    resolve()
+                }
+            }, (i) * 1000)
+        }
+    });
+}
+
+let CURRENT_LEVEL = 0;
+
+function getLevelStats() {
+    return {
+        alienSpeedMult: CURRENT_LEVEL/20 + 1,
+        countdownTime:  Math.max(0,5 - (CURRENT_LEVEL/5 | 0)),
+        oddsOfFlying: (CURRENT_LEVEL+1)/200,
+        changingAliens: 3 + (CURRENT_LEVEL/5 |0)
+    }
+}
+
 
 function lose() {
     let promises = [];
-    ALL_FALLERS.forEach(x=>{
+    ALL_FALLERS.forEach(x => {
         x.kill()
     })
     aliens.forEach(alien => {
@@ -758,7 +809,7 @@ let things_to_update = [];
 
 
 function createAlien(target) {
-    let alien = new Flyer(10, height / 4, 'invader' + getRandom(invadercolors));
+    let alien = new Flyer(-width/30, height / 4, 'invader' + getRandom(invadercolors));
     let sprite = new Img(invaders[alien.name].cloneNode(), 0, 0, width / 19.22).fromCenter().usingNewTransform().onLoad(() => {
         sprite.zIndex = 3;
         alien.addSprite(sprite);
@@ -766,7 +817,7 @@ function createAlien(target) {
     });
 
     alien.hasNoBounds = true;
-    alien.MAX_V = 5;
+    alien.MAX_V = 5 * getLevelStats().alienSpeedMult;
     if (target) {
         alien.target = target;
 
@@ -785,15 +836,15 @@ function createAlien(target) {
 }
 let buildingHandler = {};
 
-function setup() {
-    currentGun = 'gun';
 
+function setupGun() {
+    currentGun = 'gun';
     gunSprite = new Rectangle(width / 2, height - width / 24, width / 12.8, width / 12, 0).fromCenter();
-    gunSprite.set('backgroundImage', 'url("' + IMAGE_PATH + GUN_IMG_CONFIG.path + currentGun +  '.png")'); //done this way so you can drag it without it being an image
+    gunSprite.set('backgroundImage', 'url("' + IMAGE_PATH + GUN_IMG_CONFIG.path + currentGun + '.png")'); //done this way so you can drag it without it being an image
     gunSprite.set('backgroundSize', width / 12.8 + 'px');
     gunSprite.set('backgroundColor', 'transparent');
     gunSprite.set('backgroundRepeat', 'no-repeat');
-    gunSprite.set('backgroundPosition', '0px ' +  width / 30 + 'px');
+    gunSprite.set('backgroundPosition', '0px ' + width / 30 + 'px');
     gunSprite.set('zIndex', '9999');
     selectedgun.x = width / 2;
     selectedgun.y = height - width / 24;
@@ -802,7 +853,9 @@ function setup() {
     selectedgun.angle = 270;
     selectedgun.addDeathImage(LOADED_IMAGES.fire);
     selectedgun.update();
+}
 
+function setup() {
     let y_calc = height * 0.15;
     let space = width / 64;
     chosenletters = getRandom(GRAMMAR_MODE ? sentences : words);
@@ -852,16 +905,25 @@ function setup() {
     for (let i = 0; i < splitletters.length; i++) {
         createAlien();
     }
-    ammoP = new P('Pistol: ' + gunConfigs[currentGun].ammo + ' | ' + gunConfigs[currentGun].backupammo, width * .8, height * 0.01, width / 30);
-
+    ammoP = new P('', width * .8, height * 0.01, width / 30);
+    setAmmoText(gunStats.ammo,gunStats.backupammo)
+    levelP = new P('Level: ' + (CURRENT_LEVEL+1),0,0,width/30).fromCenter();
+    timeP = new P('',0,0,width/30).fromCenter();
+    killsP = new P('Kills: ' + TOTAL_KILLS,0,0,width/30).fromCenter();
+    setLevelText(0)
+    setKillsText(0)
+    levelP.zIndex = 100000;
+    timeP.zIndex = 100000;
+    killsP.zIndex = 100000;
+    
     
 }
 
-function createItemDrop(x,y,name){
-    let faller = new FallingImg(x,y,name,getRandom(1,3),true)
+function createItemDrop(x, y, name) {
+    let faller = new FallingImg(x, y, name, getRandom(1, 3), true)
     let color = 'blue'
-    switch(gunConfigs[name].rarity){
-        case 'common': 
+    switch (gunConfigs[name].rarity) {
+        case 'common':
             color = 'blue';
             break;
         case 'uncommon':
@@ -870,83 +932,108 @@ function createItemDrop(x,y,name){
         case 'rare':
             color = 'purple';
             break;
-        case 'legendary': 
+        case 'legendary':
             color = 'yellow';
             break;
     }
-    FallingImg.createIcon(IMAGE_PATH + GUN_IMG_CONFIG.path + name + '.png', 75,75,color).then(spriteFaller=>{
+    FallingImg.createIcon(IMAGE_PATH + GUN_IMG_CONFIG.path + name + '.png', 75, 75, color).then(spriteFaller => {
         spriteFaller.zIndex = 1000000
         faller.addSprite(spriteFaller)
         faller.maxbounds.y = height;
         faller.doFall()
         things_to_update.push(faller)
         ALL_FALLERS.push(faller)
-        faller.sprite.shape.addEventListener('click',()=>{
+        faller.sprite.shape.addEventListener('click', () => {
             changeGun(name)
             faller.kill();
         })
     })
 }
 
-function setAmmoText(ammo,backupammo){
+function setAmmoText(ammo, backupammo) {
     ammoP.string = gunStats.name + ': ' + ammo + ' | ' + backupammo;
 }
+let levelP = {}
+function setLevelText(level,moveToCenter){
+    if(moveToCenter){
+        levelP.x = width/2
+        levelP.y = height/2 - levelP.height*3
+    }else{
+        levelP.x = levelP.width/2 + 1;
+        levelP.y = levelP.height/2 +1;
+    }
+    levelP.string = 'Level: ' + (level + 1);
+}
+let timeP = {};
+function setTimeText(time,moveToCenter,remove){
+    if(moveToCenter){
+        timeP.x = width/2
+        timeP.y = height/2
+    }else{
+        timeP.x = timeP.width/2 + 1 + levelP.width + width/190;
+        timeP.y = timeP.height/2 +1;
+    }
+    timeP.string = time + ' sec.'
+    if(remove) setTimeout(timeP.remove(),1000)
+}
+let killsP = {};
+let TOTAL_KILLS = 0;
+function setKillsText(kills,remove){
+    killsP.x = levelP.width + width/190 + killsP.width
+    killsP.y = killsP.height/2
+    killsP.string = 'Kills: ' + TOTAL_KILLS;
+}
 
-function changeGun(name){
-    if(IS_SHOOTING){
+function changeGun(name) {
+    if (BULLETS_ARE_FLYING) {
         GUN_CHANGE_QUEUE = name;
         return;
     }
-    if(GUN_IS_RELOADNG){
+    if (GUN_IS_RELOADNG) {
         endReload();
     }
-    if(gunConfigs[name].isLarge){
-        gunSprite.width = width/7
+    if (gunConfigs[name].isLarge) {
+        gunSprite.width = width / 7
         gunSprite.set('backgroundSize', width / 7 + 'px');
-    }else{
+    } else {
         gunSprite.set('backgroundSize', width / 12.8 + 'px');
-        gunSprite.width = width/12
+        gunSprite.width = width / 12
     }
-    oldGuns.push({name:currentGun, stats:Object.assign({},gunStats)})
+    oldGuns.push({
+        name: currentGun,
+        stats: Object.assign({}, gunStats)
+    })
     currentGun = name;
-    gunStats = Object.assign({},gunConfigs[currentGun])
-    setAmmoText(gunStats.ammo,gunStats.backupammo);
-    gunSprite.set('backgroundImage', 'url("' + IMAGE_PATH + GUN_IMG_CONFIG.path + currentGun +  '.png")'); //done this way so you can drag it without it being an image
+    gunStats = Object.assign({}, gunConfigs[currentGun])
+    setAmmoText(gunStats.ammo, gunStats.backupammo);
+    gunSprite.set('backgroundImage', 'url("' + IMAGE_PATH + GUN_IMG_CONFIG.path + currentGun + '.png")'); //done this way so you can drag it without it being an image
 }
-function resetLastGun(){
-    if(oldGuns.length === 0) return;
+
+function resetLastGun() {
+    if (oldGuns.length === 0) return;
     let lastGun = oldGuns.pop();
     currentGun = lastGun.name
     gunStats = lastGun.stats
-    setAmmoText(gunStats.ammo,gunStats.backupammo);
-    gunSprite.set('backgroundImage', 'url("' + IMAGE_PATH + GUN_IMG_CONFIG.path + currentGun +  '.png")'); //done this way so you can drag it without it being an image
-    if(gunStats.isLarge){
-        gunSprite.width = width/7
+    setAmmoText(gunStats.ammo, gunStats.backupammo);
+    gunSprite.set('backgroundImage', 'url("' + IMAGE_PATH + GUN_IMG_CONFIG.path + currentGun + '.png")'); //done this way so you can drag it without it being an image
+    if (gunStats.isLarge) {
+        gunSprite.width = width / 7
         gunSprite.set('backgroundSize', width / 7 + 'px');
-    }else{
+    } else {
         gunSprite.set('backgroundSize', width / 12.8 + 'px');
-        gunSprite.width = width/12
+        gunSprite.width = width / 12
     }
 }
 
 
-let started = false;
+let GAME_HAS_STARTED = false;
 id('jmpleft').addEventListener('click', () => {
-    if (!started) {
-        aliens.forEach((alien, i) => {
-            alien.target = allletters[i];
-            alien.doFlyTo(allletters[i].p.copy()).then(() => {
-                alien.addAttachment(allletters[i], new Vector(0, -10));
-                let bld = buildingHandler.occupy();
-                alien.bld = bld;
-                bld.occupied = true;
-                alien.doFlyTo(bld.vector.copy().add(new Vector(0, bld.height / -2))).then(() => {
-                    alien.doHover()
-                });
-            })
-        });
-        started = true;
+    if (!GAME_HAS_STARTED) {
+        releaseAliens();
+        GAME_HAS_STARTED = true;
         play();
+        id('jmpleft').remove()
+        setLevelText(CURRENT_LEVEL)
     }
 });
 
@@ -981,6 +1068,7 @@ function play() {
 
 setupBody(id("MAIN_SCREEN")).then(() => {
     setupBackground().then(() => {
+        setupGun();
         setup();
     })
 })
