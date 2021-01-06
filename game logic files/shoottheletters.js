@@ -246,6 +246,25 @@ let LEFT_OFFSET = 0;
 
 let ALL_FALLERS = [];
 
+let zIndices = {
+    loadedImages: 0,
+    imageBlocker: 1,
+    lines: 1,
+    levelText: 2,
+    aliens: 3,
+    heldLetters: 4,
+    buildings: 5,
+    finishedLetters: 6,
+    startButton: 7,
+    screenFade: 13,
+    gun: 14,
+    reload: 15, //reload+1 is needed
+    nextPlayerBtn: 14,
+    countdown: 13,
+    itemDrops: 17,
+    bullets: 14,
+}
+
 function setupBackground() {
     return new Promise(resolve => {
         let extras = ['fire'];
@@ -264,7 +283,7 @@ function setupBackground() {
         imgBlk.style.width = width / 16 + 'px';
         imgBlk.style.height = width / 16 + 'px';
         imgBlk.style.backgroundColor = 'grey'
-        imgBlk.style.zIndex = '1'
+        imgBlk.style.zIndex = zIndices.imageBlocker;
         imgBlk.style.position = 'absolute'
         imgBlk.style.left = '0'
         imgBlk.style.top = '0'
@@ -274,7 +293,7 @@ function setupBackground() {
 
 
 
-        id('jmpleft').style.zIndex = '10000';
+        id('jmpleft').style.zIndex = zIndices.startButton;
         id('jmpleft').style.width = width / 14 + 'px';
         id('jmpleft').style.height = height / 10 + 'px';
         id('jmpleft').style.fontSize = (width / 60 > 24 ? 24 : width / 60) + 'px';
@@ -308,7 +327,7 @@ function dragStop() {
 }
 
 function drag(ev) {
-    if (dragging && !dragging_disabled && !BULLETS_ARE_FLYING) {
+    if (dragging && !dragging_disabled && !BULLETS_ARE_FLYING && GAME_HAS_STARTED) {
         let x = ev.clientX - LEFT_OFFSET
         let n = selectedgun.x;
         if (n + x - startpos.x < 0) {
@@ -351,8 +370,8 @@ function reload() {
 
         let attachment = new Flyer(0, 0, 'loadingbar');
         let health = new LoadingBar(0, 0, width / 16, width / 96, 0, 100, 1);
-        health.set('zIndex', '2000');
-        health.setBar('zIndex', '2001');
+        health.set('zIndex', ''+zIndices.reload);
+        health.setBar('zIndex', ''+(zIndices.reload+1));
         attachment.addSprite(health);
         selectedgun.addAttachment(attachment, new Vector(-width / 181, -width / 181));
         GUN_IS_RELOADNG = true;
@@ -405,7 +424,7 @@ function fadeScreen(color) {
         let white = new Rectangle(0, 0, width, height);
         white.color = 'transparent';
         white.addClass('slowsmoothed');
-        white.set('zIndex', '999');
+        white.zIndex = zIndices.screenFade;
         setTimeout(() => {
             white.color = color || 'black';
             setTimeout(() => {
@@ -475,7 +494,7 @@ function shoot() {
                         for (let j = 0; j < gunShots; j++) {
                             let bullet = new Flyer(x, y, 'bullet');
                             let bulletimgScatter = new Img(LOADED_IMAGES[projectileName + '_projectile'].cloneNode(), x, y, width / bulletDim, 0, 0).fromCenter().onLoad(() => {
-                                bulletimgScatter.set('zIndex', '1000');
+                                bulletimgScatter.zIndex = zIndices.bullets;
                                 bullet.addSprite(bulletimgScatter);
                                 bullet.angle = angle + getRandom(-gunStats.spread, gunStats.spread)
                                 if (gunShots > 1) {
@@ -538,7 +557,7 @@ function killAlien(alien) {
     if (alien.attachmentList.length > 0) {
         //if the alien is holding something, then kill it and deal with the letter
         let letter = alien.detachAttachment(alien.attachmentList[0]); //is the actual letter Character object
-        letter.sprite.set('zIndex', '600')
+        letter.sprite.zIndex = zIndices.finishedLetters;
         //find the letter
         let remainder = chosenletters.replace(rescuedletters, '');
         let letterThatsNeeded = allletters.slice(NUM_OF_LETTERS_RESCUED).filter(x => x.name === splitletters[NUM_OF_LETTERS_RESCUED])[0];
@@ -558,7 +577,7 @@ function killAlien(alien) {
             letter.MAX_V = 5;
             letter.doMoveTo(letterThatsNeeded.cache.origXY.copy()).then(() => {
                 letter.angle = 0;
-                letter.sprite.set('zIndex', '4')
+                letter.sprite.zIndex = zIndices.heldLetters;
                 createAlien(letter);
             });
             letter.doSpin(360, 10);
@@ -709,7 +728,7 @@ function doCountdown() {
     let time = getLevelStats().countdownTime
     let timerP = new P(time, width / 2, height / 2, width / 20).fromCenter()
     timerP.color = 'yellow'
-    timerP.zIndex = 10000;
+    timerP.zIndex = zIndices.countdown;
     return new Promise(resolve => {
         for (let i = 0; i <= time; i++) {
             setTimeout(() => {
@@ -784,7 +803,7 @@ let things_to_update = [];
 function createAlien(target) {
     let alien = new Flyer(-width / 30, height / 4, 'invader' + getRandom(invadercolors));
     let sprite = new Img(invaders[alien.name].cloneNode(), 0, 0, width / 19.22).fromCenter().usingNewTransform().onLoad(() => {
-        sprite.zIndex = 3;
+        sprite.zIndex = zIndices.aliens;
         alien.addSprite(sprite);
         alien.addDeathImage(aliendeathimg.cloneNode());
     });
@@ -819,7 +838,7 @@ function setupGun() {
     gunSprite.set('backgroundColor', 'transparent');
     gunSprite.set('backgroundRepeat', 'no-repeat');
     gunSprite.set('backgroundPosition', '0px ' + width / 30 + 'px');
-    gunSprite.set('zIndex', '1000');
+    gunSprite.zIndex = zIndices.gun;
     selectedgun.x = width / 2;
     selectedgun.y = height - width / 24;
     selectedgun.addSprite(gunSprite);
@@ -843,7 +862,7 @@ function setup() {
         letter.x = leftOffset + p.width / 2;
         letter.y = y_calc - p.height / 3;
         letter.hasNoBounds = true;
-        p.set('zIndex', '4');
+        p.zIndex =  zIndices.heldLetters;
         p.set('textShadow', 'black 0 0 1px');
         letter.cache.origXY = new Vector(letter.x, letter.y);
         allletters.push(letter);
@@ -872,7 +891,7 @@ function setup() {
         let img = new Img(IMAGE_PATH + BUILDING_IMG_CONFIG.path + 'skyscraper' + getRandom(BUILDING_IMG_CONFIG.num) + '.png', width * .1 + (width * .9 / (splitletters.length + 1)) * i + getRandom(-40, 40), 0, width / 19.22, ).fromCenter().onLoad(() => {
             img.y = height - img.height / 2;
         });
-        img.set('zIndex', '10');
+        img.zIndex =  zIndices.buildings;
         return img
     });
     buildingHandler = new BuildingHandler(buildings);
@@ -886,9 +905,9 @@ function setup() {
     killsP = new P('Kills: ' + TOTAL_KILLS, 0, 0, width / 30).fromCenter();
     setLevelText(0)
     setKillsText(0)
-    levelP.zIndex = 500;
-    timeP.zIndex = 500;
-    killsP.zIndex = 500;
+    levelP.zIndex = zIndices.levelText;
+    timeP.zIndex = zIndices.levelText;
+    killsP.zIndex = zIndices.levelText;
 
 
 }
@@ -911,7 +930,7 @@ function createItemDrop(x, y, name) {
             break;
     }
     FallingImg.createIcon(IMAGE_PATH + GUN_IMG_CONFIG.path + name + '.png', width / 13, width / 13, color).then(spriteFaller => {
-        spriteFaller.zIndex = 800
+        spriteFaller.zIndex = zIndices.itemDrops
         faller.addSprite(spriteFaller)
         faller.maxbounds.y = height;
         faller.doFall()
@@ -1051,7 +1070,7 @@ function nextRelay() {
             })
             bullets = []
         let nextBtn = new P('Next Player', width / 2, height * .1, width / 20).fromCenter()
-        nextBtn.zIndex = 1000;
+        nextBtn.zIndex = zIndices.nextPlayerBtn;
         nextBtn.color = 'white';
         nextBtn.set('backgroundColor', 'black')
         nextBtn.shape.addEventListener('click', () => {

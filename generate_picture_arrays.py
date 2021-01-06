@@ -68,7 +68,7 @@ for key in dirs.keys():
 			if 'valid_name' in syntax[key]:
 				to_remove = syntax[key].replace('{valid_name}','').split('.')
 				word = word.replace(to_remove[0],'').replace('.' + to_remove[1],'')
-				if len(re.findall(r"\d+",word)):
+				if '{num}' in syntax[key] and len(re.findall(r"\d+",word)):
 					num = re.findall(r"\d+",word)[0]
 					word = word.replace(num,'')
 				list_of_names.append(word)
@@ -76,6 +76,7 @@ for key in dirs.keys():
 
 	lines.append(f'\t\tnum: {num_of_images},')
 	lines.append(f'\t\tsyntax: "{syntax[key]}",')
+	print(f'Found {num_of_images} images of {key}.')
 	if 'valid_name' in syntax[key]:
 		lines.append(f'\t\tvalid_names: {list(set(list_of_names))},')
 				
