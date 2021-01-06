@@ -9,7 +9,7 @@
     <script language="javascript" src="./lib/collisioncontainer.js"></script>
     <script language="javascript" src="./lib/PhysicsObject.js"></script>
     <script language="javascript" src="./lib/DomObject.js"></script>
-    <script language="javascript" src="./picture_config.js"></script>
+    <script language="javascript" src="./image_config.js"></script>
     <script language="javascript" src="./lib/Character.js"></script>
     <script language="javascript" src="./lib/PlayerImages.js"></script>
     <title>Artem's Over Under</title>
@@ -17,134 +17,189 @@
 </head>
 
 <body>
-<button class="bluebtn" id="jmpleft">random</button>
-<script>
-    let background = 'background' + getRandom(PICTURE_CONFIG.battle_backgrounds.num) + '.jpg'
-    document.body.style.backgroundColor = 'grey';
-    document.body.style.backgroundImage = 'url(./images/' + background.toString() + ')';
-    document.body.style.backgroundSize = width + 'px auto';
-    document.body.style.backgroundRepeat = 'no-repeat';
+    <div id="MAIN_WRAPPER">
+        <div id="MAIN_SCREEN">
+            <button class="bluebtn" id="jmpleft">random</button>
+        </div>
+    </div>
+    <script>
+        let character = {}
+        let btns = [];
 
-    let bw = 250;
-    let iw = 75;
-    let bp = {x: width / 2 - bw / 2, y: height * .7 - bw / 2};
-    let xx = bp.x + bw / 2 - iw / 2;
-    let yy = bp.y + bw / 2 - iw / 2;
+        function setupBackground() {
+            return new Promise(resolve => {
+                let background = 'background' + getRandom(IMAGE_CONFIG.backgrounds.num) + '.jpg'
+                DOMObjectGlobals.body.style.backgroundColor = 'grey';
+                DOMObjectGlobals.body.style.backgroundImage = 'url(./images/' + background.toString() + ')';
+                DOMObjectGlobals.body.style.backgroundSize = width + 'px auto';
+                DOMObjectGlobals.body.style.backgroundRepeat = 'no-repeat';
 
-    let character = new Flyer(50, 50, 'div');
-    let div = new Img('./images/' + getRandom(characters) + '.png', 50, 50, iw).onLoad(() => {
-        character.addSprite(div);
-        character.MAX_V = 10
-    });
-    character.hasNoBounds = true;
+                bw = width/3.84;
+                iw = width/12.8;
+                bp = {
+                    x: width / 2 - bw / 2,
+                    y: height * .7 - bw / 2
+                };
+                xx = bp.x + bw / 2 - iw / 2;
+                yy = bp.y + bw / 2 - iw / 2;
 
-    let pos = {};
-    let check = 0;
-
-    function updatePos() {
-        let hh = character.height;
-        pos = {
-            on: {x: xx, y: bp.y - hh + 10, extra: ['zIndex 5']},
-            under: {x: xx, y: bp.y + bw / 2 - hh + iw, extra: ['zIndex 0', 'transform rotate(90deg)']},
-            // above: {x: xx, y: bp.y - iw * 2},
-            inside: {x: xx, y: bp.y + iw / 2, extra: ['zIndex 5']},
-            behind: {x: xx + bw / 4, y: yy - iw / 4, extra: ['zIndex 0', 'transform rotate(45deg)']},
-            beside: {x: bp.x - iw, y: yy},
-            front: {x: xx, y: yy, extra: ['zIndex 1000']},
-            between: {x: xx + iw * 2, y: yy},
-            //  below: {x: xx, y: bp.y + bw + iw}
+                character = new Flyer(50, 50, 'div');
+                let div = new Img('./images/' + getRandom(characters) + '.png', width/20, width/20, iw).onLoad(() => {
+                    character.addSprite(div);
+                    character.MAX_V = 10
+                    resolve()
+                });
+                character.hasNoBounds = true;
+                let box = new Img('./images/box/box0.png', bp.x, bp.y, bw);
+                let boxfront = new Img('./images/box/box0front.png', bp.x, bp.y, bw);
+                boxfront.shape.style.zIndex = 10;
+            })
+        }
+        let bw = 250;
+        let iw = 75;
+        let bp = {
+            x: width / 2 - bw / 2,
+            y: height * .7 - bw / 2
         };
-        check = hh;
-    }
-
-    requestAnimationFrame(updatePos);
-    let currentPos = 'other';
+        let xx = bp.x + bw / 2 - iw / 2;
+        let yy = bp.y + bw / 2 - iw / 2;
 
 
-    let box = new Img('./images/box/box0.png', bp.x, bp.y, bw);
-    let boxfront = new Img('./images/box/box0front.png', bp.x, bp.y, bw);
-    boxfront.shape.style.zIndex = 10;
-    let btns = [];
+        let pos = {};
+        let check = 0;
 
-    function setup() {
-        Object.keys(pos).forEach((key, i) => {
-            let div = new Square(10 + 30 * i, 10, 20).setColor('white');
-            div.shape.setAttribute('class', 'bluebtn');
-            let t = document.createTextNode(key.slice(0, 2));
-            div.shape.appendChild(t);
-            div.key = key;
-            div.shape.addEventListener('click', () => {
-                if (!check) {
-                    updatePos()
-                }
-                if (currentPos.match(/behind|under/)) {
-                    character.sprite.set('transform', '');
-                    character.angle = 0
-                    console.log('leaving ' + key)
-                }
+        function updatePos() {
+            let hh = character.height;
+            pos = {
+                on: {
+                    x: xx,
+                    y: bp.y - hh*1.2,
+                    extra: ['zIndex 5']
+                },
+                under: {
+                    x: xx,
+                    y: bp.y + bw / 2 - hh + iw*1.1,
+                    extra: ['zIndex 0', 'transform rotate(90deg)']
+                },
+                // above: {x: xx, y: bp.y - iw * 2},
+                inside: {
+                    x: xx,
+                    y: bp.y + iw / 2,
+                    extra: ['zIndex 5']
+                },
+                behind: {
+                    x: xx + bw / 4,
+                    y: yy - iw / 4,
+                    extra: ['zIndex 0', 'transform rotate(45deg)']
+                },
+                beside: {
+                    x: bp.x - iw,
+                    y: yy
+                },
+                front: {
+                    x: xx,
+                    y: yy,
+                    extra: ['zIndex 1000']
+                },
+                between: {
+                    x: xx + iw * 2,
+                    y: yy
+                },
+                //  below: {x: xx, y: bp.y + bw + iw}
+            };
+            check = hh;
+        }
 
-                function after() {
-                    if (pos[key].extra) {
-                        pos[key].extra.forEach(data => {
-                            let inst = data.split(' ');
-                            character.sprite.set(inst[0], inst[1]);
-                            console.log(inst[0], character.sprite.shape.style[inst[0]])
-                            if(key === 'under'){
-                                character.doSpin(90,50)
-                            }else if(key === 'behind'){
-                                character.doSpin(45,50)
-                            }
-                        });
+        let currentPos = 'other';
 
+
+
+
+        function setup() {
+            Object.keys(pos).forEach((key, i) => {
+                let div = new Square(10 + 30 * i, 10, 20).setColor('white');
+                div.shape.setAttribute('class', 'bluebtn');
+                let t = document.createTextNode(key.slice(0, 2));
+                div.shape.appendChild(t);
+                div.key = key;
+                div.shape.addEventListener('click', () => {
+                    if (!check) {
+                        updatePos()
                     }
-                }
+                    if (currentPos.match(/behind|under/)) {
+                        character.sprite.set('transform', '');
+                        character.angle = 0
+                        console.log('leaving ' + key)
+                    }
 
-                if (key.match(/inside|on|under/)) {
+                    function after() {
+                        if (pos[key].extra) {
+                            pos[key].extra.forEach(data => {
+                                let inst = data.split(' ');
+                                character.sprite.set(inst[0], inst[1]);
+                                console.log(inst[0], character.sprite.shape.style[inst[0]])
+                                if (key === 'under') {
+                                    character.doSpin(90, 50)
+                                } else if (key === 'behind') {
+                                    character.doSpin(45, 50)
+                                }
+                            });
 
-                    character.doFlyTo(new Vector(pos.above || pos.on)).then(() => {
-                        if (key.match(/inside|front/)) after();
+                        }
+                    }
+
+                    if (key.match(/inside|on|under/)) {
+
+                        character.doFlyTo(new Vector(pos.above || pos.on)).then(() => {
+                            if (key.match(/inside|front/)) after();
+                            character.doFlyTo(new Vector(pos[key])).then(() => {
+                                after();
+                            })
+                        })
+                    } else {
                         character.doFlyTo(new Vector(pos[key])).then(() => {
                             after();
                         })
-                    })
-                } else {
-                    character.doFlyTo(new Vector(pos[key])).then(() => {
-                        after();
-                    })
-                }
-                currentPos = key;
+                    }
+                    currentPos = key;
 
-            });
-            btns.push(div)
+                });
+                btns.push(div)
+            })
+        }
+
+
+        id('jmpleft').addEventListener('click', ev => {
+            if (ev.target.nodeName === 'HTML') {
+                console.log('uh')
+            }
+            console.log(currentPos);
+            let btn = {
+                key: currentPos
+            };
+            while (btn.key === currentPos) {
+                btn = getRandom(btns);
+            }
+            btn.shape.click();
+            console.log(currentPos)
+
+        });
+
+        loop = function () {
+            character.update();
+            requestAnimationFrame(loop)
+
+        };
+
+        setupBody(id("MAIN_SCREEN")).then(() => {
+            setupBackground().then(() => {
+                requestAnimationFrame(updatePos);
+                requestAnimationFrame(setup);
+                requestAnimationFrame(loop);
+            })
         })
-    }
-
-
-    id('jmpleft').addEventListener('click', ev => {
-        if (ev.target.nodeName === 'HTML') {
-            console.log('uh')
-        }
-        console.log(currentPos);
-        let btn = {key: currentPos};
-        while (btn.key === currentPos) {
-            btn = getRandom(btns);
-        }
-        btn.shape.click();
-        console.log(currentPos)
-
-    });
-
-    loop = function () {
-        character.update();
-
-        requestAnimationFrame(loop)
-
-    };
-    requestAnimationFrame(setup);
-    requestAnimationFrame(loop);
-
-
-</script>
+    </script>
 
 </body>
+
 </html>
