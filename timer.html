@@ -19,162 +19,199 @@
 <button id="reset">reset</button>
 <button id="save">save</button>
 <style>
-    button{
-        width: 4em;
-        height: 2em;
+    button {
+        width: 11vw;
+        height: 5vw;
         border-radius: 30px;
         font-weight: bold;
-        font-size: 1.5em;
+        font-size: 3vw;
         z-index: 100;
         position: absolute;
-        top: 70%;
+        top: 30vw;
     }
-    #start{
+
+    #start {
         background-color: #17ff00;
         border: #009915 solid 3px;
         color: #185000;
         left: 15%
     }
-    #stop{
+
+    #stop {
         background-color: #ff0001;
         border: #800200 solid 3px;
         color: #5a0000;
         left: 27%;
     }
-    #reset{
+
+    #reset {
         background-color: #0015ff;
         border: #001880 solid 3px;
         color: #080066;
         left: 39%;
     }
-    #save{
+
+    #save {
         background-color: #c100ff;
         border: #6f0080 solid 3px;
         color: #5a0066;
         left: 51%;
     }
-    #smallstart{
-        top: 50%;
-        width: 2em;
+
+    #smallstart {
+        top: 10vw;
+        width: 5vw;
+        height: 5vw;
         background-color: #17ff00;
         border: #009915 solid 3px;
         color: #185000;
     }
-    #smallstop{
-        width: 2em;
+
+    #smallstop {
+        top: 15vw;
+        width: 5vw;
+        height: 5vw;
         background-color: #ff0001;
         border: #800200 solid 3px;
         color: #5a0000;
     }
 </style>
-<body>
-<script type="text/javascript">
-    FPS = 60
-    let LEFT = width*0.07
-    let MAINTIMER = new Rectangle(LEFT, height * .1, width * .6, height * .8).asOutline('blue');
-    MAINTIMER.set("backgroundColor", "yellow");
-    MAINTIMER.set("borderRadius", 10);
-    MAINTIMER.border = "blue solid 3px";
 
-    let numberfield = new Rectangle(30, 30, MAINTIMER.width - 60, height * .3).asOutline("blue");
-    MAINTIMER.attach(numberfield);
-    numberfield.border = "blue solid 3px";
-    numberfield.set("borderRadius", 10);
-    numberfield.set('backgroundColor','yellow');
-    let SIDEBAR = new Rectangle(LEFT + MAINTIMER.width + 20, height*.1, width*.9-MAINTIMER.width -40, height*.8).asOutline('blue');
-    SIDEBAR.border = "blue solid 3px"
-    SIDEBAR.set("borderRadius", 10);
-    SIDEBAR.set('backgroundColor','yellow');
+<body style="background-color: green;">
+    <div id="MAIN_WRAPPER">
+        <div id="MAIN_SCREEN">
 
-    let TIME = new P("00:00.000", 0, 0);
-    TIME.set("fontSize", "7em");
-    TIME.set("forWeight", "bolder");
-    TIME.x = numberfield.width/2 - TIME.width/2;
-    TIME.color = "blue";
-    numberfield.attach(TIME);
+        </div>
+    </div>
+    <script type="text/javascript">
+        let LEFT = 0;
+        let MAINTIMER = {};
+        let SIDEBAR = {};
+        let TIME = {}
 
+        let color_btns = []
+        let colors = ['blue', 'red', 'orange', 'deeppink', 'limegreen', 'purple', 'white'];
+        let selected_color = 'blue'
+        
+        function setupBackground() {
+            FPS = 60
+            LEFT = width * 0.07
+            MAINTIMER = new Rectangle(LEFT, height * .1, width * .6, height * .8).asOutline('blue');
+            MAINTIMER.set("backgroundColor", "yellow");
+            MAINTIMER.set("borderRadius", 10);
+            MAINTIMER.border = "blue solid 3px";
 
-    function millis2time(millis) {
-        CURRENT_TIME = millis;
-        let number = (millis / 1000);
-        let min = number / 60 | 0;
-        while(min.toString().length<2){
-            min = '0' + min;
-        }
-        let seconds = (number % 60) |0;
-        while(seconds.toString().length<2){
-            seconds = '0' + seconds;
-        }
-        let mils = (number%1).toPrecision(3).toString().slice(1);
-        if(mils === '.00') mils = '.000'
-        if(mils.length>4){
-            mils = mils.slice(0,4)
-        }
-        while(mils.toString().length<3){
-            mils = '0' + mils;
-        }
-        return min + ":" + seconds + mils
-    }
+            numberfield = new Rectangle(width/32, width/32, MAINTIMER.width - width/16, height * .3).asOutline("blue");
+            MAINTIMER.attach(numberfield);
+            numberfield.border = "blue solid 3px";
+            numberfield.set("borderRadius", 10);
+            numberfield.set('backgroundColor', 'yellow');
+            SIDEBAR = new Rectangle(LEFT + MAINTIMER.width + width/48, height * .1, width * .9 - MAINTIMER.width - width/24,
+                height * .8).asOutline('blue');
+            SIDEBAR.border = "blue solid 3px"
+            SIDEBAR.set("borderRadius", 10);
+            SIDEBAR.set('backgroundColor', 'yellow');
 
-    function displayTime(val){
-        TIME.string = millis2time(val)
-    }
-    let LOOP_ID = 0;
-    let START_TIME = 0;
-    let CURRENT_TIME = 0;
-    let SAVED_TIME = 0;
-    function start(){
-        LOOPING = true;
-        START_TIME = window.performance.now();
-        LOOP_ID = setInterval(()=>{
-            displayTime(window.performance.now()-START_TIME + SAVED_TIME)
-        },1000/FPS)
-    }
-    function stop(){
-        clearInterval(LOOP_ID)
-        SAVED_TIME = CURRENT_TIME;
-        LOOPING = false;
-    }
-    id('start').addEventListener('click',start);
-    id('smallstart').addEventListener('click',start);
-    id('stop').addEventListener('click',stop);
-    id('smallstop').addEventListener('click',stop);
-    id('reset').addEventListener('click',()=>{
-        SAVED_TIME = 0;
-        displayTime(0)
-    })
-    let saved_times = []
-    id('save').addEventListener('click',()=>{
-        if(height*0.1 + saved_times.length*24 > height*.85){
-            saved_times[0].remove()
-            saved_times.shift()
-            saved_times.forEach(x=>{
-                x.mod('top', -24)
+            TIME = new P("00:00.000", 0, 0);
+            TIME.set("fontSize", r(width/9)+ 'px');
+            TIME.set("forWeight", "bolder");
+            TIME.x = numberfield.width / 2 - TIME.width / 2;
+            TIME.color = "blue";
+            numberfield.attach(TIME);
+            for (let i = 0; i < colors.length; i++) {
+                let circle = new Circle(LEFT + MAINTIMER.width / 2 - ((colors.length / 2 | 0) * width/36) + width/36 * (i), height *
+                    0.6, width/96).asOutline('black', 2);
+                circle.set('backgroundColor', colors[i]);
+                circle.shape.addEventListener('click', () => {
+                    color_btns.forEach(x => {
+                        x.border = 'solid black 2px'
+                    });
+                    circle.border = 'solid white 2px'
+                    selected_color = colors[i];
+                });
+                color_btns.push(circle)
+            }
+
+            return new Promise(resolve => {
+                resolve()
             })
         }
-        let new_time = new P(millis2time(CURRENT_TIME),LEFT + MAINTIMER.width + 40,height*0.1 + saved_times.length*24);
-        new_time.color = selected_color;
-        new_time.set('fontWeight','bolder');
-        new_time.set('fontSize','2em');
-        new_time.set('textShadow', '#0058ff 0px 0px 1px')
-        saved_times.push(new_time)
-    })
-    let color_btns = []
-    let colors = ['blue','red','orange','deeppink','limegreen','purple','white'];
-    let selected_color = 'blue'
-    for(let i = 0; i<colors.length; i++){
-        let circle = new Circle(LEFT + MAINTIMER.width/2 - ((colors.length/2 |0)*30) + 30*(i), height*0.6, 10).asOutline('black',2);
-        circle.set('backgroundColor', colors[i]);
-        circle.shape.addEventListener('click',()=>{
-            color_btns.forEach(x=>{
-                x.border = 'solid black 2px'
-            });
-            circle.border = 'solid white 2px'
-            selected_color = colors[i];
-        });
-        color_btns.push(circle)
-    }
 
-</script>
+
+
+        function millis2time(millis) {
+            CURRENT_TIME = millis;
+            let number = (millis / 1000);
+            let min = number / 60 | 0;
+            while (min.toString().length < 2) {
+                min = '0' + min;
+            }
+            let seconds = (number % 60) | 0;
+            while (seconds.toString().length < 2) {
+                seconds = '0' + seconds;
+            }
+            let mils = (number % 1).toPrecision(3).toString().slice(1);
+            if (mils === '.00') mils = '.000'
+            if (mils.length > 4) {
+                mils = mils.slice(0, 4)
+            }
+            while (mils.toString().length < 3) {
+                mils = '0' + mils;
+            }
+            return min + ":" + seconds + mils
+        }
+
+        function displayTime(val) {
+            TIME.string = millis2time(val)
+        }
+        let LOOP_ID = 0;
+        let START_TIME = 0;
+        let CURRENT_TIME = 0;
+        let SAVED_TIME = 0;
+
+        function start() {
+            LOOPING = true;
+            START_TIME = window.performance.now();
+            LOOP_ID = setInterval(() => {
+                displayTime(window.performance.now() - START_TIME + SAVED_TIME)
+            }, 1000 / FPS)
+        }
+
+        function stop() {
+            clearInterval(LOOP_ID)
+            SAVED_TIME = CURRENT_TIME;
+            LOOPING = false;
+        }
+        id('start').addEventListener('click', start);
+        id('smallstart').addEventListener('click', start);
+        id('stop').addEventListener('click', stop);
+        id('smallstop').addEventListener('click', stop);
+        id('reset').addEventListener('click', () => {
+            SAVED_TIME = 0;
+            displayTime(0)
+        })
+        let saved_times = []
+        id('save').addEventListener('click', () => {
+            if (height * 0.1 + saved_times.length * r(width/41) > height * .85) {
+                saved_times[0].remove()
+                saved_times.shift()
+                saved_times.forEach(x => {
+                    x.mod('top', -1*r(width/41))
+                })
+            }
+            let new_time = new P(millis2time(CURRENT_TIME), LEFT + MAINTIMER.width + width/24, height * 0.1 +
+                saved_times.length * r(width/41));
+            new_time.color = selected_color;
+            new_time.set('fontWeight', 'bolder');
+            new_time.set('fontSize', r(width/30));
+            new_time.set('textShadow', '#0058ff 0px 0px 1px')
+            saved_times.push(new_time)
+        })
+
+        setupBody(id('MAIN_SCREEN')).then(()=>{
+            setupBackground()
+        })
+    </script>
 </body>
+
 </html>

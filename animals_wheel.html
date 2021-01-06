@@ -148,11 +148,13 @@
                     l.color = 'blue';
                     lines.push(l);
                     let radi = width / 6;
-                    let img = new Img(LOADED_IMAGES[images[i]],getX((360/total)*i,r),getY((360/total)*i,r),r(width/12),undefined,(360/total)*i +90).fromCenter();
+                    let img = new Img(LOADED_IMAGES[images[i]], getX((360 / total) * i, r), getY((360 /
+                            total) * i, r), r(width / 12), undefined, (360 / total) * i + 90)
+                        .fromCenter();
                     imageDivs.push(img);
-                    img.onLoad(()=>{
+                    img.onLoad(() => {
                         check++;
-                        if(check===total){
+                        if (check === total) {
                             resolve()
                         }
                     })
@@ -208,8 +210,8 @@
             }
         }
 
-        
-        
+
+
 
         let SPINNING = false;
         let main_theta = 1;
