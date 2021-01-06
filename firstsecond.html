@@ -10,34 +10,46 @@
     <script language="javascript" src="./lib/PhysicsObject.js"></script>
     <script language="javascript" src="./lib/DomObject.js"></script>
     <script language="javascript" src="./lib/Character.js"></script>
-    <script language="javascript" src="./lib/PlayerImages.js"></script>
-    <script language="javascript" src="./picture_config.js"></script>
+    <script language="javascript" src="./image_config.js"></script>
+    <script language="javascript" src="./lib/PlayerImages.js"></script> 
     <title>Artem's Testing</title>
     <link rel="stylesheet" href="global_styles.css">
 </head>
 
 <body>
-<button class="bluebtn" id="jmpleft">line up</button>
-<button class="bluebtn" id="jump">numbers</button>
+    <div id="MAIN_WRAPPER">
+        <div id="MAIN_SCREEN">
+            <button class="bluebtn" id="jmpleft">line up</button>
+            <button class="bluebtn" id="jump">numbers</button>
+        </div>
+    </div>
 <script>
 
-    let background = 'background' + getRandom(PICTURE_CONFIG.battle_backgrounds.num) + '.jpg'
-    document.body.style.backgroundColor = 'grey';
-    document.body.style.backgroundImage = 'url(./images/' + background.toString() + ')';
-    document.body.style.backgroundSize = width + 'px auto';
-    document.body.style.backgroundRepeat = 'no-repeat';
-
-
+    let chars =[]
     let num = 20;
-    allnames = shuffle(characters).slice(0, num);
-    let chars = allnames.map(name => {
-        let char = new Flyer(width/2, 0, name);
-        let charimg = new Img('./images/' + char.name + '.png', 0, 0, width/num).fromCenter().onLoad(() => {
-            char.addSprite(charimg);
-            char.MAX_V = 5;
-        });
-        return char;
-    });
+    function setupBackground(){
+        return new Promise(resolve=>{
+            let background = 'background' + getRandom(IMAGE_CONFIG.backgrounds.num) + '.jpg'
+            document.body.style.backgroundColor = 'grey';
+            document.body.style.backgroundImage = 'url(./images/' + background.toString() + ')';
+            document.body.style.backgroundSize = width + 'px auto';
+            document.body.style.backgroundRepeat = 'no-repeat';
+            allnames = shuffle(characters).slice(0, num);
+            chars = allnames.map(name => {
+                let char = new Flyer(width/2, 0, name);
+                let charimg = new Img('./images/' + char.name + '.png', 0, 0, width/num).fromCenter().onLoad(() => {
+                    char.addSprite(charimg);
+                    char.MAX_V = 5;
+                    char.hasNoBounds = true;
+                });
+                return char;
+            });
+            resolve()
+        })
+    }
+
+
+
 
     id('jmpleft').addEventListener('click', () => {
         chars.forEach((char, i) => {
@@ -56,8 +68,9 @@
         shownumbers = !shownumbers;
         if (shownumbers) {
             chars.forEach((char, i) => {
-                let p = new P(i + 1 + postfix(i+1), 10 + ((width)/num) * i, 100, '2em').fromCenter();
-                p.set('color', 'black');
+                let p = new P(i + 1 + postfix(i+1), 10 + ((width)/num) * i, 100, (width/(num*2))).fromCenter();
+                p.color = 'white'
+                p.set('textShadow','black 0 0 2px')
                 p.x = 20 + ((width)/num) * i;
                 ps.push(p);
             })
@@ -76,7 +89,11 @@
         });
         requestAnimationFrame(loop)
     };
-    loop()
+    setupBody(id('MAIN_SCREEN')).then(()=>{
+        setupBackground().then(()=>{
+            loop()
+        })
+    })
 
 </script>
 </body>
