@@ -12,9 +12,13 @@
     <link rel="stylesheet" href="global_styles.css">
 </head>
 
-<body class="locked">
-<button class="bluebtn" id="powerup">reset</button>
-<p style="color: black; font-size: 2em; position: absolute"><span id="speedspan"></span>度 <span id="direction"></span></p>
+<body class="locked" style="background-color: white;">
+    <div id="MAIN_WRAPPER">
+        <div id="MAIN_SCREEN">
+            <button class="bluebtn" id="powerup">reset</button>
+            <p style="color: black; font-size: 2em; position: absolute"><span id="speedspan"></span>度 <span id="direction"></span></p>
+        </div>
+    </div>
 <script>
     // let background = 'bg' + (getRandom(3,5) | 0).toString() + '.jpg';
     // document.body.style.backgroundColor = 'grey';
@@ -23,7 +27,18 @@
     // document.body.style.backgroundRepeat = 'no-repeat';
 
 
-
+    function setupBackground(){
+        return new Promise(resolve=>{
+            originX = width/2 -125;
+            originY = height/2 -125 ;
+            circleRadius = 250;
+            wheelShape = {}
+            lines = [];
+            radius = 150;
+            rSqrd = circleRadius**2;
+            resolve();
+        })
+    }
 
 
 
@@ -62,11 +77,15 @@
     let SPINNING = false;
     let spinInt = 0;
     let main_theta = 1;
-    setup().then(()=>{
-        requestAnimationFrame(()=>{
-            spinTo(0)
-        });
-    });
+    setupBody(id('MAIN_SCREEN')).then(()=>{
+       setupBackground().then(()=>{
+           setup().then(()=>{
+               requestAnimationFrame(()=>{
+                   spinTo(0)
+               });
+           });
+       }) 
+    })
     let DRAGGING = false;
     let event = {};
     let rSqrd = circleRadius**2;
