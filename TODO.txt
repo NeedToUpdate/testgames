@@ -7,7 +7,7 @@
 
 [DONE] - add more guns
 [DONE] - remove blacksquare
-- add level system
+[DONE} - add level system
 - add dynamic dificulty
 - add attacking aliens
 
@@ -110,3 +110,4 @@ font for power select is too big on small screen and too spaced out
 
 [DONE] - add time based update loop
 need to add scaling for the main update class
+- fix python script for the weapons having numbers

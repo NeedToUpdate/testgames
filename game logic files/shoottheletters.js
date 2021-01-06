@@ -216,6 +216,8 @@ let oddsOfLegendary = 0.7;
 let alienBlasterShots = 20;
 let remingtonShots = 8;
 let GUN_IMG_CONFIG = IMAGE_CONFIG.weapons;
+let CITY_IMG_CONFIG = IMAGE_CONFIG.cityscapes;
+let BUILDING_IMG_CONFIG = IMAGE_CONFIG.buildings;
 
 const MAX_LEVELS_PER_PERSON = 5;
 const TIME_PER_PLAYER = 46;
@@ -250,7 +252,10 @@ function setupBackground() {
         LOADED_IMAGES = new ImageLoader(IMAGE_PATH + 'projectiles/', extras.concat(['electric', 'bullet', 'nuke', 'whitemagic'].map(x => x + '_projectile')));
         aliendeathimg = LOADED_IMAGES.electric_projectile
         invaders = new ImageLoader(IMAGE_PATH + 'invaders/', invadercolors.map(x => 'invader' + x));
-        DOMObjectGlobals.body.style.backgroundImage = 'url(' + IMAGE_PATH + 'bg3.jpg)';
+        let randNum = getRandom(CITY_IMG_CONFIG.num);
+        DOMObjectGlobals.body.style.backgroundImage = 'url(' + IMAGE_PATH + CITY_IMG_CONFIG.path + 'city' + randNum + '.jpg)';
+        DOMObjectGlobals.body.style.backgroundSize = width + 'px auto';
+        DOMObjectGlobals.body.style.backgroundPositon = 'bottom';
         selectedgun = new Character(0, 0, gunStats.name);
         selectedgun.hasNoBounds = true;
         LEFT_OFFSET = DOMObjectGlobals.body.offsetLeft;
@@ -263,7 +268,7 @@ function setupBackground() {
         imgBlk.style.position = 'absolute'
         imgBlk.style.left = '0'
         imgBlk.style.top = '0'
-        imgBlk.style.backgroundImage = 'url(' + IMAGE_PATH + 'bg3.jpg)';
+        imgBlk.style.backgroundImage = 'url(' + IMAGE_PATH + CITY_IMG_CONFIG.path + 'city' + randNum + '.jpg)';
         imgBlk.style.backgroundSize = width + 'px auto';
         imgBlk.style.backgroundRepeat = 'no-repeat';
 
@@ -273,9 +278,7 @@ function setupBackground() {
         id('jmpleft').style.width = width / 14 + 'px';
         id('jmpleft').style.height = height / 10 + 'px';
         id('jmpleft').style.fontSize = (width / 60 > 24 ? 24 : width / 60) + 'px';
-        city = new Img(IMAGE_PATH + 'city.png', 0, 0, width).onLoad(() => {
-            resolve()
-        });
+        resolve();
     })
 }
 
@@ -737,6 +740,7 @@ function getLevelStats() {
 
 function lose() {
     let promises = [];
+    IS_TIME_TICKING = false;
     ALL_FALLERS.forEach(x => {
         x.kill()
     })
@@ -751,8 +755,7 @@ function lose() {
                     })
                 })
             )
-        }
-        if (alien.isDoingFlyTo) {
+        }else if (alien.isDoingFlyTo) {
             alien.isDoingFlyTo = false;
             promises.push(
                 new Promise((resolve) => {
@@ -866,7 +869,7 @@ function setup() {
 
     });
     buildings = shuffle(Array(splitletters.length).fill('').map((x, i) => i)).map((x, i) => {
-        let img = new Img(IMAGE_PATH + 'buildings/skyscraper' + getRandom(6) + '.png', width * .1 + (width * .9 / (splitletters.length + 1)) * i + getRandom(-40, 40), 0, width / 19.22, ).fromCenter().onLoad(() => {
+        let img = new Img(IMAGE_PATH + BUILDING_IMG_CONFIG.path + 'skyscraper' + getRandom(BUILDING_IMG_CONFIG.num) + '.png', width * .1 + (width * .9 / (splitletters.length + 1)) * i + getRandom(-40, 40), 0, width / 19.22, ).fromCenter().onLoad(() => {
             img.y = height - img.height / 2;
         });
         img.set('zIndex', '10');

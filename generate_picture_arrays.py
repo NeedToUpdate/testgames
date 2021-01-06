@@ -30,7 +30,8 @@ dirs = {
 	"old_space_bg": '/',
 	"monsters": '/',
 	"old_ghosts": '/',
-	"weapons": '/weapons/'
+	"weapons": '/weapons/',
+	"cityscapes": '/cityscapes/'
 }
 syntax = {
 	"buildings": 'skyscraper{num}.png',
@@ -42,7 +43,8 @@ syntax = {
 	"old_space_bg": 'bg{num}.jpg',
 	"monsters": 'monster{num}.png',
 	"old_ghosts": 'ghost{num}.png',
-	"weapons": '{valid_name}.png'
+	"weapons": '{valid_name}.png',
+	"cityscapes":'city{num}.jpg'
 }
 
 lines = []
