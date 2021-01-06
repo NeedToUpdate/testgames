@@ -34,8 +34,8 @@
                 DOMObjectGlobals.body.style.backgroundSize = width + 'px auto';
                 DOMObjectGlobals.body.style.backgroundRepeat = 'no-repeat';
 
-                bw = width/3.84;
-                iw = width/12.8;
+                bw = width / 3.84;
+                iw = width / 12.8;
                 bp = {
                     x: width / 2 - bw / 2,
                     y: height * .7 - bw / 2
@@ -44,11 +44,12 @@
                 yy = bp.y + bw / 2 - iw / 2;
 
                 character = new Flyer(50, 50, 'div');
-                let div = new Img('./images/' + getRandom(characters) + '.png', width/20, width/20, iw).onLoad(() => {
-                    character.addSprite(div);
-                    character.MAX_V = 10
-                    resolve()
-                });
+                let div = new Img('./images/' + getRandom(characters) + '.png', width / 20, width / 20, iw)
+                    .onLoad(() => {
+                        character.addSprite(div);
+                        character.MAX_V = 10
+                        resolve()
+                    });
                 character.hasNoBounds = true;
                 let box = new Img('./images/box/box0.png', bp.x, bp.y, bw);
                 let boxfront = new Img('./images/box/box0front.png', bp.x, bp.y, bw);
@@ -73,12 +74,12 @@
             pos = {
                 on: {
                     x: xx,
-                    y: bp.y - hh*1.2,
+                    y: bp.y - hh * 1.2,
                     extra: ['zIndex 5']
                 },
                 under: {
                     x: xx,
-                    y: bp.y + bw / 2 - hh + iw*1.1,
+                    y: bp.y + bw / 2 - hh + iw * 1.1,
                     extra: ['zIndex 0', 'transform rotate(90deg)']
                 },
                 // above: {x: xx, y: bp.y - iw * 2},
