@@ -160,7 +160,7 @@
             dudes.push(char);
             THINGS_TO_UPDATE.push(char);
             setTimeout(() => {
-                char.jumpFwd(0.5);
+                char.doJump(0.5);
             }, 1000);
             let unsub = char.landing_emitter.subscribe('land', () => {
                 setTimeout(()=>{
@@ -171,7 +171,7 @@
                             showLetters()
                         }
                     } else {
-                        char.jumpFwd(0.6);
+                        char.doJump(0.6);
                     }
                 },getRandom(30,60))
             })
