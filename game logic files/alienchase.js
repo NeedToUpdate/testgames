@@ -764,7 +764,11 @@ function setMaxF(val){
     })
 }
 
+let difficultyLimitMin = 1;
+let difficultyLimitMax = 10;
 function changeDifficuly(multiplier){
+    if(CURRENT_MAX_V_MULTIPLIER<=difficultyLimitMin || CURRENT_MAX_F_MULTIPLIER<=difficultyLimitMin) return;
+    if(CURRENT_MAX_V_MULTIPLIER>=difficultyLimitMax || CURRENT_MAX_F_MULTIPLIER>=difficultyLimitMax) return;
     if(multiplier === 'reset'){
         setMaxV(DEFAULT_MAX_V_MULTIPLIER)
         setMaxF(DEFAULT_MAX_F_MULTIPLIER)

@@ -1093,7 +1093,7 @@ function loop(time) {
     let deltaT = time - currentTime;
     currentTime = time;
     selectedgun.update();
-    if (Math.random() < getLevelStats().oddsOfFlying && countHoveringAliens() === aliens.length && aliens.length > getLevelStats().changingAliens - 1) {
+    if (Math.random() < getLevelStats().oddsOfFlying && countHoveringAliens() === aliens.length && aliens.length >= getLevelStats().changingAliens) {
         //CHANGE PLACES!!!
         let randoms = shuffle(aliens).slice(0, getLevelStats().changingAliens);
         let randomBlds = randoms.map(x => x.bld);
@@ -1114,7 +1114,7 @@ function loop(time) {
         }
     }
     for (let j = bullets.length - 1; j >= 0; j--) {
-        bullets[j].update(deltaT);
+        bullets[j].update(); //bullets dont need deltaT accuracy, they need more checks
         if (bullets[j].dead) {
             bullets.splice(j, 1);
         }
@@ -1140,7 +1140,6 @@ function loop(time) {
                 bullets[j].kill();
             }
         }
-        
     }
     if (rescuedletters === (chosenletters + (GRAMMAR_MODE ? ' ' : '')) && allletters.filter(l => l.isDoingMoveTo).length < 1 && !HAS_WON) {
         allletters.forEach(x => {
@@ -1178,3 +1177,21 @@ setupBody(id("MAIN_SCREEN")).then(() => {
         setup();
     })
 })
+
+
+
+//DEBUG STUFF BELOW
+
+let FPSLOCK = 0;
+let FPSLOOP = 0;
+
+function setFPS(num) {
+    LOOPING = false;
+    clearInterval(FPSLOOP)
+    FPSLOCK = num;
+    if (FPSLOCK > 0) {
+        FPSLOOP = setInterval(()=>{loop(window.performance.now())}, 1000 / FPSLOCK)
+    } else {
+        requestAnimationFrame(loop);
+    }
+}
