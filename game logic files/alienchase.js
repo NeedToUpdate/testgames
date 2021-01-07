@@ -105,13 +105,13 @@ function restartGame() {
         releaseAliens();
     })
 }
-difficulty = 3;
+let num_fake_letters = 3;
 
 function setupLetters() {
     //pick a random word, and show a transparent figure of it in the final spot. but have extra letters?
     actual_letters = chosen_word.split('').map(x => x === ' ' ? '#' : x);
     letters = Array.from(actual_letters)
-    for (let i = 0; i < difficulty; i++) {
+    for (let i = 0; i < num_fake_letters; i++) {
         letters.push(getRandom(alphabet.split('')))
     }
     console.log(letters, actual_letters)
@@ -575,7 +575,10 @@ function dropAll() {
 function resetLetter(letter) {
     if(letter.isLocked) return;
     DEATHS_SINCE_LAST_LETTER++;
-    if(DEATHS_SINCE_LAST_LETTER>=10){
+    if(CURRENT_MAX_V_MULTIPLIER>DEFAULT_MAX_V_MULTIPLIER && DEATHS_SINCE_LAST_LETTER>=3){
+        changeDifficuly(0.9)
+        DEATHS_SINCE_LAST_LETTER = 0;
+    }else if(DEATHS_SINCE_LAST_LETTER>=10){
         changeDifficuly(0.85)
         DEATHS_SINCE_LAST_LETTER = 0;
     }
