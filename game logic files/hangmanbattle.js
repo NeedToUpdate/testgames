@@ -17,8 +17,8 @@ function setupBackground() {
 
         MAINARENA = new Rectangle(width * .2, height * .2, width * .6 - 5, height * .8).asOutline('black', 5);
         let background = 'background' + getRandom(BACKGROUND_CONFIG.num).toString() + '.jpg';
-        MAINARENA.set('backgroundColor', 'grey');
         MAINARENA.set('backgroundImage', 'url(' + IMAGE_PATH + BACKGROUND_CONFIG.path + background + ')');
+        MAINARENA.set('backgroundColor', 'grey');
         MAINARENA.set('backgroundSize', 'cover');
         MAINARENA.set('backgroundRepeat', 'no-repeat');
         MAINARENA.set('backgroundPosition', 'center');
@@ -172,6 +172,8 @@ function handleWin(isTeamA) {
                                 teamA.hpDiv.value = 100;
                                 teamB.hp = 100;
                                 teamB.hpDiv.value = 100;
+                                let background = 'background' + getRandom(BACKGROUND_CONFIG.num).toString() + '.jpg';
+                                MAINARENA.set('backgroundImage', 'url(' + IMAGE_PATH + BACKGROUND_CONFIG.path + background + ')');
                                 resetAll()
                             });
                         });
@@ -192,6 +194,8 @@ function handleWin(isTeamA) {
                     teamA.hpDiv.value = 100;
                     teamB.hp = 100;
                     teamB.hpDiv.value = 100;
+                    let background = 'background' + getRandom(BACKGROUND_CONFIG.num).toString() + '.jpg';
+                    MAINARENA.set('backgroundImage', 'url(' + IMAGE_PATH + BACKGROUND_CONFIG.path + background + ')');
                     resetAll()
                 });
             });
