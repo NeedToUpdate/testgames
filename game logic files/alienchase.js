@@ -574,6 +574,11 @@ function dropAll() {
 
 function resetLetter(letter) {
     if(letter.isLocked) return;
+    DEATHS_SINCE_LAST_LETTER++;
+    if(DEATHS_SINCE_LAST_LETTER>=10){
+        changeDifficuly(0.85)
+        DEATHS_SINCE_LAST_LETTER = 0;
+    }
     letter.isResetting = true;
     drop(letter)
     letter.sprite.color = 'red';
@@ -617,6 +622,15 @@ function checkLetter() {
             y: letter.y
         };
         if (Math.abs(line.x - pos.x) < buffer && line.y - pos.y < y_buffer) {
+            if(CURRENT_MAX_V_MULTIPLIER<DEFAULT_MAX_V_MULTIPLIER){
+                //difficulty was lowered before
+                //bump it up a bit
+                changeDifficuly(1.1)
+            }
+            if(DEATHS_SINCE_LAST_LETTER<2){
+                changeDifficuly(1.1)
+            }
+            DEATHS_SINCE_LAST_LETTER = 0;
             let index = lines.indexOf(l);
             l.letter = ''
             console.log(index)
@@ -657,6 +671,10 @@ function checkLetter() {
 let previouslyTouchedLetter = {}
 let currentTime = window.performance.now();
 
+let IS_TIME_TICKING = false;
+let DEATHS_SINCE_LAST_LETTER = 0; //WILL BE USED TO SCALE DIFFICULTY
+
+
 function gameloop(time) {
     let deltaT = time - currentTime;
     currentTime = time;
@@ -683,31 +701,33 @@ let valid_challenge_names = ['grass', 'ocean','fire' , 'hellokitty', 'beautiful'
 
 function getChallenge(name) {
     console.assert(valid_challenge_names.includes(name), name + ' is not a valid challenge.')
+    let mult = 1;
+    if(HARD_MODE_ON) mult = 2;
     switch (name) {
         case "ocean":
             total_difficulty += 50;
-            return Array(60).fill('blue');
+            return Array(30*mult).fill('blue');
         case "fire":
             total_difficulty+= 61;
-            return Array(8).fill('yellow').concat(Array(8).fill('orange')).concat(Array(9).fill('red'));
+            return Array(4*mult).fill('yellow').concat(Array(4*mult).fill('orange')).concat(Array(4*mult).fill('red'));
         case "grass":
             total_difficulty+= 50;
-            return Array(25).fill('green');
+            return Array(12*mult +1).fill('green');
         case "hellokitty":
             total_difficulty+= 72;
-            return Array(25).fill('').map((x,i)=>i%2?'pink':'purple');
+            return Array(12*mult + 1).fill('').map((x,i)=>i%2?'pink':'purple');
         case "black hole":
             total_difficulty+= 100;
-            return Array(15).fill('space');
+            return Array(7*mult + 1).fill('space');
         case "oh my god":
             total_difficulty+= 150;
-            return Array(15).fill('evil');
+            return Array(7* mult + 1).fill('evil');
         case "beautiful":
             total_difficulty+= 80;
-            return Array(15).fill('rainbow');
+            return Array(7* mult + 1).fill('rainbow');
         case "every color":
             total_difficulty+= 142;
-            return valid_colors.concat(valid_colors);
+            return valid_colors.concat(HARD_MODE_ON? valid_colors : []);
         default:
             return [];
 
@@ -722,6 +742,36 @@ function selectChallenge(name) {
         addAlien(alien, variety);
 
     })
+}
+
+let CURRENT_MAX_V_MULTIPLIER = DEFAULT_MAX_V_MULTIPLIER
+let CURRENT_MAX_F_MULTIPLIER = DEFAULT_MAX_F_MULTIPLIER
+function setMaxV(val){
+    CURRENT_MAX_V_MULTIPLIER = val;
+    aliens.forEach(alien => {
+        alien._DEFAULT_MAX_V = val * alien.difficulty;
+        alien.MAX_V = alien._DEFAULT_MAX_V
+    })
+}
+function setMaxF(val){
+    CURRENT_MAX_F_MULTIPLIER = val;
+    aliens.forEach(alien => {
+        alien._DEFAULT_MAX_F = val * alien.difficulty;
+        alien.MAX_F = alien._DEFAULT_MAX_F
+    })
+}
+
+function changeDifficuly(multiplier){
+    if(multiplier === 'reset'){
+        setMaxV(DEFAULT_MAX_V_MULTIPLIER)
+        setMaxF(DEFAULT_MAX_F_MULTIPLIER)
+        return
+    }
+    let new_maxV = CURRENT_MAX_V_MULTIPLIER*multiplier
+    let new_maxF = CURRENT_MAX_F_MULTIPLIER*multiplier
+    console.log(`maxF: ${new_maxF}, maxV: ${new_maxV}`)
+    setMaxV(new_maxV)
+    setMaxF(new_maxF)
 }
 
 
@@ -743,8 +793,9 @@ function setFPS(num) {
 }
 
 let SHOWCHALLENGES = false;
+let HARD_MODE_ON = false;
 function tester() {
-    MAINTESTER = new TestObj(2, 0, 3);
+    MAINTESTER = new TestObj(2, 0, 4);
     MAINTESTER.setButton(0).name('restart');
     MAINTESTER.setButton(0).func(() => {
         restartGame();
@@ -757,8 +808,20 @@ function tester() {
     MAINTESTER.setButton(2).func(()=>{
         if(SHOWCHALLENGES){
             challenges.set('display','none')
+            HARD_MODE_ON = false;
         }else{
             challenges.set('display','')
+        }
+        SHOWCHALLENGES = !SHOWCHALLENGES;
+    })
+    MAINTESTER.setButton(3).name('harder challenges');
+    MAINTESTER.setButton(3).func(()=>{
+        if(SHOWCHALLENGES){
+            challenges.set('display','none');
+            HARD_MODE_ON = false;
+        }else{
+            challenges.set('display','')
+            HARD_MODE_ON = true;
         }
         SHOWCHALLENGES = !SHOWCHALLENGES;
     })

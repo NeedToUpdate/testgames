@@ -109,5 +109,5 @@ font for power select is too big on small screen and too spaced out
 //general
 
 [DONE] - add time based update loop
-need to add scaling for the main update class
-- fix python script for the weapons having numbers
+[DONE] - need to add scaling for the main update class (can be done locally)
+[DONE] - fix python script for the weapons having numbers
