@@ -8,61 +8,36 @@
     <script language="javascript" type="text/javascript" src="./lib/drawbase.js"></script>
     <script language="javascript" type="text/javascript" src="./lib/matrix.js"></script>
     <script language="javascript" type="text/javascript" src="./lib/DomObject.js"></script>
-    <script src="./wordlist.js"></script>
     <script language="javascript" type="text/javascript" src="./lib/PhysicsObject.js"></script>
     <script language="javascript" type="text/javascript" src="./lib/Character.js"></script>
     <script language="javascript" type="text/javascript" src="./lib/eventemitter.js"></script>
     <script language="javascript" type="text/javascript" src="./lib/collisioncontainer.js"></script>
-    <script language="javascript" type="text/javascript" src="./one/words.js"></script>
-    <script language="javascript" type="text/javascript" src="./one/sentences.js"></script>
+    <script language="javascript" type="text/javascript" src="./todays_words.js"></script>
+    <script language="javascript" type="text/javascript" src="./Letters/keywords_config.js"></script>
+    <link rel="stylesheet" type="text/css" href="../global_styles.css">
     <style>
-        #MAIN_SCREEN{
-            position: absolute;
-            overflow: hidden;
-            height: calc(44.9vw + 1px);
-            width: calc(100vw + 1px);
-            border: black solid 1px;
-            margin:0;
-            padding: 0;
-            top: -1px;
-            left: -1px;
-        }
-        body{
-            padding: 0;
-            margin: 0;
-            overflow: hidden;
-        }
     </style>
 </head>
 <body>
-    <div id="MAIN_SCREEN">
-        <p id="test"></p>
-        <p id="words"></p>
-        <p id="sentences"></p>
+    <div id="MAIN_WRAPPER">
+        <div id="MAIN_SCREEN">
+
+        </div>
     </div>
-
 <script>
-    id('words').innerText = 'width: ' + width + 'px';
-    id('sentences').innerText = 'height: ' + height + 'px';
-    let p = document.getElementById('test');
-
-    document.addEventListener('touchstart', ev => {
-        //ev.touches.length;
-        p.innerText = 'touched with ' + ev.touches.length + ' fingers at: ';
-        Array(ev.touches.length).fill('').forEach((bleh, i) => {
-            let x = ev.touches[i].clientX;
-            let y = ev.touches[i].clientY;
-            p.innerText += '\nx: ' + x + '| y:   ' + (y);
-            let tmp = new P('X', x, y - 25);
-            tmp.shape.style.color = 'black'
-            tmp.shape.style.fontsize = '2em';
-            setTimeout(() => {
-                tmp.remove();
-            }, 1000)
-        })
+    console.log(KEYWORDS_CONFIG)
+    setupBody(id('MAIN_SCREEN')).then(()=>{
+        setup();
     })
 
-
+    function setup(){
+        Array.from(alphabet).forEach((letter,i)=>{
+            let keywords = KEYWORDS_CONFIG[letter]
+            keywords.forEach((word,j)=>{
+                let img = new Img('/Letters/'+ letter + '/' + word + '.png',i*45,j*70,40)
+            })
+        })
+    }
    
 </script>
 

@@ -64,6 +64,7 @@ let override = [
 //['hotel','movie theater','zoo','swimming pool','cafe','hospital','mall','library','park'],
 //['movie theater','zoo','swimming pool','cafe','hospital','mall','hotel','library','park','east','west','north','south'],
 //['truck','taxi','van','motorcycle','bus','car'],
+['beach','waves','bright','sailboat','seashore','umbrella','sandcastle','jellyfish','starfish','seashore'],
 //['firefighter','cleaner','doctor','chef','office worker','police officer','teacher','vet'],
 //['science','animals','pets','veterinarian','sick','diet','healthy','owners'],
 //['bread','turkey','green pepper','cucumber','tomato','mustard','egg'],
