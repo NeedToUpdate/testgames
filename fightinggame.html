@@ -283,12 +283,15 @@
                 img.shape.addEventListener('click', () => {
                     start_the_game(num);
                 });
-                let name = new P(characters[num], screenx + (screenw / chosen_nums.length) * (i + .1) + 10, 5 +
+                let actual_name = characters[num].split('_').map(x=>x[0].toUpperCase() + x.slice(1,x.length)).join(' ');
+                if(!isNaN(actual_name[actual_name.length-1])){
+                    actual_name = actual_name.slice(0,actual_name.length-1)
+                }
+                let name = new P(actual_name, screenx + (screenw / chosen_nums.length) * (i + .1) + 10, 5 +
                     screeny + screenh / 1.5,width/40);
                 if (name.width + width/48 > screenw / chosen_nums.length) {
-                    name.string = characters[num].slice(0, 7) + '..'
+                    name.string = actual_name.slice(0, 7) + '..'
                 }
-                name.string = name.string.replace(name.string.charAt(0), name.string.charAt(0).toUpperCase());
                 names.push(name);
                 images.push(img);
             });
