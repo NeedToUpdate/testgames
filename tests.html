@@ -34,7 +34,7 @@
         Array.from(alphabet).forEach((letter,i)=>{
             let keywords = KEYWORDS_CONFIG[letter]
             keywords.forEach((word,j)=>{
-                let img = new Img('/Letters/'+ letter + '/' + word + '.png',i*45,j*70,40)
+                let img = new Img('./Letters/'+ letter + '/' + word + '.png',i*45,j*70,40)
             })
         })
     }
