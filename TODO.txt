@@ -52,7 +52,7 @@
 //MAIN STUFF
 
 [DONE] - add main body element to scale screen
-- add a main background process that will load the games into the right shape, like a canvas or something
+[DONE] - add a main background process that will load the games into the right shape, like a canvas or something
 - remove all reference to the old space bgs and move all bgs to a new folder
 
 //TIMETRIAL
@@ -111,3 +111,5 @@ font for power select is too big on small screen and too spaced out
 [DONE] - add time based update loop
 [DONE] - need to add scaling for the main update class (can be done locally)
 [DONE] - fix python script for the weapons having numbers
+
+- add touchstart to click methods to make them easier to work with (like the item drops)

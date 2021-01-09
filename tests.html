@@ -12,6 +12,7 @@
     <script language="javascript" type="text/javascript" src="./lib/Character.js"></script>
     <script language="javascript" type="text/javascript" src="./lib/eventemitter.js"></script>
     <script language="javascript" type="text/javascript" src="./lib/collisioncontainer.js"></script>
+    <script language="javascript" type="text/javascript" src="./lib/FallingImg.js"></script>
     <script language="javascript" type="text/javascript" src="./todays_words.js"></script>
     <script language="javascript" type="text/javascript" src="./Letters/keywords_config.js"></script>
     <link rel="stylesheet" type="text/css" href="../global_styles.css">
@@ -20,7 +21,7 @@
 </head>
 <body>
     <div id="MAIN_WRAPPER">
-        <div id="MAIN_SCREEN">
+        <div style="background-color: white"  id="MAIN_SCREEN">
 
         </div>
     </div>
@@ -35,8 +36,32 @@
             let keywords = KEYWORDS_CONFIG[letter]
             keywords.forEach((word,j)=>{
                 let img = new Img('./Letters/'+ letter + '/' + word + '.png',i*45,j*70,40)
+                img.shape.addEventListener('click',()=>{
+                    createFaller(word);
+                })
             })
         })
+        play()
+    }
+
+    function createFaller(name){
+        let faller = new FallingImg(getRandom(100,width-100),50,name,getRandom(1,3),true)
+        FallingImg.createIcon('./Letters/'+ name[0] + '/' + name + '.png',100,100,'blue').then(x=>{
+            faller.addSprite(x)
+            faller.doFall()
+            THINGS_TO_UPDATE.push(faller)
+        })
+    }
+
+    let THINGS_TO_UPDATE = []
+    function loop(){
+        for(let i = THINGS_TO_UPDATE.length-1; i>=0; i--){
+            THINGS_TO_UPDATE[i].update()
+            if(THINGS_TO_UPDATE[i].dead){
+                THINGS_TO_UPDATE.splice(i,1);
+            }
+        }
+        if(LOOPING) requestAnimationFrame(loop)
     }
    
 </script>
