@@ -663,8 +663,8 @@ function unIdlePlayers() {
 
         let a = false;
         let b = false;
-        if (playerA.isJumping) {
-            playerA.interruptSperHop = true;
+        if (playerA.isCurrentlyJumping) {
+            playerA.interruptSparHop = true;
             let unsub = playerA.landing_emitter.subscribe('land', () => {
                 a = true;
                 unsub();
@@ -674,8 +674,8 @@ function unIdlePlayers() {
             a = true;
             tryResolve();
         }
-        if (playerB.isJumping) {
-            playerB.interruptSperHop = true;
+        if (playerB.isCurrentlyJumping) {
+            playerB.interruptSparHop = true;
             let unsub = playerB.landing_emitter.subscribe('land', () => {
                 b = true;
                 unsub();
@@ -801,7 +801,7 @@ function spinShot(isPlayerA, dmg) {
     let target = isPlayerA ? playerB : playerA;
     return new Promise(resolve => {
         if (fighter.dead) return resolve();
-        fighter.jumpUp(1.2);
+        fighter.jumpUp(30);
         fighter.doSpin(360 * (isPlayerA ? -1 : 1), 10);
         fighter.powerUp(dmg / 2);
         setTimeout(() => {
@@ -1218,8 +1218,14 @@ function marioHop(isPlayerA, val) {
     let target = isPlayerA ? playerB : playerA;
     return new Promise(resolve => {
         if (fighter.dead) return resolve();
-        fighter.minbounds.y = 0;
-        fighter.jumpWithAngle((isPlayerA ? 45 : -45), 20);
+        fighter.minbounds.y = -100;
+        if(fighter.isCurrentlyJumping){
+            let unsub = fighter.landing_emitter.subscribe('land', () => {
+                unsub();
+                return marioHop(isPlayerA,val)
+            });
+        }
+        fighter.jumpWithAngle((isPlayerA ? 45 : -45), 30);
         let unsub = fighter.landing_emitter.subscribe('land', () => {
             unsub();
             handleDamage(target, val / 4);
@@ -1229,7 +1235,7 @@ function marioHop(isPlayerA, val) {
             }
             target.height *= 0.8;
             fighter.maxbounds.y = height - target.height;
-            fighter.jumpUp(2);
+            fighter.jumpUp(20);
             unsub = fighter.landing_emitter.subscribe('land', () => {
                 unsub();
                 handleDamage(target, val / 4);
@@ -1240,7 +1246,7 @@ function marioHop(isPlayerA, val) {
                 }
                 target.height *= 0.7;
                 fighter.maxbounds.y = height - target.height;
-                fighter.jumpUp(2);
+                fighter.jumpUp(20);
                 unsub = fighter.landing_emitter.subscribe('land', () => {
                     unsub();
                     handleDamage(target, val / 4);
@@ -1250,7 +1256,7 @@ function marioHop(isPlayerA, val) {
                     }
                     target.height *= 0.6;
                     fighter.maxbounds.y = height - target.height;
-                    fighter.jumpUp(2);
+                    fighter.jumpUp(20);
                     unsub = fighter.landing_emitter.subscribe('land', () => {
                         unsub();
                         handleDamage(target, val / 4);
@@ -1718,12 +1724,12 @@ function subroutines() {
         timeSinceCheckB = time;
     }
     if (playerAState === 'winner' && time - timeSinceCheckA > 810) {
-        addAction(1, 'jumpUp', 1.5);
+        addAction(1, 'jumpUp', 10);
         addAction(1, 'doSpin', [270, 10]);
         timeSinceCheckA = time;
     }
     if (playerBState === 'winner' && time - timeSinceCheckB > 700) {
-        addAction(0, 'jumpUp', 1.5);
+        addAction(0, 'jumpUp', 10);
         addAction(0, 'doSpin', [270, 10]);
         timeSinceCheckB = time;
     }
@@ -1795,6 +1801,7 @@ function floop() {
     for (let i = PROJECTILES.length - 1; i >= 0; i--) {
         let p = PROJECTILES[i];
         p.update();
+        p.v.y = 0;
         if (!p.dead && p.hasHitbox && p.target.hasHitbox && p.target.hitbox.vMiddleTall.contains(p.hitbox)) {
             p.isHandled = true;
             handleDamage(p.target, p.power);
@@ -1829,6 +1836,8 @@ function test() {
     let [a, b] = [getRandom(4), getRandom(4)];
     console.log('Battle ! with (' + a + ',' + b + ')');
     battle(a, b).then(() => {
+        teamA.hp = 100
+        teamB.hp = 100
         if (testing) test()
     })
 }
