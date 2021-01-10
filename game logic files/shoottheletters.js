@@ -34,7 +34,7 @@ let gunConfigs = {
         reloadTime: 200,
         perShot: 1,
         bulletSpeed: 7,
-        rarity: 'broken',
+        rarity: 'legendary',
         spread: 0,
         isLarge: false,
     },
@@ -213,7 +213,7 @@ let oddsOfDrop = 5 //out of 10
 let oddsOfUncommon = 4
 let oddsOfRare = 2
 let oddsOfLegendary = 0.7;
-let alienBlasterShots = 20;
+let alienBlasterShots = 6;
 let remingtonShots = 6;
 let GUN_IMG_CONFIG = IMAGE_CONFIG.weapons;
 let CITY_IMG_CONFIG = IMAGE_CONFIG.cityscapes;
@@ -269,7 +269,7 @@ let measurements = {};
 function setupBackground() {
     return new Promise(resolve => {
         let extras = ['fire'];
-        LOADED_IMAGES = new ImageLoader(IMAGE_PATH + 'projectiles/', extras.concat(['electric', 'bullet', 'nuke', 'whitemagic'].map(x => x + '_projectile')));
+        LOADED_IMAGES = new ImageLoader(IMAGE_PATH + 'projectiles/', extras.concat(['electric', 'bullet', 'nuke', 'ki'].map(x => x + '_projectile')));
         aliendeathimg = LOADED_IMAGES.electric_projectile
         invaders = new ImageLoader(IMAGE_PATH + 'invaders/', invadercolors.map(x => 'invader' + x));
         let randNum = getRandom(CITY_IMG_CONFIG.num);
@@ -495,9 +495,9 @@ function shoot() {
                         bulletDim = 6;
                     }
                     if (currentGun == 'alienblaster') {
-                        projectileName = 'whitemagic'
+                        projectileName = 'ki'
                         gunShots = alienBlasterShots
-                        bulletDim = 30;
+                        bulletDim = 10;
                     }
                     if (currentGun == 'remington') {
                         gunShots = remingtonShots
