@@ -34,7 +34,7 @@ let gunConfigs = {
         reloadTime: 200,
         perShot: 1,
         bulletSpeed: 7,
-        rarity: 'legendary',
+        rarity: 'broken',
         spread: 0,
         isLarge: false,
     },
@@ -214,13 +214,13 @@ let oddsOfUncommon = 4
 let oddsOfRare = 2
 let oddsOfLegendary = 0.7;
 let alienBlasterShots = 20;
-let remingtonShots = 8;
+let remingtonShots = 6;
 let GUN_IMG_CONFIG = IMAGE_CONFIG.weapons;
 let CITY_IMG_CONFIG = IMAGE_CONFIG.cityscapes;
 let BUILDING_IMG_CONFIG = IMAGE_CONFIG.buildings;
 
 const MAX_LEVELS_PER_PERSON = 2;
-const TIME_PER_PLAYER = 61;
+const MAX_TIME_PER_PLAYER = 61;
 
 let currentGun = 'gun';
 let gunStats = Object.assign({}, gunConfigs[currentGun])
@@ -491,8 +491,8 @@ function shoot() {
                     let gunShots = 1;
                     let bulletDim = 60;
                     if (currentGun == 'rpg') {
-                        projectileName = 'nuke'
-                        bulletDim = 6
+                        projectileName = 'nuke';
+                        bulletDim = 6;
                     }
                     if (currentGun == 'alienblaster') {
                         projectileName = 'whitemagic'
@@ -501,7 +501,7 @@ function shoot() {
                     }
                     if (currentGun == 'remington') {
                         gunShots = remingtonShots
-                        bulletDim = 120
+                        bulletDim = 120;
                     }
                     gunSprite.set('backgroundColor','rgba(255,255,255,0.3')
                     setTimeout(() => {
@@ -692,6 +692,7 @@ function win() {
                     fadeOut()
                     setLevelText(CURRENT_LEVEL)
                     setTimeText(PLAYER_TIME_LEFT|0)
+                    PLAYER_TIME_LEFT = MAX_TIME_PER_PLAYER;
                     doCountdown().then(() => {
                         setTimeout(() => {
                             IS_TIME_TICKING = true;
@@ -1113,7 +1114,7 @@ function nextRelay() {
 
 let currentTime = 0;
 let IS_TIME_TICKING = false;
-let PLAYER_TIME_LEFT = TIME_PER_PLAYER;
+let PLAYER_TIME_LEFT = MAX_TIME_PER_PLAYER;
 function loop(time) {
     let deltaT = time - currentTime;
     currentTime = time;
@@ -1193,7 +1194,7 @@ function loop(time) {
         IS_TIME_TICKING = false;
         setTimeText(0)
         nextRelay().then(()=>{
-            PLAYER_TIME_LEFT = TIME_PER_PLAYER
+            PLAYER_TIME_LEFT = MAX_TIME_PER_PLAYER
             timeP.color = 'white'
             IS_TIME_TICKING = true;
         })
