@@ -79,7 +79,7 @@ let gunConfigs = {
     },
     'awm': {
         name: 'AWM',
-        delay: 300,
+        delay: 500,
         ammo: 4,
         backupammo: 8,
         ammocap: 4,
@@ -118,7 +118,7 @@ let gunConfigs = {
     },
     'm16': {
         name: 'M-16',
-        delay: 200,
+        delay: 100,
         ammo: 20,
         backupammo: 60,
         ammocap: 20,
@@ -183,7 +183,7 @@ let gunConfigs = {
     },
     'rpd': {
         name: 'RPD',
-        delay: 50,
+        delay: 20,
         ammo: 20,
         backupammo: 100,
         ammocap: 20,
