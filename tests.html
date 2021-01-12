@@ -32,7 +32,7 @@
     })
 
 
-    let CURRENT_REQUIRED_WORDS = [];
+    let CURRENT_REQUIRED_WORDS = ['hippo'];
     function setup(){
         Array.from(alphabet).forEach((letter,i)=>{
             let keywords = KEYWORDS_CONFIG[letter]
@@ -46,20 +46,24 @@
         play()
     }
 
-    function createFaller(name){
-        let faller = new FallingImg(getRandom(width*0.1,width*0.9),-height/10,name,getRandom(1,3),true)
+    function createFaller(name,spinSpeed,fallSpeed,extraPoints){
+        let speed = fallSpeed || getRandom(1,3);
+        let spin = spinSpeed || 0;
+        let faller = new FallingImg(getRandom(width*0.1,width*0.9),-height/10,name,speed,true)
         FallingImg.createIcon('./Letters/'+ name[0] + '/' + name + '.png',width/10,width/10,'blue').then(x=>{
             faller.hasNoBounds = true;
             faller.addSprite(x)
             faller.doFall()
             faller.maxbounds.y = height*1.2
-            faller.doSpin(36000,getRandom(-1)*getRandom(10))
+            if(spin !== 0){
+                faller.doSpin(36000,getRandom(-1)*spin)
+            }
             THINGS_TO_UPDATE.push(faller)
             function handleClick(){
                 if(CURRENT_REQUIRED_WORDS.includes(name)){
-                    handleCorrectWord(name)
+                    handleCorrectWord(name,faller)
                 }else{
-                    handleIncorrectWord(name)
+                    handleIncorrectWord(name,faller)
                 }
                 faller.kill()
             }
@@ -68,11 +72,26 @@
         })
     }
 
-    function handleCorrectWord(word){
-        console.log('ding')
+    function handleCorrectWord(word,data){
+        //calculate points later
+        CURRENT_STREAK++
+        let extraPoints = 0;
+        if(data.extraPoints){
+            extraPoints = data.extraPoints;
+        }
+        let numOfPoints = calculatePoints(true,CURRENT_STREAK,extraPoints);
+        showPoints(data.x,data.y,numOfPoints);
     }
-    function handleIncorrectWord(word){
-        console.log('bwap bwap')
+    function handleIncorrectWord(word,data){
+        CURRENT_STREAK = 0;
+        let numOfPoints = calculatePoints(false,CURRENT_STREAK);
+        showPoints(data.x,data.y,numOfPoints);
+    }
+
+    let CURRENT_STREAK = 0;
+    function calculatePoints(isCorrect,currentStreak,extras){
+        let extraPoints = extras || 0;
+        return isCorrect*20*(currentStreak+1) - 10 + extraPoints;
     }
 
     let THINGS_TO_UPDATE = []
@@ -86,10 +105,66 @@
         if(LOOPING) requestAnimationFrame(loop)
     }
 
+
+    let VARIOUS_LOOPS = []
     function startDropping(letter){
+        letter = letter.toLowerCase();
+        if(!alphabet.includes(letter)){
+            console.error(letter + ' is not a letter');
+            return;
+        }
         let interval = setInterval(()=>{
             createFaller(getRandom(KEYWORDS_CONFIG[letter]))
         },700)
+        VARIOUS_LOOPS.push(interval);
+        let onlyCorrectDrop = setInterval(()=>{
+            createFaller(getRandom(CURRENT_REQUIRED_WORDS))
+        },1500)
+        VARIOUS_LOOPS.push(onlyCorrectDrop);
+    }
+
+    function stopDropping(){
+        VARIOUS_LOOPS.forEach(x=>{
+            clearInterval(x)
+        })
+    }
+
+    function getPointsColor(num){
+        if(num < 0){
+            return 'red';
+        }else if( num === 0){
+            return 'grey'
+        }else if(num <= 10){
+            return 'green'
+        }else if(num <= 30){
+            return 'lightgreen'
+        }else if(num <= 80){
+            return 'lightblue'
+        }else if(num <= 1000){
+            return 'yellow'
+        }else{
+            return 'white'
+        }
+    }
+
+    function getFallerConfig(){
+        let rand = getRandom()
+    }
+
+    function showPoints(x,y,points){
+        if(typeof points !== 'number'){
+            console.error(letter + ' is not a number');
+            return;
+        }
+        let pointDiv = new P(points,x,y,r(width/30) + 'px').fromCenter();
+        pointDiv.color = getPointsColor(points);
+        let pointLoop = setInterval(()=>{
+            pointDiv.y -= 1
+        },50)
+        setTimeout(()=>{
+            pointDiv.remove();
+            clearInterval(pointLoop)
+        },1000)
     }
    
 </script>
