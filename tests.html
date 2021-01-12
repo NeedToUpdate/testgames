@@ -53,7 +53,7 @@
             faller.addSprite(x)
             faller.doFall()
             faller.maxbounds.y = height*1.2
-            faller.doSpin(360,getRandom(-1)*getRandom(10))
+            faller.doSpin(36000,getRandom(-1)*getRandom(10))
             THINGS_TO_UPDATE.push(faller)
             function handleClick(){
                 if(CURRENT_REQUIRED_WORDS.includes(name)){
