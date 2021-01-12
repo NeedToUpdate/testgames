@@ -31,6 +31,8 @@
         setup();
     })
 
+
+    let CURRENT_REQUIRED_WORDS = [];
     function setup(){
         Array.from(alphabet).forEach((letter,i)=>{
             let keywords = KEYWORDS_CONFIG[letter]
@@ -45,12 +47,32 @@
     }
 
     function createFaller(name){
-        let faller = new FallingImg(getRandom(100,width-100),50,name,getRandom(1,3),true)
-        FallingImg.createIcon('./Letters/'+ name[0] + '/' + name + '.png',100,100,'blue').then(x=>{
+        let faller = new FallingImg(getRandom(width*0.1,width*0.9),-height/10,name,getRandom(1,3),true)
+        FallingImg.createIcon('./Letters/'+ name[0] + '/' + name + '.png',width/10,width/10,'blue').then(x=>{
+            faller.hasNoBounds = true;
             faller.addSprite(x)
             faller.doFall()
+            faller.maxbounds.y = height*1.2
+            faller.doSpin(360,getRandom(-1)*getRandom(10))
             THINGS_TO_UPDATE.push(faller)
+            function handleClick(){
+                if(CURRENT_REQUIRED_WORDS.includes(name)){
+                    handleCorrectWord(name)
+                }else{
+                    handleIncorrectWord(name)
+                }
+                faller.kill()
+            }
+            x.shape.addEventListener('click',handleClick)
+            x.shape.addEventListener('touchstart',handleClick)
         })
+    }
+
+    function handleCorrectWord(word){
+        console.log('ding')
+    }
+    function handleIncorrectWord(word){
+        console.log('bwap bwap')
     }
 
     let THINGS_TO_UPDATE = []
@@ -62,6 +84,12 @@
             }
         }
         if(LOOPING) requestAnimationFrame(loop)
+    }
+
+    function startDropping(letter){
+        let interval = setInterval(()=>{
+            createFaller(getRandom(KEYWORDS_CONFIG[letter]))
+        },700)
     }
    
 </script>
