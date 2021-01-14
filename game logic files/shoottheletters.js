@@ -412,41 +412,7 @@ function reload() {
 
 }
 
-function shakeScreen() {
-    id('MAIN_SCREEN').style.left = '-5px'
-    setTimeout(() => {
-        id('MAIN_SCREEN').style.left = '5px'
-        setTimeout(() => {
-            id('MAIN_SCREEN').style.left = '-5px'
-            setTimeout(() => {
-                id('MAIN_SCREEN').style.left = '5px'
-                setTimeout(() => {
-                    id('MAIN_SCREEN').style.left = '-5px'
-                    setTimeout(() => {
-                        id('MAIN_SCREEN').style.left = ''
-                    }, 50)
-                }, 50)
-            }, 50)
-        }, 50)
-    }, 50)
-}
 
-function fadeScreen(color) {
-    return new Promise(resolve => {
-        let white = new Rectangle(0, 0, width, height);
-        white.color = 'transparent';
-        white.addClass('slowsmoothed');
-        white.zIndex = zIndices.screenFade;
-        setTimeout(() => {
-            white.color = color || 'black';
-            setTimeout(() => {
-                resolve(function () {
-                    white.remove();
-                })
-            }, 3100)
-        }, 100);
-    })
-}
 
 let IS_SHOOTING = false;
 let GUN_CHANGE_QUEUE = 'none'
