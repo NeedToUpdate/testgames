@@ -460,7 +460,7 @@
         });
         id('jump_up').addEventListener('click', function () {
             if (player.dead) return;
-            player.jumpUp(1.4);
+            player.jumpUp(25);
             if (getRandom(4) < 1 && !monster.dead) {
                 monsterShoot();
             }

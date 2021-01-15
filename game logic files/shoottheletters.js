@@ -651,7 +651,7 @@ function win() {
     IS_TIME_TICKING = false;
     setTimeout(() => {
         resetAll()
-        fadeScreen('black').then(fadeOut => {
+        fadeScreen('black',zIndices.screenFade).then(fadeOut => {
             if (LEVELS_BEATEN_THIS_RELAY >= MAX_LEVELS_PER_PERSON) {
                 nextRelay().then(() => {
                     setup(); //fadescreen takes 3sec
@@ -1056,7 +1056,7 @@ function nextRelay() {
     return new Promise(resolve => {
         GAME_HAS_STARTED = false;
         stop();
-        fadeScreen('rgba(0,0,0,0.5)').then(fadeOut=>{
+        fadeScreen('rgba(0,0,0,0.5)',zIndices.screenFade).then(fadeOut=>{
             bullets.forEach(x=>{
                 x.kill();
             })

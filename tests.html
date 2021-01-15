@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -19,483 +20,672 @@
     <style>
     </style>
 </head>
+
 <body>
     <div id="MAIN_WRAPPER">
-        <div style="background-color: black"  id="MAIN_SCREEN">
+        <div style="background-color: black" id="MAIN_SCREEN">
 
         </div>
     </div>
-<script>
-   
-    let TIME_PER_PLAYER = 61;
+    <script>
+        let TIME_PER_PLAYER = 61;
 
 
-    let LEFT_PADDING = width*0.1
-    let LETTER_WIDTH = width/20
-    let COL_NUM = 10;
-    let TOP_PADDING = height*0.2
+        let LEFT_PADDING = width * 0.1
+        let LETTER_WIDTH = width / 20
+        let COL_NUM = 10;
+        let TOP_PADDING = height * 0.2
 
-    let CURRENT_REQUIRED_WORDS = [];
-    let SELECTED_LETTERS = [];
-    let DIFFICULTY = 0;
-    let CURRENT_POINTS = 0;
+        let SESSION_WORDS = [];
+        let SESSION_LETTERS = [];
+        let CURRENT_REQUIRED_WORDS = [];
+        let SELECTED_LETTERS = [];
+        let DIFFICULTY = 0;
+        let CURRENT_POINTS = 0;
+        let TOTAL_POINTS = 0;
 
 
-    function setup(){
-        LEFT_PADDING = width*0.1
-        LETTER_WIDTH = width/12
-        COL_NUM = 10;
-        TOP_PADDING = height*0.2
-        setupKeyboard().then((x)=>{
-            SELECTED_LETTERS = x.letters.split('').map(x=>x.toLowerCase());
-            DIFFICULTY = x.num; //TODO
-            x.removeFn();
-            play()
-            selectPlayLetter().then(y=>{
-                y.removeFn()
-                setPointsText(CURRENT_POINTS);
-                setStreakText(1)
-                IS_TIME_TICKING = true;
-                startDropping(y.letters)
+        function setup() {
+            LEFT_PADDING = width * 0.1
+            LETTER_WIDTH = width / 12
+            COL_NUM = 10;
+            TOP_PADDING = height * 0.2
+            setupKeyboard().then((x) => {
+                SELECTED_LETTERS = x.letters.split('').map(x => x.toLowerCase());
+                DIFFICULTY = x.num; //TODO
+                x.removeFn();
+                play()
+                selectPlayLetter().then(y => {
+                    y.removeFn()
+                    SESSION_LETTERS = y.letters;
+                    startScreen().then(()=>{
+                        setPointsText(CURRENT_POINTS);
+                        setStreakText(1)
+                        IS_TIME_TICKING = true;
+                        startDropping(y.letters)
+                    })
+                })
             })
-        })
-    }
+        }
 
-    let timeP = {}
-    function setTimeText(num){
-        function makeString(num){
-            return num + 's'
-        }
-        let color = 'white'
-        if(num<=15){
-            color = 'yellow'
-        }
-        if(num<=5){
-            color = 'red'
-        }
-        if(checkObj(timeP)){
-            timeP.string = makeString(num)
-            timeP.color = color
-            timeP.set('border', color + ' solid 3px')
 
-        }else{
-            timeP = new P(makeString(CURRENT_POINTS+num),width/2, width/35, r(width/20)).fromCenter()
-            timeP.color = color;
-            timeP.set('backgroundColor','rgba(255,255,255,0.8)')
-            timeP.set('border',color + ' solid 3px')
-            timeP.set('borderRadius',r(width/50) + 'px')
-            timeP.zIndex = 100;
-        }
-    }
+        let headerP = {}
+        function setHeader(){
 
-    let pointsP = {}
-    let IS_ADDING_POINTS = false;
-    let points_queue = []
-    function setPointsText(num){
-        function makeString(num){
-            return 'Points: ' + (num |0) + '   ';
         }
-        if(IS_ADDING_POINTS){
-            points_queue.push(num)
-            return;
-        }
-        IS_ADDING_POINTS = true;
-        let final_points = CURRENT_POINTS + num;
-        let initial_points = CURRENT_POINTS;
-        if(checkObj(pointsP)){
-            let chunk = num/17 | 0;
-            for(let i = 0; i<18; i++){
-                pointsP.set('textShadow','lightgreen 0 0 5px')
-                setTimeout(()=>{
-                    if(i===17){
-                    pointsP.string = makeString(final_points);
-                    CURRENT_POINTS+= num;
-                    pointsP.set('textShadow','')
-                    IS_ADDING_POINTS = false;
-                    if(points_queue.length>0){
-                        let nextNum = points_queue.shift();
-                        setPointsText(nextNum)
-                    }
-                }else{
-                    initial_points += chunk
-                    pointsP.string = makeString(initial_points);
-                }
-                },i*30)
+
+        let timeP = {}
+        function setTimeText(num) {
+            function makeString(num) {
+                return num + 's'
             }
-        }else{
-            pointsP = new P(makeString(CURRENT_POINTS+num),width/50, width/50, r(width/20))
-            pointsP.color = 'blue';
-            pointsP.set('backgroundColor','rgba(255,255,255,0.8)')
-            pointsP.set('border','blue solid 3px')
-            pointsP.set('borderRadius',r(width/50) + 'px')
-            pointsP.zIndex = 100
-            IS_ADDING_POINTS = false;
-            CURRENT_POINTS += num
-        }
-    }
+            let color = 'white'
+            if (num <= 15) {
+                color = 'yellow'
+            }
+            if (num <= 5) {
+                color = 'red'
+            }
+            if (checkObj(timeP)) {
+                timeP.string = makeString(num)
+                timeP.color = color
+                timeP.set('border', color + ' solid 3px')
 
-    let streakP = {}
-    function setStreakText(num){
-        let string = 'x' + (num |0);
-        let color = 'grey'
-        if(num>1){
-            color = 'green'
+            } else {
+                timeP = new P(makeString(CURRENT_POINTS + num), width / 2, width / 35, r(width / 20)).fromCenter()
+                timeP.color = color;
+                timeP.set('backgroundColor', 'rgba(255,255,255,0.8)')
+                timeP.set('border', color + ' solid 3px')
+                timeP.set('borderRadius', r(width / 50) + 'px')
+                timeP.zIndex = 100;
+            }
         }
-        if(num>3){
-            color = 'blue'
-        }
-        if(num>7){
-            color = 'deeppink'
-        }
-        if(num>15){
-            color = 'red'
-        }
-        if(checkObj(streakP)){
-            streakP.string = string
-            streakP.color = color
-            streakP.set('border', color + ' solid 3px')
 
-        }else{
-            streakP = new P(string, width - width/6,width/50, r(width/20))
-            streakP.color = color;
-            streakP.set('backgroundColor','rgba(255,255,255,0.8)')
-            streakP.set('border', color + ' solid 3px')
-            streakP.set('borderRadius',r(width/50) + 'px')
-            streakP.zIndex = 100
+        let pointsP = {}
+        let IS_ADDING_POINTS = false;
+        let points_queue = []
+
+        function setPointsText(num) {
+            function makeString(num) {
+                return 'Points: ' + (num | 0) + '   ';
+            }
+            if (IS_ADDING_POINTS) {
+                points_queue.push(num)
+                return;
+            }
+            IS_ADDING_POINTS = true;
+            let final_points = CURRENT_POINTS + num;
+            let initial_points = CURRENT_POINTS;
+            if (checkObj(pointsP)) {
+                let chunk = num / 17 | 0;
+                for (let i = 0; i < 18; i++) {
+                    pointsP.set('textShadow', 'lightgreen 0 0 5px')
+                    setTimeout(() => {
+                        if (i === 17) {
+                            pointsP.string = makeString(final_points);
+                            CURRENT_POINTS += num;
+                            TOTAL_POINTS += num;
+                            pointsP.set('textShadow', '')
+                            IS_ADDING_POINTS = false;
+                            if (points_queue.length > 0) {
+                                let nextNum = points_queue.shift();
+                                setPointsText(nextNum)
+                            }
+                        } else {
+                            initial_points += chunk
+                            pointsP.string = makeString(initial_points);
+                        }
+                    }, i * 30)
+                }
+            } else {
+                pointsP = new P(makeString(CURRENT_POINTS + num), width / 50, width / 50, r(width / 20))
+                pointsP.color = 'blue';
+                pointsP.set('backgroundColor', 'rgba(255,255,255,0.8)')
+                pointsP.set('border', 'blue solid 3px')
+                pointsP.set('borderRadius', r(width / 50) + 'px')
+                pointsP.zIndex = 100
+                IS_ADDING_POINTS = false;
+                CURRENT_POINTS += num
+                TOTAL_POINTS += num
+            }
         }
-    }
+
+        let streakP = {}
+
+        function setStreakText(num) {
+            let string = 'x' + (num | 0);
+            let color = 'grey'
+            if (num > 1) {
+                color = 'green'
+            }
+            if (num > 3) {
+                color = 'blue'
+            }
+            if (num > 7) {
+                color = 'deeppink'
+            }
+            if (num > 15) {
+                color = 'red'
+            }
+            if (checkObj(streakP)) {
+                streakP.string = string
+                streakP.color = color
+                streakP.set('border', color + ' solid 3px')
+
+            } else {
+                streakP = new P(string, width - width / 6, width / 50, r(width / 20))
+                streakP.color = color;
+                streakP.set('backgroundColor', 'rgba(255,255,255,0.8)')
+                streakP.set('border', color + ' solid 3px')
+                streakP.set('borderRadius', r(width / 50) + 'px')
+                streakP.zIndex = 100
+            }
+        }
 
 
-    function nextRelay(){
-        stop()
-        PLAYER_TIME_LEFT = TIME_PER_PLAYER;
-        fadeScreen()
-    }
+        function nextRelay() {
+            stop()
+            PLAYER_TIME_LEFT = TIME_PER_PLAYER;
+            return new Promise(resolve => {
+                fadeScreen('rgba(0,0,0,0.7)', 15).then(fadeOut => {
+                    let goodJob = new P('Good Job!', width / 2, height * 0.1, r(width / 20) + 'px')
+                        .fromCenter();
+                    goodJob.color = 'lightgreen';
+                    goodJob.zIndex = 16;
+                    setTimeout(() => {
+                        //SHOW THIS ROUNDS POINTS
+                        let currentPoints = new P('Your Points: 0', width / 2, height * 0.2, r(
+                            width / 22) + 'px').fromCenter();
+                        currentPoints.zIndex = 16
+                        currentPoints.color = 'lightblue'
+                        let chunk = CURRENT_POINTS / 60;
+                        let counter = 0;
+                        for (let i = 0; i <= 60; i++) {
+                            //DO INCREMENT
+                            setTimeout(() => {
+                                if (i === 60) {
+                                    currentPoints.string = 'Your Points: ' +  r(CURRENT_POINTS);
+                                    setTimeout(()=>{
+                                    //SHOW TOTAL POINTS FOR THIS SESSION
+                                    let counter2 = TOTAL_POINTS - CURRENT_POINTS;
+                                    let totalPoints = new P('Total Points: ' + counter2,width/2,height*0.3,r(width/22)).fromCenter();
+                                    totalPoints.zIndex = 16
+                                    totalPoints.color = 'lightred'
+                                    let chunk = CURRENT_POINTS / 60;
+                                    for (let i = 0; i <= 60; i++) {
+                                        //do decrement of current points and increment total points
+                                        setTimeout(() => {
+                                            if (i === 60) {
+                                                totalPoints.string = 'Total Points: ' +   TOTAL_POINTS;
+                                                currentPoints.string = 'Your Points: ' +  0;
+                                                setTimeout(()=>{
+                                                    currentPoints.remove() //delay this
+                                                },100);
+                                                resolve({
+                                                    fadeOut: fadeOut,
+                                                    removeFn: ()=>{
+                                                        totalPoints.remove()
+                                                        goodJob.remove();
+                                                    }
+                                                });
+                                            } else {
+                                                counter -= chunk;
+                                                counter2 += chunk;
+                                                currentPoints.string = 'Your Points: ' + r(counter);
+                                                totalPoints.string = 'Total Points: ' + r(counter2);
 
-    function selectPlayLetter(){
-        let stuffToDelete = []
-        CURRENT_REQUIRED_WORDS = [];
-        return new Promise(resolve=>{
-            let chosenFew = []
-            SELECTED_LETTERS.forEach((letter,i)=>{
-                    let pDiv = new P(letter.toUpperCase() + ': ',width/2 - LETTER_WIDTH*3,TOP_PADDING + LETTER_WIDTH*i,LETTER_WIDTH).fromCenter();
+                                            }
+                                        }, i * 17)
+                                    }
+                                    },3000)
+                                    
+                                } else {
+                                    counter += chunk;
+                                    currentPoints.string = 'Your Points: ' + r(counter);
+                                }
+                            }, i * 17)
+                        }
+                    }, 500)
+                })
+            })
+        }
+
+        function startScreen(){
+            let LETTER_WIDTH = width/10;
+            let yourGoal = new P('Your Goal:', width/2, width*0.1, r(width/20)).fromCenter();
+            yourGoal.zIndex = 16;
+            yourGoal.color = 'lightgreen';
+            CURRENT_REQUIRED_WORDS = [];
+            let stuffToDelete = [];
+            stuffToDelete.push(yourGoal);
+            SESSION_WORDS.forEach((x,i)=>{
+                let letter = x[0];
+                if(!KEYWORDS_CONFIG[letter].includes(x)){
+                    letter = findLetter(x);
+                }
+                let img = new Img('./Letters/' + letter + '/' + x + '.png', width/2 - LETTER_WIDTH*(SESSION_WORDS.length/2 - i), width*0.2,LETTER_WIDTH).onLoad(()=>{
+                    img.y -= img.height/2;
+                    CURRENT_REQUIRED_WORDS.push(x)
+                    img.shape.addEventListener('click',()=>{
+                        if(CURRENT_REQUIRED_WORDS.includes(x)){
+                            CURRENT_REQUIRED_WORDS.splice(CURRENT_REQUIRED_WORDS.indexOf(x),1);
+                            img.set('opacity','0');
+                        }else{
+                            CURRENT_REQUIRED_WORDS.push(x);
+                            img.set('opacity','1');
+                        }
+
+                    })
+                });
+                img.zIndex = 16;
+                stuffToDelete.push(img);
+            })
+            let goBtn = new P('GO', width/2, height*0.6,r(width/20)).fromCenter()
+            goBtn.zIndex = 16;
+            goBtn.set('backgroundColor','lightgreen')
+            goBtn.color = 'green'
+            goBtn.set('borderColor','green')
+            goBtn.set('borderRadius',r(width/100) + 'px');
+            stuffToDelete.push(goBtn)
+            return new Promise(resolve=>{
+                goBtn.shape.addEventListener('click',()=>{
+                    stuffToDelete.forEach(x=>{
+                        x.remove();
+                    })
+                    resolve()
+                })
+            })
+        }
+
+        function selectPlayLetter() {
+            let stuffToDelete = []
+            SESSION_WORDS = [];
+            return new Promise(resolve => {
+                let chosenFew = []
+                SELECTED_LETTERS.forEach((letter, i) => {
+                    let pDiv = new P(letter.toUpperCase() + ': ', width / 2 - LETTER_WIDTH * 3,
+                        TOP_PADDING + LETTER_WIDTH * i, LETTER_WIDTH).fromCenter();
                     pDiv.color = 'yellow';
                     stuffToDelete.push(pDiv);
-                    KEYWORDS_CONFIG[letter].forEach((icon,j)=>{
-                        let img = new Img('./Letters/' + letter + '/' + icon + '.png', width/2 - LETTER_WIDTH*(1-j), TOP_PADDING + LETTER_WIDTH*i, LETTER_WIDTH).fromCenter().onLoad(()=>{
-                            img.y -= img.height/2
+                    KEYWORDS_CONFIG[letter].forEach((icon, j) => {
+                        let img = new Img('./Letters/' + letter + '/' + icon + '.png', width /
+                            2 - LETTER_WIDTH * (1 - j), TOP_PADDING + LETTER_WIDTH * i,
+                            LETTER_WIDTH).fromCenter().onLoad(() => {
+                            img.y -= img.height / 2
                             img.x -= img.width
-                            img.shape.addEventListener('click',()=>{
-                                if(CURRENT_REQUIRED_WORDS.includes(icon)){
-                                    img.set('border','')
-                                    chosenFew.splice(chosenFew.indexOf(icon[0]),1)
-                                    CURRENT_REQUIRED_WORDS.splice(CURRENT_REQUIRED_WORDS.indexOf(icon),1)
-                                }else{
-                                    CURRENT_REQUIRED_WORDS.push(icon)
+                            img.shape.addEventListener('click', () => {
+                                if (SESSION_WORDS.includes(icon)) {
+                                    img.set('border', '')
+                                    chosenFew.splice(chosenFew.indexOf(icon[0]),
+                                        1)
+                                    SESSION_WORDS.splice(
+                                        SESSION_WORDS.indexOf(
+                                        icon), 1)
+                                } else {
+                                    SESSION_WORDS.push(icon)
                                     let letter = icon[0];
-                                    if(!KEYWORDS_CONFIG[letter].includes(icon)){
+                                    if (!KEYWORDS_CONFIG[letter].includes(
+                                        icon)) {
                                         letter = findLetter(icon)
                                     }
                                     chosenFew.push(letter)
-                                    img.set('border','solid green 3px')
-                                    img.set('borderRadius',width/10 + 'px')
+                                    img.set('border', 'solid green 3px')
+                                    img.set('borderRadius', width / 10 + 'px')
                                 }
                             })
                         })
                         stuffToDelete.push(img)
                     })
-                    let checkDiv = new P('✔', 10,10, r(width/30) + 'px')
+                    let checkDiv = new P('✔', 10, 10, r(width / 30) + 'px')
                     checkDiv.color = 'green'
                     stuffToDelete.push(checkDiv)
-                    checkDiv.shape.addEventListener('click',()=>{
+                    checkDiv.shape.addEventListener('click', () => {
                         resolve({
                             letters: chosenFew,
-                            removeFn: ()=>{
-                                stuffToDelete.forEach(x=>{
+                            removeFn: () => {
+                                stuffToDelete.forEach(x => {
                                     x.remove()
                                 })
                             }
                         })
                     })
+                })
             })
-        })
-    }
+        }
 
-    function makeLetter(letter, x, y) {
-        let div = new Square(x, y, LETTER_WIDTH - 10);
-        div.set('border', 'solid white 3px');
-        div.set('borderRadius', '10px');
-        div.set('display', 'grid');
-        div.set('justify-items', 'center');
-        div.set('backgroundColor', 'rgba(255,255,255,0.2)');
-        let l = new P(letter, 0, 0);
-        l.set('position', '');
-        l.set('color', 'white');
-        l.set('font-family', 'sans');
-        l.set('font-size', '2em');
-        l.set('padding', '0');
-        l.set('margin', 'auto 0');
-        div.letter = letter;
-        div.attach(l);
-        return div;
-    }
+        function makeLetter(letter, x, y) {
+            let div = new Square(x, y, LETTER_WIDTH - 10);
+            div.set('border', 'solid white 3px');
+            div.set('borderRadius', '10px');
+            div.set('display', 'grid');
+            div.set('justify-items', 'center');
+            div.set('backgroundColor', 'rgba(255,255,255,0.2)');
+            let l = new P(letter, 0, 0);
+            l.set('position', '');
+            l.set('color', 'white');
+            l.set('font-family', 'sans');
+            l.set('font-size', '2em');
+            l.set('padding', '0');
+            l.set('margin', 'auto 0');
+            div.letter = letter;
+            div.attach(l);
+            return div;
+        }
 
-    function setupKeyboard() {
-        let alphabet_divs = [];
-        return new Promise(resolve => {
-            let selectedletters = '';
-            let selectednumber =  0;
-            (alphabet.toUpperCase() + '123✔').split('').forEach((letter, i) => {
-                let div = makeLetter(letter, LEFT_PADDING + LETTER_WIDTH * (i % COL_NUM), TOP_PADDING + LETTER_WIDTH * (i / COL_NUM | 0));
-                div.shape.addEventListener('click', () => {
-                    div.set('border', 'green solid 4px');
-                    if (parseInt(letter)) {
-                        selectednumber = letter;
-                        //fancy way of setting the other numbers to white
-                        alphabet_divs.filter(x => ('357'.replace(letter, '').includes(x.letter))).forEach(x => {
-                            x.set('border', 'white solid 4px')
-                        })
-                    } else if (alphabet.toUpperCase().includes(letter)) {
-                        if (selectedletters.includes(letter)) {
-                            selectedletters = selectedletters.replace(letter, '');
-                            div.set('border', 'white solid 4px')
+        function setupKeyboard() {
+            let alphabet_divs = [];
+            return new Promise(resolve => {
+                let selectedletters = '';
+                let selectednumber = 0;
+                (alphabet.toUpperCase() + '123✔').split('').forEach((letter, i) => {
+                    let div = makeLetter(letter, LEFT_PADDING + LETTER_WIDTH * (i % COL_NUM),
+                        TOP_PADDING + LETTER_WIDTH * (i / COL_NUM | 0));
+                    div.shape.addEventListener('click', () => {
+                        div.set('border', 'green solid 4px');
+                        if (parseInt(letter)) {
+                            selectednumber = letter;
+                            //fancy way of setting the other numbers to white
+                            alphabet_divs.filter(x => ('357'.replace(letter, '').includes(x
+                                .letter))).forEach(x => {
+                                x.set('border', 'white solid 4px')
+                            })
+                        } else if (alphabet.toUpperCase().includes(letter)) {
+                            if (selectedletters.includes(letter)) {
+                                selectedletters = selectedletters.replace(letter, '');
+                                div.set('border', 'white solid 4px')
+                            } else {
+                                if (selectedletters.length >= 4) {
+                                    let toRemove = selectedletters[0]
+                                    selectedletters = selectedletters.slice(1)
+                                    alphabet_divs.filter(x => x.letter === toRemove)[0].set(
+                                        'border', 'white solid 4px');
+                                }
+                                selectedletters += letter;
+                            }
+
                         } else {
-                            if(selectedletters.length>=4){
-                                let toRemove = selectedletters[0]
-                                selectedletters = selectedletters.slice(1)
-                                alphabet_divs.filter(x=>x.letter === toRemove)[0].set('border','white solid 4px');
-                            }
-                            selectedletters += letter;
+                            resolve({
+                                letters: selectedletters,
+                                num: parseInt(selectednumber),
+                                removeFn: function () {
+                                    alphabet_divs.forEach(div => {
+                                        div.remove();
+                                    })
+                                }
+                            })
                         }
-
-                    } else {
-                        resolve({
-                            letters: selectedletters, num: parseInt(selectednumber),
-                            removeFn: function () {
-                                alphabet_divs.forEach(div => {
-                                    div.remove();
-                                })
-                            }
-                        })
-                    }
-                });
-                alphabet_divs.push(div)
+                    });
+                    alphabet_divs.push(div)
+                })
             })
-        })
 
-    }
-
-    function findLetter(name){
-        return alphabet.split('').map(letter=>{
-            return KEYWORDS_CONFIG[letter].includes(name)? letter : ''
-        }).filter(x=>x!=='')[0]
-    }
-
-    function createFaller(name,fallSpeed,spinSpeed,extraPoints,color){
-        let speed = fallSpeed || getRandom(1,3);
-        let spin = spinSpeed || 0;
-        let faller = new FallingImg(getRandom(width*0.1,width*0.9),-height/10,name,speed,true)
-        let letter = name[0]
-        if(!KEYWORDS_CONFIG[letter].includes(name)){
-            letter = findLetter(name)
         }
-        FallingImg.createIcon('./Letters/'+ letter + '/' + name + '.png',width/10,width/10,color || 'blue').then(x=>{
-            faller.hasNoBounds = true;
-            faller.addSprite(x)
-            faller.doFall()
-            faller.maxbounds.y = height*1.2
-            faller.extraPoints = extraPoints
-            if(spin !== 0){
-                faller.doSpin(36000,getRandom(-1)*spin)
+
+        function findLetter(name) {
+            return alphabet.split('').map(letter => {
+                return KEYWORDS_CONFIG[letter].includes(name) ? letter : ''
+            }).filter(x => x !== '')[0]
+        }
+
+        function createFaller(name, fallSpeed, spinSpeed, extraPoints, color) {
+            let speed = fallSpeed || getRandom(1, 3);
+            let spin = spinSpeed || 0;
+            let faller = new FallingImg(getRandom(width * 0.1, width * 0.9), -height / 10, name, speed, true)
+            let letter = name[0]
+            if (!KEYWORDS_CONFIG[letter].includes(name)) {
+                letter = findLetter(name)
             }
-            THINGS_TO_UPDATE.push(faller)
-            function handleClick(){
-                if(CURRENT_REQUIRED_WORDS.includes(name)){
-                    handleCorrectWord(name,faller)
-                }else{
-                    handleIncorrectWord(name,faller)
+            FallingImg.createIcon('./Letters/' + letter + '/' + name + '.png', width / 10, width / 10, color || 'blue')
+                .then(x => {
+                    faller.hasNoBounds = true;
+                    faller.addSprite(x)
+                    faller.doFall()
+                    faller.maxbounds.y = height * 1.2
+                    faller.extraPoints = extraPoints
+                    if (spin !== 0) {
+                        faller.doSpin(36000, getRandom(-1) * spin)
+                    }
+                    THINGS_TO_UPDATE.push(faller)
+
+                    function handleClick() {
+                        if (CURRENT_REQUIRED_WORDS.includes(name)) {
+                            handleCorrectWord(name, faller)
+                        } else {
+                            handleIncorrectWord(name, faller)
+                        }
+                        faller.kill()
+                    }
+                    x.shape.addEventListener('click', handleClick)
+                    x.shape.addEventListener('touchstart', handleClick)
+                })
+        }
+
+        function getMultiplier(num) {
+            if (num >= 50) {
+                return 32
+            }
+            if (num >= 25) {
+                return 16
+            }
+            if (num >= 12) {
+                return 8
+            }
+            if (num >= 5) {
+                return 4
+            }
+            if (num >= 3) {
+                return 2
+            }
+            return 1;
+        }
+
+        function handleCorrectWord(word, data) {
+            //calculate points later
+            CURRENT_STREAK++
+            let extraPoints = 0;
+            if (data.extraPoints) {
+                extraPoints = data.extraPoints;
+            }
+            let numOfPoints = calculatePoints(true, CURRENT_STREAK, extraPoints);
+            showPoints(data.x, data.y, numOfPoints);
+            setPointsText(numOfPoints)
+            setStreakText(getMultiplier(CURRENT_STREAK))
+        }
+
+        function handleIncorrectWord(word, data) {
+            CURRENT_STREAK = 0;
+            let numOfPoints = calculatePoints(false, CURRENT_STREAK);
+            showPoints(data.x, data.y, numOfPoints);
+            setPointsText(numOfPoints)
+            setStreakText(1)
+        }
+
+        let CURRENT_STREAK = 0;
+
+        function calculatePoints(isCorrect, currentStreak, extras) {
+            let extraPoints = extras || 0;
+            return isCorrect * 20 * getMultiplier(currentStreak) - 10 + extraPoints + currentStreak;
+        }
+
+        let THINGS_TO_UPDATE = []
+        let current_time = 0;
+        let IS_TIME_TICKING = false;
+        let PLAYER_TIME_LEFT = TIME_PER_PLAYER;
+
+        function loop(time) {
+            let deltaT = time - current_time;
+            current_time = time;
+            if (IS_TIME_TICKING) {
+                PLAYER_TIME_LEFT -= deltaT / 1000
+                setTimeText(PLAYER_TIME_LEFT | 0);
+            }
+            if(PLAYER_TIME_LEFT<=0){
+                IS_TIME_TICKING = false;
+                
+                timeP.remove()
+                streakP.remove()
+                pointsP.remove();
+                nextRelay().then(x=>{
+                    THINGS_TO_UPDATE.forEach(x=>{
+                        x.kill();
+                    })
+                    THINGS_TO_UPDATE = [];
+                    x.removeFn()
+                    let goBtn = new P('ok',width/2,height*0.7,r(width/22)+'px').fromCenter()
+                    goBtn.set('border','solid green ' + r(width/300) + 'px')
+                    goBtn.set('borderRadius',r(width/30) + 'px');
+                    goBtn.color = 'green'
+                    goBtn.set('backgroundColor','lightgreen')
+                    goBtn.shape.addEventListener('click',()=>{
+                        startScreen().then(()=>{
+                            x.fadeOut()
+                        })
+                    })
+                })
+            }
+
+            for (let i = THINGS_TO_UPDATE.length - 1; i >= 0; i--) {
+                THINGS_TO_UPDATE[i].update(deltaT)
+                if (THINGS_TO_UPDATE[i].dead) {
+                    THINGS_TO_UPDATE.splice(i, 1);
                 }
-                faller.kill()
             }
-            x.shape.addEventListener('click',handleClick)
-            x.shape.addEventListener('touchstart',handleClick)
-        })
-    }
-
-    function getMultiplier(num){
-        if(num>=50){
-            return 32
-        }
-        if(num>=25){
-            return 16
-        }
-        if(num>=12){
-            return 8
-        }
-        if(num>=5){
-            return 4
-        }
-        if(num>=3){
-            return 2
-        }
-        return 1;
-    }
-
-    function handleCorrectWord(word,data){
-        //calculate points later
-        CURRENT_STREAK++
-        let extraPoints = 0;
-        if(data.extraPoints){
-            extraPoints = data.extraPoints;
-        }
-        let numOfPoints = calculatePoints(true,CURRENT_STREAK,extraPoints);
-        showPoints(data.x,data.y,numOfPoints);
-        setPointsText(numOfPoints)
-        setStreakText(getMultiplier(CURRENT_STREAK))
-    }
-    function handleIncorrectWord(word,data){
-        CURRENT_STREAK = 0;
-        let numOfPoints = calculatePoints(false,CURRENT_STREAK);
-        showPoints(data.x,data.y,numOfPoints);
-        setPointsText(numOfPoints)
-        setStreakText(1)
-    }
-
-    let CURRENT_STREAK = 0;
-    function calculatePoints(isCorrect,currentStreak,extras){
-        let extraPoints = extras || 0;
-        return isCorrect*20*getMultiplier(currentStreak) - 10 + extraPoints + currentStreak;
-    }
-
-    let THINGS_TO_UPDATE = []
-    let current_time = 0;
-    let IS_TIME_TICKING = false;
-    let PLAYER_TIME_LEFT = TIME_PER_PLAYER;
-    function loop(time){
-        let deltaT = time-current_time;
-        current_time = time;
-        if(IS_TIME_TICKING){
-             PLAYER_TIME_LEFT -= deltaT/1000
-             setTimeText(PLAYER_TIME_LEFT|0);
+            if (LOOPING) requestAnimationFrame(loop)
         }
 
-        for(let i = THINGS_TO_UPDATE.length-1; i>=0; i--){
-            THINGS_TO_UPDATE[i].update(deltaT)
-            if(THINGS_TO_UPDATE[i].dead){
-                THINGS_TO_UPDATE.splice(i,1);
+
+        let VARIOUS_LOOPS = []
+
+        function startDropping(letter) {
+            let letters = []
+            if (letter instanceof Array) {
+                letters = letter.map(x => x.toLowerCase())
+            } else {
+                if (!alphabet.includes(letter) || letter.length > 1) {
+                    console.error(letter + ' is not a letter');
+                    return;
+                }
+                letters = [letter.toLowerCase()];
+                let letter = name[0]
+                if (!KEYWORDS_CONFIG[letter].includes(name)) {
+                    letter = findLetter(name)
+                }
+            }
+            console.log(letters)
+
+            let interval = setInterval(() => {
+                let config = getFallerConfig();
+                createFaller(getRandom(KEYWORDS_CONFIG[getRandom(letters)]), config.speed, config.spin, config
+                    .extraPoints, config.extraPoints > 50 ? 'yellow' : 'grey')
+            }, 900)
+            VARIOUS_LOOPS.push(interval);
+            let onlyCorrectDrop = setInterval(() => {
+                if (CURRENT_REQUIRED_WORDS.length == 0) return;
+                let config = getFallerConfig(2);
+                createFaller(getRandom(CURRENT_REQUIRED_WORDS), config.speed, config.spin, 10, 'blue')
+            }, 3500)
+            VARIOUS_LOOPS.push(onlyCorrectDrop);
+            let completelyWrong = setInterval(() => {
+                let config = getFallerConfig(0.8);
+                let wrongName = getRandom(KEYWORDS_CONFIG[getRandom(alphabet.split(''))]);
+                console.log(wrongName)
+                createFaller(wrongName, config.speed, config.spin, 10, getRandom(['blue', 'grey', 'green',
+                    'yellow'
+                ]))
+            }, 4100)
+            VARIOUS_LOOPS.push(completelyWrong)
+        }
+
+        function stopDropping() {
+            VARIOUS_LOOPS.forEach(x => {
+                clearInterval(x)
+            })
+        }
+
+        stop = ()=>{
+            LOOPING = false;
+            stopDropping();
+        }
+
+        function getPointsColor(num) {
+            if (num < 0) {
+                return 'red';
+            } else if (num === 0) {
+                return 'grey'
+            } else if (num <= 10) {
+                return 'green'
+            } else if (num <= 30) {
+                return 'lightgreen'
+            } else if (num <= 80) {
+                return 'lightblue'
+            } else if (num <= 1000) {
+                return 'yellow'
+            } else {
+                return 'white'
             }
         }
-        if(LOOPING) requestAnimationFrame(loop)
-    }
 
+        function getFallerConfig(multiplier) {
+            if (multiplier === undefined) multiplier = 1;
+            let rand = getRandom() * multiplier; //if multiplier is larger, higher chance of lower diifculty
+            if (rand < 0.1) {
+                //10%
+                return {
+                    speed: getRandom(5, 7),
+                    spin: getRandom(8, 10),
+                    extraPoints: getRandom(50) * 2
+                }
+            } else if (rand < 0.3) {
+                //20%
+                return {
+                    speed: getRandom(3, 4),
+                    spin: getRandom(5, 7),
+                    extraPoints: getRandom(25) * 2
+                }
+            } else if (rand < 0.6) {
+                //30%
+                return {
+                    speed: getRandom(1, 2),
+                    spin: getRandom(1, 2),
+                    extraPoints: getRandom(5) * 2
+                }
+            } else {
+                //40%
+                return {
+                    speed: getRandom(1, 2),
+                    spin: 0,
+                    extraPoints: 0
+                }
+            }
+        }
 
-    let VARIOUS_LOOPS = []
-    function startDropping(letter){
-        let letters = []
-        if(letter instanceof Array){
-            letters = letter.map(x=>x.toLowerCase())
-        }else{
-            if(!alphabet.includes(letter) || letter.length>1){
-                console.error(letter + ' is not a letter');
+        function showPoints(x, y, points) {
+            if (typeof points !== 'number') {
+                console.error(letter + ' is not a number');
                 return;
             }
-            letters = [letter.toLowerCase()];
-            let letter = name[0]
-            if(!KEYWORDS_CONFIG[letter].includes(name)){
-            letter = findLetter(name)
+            let pointDiv = new P(points, x, y, r(width / 30) + 'px').fromCenter();
+            pointDiv.color = getPointsColor(points);
+            let pointLoop = setInterval(() => {
+                pointDiv.y -= 1
+            }, 50)
+            setTimeout(() => {
+                pointDiv.remove();
+                clearInterval(pointLoop)
+            }, 1000)
         }
-        }
-        console.log(letters)
-        
-        let interval = setInterval(()=>{
-            let config = getFallerConfig();
-            createFaller(getRandom(KEYWORDS_CONFIG[getRandom(letters)]), config.speed, config.spin, config.extraPoints, config.extraPoints>50? 'yellow':'grey')
-        },900)
-        VARIOUS_LOOPS.push(interval);
-        let onlyCorrectDrop = setInterval(()=>{
-            if(CURRENT_REQUIRED_WORDS.length==0) return;
-            let config = getFallerConfig(2);
-            createFaller(getRandom(CURRENT_REQUIRED_WORDS), config.speed, config.spin, 10, 'blue')
-        },3500)
-        VARIOUS_LOOPS.push(onlyCorrectDrop);
-        let completelyWrong = setInterval(()=>{
-            let config = getFallerConfig(0.8);
-            let wrongName = getRandom(KEYWORDS_CONFIG[getRandom(alphabet.split(''))]);
-            console.log(wrongName)
-            createFaller(wrongName, config.speed, config.spin, 10, getRandom(['blue','grey','green','yellow']))
-        },4100)
-        VARIOUS_LOOPS.push(completelyWrong)
-    }
 
-    function stopDropping(){
-        VARIOUS_LOOPS.forEach(x=>{
-            clearInterval(x)
+
+        setupBody(id('MAIN_SCREEN')).then(() => {
+            let backgroundimage = 'bg' + (Math.random() * 8 | 0).toString() + '.jpg';
+            DOMObjectGlobals.body.style.backgroundColor = 'grey';
+            DOMObjectGlobals.body.style.backgroundImage = 'url(../images/' + backgroundimage.toString() + ')';
+            DOMObjectGlobals.body.style.backgroundRepeat = 'no-repeat';
+            DOMObjectGlobals.body.style.backgroundSize = width + 'px auto';
+            setup();
         })
-    }
-
-    function getPointsColor(num){
-        if(num < 0){
-            return 'red';
-        }else if( num === 0){
-            return 'grey'
-        }else if(num <= 10){
-            return 'green'
-        }else if(num <= 30){
-            return 'lightgreen'
-        }else if(num <= 80){
-            return 'lightblue'
-        }else if(num <= 1000){
-            return 'yellow'
-        }else{
-            return 'white'
-        }
-    }
-
-    function getFallerConfig(multiplier){
-        if(multiplier === undefined) multiplier = 1;
-        let rand = getRandom()*multiplier; //if multiplier is larger, higher chance of lower diifculty
-        if(rand<0.1){
-            //10%
-            return {speed: getRandom(5,7), spin: getRandom(8,10), extraPoints: getRandom(50)*2}
-        }else if(rand<0.3){
-            //20%
-            return {speed: getRandom(3,4), spin: getRandom(5,7), extraPoints: getRandom(25)*2}
-        }else if(rand<0.6){
-            //30%
-            return {speed: getRandom(1,2), spin: getRandom(1,2), extraPoints: getRandom(5)*2}
-        }else{
-            //40%
-            return {speed: getRandom(1,2), spin: 0, extraPoints: 0}
-        }
-    }
-
-    function showPoints(x,y,points){
-        if(typeof points !== 'number'){
-            console.error(letter + ' is not a number');
-            return;
-        }
-        let pointDiv = new P(points,x,y,r(width/30) + 'px').fromCenter();
-        pointDiv.color = getPointsColor(points);
-        let pointLoop = setInterval(()=>{
-            pointDiv.y -= 1
-        },50)
-        setTimeout(()=>{
-            pointDiv.remove();
-            clearInterval(pointLoop)
-        },1000)
-    }
-   
-
-    setupBody(id('MAIN_SCREEN')).then(()=>{
-        let backgroundimage = 'bg' + (Math.random() * 8 | 0).toString() + '.jpg';
-        DOMObjectGlobals.body.style.backgroundColor = 'grey';
-        DOMObjectGlobals.body.style.backgroundImage = 'url(../images/' + backgroundimage.toString() + ')';
-        DOMObjectGlobals.body.style.backgroundRepeat = 'no-repeat';
-        DOMObjectGlobals.body.style.backgroundSize =  width + 'px auto';
-        setup();
-    })
-
-</script>
+    </script>
 
 </body>
+
 </html>
