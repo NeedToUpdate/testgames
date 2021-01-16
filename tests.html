@@ -771,7 +771,7 @@
         setupBody(id('MAIN_SCREEN')).then(() => {
             let backgroundimage = 'bg' + (Math.random() * 8 | 0).toString() + '.jpg';
             DOMObjectGlobals.body.style.backgroundColor = 'grey';
-            DOMObjectGlobals.body.style.backgroundImage = 'url(../images/' + backgroundimage.toString() + ')';
+            DOMObjectGlobals.body.style.backgroundImage = 'url(./images/' + backgroundimage.toString() + ')';
             DOMObjectGlobals.body.style.backgroundRepeat = 'no-repeat';
             DOMObjectGlobals.body.style.backgroundSize = width + 'px auto';
             setup();
