@@ -58,7 +58,7 @@
                 selectPlayLetter().then(y => {
                     y.removeFn()
                     SESSION_LETTERS = y.letters;
-                    startScreen().then(()=>{
+                    startScreen().then(() => {
                         setPointsText(CURRENT_POINTS);
                         setStreakText(1)
                         IS_TIME_TICKING = true;
@@ -69,12 +69,45 @@
         }
 
 
-        let headerP = {}
-        function setHeader(){
+        let headerDiv = {}
 
+        function toggleHeader() {
+            if (checkObj(headerDiv)) {
+                headerDiv.remove()
+                headerDiv = {};
+            } else {
+                headerDiv = new Rectangle(0, 0, width, height / 5)
+                headerDiv.set('backgroundColor', 'rgba(255,255,255,0.5)')
+                const LEFT_OFFSET = width / 4;
+                let targetP = new P('Target:', LEFT_OFFSET, height / 10, r(width / 40) + 'px').fromCenter()
+                headerDiv.attach(targetP)
+                CURRENT_REQUIRED_WORDS.forEach((word, i) => {
+                    let letter = word[0]
+                    if (!KEYWORDS_CONFIG[letter].includes(word)) {
+                        letter = findLetter(word);
+                    }
+                    const IMAGE_WIDTH = width / 20;
+                    const IMAGE_PADDING = width / 500;
+
+                    function getXY(index) {
+                        let offset = LEFT_OFFSET + targetP.width + width / 500;
+                        let x = offset + (index % 5) * (IMAGE_WIDTH + IMAGE_PADDING);
+                        let y = IMAGE_PADDING + ((i / 5) | 0) * IMAGE_WIDTH;
+                        return {
+                            x: x,
+                            y: y
+                        };
+                    }
+                    let img = new Img('./Letters/' + letter + '/' + word + '.png', getXY(i).x, getXY(i).y,
+                        IMAGE_WIDTH).onLoad(() => {
+                        img.y += img.height / 2;
+                    });
+                })
+            }
         }
 
         let timeP = {}
+
         function setTimeText(num) {
             function makeString(num) {
                 return num + 's'
@@ -105,7 +138,7 @@
         let IS_ADDING_POINTS = false;
         let points_queue = []
 
-        function setPointsText(num) {
+        function setPointsText(num, dontAdd) {
             function makeString(num) {
                 return 'Points: ' + (num | 0) + '   ';
             }
@@ -123,8 +156,10 @@
                     setTimeout(() => {
                         if (i === 17) {
                             pointsP.string = makeString(final_points);
-                            CURRENT_POINTS += num;
-                            TOTAL_POINTS += num;
+                            if (!dontAdd) {
+                                CURRENT_POINTS += num;
+                                TOTAL_POINTS += num;
+                            }
                             pointsP.set('textShadow', '')
                             IS_ADDING_POINTS = false;
                             if (points_queue.length > 0) {
@@ -145,8 +180,10 @@
                 pointsP.set('borderRadius', r(width / 50) + 'px')
                 pointsP.zIndex = 100
                 IS_ADDING_POINTS = false;
-                CURRENT_POINTS += num
-                TOTAL_POINTS += num
+                if (!dontAdd) {
+                    CURRENT_POINTS += num;
+                    TOTAL_POINTS += num;
+                }
             }
         }
 
@@ -204,41 +241,59 @@
                             //DO INCREMENT
                             setTimeout(() => {
                                 if (i === 60) {
-                                    currentPoints.string = 'Your Points: ' +  r(CURRENT_POINTS);
-                                    setTimeout(()=>{
-                                    //SHOW TOTAL POINTS FOR THIS SESSION
-                                    let counter2 = TOTAL_POINTS - CURRENT_POINTS;
-                                    let totalPoints = new P('Total Points: ' + counter2,width/2,height*0.3,r(width/22)).fromCenter();
-                                    totalPoints.zIndex = 16
-                                    totalPoints.color = 'lightred'
-                                    let chunk = CURRENT_POINTS / 60;
-                                    for (let i = 0; i <= 60; i++) {
-                                        //do decrement of current points and increment total points
-                                        setTimeout(() => {
-                                            if (i === 60) {
-                                                totalPoints.string = 'Total Points: ' +   TOTAL_POINTS;
-                                                currentPoints.string = 'Your Points: ' +  0;
-                                                setTimeout(()=>{
-                                                    currentPoints.remove() //delay this
-                                                },100);
-                                                resolve({
-                                                    fadeOut: fadeOut,
-                                                    removeFn: ()=>{
-                                                        totalPoints.remove()
-                                                        goodJob.remove();
-                                                    }
-                                                });
-                                            } else {
-                                                counter -= chunk;
-                                                counter2 += chunk;
-                                                currentPoints.string = 'Your Points: ' + r(counter);
-                                                totalPoints.string = 'Total Points: ' + r(counter2);
+                                    currentPoints.string = 'Your Points: ' + r(
+                                        CURRENT_POINTS);
+                                    setTimeout(() => {
+                                        //SHOW TOTAL POINTS FOR THIS SESSION
+                                        let counter2 = TOTAL_POINTS -
+                                            CURRENT_POINTS;
+                                        let totalPoints = new P(
+                                            'Total Points: ' + counter2,
+                                            width / 2, height * 0.3, r(
+                                                width / 22)).fromCenter();
+                                        totalPoints.zIndex = 16
+                                        totalPoints.color = 'lightred'
+                                        let chunk = CURRENT_POINTS / 60;
+                                        for (let i = 0; i <= 60; i++) {
+                                            //do decrement of current points and increment total points
+                                            setTimeout(() => {
+                                                if (i === 60) {
+                                                    totalPoints.string =
+                                                        'Total Points: ' +
+                                                        TOTAL_POINTS;
+                                                    currentPoints
+                                                        .string =
+                                                        'Your Points: ' +
+                                                        0;
+                                                    setTimeout(() => {
+                                                        currentPoints
+                                                            .remove() //delay this
+                                                    }, 100);
+                                                    resolve({
+                                                        fadeOut: fadeOut,
+                                                        removeFn: () => {
+                                                            totalPoints
+                                                                .remove()
+                                                            goodJob
+                                                                .remove();
+                                                        }
+                                                    });
+                                                } else {
+                                                    counter -= chunk;
+                                                    counter2 += chunk;
+                                                    currentPoints
+                                                        .string =
+                                                        'Your Points: ' +
+                                                        r(counter);
+                                                    totalPoints.string =
+                                                        'Total Points: ' +
+                                                        r(counter2);
 
-                                            }
-                                        }, i * 17)
-                                    }
-                                    },3000)
-                                    
+                                                }
+                                            }, i * 17)
+                                        }
+                                    }, 3000)
+
                                 } else {
                                     counter += chunk;
                                     currentPoints.string = 'Your Points: ' + r(counter);
@@ -250,29 +305,30 @@
             })
         }
 
-        function startScreen(){
-            let LETTER_WIDTH = width/10;
-            let yourGoal = new P('Your Goal:', width/2, width*0.1, r(width/20)).fromCenter();
+        function startScreen() {
+            let LETTER_WIDTH = width / 10;
+            let yourGoal = new P('Your Goal:', width / 2, width * 0.1, r(width / 20)).fromCenter();
             yourGoal.zIndex = 16;
             yourGoal.color = 'lightgreen';
             CURRENT_REQUIRED_WORDS = [];
             let stuffToDelete = [];
             stuffToDelete.push(yourGoal);
-            SESSION_WORDS.forEach((x,i)=>{
+            SESSION_WORDS.forEach((x, i) => {
                 let letter = x[0];
-                if(!KEYWORDS_CONFIG[letter].includes(x)){
+                if (!KEYWORDS_CONFIG[letter].includes(x)) {
                     letter = findLetter(x);
                 }
-                let img = new Img('./Letters/' + letter + '/' + x + '.png', width/2 - LETTER_WIDTH*(SESSION_WORDS.length/2 - i), width*0.2,LETTER_WIDTH).onLoad(()=>{
-                    img.y -= img.height/2;
+                let img = new Img('./Letters/' + letter + '/' + x + '.png', width / 2 - LETTER_WIDTH * (
+                    SESSION_WORDS.length / 2 - i), width * 0.2, LETTER_WIDTH).onLoad(() => {
+                    img.y -= img.height / 2;
                     CURRENT_REQUIRED_WORDS.push(x)
-                    img.shape.addEventListener('click',()=>{
-                        if(CURRENT_REQUIRED_WORDS.includes(x)){
-                            CURRENT_REQUIRED_WORDS.splice(CURRENT_REQUIRED_WORDS.indexOf(x),1);
-                            img.set('opacity','0');
-                        }else{
+                    img.shape.addEventListener('click', () => {
+                        if (CURRENT_REQUIRED_WORDS.includes(x)) {
+                            CURRENT_REQUIRED_WORDS.splice(CURRENT_REQUIRED_WORDS.indexOf(x), 1);
+                            img.set('opacity', '0');
+                        } else {
                             CURRENT_REQUIRED_WORDS.push(x);
-                            img.set('opacity','1');
+                            img.set('opacity', '1');
                         }
 
                     })
@@ -280,16 +336,16 @@
                 img.zIndex = 16;
                 stuffToDelete.push(img);
             })
-            let goBtn = new P('GO', width/2, height*0.6,r(width/20)).fromCenter()
+            let goBtn = new P('GO', width * 0.05, height * 0.05, r(width / 20)).fromCenter()
             goBtn.zIndex = 16;
-            goBtn.set('backgroundColor','lightgreen')
+            goBtn.set('backgroundColor', 'lightgreen')
             goBtn.color = 'green'
-            goBtn.set('borderColor','green')
-            goBtn.set('borderRadius',r(width/100) + 'px');
+            goBtn.set('borderColor', 'green')
+            goBtn.set('borderRadius', r(width / 100) + 'px');
             stuffToDelete.push(goBtn)
-            return new Promise(resolve=>{
-                goBtn.shape.addEventListener('click',()=>{
-                    stuffToDelete.forEach(x=>{
+            return new Promise(resolve => {
+                goBtn.shape.addEventListener('click', () => {
+                    stuffToDelete.forEach(x => {
                         x.remove();
                     })
                     resolve()
@@ -320,12 +376,12 @@
                                         1)
                                     SESSION_WORDS.splice(
                                         SESSION_WORDS.indexOf(
-                                        icon), 1)
+                                            icon), 1)
                                 } else {
                                     SESSION_WORDS.push(icon)
                                     let letter = icon[0];
                                     if (!KEYWORDS_CONFIG[letter].includes(
-                                        icon)) {
+                                            icon)) {
                                         letter = findLetter(icon)
                                     }
                                     chosenFew.push(letter)
@@ -494,7 +550,7 @@
 
         function handleIncorrectWord(word, data) {
             CURRENT_STREAK = 0;
-            let numOfPoints = calculatePoints(false, CURRENT_STREAK);
+            let numOfPoints = -10;
             showPoints(data.x, data.y, numOfPoints);
             setPointsText(numOfPoints)
             setStreakText(1)
@@ -504,7 +560,7 @@
 
         function calculatePoints(isCorrect, currentStreak, extras) {
             let extraPoints = extras || 0;
-            return isCorrect * 20 * getMultiplier(currentStreak) - 10 + extraPoints + currentStreak;
+            return isCorrect * 1 * getMultiplier(currentStreak) + extraPoints + currentStreak;
         }
 
         let THINGS_TO_UPDATE = []
@@ -519,28 +575,43 @@
                 PLAYER_TIME_LEFT -= deltaT / 1000
                 setTimeText(PLAYER_TIME_LEFT | 0);
             }
-            if(PLAYER_TIME_LEFT<=0){
+            if (PLAYER_TIME_LEFT <= 0) {
                 IS_TIME_TICKING = false;
-                
+
                 timeP.remove()
                 streakP.remove()
                 pointsP.remove();
-                nextRelay().then(x=>{
-                    THINGS_TO_UPDATE.forEach(x=>{
+                timeP = {}
+                streakP = {};
+                pointsP = {};
+                nextRelay().then(x => {
+                    THINGS_TO_UPDATE.forEach(x => {
                         x.kill();
                     })
                     THINGS_TO_UPDATE = [];
-                    x.removeFn()
-                    let goBtn = new P('ok',width/2,height*0.7,r(width/22)+'px').fromCenter()
-                    goBtn.set('border','solid green ' + r(width/300) + 'px')
-                    goBtn.set('borderRadius',r(width/30) + 'px');
-                    goBtn.color = 'green'
-                    goBtn.set('backgroundColor','lightgreen')
-                    goBtn.shape.addEventListener('click',()=>{
-                        startScreen().then(()=>{
+                    let okBtn = new P('ok', width * 0.05, height * 0.05, r(width / 22) + 'px').fromCenter()
+                    okBtn.set('border', 'solid green ' + r(width / 300) + 'px')
+                    okBtn.set('borderRadius', r(width / 30) + 'px');
+                    okBtn.color = 'green'
+                    okBtn.set('backgroundColor', 'lightgreen')
+                    okBtn.shape.addEventListener('click', () => {
+                        x.removeFn()
+                        okBtn.remove()
+                        startScreen().then(() => {
                             x.fadeOut()
+                            PLAYER_TIME_LEFT = TIME_PER_PLAYER
+                            CURRENT_STREAK = 0;
+                            CURRENT_POINTS = 0;
+                            startDropping(SESSION_LETTERS)
+                            setPointsText(CURRENT_POINTS,true)
+                            setTimeText(PLAYER_TIME_LEFT)
+                            setStreakText(1);
+                            IS_TIME_TICKING = true
+                            current_time = window.performance.now();
+                            play()
                         })
                     })
+                    okBtn.zIndex = 16
                 })
             }
 
@@ -602,7 +673,7 @@
             })
         }
 
-        stop = ()=>{
+        stop = () => {
             LOOPING = false;
             stopDropping();
         }
@@ -633,21 +704,21 @@
                 return {
                     speed: getRandom(5, 7),
                     spin: getRandom(8, 10),
-                    extraPoints: getRandom(50) * 2
+                    extraPoints: r(getRandom(5, 10))
                 }
             } else if (rand < 0.3) {
                 //20%
                 return {
                     speed: getRandom(3, 4),
                     spin: getRandom(5, 7),
-                    extraPoints: getRandom(25) * 2
+                    extraPoints: r(getRandom(3, 5))
                 }
             } else if (rand < 0.6) {
                 //30%
                 return {
                     speed: getRandom(1, 2),
                     spin: getRandom(1, 2),
-                    extraPoints: getRandom(5) * 2
+                    extraPoints: r(getRandom(12))
                 }
             } else {
                 //40%
