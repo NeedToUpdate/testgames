@@ -79,7 +79,7 @@
             } else {
                 headerDiv = new Rectangle(0, 0, width, height / 5)
                 headerDiv.set('backgroundColor', 'rgba(255,255,255,0.5)')
-                const LEFT_OFFSET = width / 3.5;
+                const LEFT_OFFSET = width / 3.4;
                 CURRENT_REQUIRED_WORDS.forEach((word, i) => {
                     let letter = word[0]
                     if (!KEYWORDS_CONFIG[letter].includes(word)) {
@@ -103,6 +103,7 @@
                         //img.fromCenter();
                         img.set('backgroundColor', 'rgba(125,125,255,0.5)')
                         img.set('borderRadius', r(width / 100) + 'px')
+                        headerDiv.attach(img);
                     });
                 })
             }
@@ -658,7 +659,6 @@
                     letter = findLetter(name)
                 }
             }
-            console.log(letters)
 
             let interval = setInterval(() => {
                 let config = getFallerConfig();
@@ -676,7 +676,6 @@
             let completelyWrong = setInterval(() => {
                 let config = getFallerConfig(0.8);
                 let wrongName = getRandom(KEYWORDS_CONFIG[getRandom(alphabet.split(''))]);
-                console.log(wrongName)
                 createFaller(wrongName, config.speed, config.spin, 10, getRandom(['blue', 'grey', 'green',
                     'yellow'
                 ]), config.angle)
