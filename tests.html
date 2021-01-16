@@ -663,13 +663,14 @@
             let interval = setInterval(() => {
                 let config = getFallerConfig();
                 createFaller(getRandom(KEYWORDS_CONFIG[getRandom(letters)]), config.speed, config.spin, config
-                    .extraPoints, config.extraPoints > 50 ? 'yellow' : 'grey',config.angle)
+                    .extraPoints, config.extraPoints > 50 ? 'yellow' : 'grey', config.angle)
             }, 900)
             VARIOUS_LOOPS.push(interval);
             let onlyCorrectDrop = setInterval(() => {
                 if (CURRENT_REQUIRED_WORDS.length == 0) return;
                 let config = getFallerConfig(2);
-                createFaller(getRandom(CURRENT_REQUIRED_WORDS), config.speed, config.spin, 10, 'blue',config.angle)
+                createFaller(getRandom(CURRENT_REQUIRED_WORDS), config.speed, config.spin, 10, 'blue', config
+                    .angle)
             }, 3500)
             VARIOUS_LOOPS.push(onlyCorrectDrop);
             let completelyWrong = setInterval(() => {
@@ -678,7 +679,7 @@
                 console.log(wrongName)
                 createFaller(wrongName, config.speed, config.spin, 10, getRandom(['blue', 'grey', 'green',
                     'yellow'
-                ]),config.angle)
+                ]), config.angle)
             }, 4100)
             VARIOUS_LOOPS.push(completelyWrong)
         }
@@ -721,7 +722,7 @@
                     speed: getRandom(5, 7),
                     spin: getRandom(8, 10),
                     extraPoints: r(getRandom(5, 10)),
-                    angle: getRandom([0,90,270,180,45])
+                    angle: getRandom([0, 90, 270, 180, 45])
                 }
             } else if (rand < 0.3) {
                 //20%
@@ -729,7 +730,7 @@
                     speed: getRandom(3, 4),
                     spin: getRandom(5, 7),
                     extraPoints: r(getRandom(3, 5)),
-                    angle: getRandom([0,90,270,180])
+                    angle: getRandom([0, 90, 270, 180])
                 }
             } else if (rand < 0.6) {
                 //30%
@@ -737,7 +738,7 @@
                     speed: getRandom(1, 2),
                     spin: getRandom(1, 2),
                     extraPoints: r(getRandom(12)),
-                    angle: getRandom([0,90,270,180])
+                    angle: getRandom([0, 90, 270, 180])
                 }
             } else {
                 //40%
