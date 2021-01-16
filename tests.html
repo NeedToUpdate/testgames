@@ -78,9 +78,10 @@
             } else {
                 headerDiv = new Rectangle(0, 0, width, height / 5)
                 headerDiv.set('backgroundColor', 'rgba(255,255,255,0.5)')
-                const LEFT_OFFSET = width / 4;
+                const LEFT_OFFSET = width / 3.5;
                 let targetP = new P('Target:', LEFT_OFFSET, height / 10, r(width / 40) + 'px').fromCenter()
                 headerDiv.attach(targetP)
+                targetP.color = 'darkblue'
                 CURRENT_REQUIRED_WORDS.forEach((word, i) => {
                     let letter = word[0]
                     if (!KEYWORDS_CONFIG[letter].includes(word)) {
@@ -101,6 +102,9 @@
                     let img = new Img('./Letters/' + letter + '/' + word + '.png', getXY(i).x, getXY(i).y,
                         IMAGE_WIDTH).onLoad(() => {
                         img.y += img.height / 2;
+                        img.fromCenter();
+                        img.set('backgroundColor', 'rgba(125,125,255,0.5)')
+                        img.set('borderRadius', r(width / 100) + 'px')
                     });
                 })
             }
@@ -112,7 +116,7 @@
             function makeString(num) {
                 return num + 's'
             }
-            let color = 'white'
+            let color = 'black'
             if (num <= 15) {
                 color = 'yellow'
             }
@@ -334,9 +338,12 @@
                     })
                 });
                 img.zIndex = 16;
+                img.set('backgroundColor', 'rgba(200,255,200,0.5)')
+                img.set('borderRadius', r(width / 100) + 'px');
+
                 stuffToDelete.push(img);
             })
-            let goBtn = new P('GO', width * 0.05, height * 0.05, r(width / 20)).fromCenter()
+            let goBtn = new P('GO', width * 0.05, height * 0.1, r(width / 20)).fromCenter()
             goBtn.zIndex = 16;
             goBtn.set('backgroundColor', 'lightgreen')
             goBtn.color = 'green'
@@ -363,15 +370,16 @@
                         TOP_PADDING + LETTER_WIDTH * i, LETTER_WIDTH).fromCenter();
                     pDiv.color = 'yellow';
                     stuffToDelete.push(pDiv);
+                    let imgs = [];
                     KEYWORDS_CONFIG[letter].forEach((icon, j) => {
                         let img = new Img('./Letters/' + letter + '/' + icon + '.png', width /
                             2 - LETTER_WIDTH * (1 - j), TOP_PADDING + LETTER_WIDTH * i,
-                            LETTER_WIDTH).fromCenter().onLoad(() => {
-                            img.y -= img.height / 2
-                            img.x -= img.width
+                            LETTER_WIDTH).onLoad(() => {
+                            img = img.asSquare().fromCenter();
+                            img.set('border', 'solid transparent 3px')
                             img.shape.addEventListener('click', () => {
                                 if (SESSION_WORDS.includes(icon)) {
-                                    img.set('border', '')
+                                    img.set('border', 'solid transparent 3px')
                                     chosenFew.splice(chosenFew.indexOf(icon[0]),
                                         1)
                                     SESSION_WORDS.splice(
@@ -389,8 +397,14 @@
                                     img.set('borderRadius', width / 10 + 'px')
                                 }
                             })
+                            stuffToDelete.push(img)
+                            imgs.push(img)
                         })
-                        stuffToDelete.push(img)
+                    })
+                    pDiv.shape.addEventListener('click', () => {
+                        imgs.forEach(x => {
+                            x.shape.click();
+                        })
                     })
                     let checkDiv = new P('✔', 10, 10, r(width / 30) + 'px')
                     checkDiv.color = 'green'
@@ -603,7 +617,7 @@
                             CURRENT_STREAK = 0;
                             CURRENT_POINTS = 0;
                             startDropping(SESSION_LETTERS)
-                            setPointsText(CURRENT_POINTS,true)
+                            setPointsText(CURRENT_POINTS, true)
                             setTimeText(PLAYER_TIME_LEFT)
                             setStreakText(1);
                             IS_TIME_TICKING = true
