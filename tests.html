@@ -324,24 +324,24 @@
                 }
                 let img = new Img('./Letters/' + letter + '/' + x + '.png', width / 2 - LETTER_WIDTH * (
                     SESSION_WORDS.length / 2 - i), width * 0.2, LETTER_WIDTH).onLoad(() => {
-                    img.y -= img.height / 2;
+                    img = img.asSquare()
                     CURRENT_REQUIRED_WORDS.push(x)
                     img.shape.addEventListener('click', () => {
                         if (CURRENT_REQUIRED_WORDS.includes(x)) {
                             CURRENT_REQUIRED_WORDS.splice(CURRENT_REQUIRED_WORDS.indexOf(x), 1);
-                            img.set('opacity', '0');
+                            img.attachments.imgs[0].set('opacity', '0');
                         } else {
                             CURRENT_REQUIRED_WORDS.push(x);
-                            img.set('opacity', '1');
+                            img.attachments.imgs[0].set('opacity', '1');
                         }
 
                     })
+                    img.zIndex = 16;
+                    img.set('backgroundColor', 'rgba(200,255,200,0.5)')
+                    img.set('borderRadius', r(width / 100) + 'px');
+                    stuffToDelete.push(img);
                 });
-                img.zIndex = 16;
-                img.set('backgroundColor', 'rgba(200,255,200,0.5)')
-                img.set('borderRadius', r(width / 100) + 'px');
 
-                stuffToDelete.push(img);
             })
             let goBtn = new P('GO', width * 0.05, height * 0.1, r(width / 20)).fromCenter()
             goBtn.zIndex = 16;
