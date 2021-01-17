@@ -321,8 +321,12 @@
                 if (!KEYWORDS_CONFIG[letter].includes(x)) {
                     letter = findLetter(x);
                 }
-                let img = new Img('./Letters/' + letter + '/' + x + '.png', width / 2 - LETTER_WIDTH * (
-                    SESSION_WORDS.length / 2 - i), width * 0.2, LETTER_WIDTH).onLoad(() => {
+                function getXY(index){
+                    let x = width/2 - LETTER_WIDTH*(Math.min(SESSION_WORDS.length/2,5) - index%10)
+                    let y = height*0.5 + LETTER_WIDTH*((index/10)|0)
+                    return {x:x, y:y}
+                }
+                let img = new Img('./Letters/' + letter + '/' + x + '.png',  getXY(i).x, getXY(i).y , LETTER_WIDTH).onLoad(() => {
                     img = img.asSquare()
                     CURRENT_REQUIRED_WORDS.push(x)
                     img.shape.addEventListener('click', () => {
@@ -508,7 +512,7 @@
             FallingImg.createIcon('./Letters/' + letter + '/' + name + '.png', width / 10, width / 10, color || 'blue')
                 .then(x => {
                     faller.hasNoBounds = true;
-                    faller.addSprite(x)
+                    faller.addSprite(x.fromCenter())
                     faller.doFall()
                     faller.angle = theta;
                     faller.maxbounds.y = height * 1.2
@@ -528,6 +532,9 @@
                     }
                     if(isBomb){
                         x.set('border','solid red 5px')
+                        let fire = new Img('./images/fire.png',-width/10,-width/10,width/10).onLoad(()=>{
+                            faller.addDeathImage(fire.shape)
+                        })
                         handleClick = function(){
                             faller.kill();
                             showPoints(faller.x, faller.y,r( -CURRENT_POINTS/4));
@@ -762,7 +769,7 @@
                     spin: 0,
                     extraPoints: 1,
                     angle: getRandom([0, 90, 270, 180]),
-                    isBomb: getRandom(50) === 0? true: false
+                    isBomb: getRandom(40) === 0? true: false
                 }
             } else {
                 //25%
@@ -771,7 +778,7 @@
                     spin: 0,
                     extraPoints: 0,
                     angle: 0,
-                    isBomb: getRandom(70) === 0? true: false
+                    isBomb: getRandom(50) === 0? true: false
                 }
             }
         }
@@ -781,8 +788,10 @@
                 console.error(letter + ' is not a number');
                 return;
             }
-            let pointDiv = new P(points, x, y, r(width / 30) + 'px').fromCenter();
+            let pointDiv = new P(points, x, y, r(width / 20) + 'px').fromCenter();
             pointDiv.color = getPointsColor(points);
+            pointDiv.set('textShadow','white 0 0 3px')
+            pointDiv.set('fontStyle','bolder')
             let pointLoop = setInterval(() => {
                 pointDiv.y -= 1
             }, 50)
