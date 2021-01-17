@@ -110,6 +110,7 @@
         }
 
         let timeP = {}
+        let SHOW_SPLIT_LINE = false;
 
         function setTimeText(num) {
             function makeString(num) {
@@ -134,6 +135,20 @@
                 timeP.set('border', color + ' solid 3px')
                 timeP.set('borderRadius', r(width / 50) + 'px')
                 timeP.zIndex = 100;
+                let line = Line.fromAngle(timeP.width/2,timeP.height,height,90,2)
+                line.color = 'black'
+                line.set('border','dashed white 3px')
+                timeP.attach(line)
+                line.zIndex = 99
+                if(!SHOW_SPLIT_LINE) line.set('display','none')
+                timeP.shape.addEventListener('click',()=>{
+                    if(SHOW_SPLIT_LINE){
+                        line.set('display','none')
+                    }else{
+                        line.set('display','')
+                    }
+                    SHOW_SPLIT_LINE = !SHOW_SPLIT_LINE;
+                })
             }
         }
 
@@ -157,21 +172,26 @@
                 for (let i = 0; i < 18; i++) {
                     pointsP.set('textShadow', 'lightgreen 0 0 5px')
                     setTimeout(() => {
-                        if (i === 17) {
-                            pointsP.string = makeString(final_points);
-                            if (!dontAdd) {
-                                CURRENT_POINTS += num;
-                                TOTAL_POINTS += num;
+                        if(IS_TIME_TICKING){
+                            if (i === 17) {
+                                pointsP.string = makeString(final_points);
+                                if (!dontAdd) {
+                                    CURRENT_POINTS += num;
+                                    TOTAL_POINTS += num;
+                                }
+                                pointsP.set('textShadow', '')
+                                IS_ADDING_POINTS = false;
+                                if (points_queue.length > 0) {
+                                    let nextNum = points_queue.shift();
+                                    setPointsText(nextNum)
+                                }
+                            } else {
+                                initial_points += chunk
+                                pointsP.string = makeString(initial_points);
                             }
-                            pointsP.set('textShadow', '')
-                            IS_ADDING_POINTS = false;
-                            if (points_queue.length > 0) {
-                                let nextNum = points_queue.shift();
-                                setPointsText(nextNum)
-                            }
-                        } else {
-                            initial_points += chunk
-                            pointsP.string = makeString(initial_points);
+                        }else{
+                            CURRENT_POINTS += num;
+                            TOTAL_POINTS += num;
                         }
                     }, i * 30)
                 }
@@ -616,9 +636,6 @@
                 timeP.remove()
                 streakP.remove()
                 pointsP.remove();
-                timeP = {}
-                streakP = {};
-                pointsP = {};
                 nextRelay().then(x => {
                     THINGS_TO_UPDATE.forEach(x => {
                         x.kill();
@@ -638,6 +655,10 @@
                             PLAYER_TIME_LEFT = TIME_PER_PLAYER
                             CURRENT_STREAK = 0;
                             CURRENT_POINTS = 0;
+                            IS_ADDING_POINTS = false;
+                            timeP = {}
+                            streakP = {};
+                            pointsP = {};
                             startDropping(SESSION_LETTERS)
                             setPointsText(CURRENT_POINTS, true)
                             setTimeText(PLAYER_TIME_LEFT)
