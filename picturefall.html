@@ -76,6 +76,9 @@
                         }
                     })
                 }
+                if(SELECTED_LETTERS.length === 0 && EXTRAS_MODE){
+                    SELECTED_LETTERS = ['+']
+                }
                 x.removeFn();
                 play()
                 selectPlayLetter().then(y => {
@@ -431,15 +434,26 @@
                 let chosenFew = []
                 let imgs = [];
                 SELECTED_LETTERS.forEach((letter, i) => {
+                    let arrayToProcess = []
+                    let ONLY_EXTRAS = false;
                     let pDiv = new P(letter.toUpperCase() + ': ', width / 2 - LETTER_WIDTH * 3,
                         TOP_PADDING + LETTER_WIDTH * i, LETTER_WIDTH).fromCenter();
-                    pDiv.color = 'yellow';
-                    let arrayToProcess = KEYWORDS_CONFIG[letter]
-                    if (EXTRAS_MODE) {
-                        arrayToProcess = arrayToProcess.concat(EXTRA_KEYWORDS_CONFIG[letter])
+                    if(alphabet.split('').includes(letter)){
+                        arrayToProcess = KEYWORDS_CONFIG[letter]
+                        pDiv.color = 'yellow';
+                        if (EXTRAS_MODE) {
+                            arrayToProcess = arrayToProcess.concat(EXTRA_KEYWORDS_CONFIG[letter])
+                        }
+                        stuffToDelete.push(pDiv);
+                    }else if(letter === '+'){
+                        //only use extra words, show 10 randoms
+                        ONLY_EXTRAS = true;
+                        Object.values(EXTRA_KEYWORDS_CONFIG).forEach(array=>{
+                            arrayToProcess = arrayToProcess.concat(array)
+                        })
+                        arrayToProcess = shuffle(arrayToProcess).splice(0,10)
                     }
                     let IMAGE_WIDTH = width * 0.6 / (arrayToProcess.length + 1)
-                    stuffToDelete.push(pDiv);
                     arrayToProcess.forEach((icon, j) => {
                         let url = './Letters/' + letter + '/' + icon + '.png'
                         if (typeof icon === 'object') {
