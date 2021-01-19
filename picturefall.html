@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Artem's Picture Fall</title>
     <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
     <script language="javascript" type="text/javascript" src="./lib/vector.js"></script>
     <script language="javascript" type="text/javascript" src="./lib/drawbase.js"></script>
@@ -200,7 +200,7 @@
             let final_points = CURRENT_POINTS + num;
             let initial_points = CURRENT_POINTS;
             if (checkObj(pointsP)) {
-                let chunk = num / 17 | 0;
+                let chunk = num / 17;
                 for (let i = 0; i < 18; i++) {
                     pointsP.set('textShadow', 'lightgreen 0 0 5px')
                     setTimeout(() => {
@@ -219,7 +219,7 @@
                                 }
                             } else {
                                 initial_points += chunk
-                                pointsP.string = makeString(initial_points);
+                                pointsP.string = makeString(initial_points |0);
                             }
                         } else {
                             CURRENT_POINTS += num;
@@ -783,7 +783,7 @@
 
             let interval = setInterval(() => {
                 let config = getFallerConfig();
-                createFaller(getRandom(KEYWORDS_CONFIG[getRandom(letters)]), config.speed, config.spin, config
+                createFaller(getRandom(KEYWORDS_CONFIG[getRandom(letters)].concat(EXTRAS_MODE? EXTRA_KEYWORDS_CONFIG[getRandom(letters)].map(x=>x.name) : [])), config.speed, config.spin, config
                     .extraPoints, config.extraPoints > 50 ? 'yellow' : 'grey', config.angle, config.isBomb)
             }, 900)
             VARIOUS_LOOPS.push(interval);
@@ -796,7 +796,8 @@
             VARIOUS_LOOPS.push(onlyCorrectDrop);
             let completelyWrong = setInterval(() => {
                 let config = getFallerConfig(0.8);
-                let wrongName = getRandom(KEYWORDS_CONFIG[getRandom(alphabet.split(''))]);
+                let wrongAlpha = alphabet.split('').filter(x=>!letters.includes(x));
+                let wrongName = getRandom(KEYWORDS_CONFIG[getRandom(wrongAlpha)].concat(EXTRAS_MODE? EXTRA_KEYWORDS_CONFIG[getRandom(wrongAlpha)].map(x=>x.name) : []));
                 createFaller(wrongName, config.speed, config.spin, 10, getRandom(['blue', 'grey', 'green',
                     'yellow'
                 ]), config.angle, false)
