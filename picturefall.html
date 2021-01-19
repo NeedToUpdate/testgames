@@ -16,6 +16,7 @@
     <script language="javascript" type="text/javascript" src="./lib/FallingImg.js"></script>
     <script language="javascript" type="text/javascript" src="./todays_words.js"></script>
     <script language="javascript" type="text/javascript" src="./Letters/keywords_config.js"></script>
+    <script language="javascript" type="text/javascript" src="./image_config.js"></script>
     <link rel="stylesheet" type="text/css" href="./global_styles.css">
     <style>
     </style>
@@ -28,6 +29,7 @@
         </div>
     </div>
     <script>
+        let IMAGE_PATH = './images/'
         let TIME_PER_PLAYER = 61;
 
 
@@ -40,10 +42,18 @@
         let SESSION_LETTERS = [];
         let CURRENT_REQUIRED_WORDS = [];
         let SELECTED_LETTERS = [];
-        let DIFFICULTY = 0;
         let CURRENT_POINTS = 0;
         let TOTAL_POINTS = 0;
 
+        let EXTRAS_MODE = false;
+        let EXTRA_KEYWORDS_CONFIG = {}
+
+        function setupExtras() {
+            EXTRAS_MODE = true;
+            alphabet.split('').forEach(letter => {
+                EXTRA_KEYWORDS_CONFIG[letter] = [];
+            });
+        }
 
         function setup() {
             LEFT_PADDING = width * 0.1
@@ -52,7 +62,20 @@
             TOP_PADDING = height * 0.2
             setupKeyboard().then((x) => {
                 SELECTED_LETTERS = x.letters.split('').map(x => x.toLowerCase());
-                DIFFICULTY = x.num; //TODO
+                if (x.extras === '+') {
+                    console.log()
+                    setupExtras();
+                    IMAGE_CONFIG.animals.valid_names.forEach(animal => {
+                        let url = IMAGE_PATH + IMAGE_CONFIG.animals.path + '/';
+                        if (findLetter(animal) === undefined) {
+                            //findLetter will return undefined if theres no word
+                            EXTRA_KEYWORDS_CONFIG[animal[0]].push({
+                                name: animal,
+                                path: url + animal + '.png'
+                            })
+                        }
+                    })
+                }
                 x.removeFn();
                 play()
                 selectPlayLetter().then(y => {
@@ -82,8 +105,14 @@
                 const LEFT_OFFSET = width / 3.4;
                 CURRENT_REQUIRED_WORDS.forEach((word, i) => {
                     let letter = word[0]
+                    let url = './Letters/' + letter + '/' + word + '.png';
                     if (!KEYWORDS_CONFIG[letter].includes(word)) {
-                        letter = findLetter(word);
+                        letter = findLetter(word)
+                        if (typeof letter === 'string') {
+                            url = './Letters/' + letter + '/' + word + '.png';
+                        } else if (typeof letter === 'object') {
+                            url = letter.path;
+                        }
                     }
                     const IMAGE_WIDTH = width / 20;
                     const IMAGE_PADDING = width / 500;
@@ -97,7 +126,7 @@
                             y: y
                         };
                     }
-                    let img = new Img('./Letters/' + letter + '/' + word + '.png', getXY(i).x, getXY(i).y,
+                    let img = new Img(url, getXY(i).x, getXY(i).y,
                         IMAGE_WIDTH).onLoad(() => {
                         img = img.asSquare()
                         //img.fromCenter();
@@ -135,17 +164,17 @@
                 timeP.set('border', color + ' solid 3px')
                 timeP.set('borderRadius', r(width / 50) + 'px')
                 timeP.zIndex = 100;
-                let line = Line.fromAngle(timeP.width/2,timeP.height,height,90,2)
+                let line = Line.fromAngle(timeP.width / 2, timeP.height, height, 90, 2)
                 line.color = 'black'
-                line.set('border','dashed white 3px')
+                line.set('border', 'dashed white 3px')
                 timeP.attach(line)
                 line.zIndex = 99
-                if(!SHOW_SPLIT_LINE) line.set('display','none')
-                timeP.shape.addEventListener('click',()=>{
-                    if(SHOW_SPLIT_LINE){
-                        line.set('display','none')
-                    }else{
-                        line.set('display','')
+                if (!SHOW_SPLIT_LINE) line.set('display', 'none')
+                timeP.shape.addEventListener('click', () => {
+                    if (SHOW_SPLIT_LINE) {
+                        line.set('display', 'none')
+                    } else {
+                        line.set('display', '')
                     }
                     SHOW_SPLIT_LINE = !SHOW_SPLIT_LINE;
                 })
@@ -172,7 +201,7 @@
                 for (let i = 0; i < 18; i++) {
                     pointsP.set('textShadow', 'lightgreen 0 0 5px')
                     setTimeout(() => {
-                        if(IS_TIME_TICKING){
+                        if (IS_TIME_TICKING) {
                             if (i === 17) {
                                 pointsP.string = makeString(final_points);
                                 if (!dontAdd) {
@@ -189,7 +218,7 @@
                                 initial_points += chunk
                                 pointsP.string = makeString(initial_points);
                             }
-                        }else{
+                        } else {
                             CURRENT_POINTS += num;
                             TOTAL_POINTS += num;
                         }
@@ -338,15 +367,27 @@
             stuffToDelete.push(yourGoal);
             SESSION_WORDS.forEach((x, i) => {
                 let letter = x[0];
+                let url = ''
                 if (!KEYWORDS_CONFIG[letter].includes(x)) {
-                    letter = findLetter(x);
+                    letter = findLetter(x)
+                    if (typeof letter === 'string') {
+                        url = './Letters/' + letter + '/' + x + '.png';
+                    } else if (typeof letter === 'object') {
+                        url = letter.path;
+                    }
+                } else {
+                    url = './Letters/' + letter + '/' + x + '.png';
                 }
-                function getXY(index){
-                    let x = width/2 - LETTER_WIDTH*(Math.min(SESSION_WORDS.length/2,5) - index%10)
-                    let y = height*0.5 + LETTER_WIDTH*((index/10)|0)
-                    return {x:x, y:y}
+
+                function getXY(index) {
+                    let x = width / 2 - LETTER_WIDTH * (Math.min(SESSION_WORDS.length / 2, 5) - index % 10)
+                    let y = height * 0.5 + LETTER_WIDTH * ((index / 10) | 0)
+                    return {
+                        x: x,
+                        y: y
+                    }
                 }
-                let img = new Img('./Letters/' + letter + '/' + x + '.png',  getXY(i).x, getXY(i).y , LETTER_WIDTH).onLoad(() => {
+                let img = new Img(url, getXY(i).x, getXY(i).y, LETTER_WIDTH).onLoad(() => {
                     img = img.asSquare()
                     CURRENT_REQUIRED_WORDS.push(x)
                     img.shape.addEventListener('click', () => {
@@ -388,45 +429,63 @@
             SESSION_WORDS = [];
             return new Promise(resolve => {
                 let chosenFew = []
+                let imgs = [];
                 SELECTED_LETTERS.forEach((letter, i) => {
                     let pDiv = new P(letter.toUpperCase() + ': ', width / 2 - LETTER_WIDTH * 3,
                         TOP_PADDING + LETTER_WIDTH * i, LETTER_WIDTH).fromCenter();
                     pDiv.color = 'yellow';
+                    let arrayToProcess = KEYWORDS_CONFIG[letter]
+                    if (EXTRAS_MODE) {
+                        arrayToProcess = arrayToProcess.concat(EXTRA_KEYWORDS_CONFIG[letter])
+                    }
+                    let IMAGE_WIDTH = width * 0.6 / (arrayToProcess.length + 1)
                     stuffToDelete.push(pDiv);
-                    let imgs = [];
-                    KEYWORDS_CONFIG[letter].forEach((icon, j) => {
-                        let img = new Img('./Letters/' + letter + '/' + icon + '.png', width /
-                            2 - LETTER_WIDTH * (1 - j), TOP_PADDING + LETTER_WIDTH * i,
-                            LETTER_WIDTH).onLoad(() => {
-                            img = img.asSquare().fromCenter();
+                    arrayToProcess.forEach((icon, j) => {
+                        let url = './Letters/' + letter + '/' + icon + '.png'
+                        if (typeof icon === 'object') {
+                            url = icon.path;
+                            icon = icon.name;
+                        }
+                        let img = new Img(url, width * 0.3 + IMAGE_WIDTH * (j), TOP_PADDING +
+                            LETTER_WIDTH * i,
+                            IMAGE_WIDTH).onLoad(() => {
+                            img.name = icon;
+                            img = img.asSquare();
+                            img.y -= LETTER_WIDTH / 2
                             img.set('border', 'solid transparent 3px')
                             img.shape.addEventListener('click', () => {
                                 if (SESSION_WORDS.includes(icon)) {
                                     img.set('border', 'solid transparent 3px')
-                                    chosenFew.splice(chosenFew.indexOf(icon[0]),
-                                        1)
                                     SESSION_WORDS.splice(
                                         SESSION_WORDS.indexOf(
                                             icon), 1)
+                                    chosenFew = Array.from(new Set(SESSION_WORDS
+                                        .map(x => x[0])));
                                 } else {
+                                    if (SESSION_WORDS.length >= 20) {
+                                        console.log(imgs)
+                                        let toRemove = SESSION_WORDS[0]
+                                        imgs.filter(x => x.name === toRemove)[0]
+                                            .shape.click();
+                                        console.log(toRemove)
+                                    }
                                     SESSION_WORDS.push(icon)
                                     let letter = icon[0];
-                                    if (!KEYWORDS_CONFIG[letter].includes(
-                                            icon)) {
-                                        letter = findLetter(icon)
-                                    }
-                                    chosenFew.push(letter)
+                                    chosenFew = Array.from(new Set(SESSION_WORDS
+                                        .map(x => x[0])));
                                     img.set('border', 'solid green 3px')
                                     img.set('borderRadius', width / 10 + 'px')
                                 }
                             })
                             stuffToDelete.push(img)
-                            imgs.push(img)
                         })
+                        imgs.push(img)
                     })
+                    console.log(imgs)
                     pDiv.shape.addEventListener('click', () => {
                         imgs.forEach(x => {
-                            x.shape.click();
+                            if (x.name[0] == pDiv.string[0].toLowerCase()) x.shape
+                                .click();
                         })
                     })
                     let checkDiv = new P('✔', 10, 10, r(width / 30) + 'px')
@@ -448,8 +507,8 @@
 
         function makeLetter(letter, x, y) {
             let div = new Square(x, y, LETTER_WIDTH - 10);
-            div.set('border', 'solid white 3px');
-            div.set('borderRadius', '10px');
+            div.set('border', 'solid white ' + r(width / 300) + 'px');
+            div.set('borderRadius', r(width / 100) + 'px');
             div.set('display', 'grid');
             div.set('justify-items', 'center');
             div.set('backgroundColor', 'rgba(255,255,255,0.2)');
@@ -457,7 +516,7 @@
             l.set('position', '');
             l.set('color', 'white');
             l.set('font-family', 'sans');
-            l.set('font-size', '2em');
+            l.set('font-size', r(width / 30) + 'px');
             l.set('padding', '0');
             l.set('margin', 'auto 0');
             div.letter = letter;
@@ -469,29 +528,29 @@
             let alphabet_divs = [];
             return new Promise(resolve => {
                 let selectedletters = '';
-                let selectednumber = 0;
-                (alphabet.toUpperCase() + '123✔').split('').forEach((letter, i) => {
+                let extras = 0;
+                (alphabet.toUpperCase() + '+  ✔').split('').forEach((letter, i) => {
                     let div = makeLetter(letter, LEFT_PADDING + LETTER_WIDTH * (i % COL_NUM),
                         TOP_PADDING + LETTER_WIDTH * (i / COL_NUM | 0));
                     div.shape.addEventListener('click', () => {
-                        div.set('border', 'green solid 4px');
-                        if (parseInt(letter)) {
-                            selectednumber = letter;
+                        div.set('border', 'green solid ' + r(width / 300) + 'px');
+                        if (['+', ' '].includes(letter)) {
+                            extras = letter;
                             //fancy way of setting the other numbers to white
-                            alphabet_divs.filter(x => ('357'.replace(letter, '').includes(x
+                            alphabet_divs.filter(x => ('+ '.replace(letter, '').includes(x
                                 .letter))).forEach(x => {
-                                x.set('border', 'white solid 4px')
+                                x.set('border', 'white solid ' + r(width / 300) + 'px')
                             })
                         } else if (alphabet.toUpperCase().includes(letter)) {
                             if (selectedletters.includes(letter)) {
                                 selectedletters = selectedletters.replace(letter, '');
-                                div.set('border', 'white solid 4px')
+                                div.set('border', 'white solid ' + r(width / 300) + 'px')
                             } else {
                                 if (selectedletters.length >= 4) {
                                     let toRemove = selectedletters[0]
                                     selectedletters = selectedletters.slice(1)
                                     alphabet_divs.filter(x => x.letter === toRemove)[0].set(
-                                        'border', 'white solid 4px');
+                                        'border', 'white solid ' + r(width / 300) + 'px');
                                 }
                                 selectedletters += letter;
                             }
@@ -499,7 +558,7 @@
                         } else {
                             resolve({
                                 letters: selectedletters,
-                                num: parseInt(selectednumber),
+                                extras: extras,
                                 removeFn: function () {
                                     alphabet_divs.forEach(div => {
                                         div.remove();
@@ -515,6 +574,11 @@
         }
 
         function findLetter(name) {
+            if (EXTRAS_MODE) {
+                if (EXTRA_KEYWORDS_CONFIG[name[0]].map(x => x.name).includes(name)) {
+                    return EXTRA_KEYWORDS_CONFIG[name[0]].filter(x => x.name === name)[0];
+                }
+            }
             return alphabet.split('').map(letter => {
                 return KEYWORDS_CONFIG[letter].includes(name) ? letter : ''
             }).filter(x => x !== '')[0]
@@ -526,10 +590,16 @@
             theta = theta || 0;
             let faller = new FallingImg(getRandom(width * 0.1, width * 0.9), -height / 10, name, speed, true)
             let letter = name[0]
+            let url = './Letters/' + letter + '/' + name + '.png';
             if (!KEYWORDS_CONFIG[letter].includes(name)) {
                 letter = findLetter(name)
+                if (typeof letter === 'string') {
+                    url = './Letters/' + letter + '/' + name + '.png';
+                } else if (typeof letter === 'object') {
+                    url = letter.path;
+                }
             }
-            FallingImg.createIcon('./Letters/' + letter + '/' + name + '.png', width / 10, width / 10, color || 'blue')
+            FallingImg.createIcon(url, width / 10, width / 10, color || 'blue')
                 .then(x => {
                     faller.hasNoBounds = true;
                     faller.addSprite(x.fromCenter())
@@ -550,21 +620,21 @@
                         }
                         faller.kill()
                     }
-                    if(isBomb){
-                        x.set('border','solid red 5px')
-                        let fire = new Img('./images/fire.png',-width/10,-width/10,width/10).onLoad(()=>{
+                    if (isBomb) {
+                        x.set('border', 'solid red 5px')
+                        let fire = new Img('./images/fire.png', -width / 10, -width / 10, width / 10).onLoad(() => {
                             faller.addDeathImage(fire.shape)
                         })
-                        handleClick = function(){
+                        handleClick = function () {
                             faller.kill();
-                            showPoints(faller.x, faller.y,r( -CURRENT_POINTS/4));
-                            setPointsText(r(-CURRENT_POINTS/4))
+                            showPoints(faller.x, faller.y, r(-CURRENT_POINTS / 4));
+                            setPointsText(r(-CURRENT_POINTS / 4))
                             setStreakText(1)
                             CURRENT_STREAK = 0;
                         }
-                        let bomb = new Img('./images/bomb.png', width/50,width/50,width/15)
+                        let bomb = new Img('./images/bomb.png', width / 50, width / 50, width / 15)
                         x.attach(bomb);
-                        bomb.set('opacity','0.7')
+                        bomb.set('opacity', '0.7')
                     }
                     x.shape.addEventListener('click', handleClick)
                     x.shape.addEventListener('touchstart', handleClick)
@@ -695,10 +765,6 @@
                     return;
                 }
                 letters = [letter.toLowerCase()];
-                let letter = name[0]
-                if (!KEYWORDS_CONFIG[letter].includes(name)) {
-                    letter = findLetter(name)
-                }
             }
 
             let interval = setInterval(() => {
@@ -763,7 +829,7 @@
                     spin: getRandom(8, 10),
                     extraPoints: r(getRandom(5, 10)),
                     angle: getRandom([0, 90, 270, 180, 45]),
-                    isBomb: getRandom(10) === 0? true: false
+                    isBomb: getRandom(10) === 0 ? true : false
                 }
             } else if (rand < 0.3) {
                 //20%
@@ -772,16 +838,16 @@
                     spin: getRandom(5, 7),
                     extraPoints: r(getRandom(3, 5)),
                     angle: getRandom([0, 90, 270, 180]),
-                    isBomb: getRandom(15) === 0? true: false
+                    isBomb: getRandom(15) === 0 ? true : false
                 }
             } else if (rand < 0.5) {
                 //20%
                 return {
                     speed: getRandom(1, 2),
                     spin: getRandom(1, 2),
-                    extraPoints: r(getRandom(1,2)),
+                    extraPoints: r(getRandom(1, 2)),
                     angle: getRandom([0, 90, 270, 180]),
-                    isBomb: getRandom(20) === 0? true: false
+                    isBomb: getRandom(20) === 0 ? true : false
                 }
             } else if (rand < 0.75) {
                 //25%
@@ -790,7 +856,7 @@
                     spin: 0,
                     extraPoints: 1,
                     angle: getRandom([0, 90, 270, 180]),
-                    isBomb: getRandom(40) === 0? true: false
+                    isBomb: getRandom(40) === 0 ? true : false
                 }
             } else {
                 //25%
@@ -799,7 +865,7 @@
                     spin: 0,
                     extraPoints: 0,
                     angle: 0,
-                    isBomb: getRandom(50) === 0? true: false
+                    isBomb: getRandom(50) === 0 ? true : false
                 }
             }
         }
@@ -811,8 +877,8 @@
             }
             let pointDiv = new P(points, x, y, r(width / 20) + 'px').fromCenter();
             pointDiv.color = getPointsColor(points);
-            pointDiv.set('textShadow','white 0 0 3px')
-            pointDiv.set('fontStyle','bolder')
+            pointDiv.set('textShadow', 'white 0 0 3px')
+            pointDiv.set('fontStyle', 'bolder')
             let pointLoop = setInterval(() => {
                 pointDiv.y -= 1
             }, 50)
