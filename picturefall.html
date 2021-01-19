@@ -66,7 +66,7 @@
                     console.log()
                     setupExtras();
                     IMAGE_CONFIG.animals.valid_names.forEach(animal => {
-                        let url = IMAGE_PATH + IMAGE_CONFIG.animals.path + '/';
+                        let url = IMAGE_CONFIG.animals.path + '/';
                         if (findLetter(animal) === undefined) {
                             //findLetter will return undefined if theres no word
                             EXTRA_KEYWORDS_CONFIG[animal[0]].push({
