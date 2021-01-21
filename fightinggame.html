@@ -307,43 +307,28 @@
         let playerHP = {};
         let monsterHP = {};
 
-        function createHPBar(image, isLeftSide) {
-            if (isLeftSide) { //TODO simplify this
-                playerHP = new LoadingBar(width*0.1, height/4, width/3, width/30, 0, 100, 100);
-                let circle = new Circle(width * 0.2, height * 0.35, width/24).fromCenter();
-                circle.color = 'white';
-                circle.border = 'solid blue 3px';
-                circle.zIndex = '10'
-                circle.set('overflow', 'hidden');
-                let img = new Img(image.cloneNode(), 0, 0, width/12).onLoad(x => {
-                    img.set('transform', '');
-                    img.y += circle.height/4;
-                    circle.attach(img);
-                });
-                playerHP.x = circle.x 
-                playerHP.y = circle.y - circle.height/2; 
-                playerHP.set('borderRadius', '0px 0px 80px 0px/0 0 40px 0');
-                playerHP.set('overflow', 'hidden')
-                playerHP.circle = circle;
-            } else {
-                monsterHP = new LoadingBar(0, 0, width/3, width/30, 0, 100, 100);
-                let circle = new Circle(width, height * 0.35, width/24).fromCenter();
-                circle.color = 'red';
-                circle.border = 'solid blue 3px';
-                circle.zIndex = '10';
-                circle.set('overflow', 'hidden');
-                let img = new Img(image.cloneNode(), 0, 0, width/12).onLoad(x => {
-                    img.set('transform', 'scaleX(-1)');
-                    img.y += 10
-                    circle.attach(img);
-                });
-                monsterHP.angle = 180;
-                monsterHP.x = circle.x - monsterHP.width //67
-                monsterHP.y = circle.y - circle.height/2 ; //33
-                monsterHP.set('borderRadius', '0 80px 0 0/0 40px 0 0');
-                monsterHP.set('overflow', 'hidden')
-                monsterHP.circle = circle;
-            }
+        function createHPBar(image, x,y, isPlayer, isLeftSide) {
+            let hpBar = new LoadingBar(x,y,width/3,width/30,0,100,100);
+            let circle = new Circle(hpBar.x + (isLeftSide? 0 : hpBar.width),hpBar.y + width/24, width/24);
+            circle.color = 'red';
+            circle.border = 'solid blue '+r(width/300)+'px';
+            circle.zIndex = '10';
+            if(isLeftSide){
+                hpBar.set('borderRadius', '0px 0px 80px 0px/0 0 40px 0');
+            }else{
+                hpBar.set('borderRadius', '0 80px 0 0/0 40px 0 0');
+                hpBar.angle = 180;
+            }   
+            hpBar.set('overflow', 'hidden')
+            let img = new Img(image.cloneNode(), 0, 0, width/12).onLoad(x => {
+                if(!isLeftSide) img.set('transform', 'scaleX(-1)');
+                img.y += 10
+                circle.attach(img);
+            });
+            if(isPlayer) circle.color = 'white';
+            circle.set('overflow', 'hidden')
+            hpBar.circle = circle;
+            return hpBar;
         }
 
         function setup() {
@@ -386,7 +371,7 @@
                     player.maxbounds.y = (height*1.1) / 2 + player.height / 2;
                     monster.projectileOffsetHeight = -player.height / 3;
                     loadingBar.value += 30;
-                    createHPBar(player.sprite.shape, true)
+                    playerHP = createHPBar(player.sprite.shape,width*0.1,height*0.05,true,true)
                 });
             player.landing_emitter.subscribe('land', () => {
                 player.faceRight();
@@ -407,7 +392,8 @@
                     monster.maxbounds.y = (height*1.1) / 2 + monster.height / 2;
                     monster.faceLeft();
                     loadingBar.value += 30
-                    createHPBar(monster.sprite.shape, false)
+                    monsterHP = createHPBar(monster.sprite.shape,width/1.8,height*0.05,false,false)
+                    
                 });
             monster.jumpMult = 20;
             monster.isCurrentlyJumping = true;
