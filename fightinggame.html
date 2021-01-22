@@ -425,6 +425,8 @@
         let PLAYING = false;
         let secret = false; //for the hardmode double click
         let secretTO; //timeout needed for doubleclick
+        let HARDMODE_HAS_BEEN_ENABLED = false;
+        let SUPER_HARDMODE = false;
         id('play_pause').addEventListener('click', function () {
             PLAYING = !PLAYING;
             if (PLAYING) {
@@ -440,6 +442,7 @@
                     id('play_PauseText').innerText = 'Playing';
                     PLAYING = true;
                     HARDMODE = true;
+
                 }
             }
             secret = true;
@@ -699,12 +702,31 @@
 
                     if (monster.dead && HARDMODE && !currentlySpawning) {
                         let spawnOnLeftSide = !getRandom(4)
-                        spawnNewMonster(index, spawnOnLeftSide ? width * 0.3 : width * 0.8, !spawnOnLeftSide,
+                        if(monsters.length>1){
+                            spawnOnLeftSide = monsters[!index + 0].character.x>width/2;
+                        }
+                        spawnNewMonster(index, spawnOnLeftSide ? width * 0.2 : width * 0.8, !spawnOnLeftSide,
                             false);
                         HARDMODE = false;
+                        
+                        if(HARDMODE_HAS_BEEN_ENABLED){
+                            //hardmode was beaten
+                            SUPER_HARDMODE = true;
+                        }
+                        HARDMODE_HAS_BEEN_ENABLED = true;
                         if (PLAYING) id('play_PauseText').innerText = 'playing';
                     }
                     return
+                }
+                if(SUPER_HARDMODE){
+                    if(!monster.dead && monster.health<=50 && !currentlySpawning){
+                        let newIndex = !index + 0; //will be 1 if index is 0 and vice versa
+                        let spawnOnLeftSide = monster.x>= width/2;
+                        spawnNewMonster(newIndex, spawnOnLeftSide ? width * 0.2 : width * 0.8, !spawnOnLeftSide,
+                            false);
+                        SUPER_HARDMODE = false;
+                        HARDMODE_HAS_BEEN_ENABLED = false;
+                    }
                 }
                 monster.update(deltaT);
                 //projectiles hit calcs
@@ -717,11 +739,6 @@
                                 //console.log(monster.health)
                                 monsterHP.value = monster.health <= 0 ? 0 : monster.health | 0;
                                 monster.doJump(-0.5 + projectile.power / 1000);
-                                let unsub = monster.landing_emitter.subscribe('land', () => {
-                                    setTimeout(() => monster.doJump(0.6 + projectile.power /
-                                        1000), 500);
-                                    unsub();
-                                })
                             }
                             projectile.owner = '';
                             projectile.kill()
@@ -796,7 +813,7 @@
                         monsterShoot(index);
                     }
                     if (Math.random() * 100 < 2) {
-                        monster.jumpUp(3);
+                        monster.jumpUp(10);
                     }
                 }
 
