@@ -25,11 +25,15 @@
             <p style="position: absolute;  font-size: 1em; top: 55px; left: 520px; color: deepskyblue; text-shadow: black 0 0 2px; font-weight: bolder"
                 id="enemyhp"></p>
             <button id="btn_top_left" class="controlBtn"><span class="powerText innerText">Power</span> </button>
-            <button id="btn_top_mid" class="controlBtn"><span class="innerText">←</span></button>
-            <button id="btn_top_right" class="controlBtn"><span class="innerText">→</span></button>
+            <button id="btn_top_mid" class="controlBtn"><span class="innerText">Jump  
+                ← left</span></button>
+            <button id="btn_top_right" class="controlBtn"><span class="innerText">Jump 
+                 right →</span></button>
             <button id="btn_bot_left" class="controlBtn"><span class="shieldText innerText">Block</span></button>
-            <button id="btn_bot_mid" class="controlBtn"><span class="shootText innerText">←</span></button>
-            <button id="btn_bot_right" class="controlBtn"><span class="shootText innerText">→</span></button>
+            <button id="btn_bot_mid" class="controlBtn"><span class="shootText innerText">shoot
+                ← left</span></button>
+            <button id="btn_bot_right" class="controlBtn"><span class="shootText innerText">shoot
+                right →</span></button>
             <button id="play_pause" class="controlBtn"><span id="play_PauseText"
                     class="innerText">paused</span></button>
             <div id="image_blocker" style="position: absolute;top: 0; left: 0; z-index: 9; background-color:#26445e">
@@ -646,7 +650,7 @@
                 setTimeout(() => {
                     createFallingMonster(xPos, monster_char.name, monster_char.power, IMAGE_PATH +
                         MONSTER_CONFIG.path + monster_char.name + '.png', index, facingLeft);
-                }, time * 2)
+                }, time * 1.5)
             } else {
                 createFallingMonster(xPos, monster_char.name, monster_char.power, IMAGE_PATH + MONSTER_CONFIG.path +
                     monster_char.name + '.png', index, facingLeft);
