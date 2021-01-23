@@ -25,13 +25,10 @@
             <p style="position: absolute;  font-size: 1em; top: 55px; left: 520px; color: deepskyblue; text-shadow: black 0 0 2px; font-weight: bolder"
                 id="enemyhp"></p>
             <button id="btn_top_left" class="controlBtn"><span class="powerText innerText">Power</span> </button>
-            <button id="btn_top_mid" class="controlBtn"><span class="innerText">Jump  
-                ← left</span></button>
-            <button id="btn_top_right" class="controlBtn"><span class="innerText">Jump 
-                 right →</span></button>
+            <button id="btn_top_mid" class="controlBtn"><span class="innerText">Jump &nbsp; ← left</span></button>
+            <button id="btn_top_right" class="controlBtn"><span class="innerText">Jump &nbsp; right →</span></button>
             <button id="btn_bot_left" class="controlBtn"><span class="shieldText innerText">Block</span></button>
-            <button id="btn_bot_mid" class="controlBtn"><span class="shootText innerText">shoot
-                ← left</span></button>
+            <button id="btn_bot_mid" class="controlBtn"><span class="shootText innerText">shoot &nbsp; ← left</span></button>
             <button id="btn_bot_right" class="controlBtn"><span class="shootText innerText">shoot
                 right →</span></button>
             <button id="play_pause" class="controlBtn"><span id="play_PauseText"
@@ -340,8 +337,8 @@
         let monsters = new MonsterController();
 
         function createHPBar(image, x, y, isPlayer, isLeftSide) {
-            let hpBar = new LoadingBar(x, y, width / 3, width / 30, 0, 100, 100);
-            let circle = new Circle(hpBar.x + (isLeftSide ? 0 : hpBar.width), hpBar.y + width / 24, width / 24);
+            let hpBar = new LoadingBar(x, y, width / 3, width / 35, 0, 100, 100);
+            let circle = new Circle(hpBar.x + (isLeftSide ? 0 : hpBar.width), hpBar.y + width / 26, width / 26);
             circle.color = 'red';
             circle.border = 'solid blue ' + r(width / 300) + 'px';
             circle.zIndex = 10;
@@ -442,7 +439,7 @@
                 if (monsters[0].character.dead && !currentlySpawning) {
                     let spawnOnLeftSide = !getRandom(4)
                     spawnNewMonster(0, spawnOnLeftSide ? width * 0.2 : width * 0.8, !spawnOnLeftSide, false);
-                } else {
+                } else if(!currentlySpawning){
                     id('play_PauseText').innerText = 'Playing';
                     PLAYING = true;
                     HARDMODE = true;
@@ -537,7 +534,7 @@
                 }, Math.abs(player.x - x) < width / 4 ? 13000 : 5000)
                 setTimeout(() => {
                     let sprite = new Img(imagePath, 0, 0,
-                            width / 2.7).fromCenter()
+                            width / 3).fromCenter()
                         .usingNewTransform().onLoad(() => {
                             if (checkObj(monsters[index])) {
                                 monsters[index].loadingBar.circle.remove()
@@ -552,7 +549,7 @@
                             monster.jumpMult = 20 * width / 960;
                             monster.isCurrentlyJumping = true;
                             monster.addForce(VECTORS.gravity);
-                            if (monster.height > height) monster.width *= height / monster.height;
+                            if (monster.height > height*0.8) monster.width *= (height*0.8) / monster.height;
                             monster.maxbounds.y = (height * 1.1) / 2 + monster.height / 2;
                             monster.addDeathImage(LOADED_IMAGES.fire.cloneNode());
                             let shield_name = 'shield_' + getRandom(valid_colors)
@@ -560,7 +557,7 @@
                             monster.addShieldImage(LOADED_IMAGES[shield_name].cloneNode())
                             monster.projectileOffsetHeight = -height / 43;
                             monsterHP = createHPBar(sprite.shape, width / 1.8 + index * width / 20,
-                                height * 0.01 + index * height * 0.2, false, false)
+                                height * 0.01 + index * height * 0.1, false, false)
                             monsterHP.zIndex = 10 + index * 2
                             monsterHP.circle.zIndex = 11 + index * 2
                             monsterHP.set('display', 'none')
