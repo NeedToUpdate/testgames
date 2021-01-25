@@ -44,6 +44,7 @@
         let SELECTED_LETTERS = [];
         let CURRENT_POINTS = 0;
         let TOTAL_POINTS = 0;
+        let POINT_LEADERBOARD = [];
 
         let EXTRAS_MODE = false;
         let EXTRA_KEYWORDS_CONFIG = {}
@@ -286,61 +287,76 @@
                     goodJob.zIndex = 16;
                     setTimeout(() => {
                         //SHOW THIS ROUNDS POINTS
-                        let currentPoints = new P('Your Points: 0', width / 2, height * 0.2, r(
+                        let currentPointsP = new P('Your Points: 0', width / 2, height * 0.2, r(
                             width / 22) + 'px').fromCenter();
-                        currentPoints.zIndex = 16
-                        currentPoints.color = 'lightblue'
+                        currentPointsP.zIndex = 16
+                        currentPointsP.color = 'lightblue'
                         let chunk = CURRENT_POINTS / 60;
                         let counter = 0;
+                        POINT_LEADERBOARD.push(CURRENT_POINTS);
                         for (let i = 0; i <= 60; i++) {
                             //DO INCREMENT
                             setTimeout(() => {
                                 if (i === 60) {
-                                    currentPoints.string = 'Your Points: ' + r(
+                                    currentPointsP.string = 'Your Points: ' + r(
                                         CURRENT_POINTS);
                                     setTimeout(() => {
                                         //SHOW TOTAL POINTS FOR THIS SESSION
                                         let counter2 = TOTAL_POINTS -
                                             CURRENT_POINTS;
-                                        let totalPoints = new P(
+                                        let totalPointsP = new P(
                                             'Total Points: ' + counter2,
                                             width / 2, height * 0.3, r(
                                                 width / 22)).fromCenter();
-                                        totalPoints.zIndex = 16
-                                        totalPoints.color = 'lightred'
+                                        totalPointsP.zIndex = 16
+                                        totalPointsP.color = 'lightred'
                                         let chunk = CURRENT_POINTS / 60;
+                                        let topScoresP = new P('Top Scores',width*.8,height*0.1,r(width/30) +'px').fromCenter()
+                                        let numPs = [];
                                         for (let i = 0; i <= 60; i++) {
+                                            //show leaderboard
+                                            topScoresP.zIndex = 19;
+                                            POINT_LEADERBOARD.sort((a,b)=>a<b).forEach((num,i)=>{
+                                                if(i>9) return;
+                                                let numP = new P(num,width*0.8, height/5 + (i+1)*height*0.07, r(width/40)+'px').fromCenter();
+                                                numP.zIndex = 19
+                                                numPs.push(numP)
+                                            })
                                             //do decrement of current points and increment total points
                                             setTimeout(() => {
                                                 if (i === 60) {
-                                                    totalPoints.string =
+                                                    totalPointsP.string =
                                                         'Total Points: ' +
                                                         TOTAL_POINTS;
-                                                    currentPoints
+                                                    currentPointsP
                                                         .string =
                                                         'Your Points: ' +
                                                         0;
                                                     setTimeout(() => {
-                                                        currentPoints
+                                                        currentPointsP
                                                             .remove() //delay this
                                                     }, 100);
                                                     resolve({
                                                         fadeOut: fadeOut,
                                                         removeFn: () => {
-                                                            totalPoints
-                                                                .remove()
+                                                            totalPointsP
+                                                                .remove();
                                                             goodJob
                                                                 .remove();
+                                                            topScoresP.remove();
+                                                            numPs.forEach(x=>{
+                                                                x.remove();
+                                                            })
                                                         }
                                                     });
                                                 } else {
                                                     counter -= chunk;
                                                     counter2 += chunk;
-                                                    currentPoints
+                                                    currentPointsP
                                                         .string =
                                                         'Your Points: ' +
                                                         r(counter);
-                                                    totalPoints.string =
+                                                    totalPointsP.string =
                                                         'Total Points: ' +
                                                         r(counter2);
 
@@ -351,7 +367,7 @@
 
                                 } else {
                                     counter += chunk;
-                                    currentPoints.string = 'Your Points: ' + r(counter);
+                                    currentPointsP.string = 'Your Points: ' + r(counter);
                                 }
                             }, i * 17)
                         }

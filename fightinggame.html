@@ -634,7 +634,7 @@
                 setTimeout(() => {
                     monsterHP.circle.attachments.imgs[0].remove();
                     monsterHP.circle.detach(monsterHP.circle.attachments.imgs[0])
-                    let skull = new Img(LOADED_IMAGES.skull_open, 0, 0, width / 12).onLoad(x => {
+                    let skull = new Img(LOADED_IMAGES.skull_open, 0, 0, width / 13).onLoad(x => {
                         monsterHP.circle.attach(skull);
                     })
                 }, time)
@@ -696,7 +696,7 @@
                         monster.iconReplaced = true;
                         monsterHP.circle.attachments.imgs[0].remove();
                         monsterHP.circle.detach(monsterHP.circle.attachments.imgs[0])
-                        let skull = new Img(LOADED_IMAGES.skull.cloneNode(), 0, 0, width / 12).onLoad(x => {
+                        let skull = new Img(LOADED_IMAGES.skull.cloneNode(), 0, 0, width / 13).onLoad(x => {
                             monsterHP.circle.attach(skull);
                         })
                     }
