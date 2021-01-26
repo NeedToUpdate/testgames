@@ -77,7 +77,7 @@
                         }
                     })
                 }
-                if(SELECTED_LETTERS.length === 0 && EXTRAS_MODE){
+                if (SELECTED_LETTERS.length === 0 && EXTRAS_MODE) {
                     SELECTED_LETTERS = ['+']
                 }
                 x.removeFn();
@@ -202,31 +202,35 @@
             let initial_points = CURRENT_POINTS;
             if (checkObj(pointsP)) {
                 let chunk = num / 17;
-                for (let i = 0; i < 18; i++) {
-                    pointsP.set('textShadow', 'lightgreen 0 0 5px')
-                    setTimeout(() => {
-                        if (IS_TIME_TICKING) {
-                            if (i === 17) {
-                                pointsP.string = makeString(final_points);
-                                if (!dontAdd) {
-                                    CURRENT_POINTS += num;
-                                    TOTAL_POINTS += num;
-                                }
-                                pointsP.set('textShadow', '')
-                                IS_ADDING_POINTS = false;
-                                if (points_queue.length > 0) {
-                                    let nextNum = points_queue.shift();
-                                    setPointsText(nextNum)
-                                }
-                            } else {
-                                initial_points += chunk
-                                pointsP.string = makeString(initial_points |0);
-                            }
-                        } else {
+                if (IS_TIME_TICKING) {
+                    for (let i = 0; i < 18; i++) {
+                        pointsP.set('textShadow', 'lightgreen 0 0 5px')
+                        if ( i === 17 && !dontAdd) {
                             CURRENT_POINTS += num;
                             TOTAL_POINTS += num;
                         }
-                    }, i * 30)
+                        setTimeout(() => {
+                            if(IS_TIME_TICKING){
+                                if (i === 17) {
+                                    pointsP.string = makeString(final_points);
+                                    pointsP.set('textShadow', '')
+                                    IS_ADDING_POINTS = false;
+                                    if (points_queue.length > 0) {
+                                        let nextNum = points_queue.shift();
+                                        setPointsText(nextNum)
+                                    }
+                                } else {
+                                    initial_points += chunk
+                                    pointsP.string = makeString(initial_points | 0);
+                                }
+                            }
+                        }, i * 30)
+                    }
+                } else {
+                    if (!dontAdd) {
+                            CURRENT_POINTS += num;
+                            TOTAL_POINTS += num;
+                    }
                 }
             } else {
                 pointsP = new P(makeString(CURRENT_POINTS + num), width / 50, width / 50, r(width / 20))
@@ -305,27 +309,40 @@
                                         let counter2 = TOTAL_POINTS -
                                             CURRENT_POINTS;
                                         let totalPointsP = new P(
-                                            'Total Points: ' + counter2,
+                                            'Everybody\'s Points: ' +
+                                            counter2,
                                             width / 2, height * 0.3, r(
                                                 width / 22)).fromCenter();
                                         totalPointsP.zIndex = 16
                                         totalPointsP.color = 'lightred'
                                         let chunk = CURRENT_POINTS / 60;
-                                        let topScoresP = new P('Top Scores',width*.8,height*0.1,r(width/30) +'px').fromCenter()
+                                        let topScoresP = new P('Top Scores',
+                                                width * .8, height * 0.1, r(
+                                                    width / 30) + 'px')
+                                            .fromCenter()
                                         let numPs = [];
                                         for (let i = 0; i <= 60; i++) {
                                             //show leaderboard
                                             topScoresP.zIndex = 19;
-                                            POINT_LEADERBOARD.sort((a,b)=>a<b).forEach((num,i)=>{
-                                                if(i>9) return;
-                                                let numP = new P(num,width*0.8, height/5 + (i+1)*height*0.07, r(width/40)+'px').fromCenter();
+                                            POINT_LEADERBOARD.sort((a, b) => a <
+                                                b).forEach((num, i) => {
+                                                if (i > 9) return;
+                                                let numP = new P(num,
+                                                        width * 0.8,
+                                                        height / 8 + (
+                                                            i + 1) *
+                                                        height * 0.07,
+                                                        r(width / 40) +
+                                                        'px')
+                                                    .fromCenter();
                                                 numP.zIndex = 19
                                                 numPs.push(numP)
                                             })
                                             //do decrement of current points and increment total points
                                             setTimeout(() => {
                                                 if (i === 60) {
-                                                    totalPointsP.string =
+                                                    totalPointsP
+                                                        .string =
                                                         'Total Points: ' +
                                                         TOTAL_POINTS;
                                                     currentPointsP
@@ -343,10 +360,15 @@
                                                                 .remove();
                                                             goodJob
                                                                 .remove();
-                                                            topScoresP.remove();
-                                                            numPs.forEach(x=>{
-                                                                x.remove();
-                                                            })
+                                                            topScoresP
+                                                                .remove();
+                                                            numPs
+                                                                .forEach(
+                                                                    x => {
+                                                                        x
+                                                                    .remove();
+                                                                    }
+                                                                    )
                                                         }
                                                     });
                                                 } else {
@@ -356,7 +378,8 @@
                                                         .string =
                                                         'Your Points: ' +
                                                         r(counter);
-                                                    totalPointsP.string =
+                                                    totalPointsP
+                                                        .string =
                                                         'Total Points: ' +
                                                         r(counter2);
 
@@ -367,7 +390,8 @@
 
                                 } else {
                                     counter += chunk;
-                                    currentPointsP.string = 'Your Points: ' + r(counter);
+                                    currentPointsP.string = 'Your Points: ' + r(
+                                    counter);
                                 }
                             }, i * 17)
                         }
@@ -454,20 +478,20 @@
                     let ONLY_EXTRAS = false;
                     let pDiv = new P(letter.toUpperCase() + ': ', width / 2 - LETTER_WIDTH * 3,
                         TOP_PADDING + LETTER_WIDTH * i, LETTER_WIDTH).fromCenter();
-                    if(alphabet.split('').includes(letter)){
+                    if (alphabet.split('').includes(letter)) {
                         arrayToProcess = KEYWORDS_CONFIG[letter]
                         pDiv.color = 'yellow';
                         if (EXTRAS_MODE) {
                             arrayToProcess = arrayToProcess.concat(EXTRA_KEYWORDS_CONFIG[letter])
                         }
                         stuffToDelete.push(pDiv);
-                    }else if(letter === '+'){
+                    } else if (letter === '+') {
                         //only use extra words, show 10 randoms
                         ONLY_EXTRAS = true;
-                        Object.values(EXTRA_KEYWORDS_CONFIG).forEach(array=>{
+                        Object.values(EXTRA_KEYWORDS_CONFIG).forEach(array => {
                             arrayToProcess = arrayToProcess.concat(array)
                         })
-                        arrayToProcess = shuffle(arrayToProcess).splice(0,10)
+                        arrayToProcess = shuffle(arrayToProcess).splice(0, 10)
                     }
                     let IMAGE_WIDTH = width * 0.6 / (arrayToProcess.length + 1)
                     arrayToProcess.forEach((icon, j) => {
@@ -799,7 +823,9 @@
 
             let interval = setInterval(() => {
                 let config = getFallerConfig();
-                createFaller(getRandom(KEYWORDS_CONFIG[getRandom(letters)].concat(EXTRAS_MODE? EXTRA_KEYWORDS_CONFIG[getRandom(letters)].map(x=>x.name) : [])), config.speed, config.spin, config
+                createFaller(getRandom(KEYWORDS_CONFIG[getRandom(letters)].concat(EXTRAS_MODE ?
+                        EXTRA_KEYWORDS_CONFIG[getRandom(letters)].map(x => x.name) : [])), config.speed,
+                    config.spin, config
                     .extraPoints, config.extraPoints > 50 ? 'yellow' : 'grey', config.angle, config.isBomb)
             }, 900)
             VARIOUS_LOOPS.push(interval);
@@ -812,8 +838,9 @@
             VARIOUS_LOOPS.push(onlyCorrectDrop);
             let completelyWrong = setInterval(() => {
                 let config = getFallerConfig(0.8);
-                let wrongAlpha = alphabet.split('').filter(x=>!letters.includes(x));
-                let wrongName = getRandom(KEYWORDS_CONFIG[getRandom(wrongAlpha)].concat(EXTRAS_MODE? EXTRA_KEYWORDS_CONFIG[getRandom(wrongAlpha)].map(x=>x.name) : []));
+                let wrongAlpha = alphabet.split('').filter(x => !letters.includes(x));
+                let wrongName = getRandom(KEYWORDS_CONFIG[getRandom(wrongAlpha)].concat(EXTRAS_MODE ?
+                    EXTRA_KEYWORDS_CONFIG[getRandom(wrongAlpha)].map(x => x.name) : []));
                 createFaller(wrongName, config.speed, config.spin, 10, getRandom(['blue', 'grey', 'green',
                     'yellow'
                 ]), config.angle, false)
