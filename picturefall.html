@@ -17,6 +17,7 @@
     <script language="javascript" type="text/javascript" src="./todays_words.js"></script>
     <script language="javascript" type="text/javascript" src="./Letters/keywords_config.js"></script>
     <script language="javascript" type="text/javascript" src="./image_config.js"></script>
+    <script language="javascript" type="text/javascript" src="../Classes/Extra Letters/keywords_config.js"></script>
     <link rel="stylesheet" type="text/css" href="./global_styles.css">
     <style>
     </style>
@@ -63,8 +64,7 @@
             TOP_PADDING = height * 0.2
             setupKeyboard().then((x) => {
                 SELECTED_LETTERS = x.letters.split('').map(x => x.toLowerCase());
-                if (x.extras === '+') {
-                    console.log()
+                if (x.extras === '&') {
                     setupExtras();
                     IMAGE_CONFIG.animals.valid_names.forEach(animal => {
                         let url = IMAGE_CONFIG.animals.path + '/';
@@ -76,9 +76,20 @@
                             })
                         }
                     })
+                } else if(x.extras === '+'){
+                    setupExtras();
+                    SELECTED_LETTERS.forEach(letter=>{
+                        let url = '../Classes/Extra Letters/'
+                        EXTRA_KEYWORDS_CONFIG[letter].push(...EXTRA_LETTERS_CONFIG[letter].map(x=>{
+                            return {
+                                name: x,
+                                path: url + '/' + x[0] + '/' + x + '.png'
+                            }
+                        }))
+                    })
                 }
                 if (SELECTED_LETTERS.length === 0 && EXTRAS_MODE) {
-                    SELECTED_LETTERS = ['+']
+                    SELECTED_LETTERS = ['&']
                 }
                 x.removeFn();
                 play()
@@ -343,7 +354,7 @@
                                                 if (i === 60) {
                                                     totalPointsP
                                                         .string =
-                                                        'Total Points: ' +
+                                                        'Everybody\'s Points: ' +
                                                         TOTAL_POINTS;
                                                     currentPointsP
                                                         .string =
@@ -419,7 +430,7 @@
                         url = letter.path;
                     }
                 } else {
-                    url = './Letters/' + letter + '/' + x + '.png';
+                    url = './Letters/' + letter + '/'  + x + '.png';
                 }
 
                 function getXY(index) {
@@ -476,32 +487,39 @@
                 SELECTED_LETTERS.forEach((letter, i) => {
                     let arrayToProcess = []
                     let ONLY_EXTRAS = false;
-                    let pDiv = new P(letter.toUpperCase() + ': ', width / 2 - LETTER_WIDTH * 3,
-                        TOP_PADDING + LETTER_WIDTH * i, LETTER_WIDTH).fromCenter();
+                    let pDiv = {};
                     if (alphabet.split('').includes(letter)) {
+                        pDiv = new P(letter.toUpperCase() + ': ', width / 2 - LETTER_WIDTH * 3,
+                            TOP_PADDING + LETTER_WIDTH * i, LETTER_WIDTH).fromCenter();
                         arrayToProcess = KEYWORDS_CONFIG[letter]
                         pDiv.color = 'yellow';
                         if (EXTRAS_MODE) {
                             arrayToProcess = arrayToProcess.concat(EXTRA_KEYWORDS_CONFIG[letter])
                         }
                         stuffToDelete.push(pDiv);
-                    } else if (letter === '+') {
+                    } else if (['+','&','%'].includes(letter)) {
                         //only use extra words, show 10 randoms
                         ONLY_EXTRAS = true;
                         Object.values(EXTRA_KEYWORDS_CONFIG).forEach(array => {
                             arrayToProcess = arrayToProcess.concat(array)
                         })
-                        arrayToProcess = shuffle(arrayToProcess).splice(0, 10)
+                        arrayToProcess = shuffle(arrayToProcess).splice(0, 50)
                     }
                     let IMAGE_WIDTH = width * 0.6 / (arrayToProcess.length + 1)
+                    if(ONLY_EXTRAS){
+                        IMAGE_WIDTH = width * 0.6/ Math.min((arrayToProcess.length + 1),10)
+                    }
                     arrayToProcess.forEach((icon, j) => {
                         let url = './Letters/' + letter + '/' + icon + '.png'
                         if (typeof icon === 'object') {
                             url = icon.path;
                             icon = icon.name;
                         }
-                        let img = new Img(url, width * 0.3 + IMAGE_WIDTH * (j), TOP_PADDING +
-                            LETTER_WIDTH * i,
+                        let x_index = ONLY_EXTRAS? j%10 : j;
+                        let y_index = ONLY_EXTRAS? ((j/10)|0) : i;
+                        let left_padding = ONLY_EXTRAS? width*0.2 : width*0.3
+                        let img = new Img(url, left_padding + IMAGE_WIDTH * x_index, TOP_PADDING +
+                            LETTER_WIDTH * y_index,
                             IMAGE_WIDTH).onLoad(() => {
                             img.name = icon;
                             img = img.asSquare();
@@ -536,12 +554,14 @@
                         imgs.push(img)
                     })
                     console.log(imgs)
-                    pDiv.shape.addEventListener('click', () => {
-                        imgs.forEach(x => {
-                            if (x.name[0] == pDiv.string[0].toLowerCase()) x.shape
-                                .click();
+                    if(!ONLY_EXTRAS){
+                        pDiv.shape.addEventListener('click', () => {
+                            imgs.forEach(x => {
+                                if (x.name[0] == pDiv.string[0].toLowerCase()) x.shape
+                                    .click();
+                            })
                         })
-                    })
+                    }
                     let checkDiv = new P('✔', 10, 10, r(width / 30) + 'px')
                     checkDiv.color = 'green'
                     stuffToDelete.push(checkDiv)
@@ -583,12 +603,12 @@
             return new Promise(resolve => {
                 let selectedletters = '';
                 let extras = 0;
-                (alphabet.toUpperCase() + '+  ✔').split('').forEach((letter, i) => {
+                (alphabet.toUpperCase() + '+%&✔').split('').forEach((letter, i) => {
                     let div = makeLetter(letter, LEFT_PADDING + LETTER_WIDTH * (i % COL_NUM),
                         TOP_PADDING + LETTER_WIDTH * (i / COL_NUM | 0));
                     div.shape.addEventListener('click', () => {
                         div.set('border', 'green solid ' + r(width / 300) + 'px');
-                        if (['+', ' '].includes(letter)) {
+                        if (['+', '%','&'].includes(letter)) {
                             extras = letter;
                             //fancy way of setting the other numbers to white
                             alphabet_divs.filter(x => ('+ '.replace(letter, '').includes(x
