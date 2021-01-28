@@ -968,11 +968,11 @@
 
 
         setupBody(id('MAIN_SCREEN')).then(() => {
-            let backgroundimage = 'bg' + (Math.random() * 8 | 0).toString() + '.jpg';
-            DOMObjectGlobals.body.style.backgroundColor = 'grey';
-            DOMObjectGlobals.body.style.backgroundImage = 'url(./images/' + backgroundimage.toString() + ')';
-            DOMObjectGlobals.body.style.backgroundRepeat = 'no-repeat';
+            let background = 'space' + (getRandom(IMAGE_CONFIG.space_bgs.num)) + '.jpg';
+            DOMObjectGlobals.body.style.backgroundColor = 'black';
+            DOMObjectGlobals.body.style.backgroundImage = 'url(' + IMAGE_PATH + IMAGE_CONFIG.space_bgs.path + background.toString() + ')';
             DOMObjectGlobals.body.style.backgroundSize = width + 'px auto';
+            DOMObjectGlobals.body.style.backgroundRepeat = 'no-repeat';
             setup();
         })
     </script>
