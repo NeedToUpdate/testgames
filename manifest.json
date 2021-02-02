@@ -1,0 +1,16 @@
+{
+   "name": "Artem's Games",
+   "short_name": "Artem's Games",
+   "statt_url": "index.html",
+   "background_color":"#660066",
+   "theme_color":"#00ff00",
+   "display":"standalone",
+   "icons":[{
+      "src": "./favicon.ico",
+      "sizes": "256x256",
+      "type":"image/ico"
+   }]
+
+
+
+}
