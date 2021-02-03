@@ -1,7 +1,7 @@
 {
    "name": "Artem's Games",
    "short_name": "Artem's Games",
-   "statt_url": "index.html",
+   "statt_url": ".",
    "background_color":"#660066",
    "theme_color":"#00ff00",
    "display":"standalone",
