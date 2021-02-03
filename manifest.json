@@ -3,7 +3,7 @@
   "short_name": "Artem's Games",
   "lang": "en-US",
   "start_url": "/",
-  "display": "minimal-ui",
+  "display": "browser",
   "orientation":"landscape",
   "theme_color": "#02713b",
   "background_color": "#000000",
