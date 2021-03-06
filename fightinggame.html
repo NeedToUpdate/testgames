@@ -105,6 +105,9 @@
         #btn_top_mid {
             left: 7%;
         }
+        #btn_top_left:active{
+            border: solid orange 3px;
+        }
 
         #btn_top_right {
             border-radius: 5px 25px 5px 5px;
@@ -117,7 +120,7 @@
         }
 
         #btn_bot_left:active {
-            border: solid orange 3px;
+            border: solid limegreen 3px;
         }
 
         #btn_bot_right {
@@ -127,7 +130,7 @@
         }
 
         #btn_bot_right:active {
-            border: solid limegreen 3px;
+            border: solid red 3px;
         }
 
         #btn_bot_mid:active {
@@ -609,7 +612,7 @@
                                 loadingBar: monsterHP
                             }
                         });
-                }, Math.abs(player.x - x) < width / 4 ? 10000 : 3000)
+                }, Math.abs(player.x - x) < width / 4 ? 7000 : 3000)
             });
         }
 
@@ -737,6 +740,9 @@
                         if (projectile.hitbox.contains(monster.hitbox.vMiddle)) {
                             if (!monster.isShielded) {
                                 monster.health -= projectile.power;
+                                if(projectile.power>40){
+                                    shakeScreen();
+                                }
                                 //console.log(monster.health)
                                 monsterHP.value = monster.health <= 0 ? 0 : monster.health | 0;
                                 monster.doJump(-0.5 + projectile.power / 1000);
@@ -749,6 +755,9 @@
                     if (projectile.owner === 'monster') {
                         if (projectile.hitbox.contains(player.hitbox.vMiddle)) {
                             if (!player.isShielded) {
+                                if(projectile.power>40){
+                                    shakeScreen();
+                                }
                                 player.health -= projectile.power;
                                 playerHP.value = player.health;
                             }
