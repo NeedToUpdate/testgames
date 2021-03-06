@@ -2,7 +2,7 @@
   "name": "Artem's Games",
   "short_name": "Artem's Games",
   "lang": "en-US",
-  "start_url": "/",
+  "start_url": "/testgames/",
   "display": "fullscreen",
   "orientation":"landscape",
   "theme_color": "#02713b",
