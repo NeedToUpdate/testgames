@@ -478,9 +478,7 @@
             if (player.dead) return;
             player.powerUp(4)
         });
-        id('btn_bot_mid').addEventListener('click', function () {
-            if (player.dead) return;
-            player.faceLeft()
+        function playerShoot(){
             let projectile = player.shoot();
             if (projectile) {
                 projectile.owner = 'player';
@@ -496,26 +494,21 @@
                     }
                 }
             }
-
+            if(player.name == 'arceus'){
+                let newInfo = create_player(67);
+                LOADED_IMAGES.add([newInfo.power + '_projectile'], IMAGE_PATH + '/projectiles/');
+                player.powerType = newInfo.power;
+            }
+        }
+        id('btn_bot_mid').addEventListener('click', function () {
+            if (player.dead) return;
+            player.faceLeft()
+            playerShoot();
         });
         id('btn_bot_right').addEventListener('click', () => {
             if (player.dead) return;
             player.faceRight()
-            let projectile = player.shoot();
-            if (projectile) {
-                projectile.owner = 'player';
-                projectiles.push(projectile);
-                if (PLAYING && !monsters[0].character.dead) {
-                    let n = Math.random() * 10;
-                    if (n > 9) {
-                        if (monsters[0].character.health > 90) {
-                            monsters[0].character.jumpUp(1.7);
-                        }
-                    } else if (n > 8) {
-                        monsters[0].character.shield();
-                    }
-                }
-            }
+            playerShoot();
         });
         let currentlySpawning = false;
 

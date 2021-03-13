@@ -34,8 +34,9 @@
 //=============  END DEBUG WITHOUT CONSOLE STUFF ==================
 
 
+const underConstruction = true;
 
-if ("serviceWorker" in navigator) {
+if ("serviceWorker" in navigator && !underConstruction) {
     navigator.serviceWorker.register("./sw.js").then(registration => {
         console.log("registered!", registration)
     }).catch(e => {

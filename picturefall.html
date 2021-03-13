@@ -76,11 +76,11 @@
                             })
                         }
                     })
-                } else if(x.extras === '+'){
+                } else if (x.extras === '+') {
                     setupExtras();
-                    SELECTED_LETTERS.forEach(letter=>{
+                    SELECTED_LETTERS.forEach(letter => {
                         let url = '../Classes/Extra Letters/'
-                        EXTRA_KEYWORDS_CONFIG[letter].push(...EXTRA_LETTERS_CONFIG[letter].map(x=>{
+                        EXTRA_KEYWORDS_CONFIG[letter].push(...EXTRA_LETTERS_CONFIG[letter].map(x => {
                             return {
                                 name: x,
                                 path: url + '/' + x[0] + '/' + x + '.png'
@@ -216,12 +216,12 @@
                 if (IS_TIME_TICKING) {
                     for (let i = 0; i < 18; i++) {
                         pointsP.set('textShadow', 'lightgreen 0 0 5px')
-                        if ( i === 17 && !dontAdd) {
+                        if (i === 17 && !dontAdd) {
                             CURRENT_POINTS += num;
                             TOTAL_POINTS += num;
                         }
                         setTimeout(() => {
-                            if(IS_TIME_TICKING){
+                            if (IS_TIME_TICKING) {
                                 if (i === 17) {
                                     pointsP.string = makeString(final_points);
                                     pointsP.set('textShadow', '')
@@ -239,8 +239,8 @@
                     }
                 } else {
                     if (!dontAdd) {
-                            CURRENT_POINTS += num;
-                            TOTAL_POINTS += num;
+                        CURRENT_POINTS += num;
+                        TOTAL_POINTS += num;
                     }
                 }
             } else {
@@ -377,9 +377,9 @@
                                                                 .forEach(
                                                                     x => {
                                                                         x
-                                                                    .remove();
+                                                                            .remove();
                                                                     }
-                                                                    )
+                                                                )
                                                         }
                                                     });
                                                 } else {
@@ -402,7 +402,7 @@
                                 } else {
                                     counter += chunk;
                                     currentPointsP.string = 'Your Points: ' + r(
-                                    counter);
+                                        counter);
                                 }
                             }, i * 17)
                         }
@@ -430,7 +430,7 @@
                         url = letter.path;
                     }
                 } else {
-                    url = './Letters/' + letter + '/'  + x + '.png';
+                    url = './Letters/' + letter + '/' + x + '.png';
                 }
 
                 function getXY(index) {
@@ -497,7 +497,7 @@
                             arrayToProcess = arrayToProcess.concat(EXTRA_KEYWORDS_CONFIG[letter])
                         }
                         stuffToDelete.push(pDiv);
-                    } else if (['+','&','%'].includes(letter)) {
+                    } else if (['+', '&', '%'].includes(letter)) {
                         //only use extra words, show 10 randoms
                         ONLY_EXTRAS = true;
                         Object.values(EXTRA_KEYWORDS_CONFIG).forEach(array => {
@@ -506,8 +506,8 @@
                         arrayToProcess = shuffle(arrayToProcess).splice(0, 50)
                     }
                     let IMAGE_WIDTH = width * 0.6 / (arrayToProcess.length + 1)
-                    if(ONLY_EXTRAS){
-                        IMAGE_WIDTH = width * 0.6/ Math.min((arrayToProcess.length + 1),10)
+                    if (ONLY_EXTRAS) {
+                        IMAGE_WIDTH = width * 0.6 / Math.min((arrayToProcess.length + 1), 10)
                     }
                     arrayToProcess.forEach((icon, j) => {
                         let url = './Letters/' + letter + '/' + icon + '.png'
@@ -515,10 +515,11 @@
                             url = icon.path;
                             icon = icon.name;
                         }
-                        let x_index = ONLY_EXTRAS? j%10 : j;
-                        let y_index = ONLY_EXTRAS? ((j/10)|0) : i;
-                        let left_padding = ONLY_EXTRAS? width*0.2 : width*0.3
-                        let img = new Img(url, left_padding + IMAGE_WIDTH * x_index, TOP_PADDING +
+                        let x_index = ONLY_EXTRAS ? j % 10 : j;
+                        let y_index = ONLY_EXTRAS ? ((j / 10) | 0) : i;
+                        let left_padding = ONLY_EXTRAS ? width * 0.2 : width * 0.3
+                        let img = new Img(url, left_padding + IMAGE_WIDTH * x_index,
+                            TOP_PADDING +
                             LETTER_WIDTH * y_index,
                             IMAGE_WIDTH).onLoad(() => {
                             img.name = icon;
@@ -554,7 +555,7 @@
                         imgs.push(img)
                     })
                     console.log(imgs)
-                    if(!ONLY_EXTRAS){
+                    if (!ONLY_EXTRAS) {
                         pDiv.shape.addEventListener('click', () => {
                             imgs.forEach(x => {
                                 if (x.name[0] == pDiv.string[0].toLowerCase()) x.shape
@@ -608,7 +609,7 @@
                         TOP_PADDING + LETTER_WIDTH * (i / COL_NUM | 0));
                     div.shape.addEventListener('click', () => {
                         div.set('border', 'green solid ' + r(width / 300) + 'px');
-                        if (['+', '%','&'].includes(letter)) {
+                        if (['+', '%', '&'].includes(letter)) {
                             extras = letter;
                             //fancy way of setting the other numbers to white
                             alphabet_divs.filter(x => ('+ '.replace(letter, '').includes(x
@@ -658,6 +659,9 @@
             }).filter(x => x !== '')[0]
         }
 
+        let clickColumns = 10;
+        let doubleClickPrevention = Array(clickColumns).fill({time:new Date()})
+
         function createFaller(name, fallSpeed, spinSpeed, extraPoints, color, theta, isBomb) {
             let speed = fallSpeed || getRandom(1, 3);
             let spin = spinSpeed || 0;
@@ -687,6 +691,11 @@
                     THINGS_TO_UPDATE.push(faller)
 
                     function handleClick() {
+                        let time = doubleClickPrevention[width/faller.x |0].time
+                        if(new Date() - time < 500){
+                            return
+                        }
+                        doubleClickPrevention[width/faller.x |0].time = new Date()
                         if (CURRENT_REQUIRED_WORDS.includes(name)) {
                             handleCorrectWord(name, faller)
                         } else {
@@ -830,7 +839,7 @@
         let VARIOUS_LOOPS = []
 
         function startDropping(letter) {
-            let letters = []
+            let letters = [];
             if (letter instanceof Array) {
                 letters = letter.map(x => x.toLowerCase())
             } else {
@@ -970,7 +979,8 @@
         setupBody(id('MAIN_SCREEN')).then(() => {
             let background = 'space' + (getRandom(IMAGE_CONFIG.space_bgs.num)) + '.jpg';
             DOMObjectGlobals.body.style.backgroundColor = 'black';
-            DOMObjectGlobals.body.style.backgroundImage = 'url(' + IMAGE_PATH + IMAGE_CONFIG.space_bgs.path + background.toString() + ')';
+            DOMObjectGlobals.body.style.backgroundImage = 'url(' + IMAGE_PATH + IMAGE_CONFIG.space_bgs.path +
+                background.toString() + ')';
             DOMObjectGlobals.body.style.backgroundSize = width + 'px auto';
             DOMObjectGlobals.body.style.backgroundRepeat = 'no-repeat';
             setup();
