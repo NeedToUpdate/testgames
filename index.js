@@ -12,7 +12,6 @@
 //         }
 //     }
 
-
 //     if (typeof console.log !== 'undefined') {
 //         console.olog = console.log;
 //     } else {
@@ -33,16 +32,17 @@
 // }
 //=============  END DEBUG WITHOUT CONSOLE STUFF ==================
 
-
-const underConstruction = true;
+const underConstruction = false;
 
 if ("serviceWorker" in navigator && !underConstruction) {
-    navigator.serviceWorker.register("./sw.js").then(registration => {
-        console.log("registered!", registration)
-    }).catch(e => {
-        console.log("failed reg.")
-        console.log(e)
+  navigator.serviceWorker
+    .register("./sw.js")
+    .then((registration) => {
+      console.log("registered!", registration);
     })
+    .catch((e) => {
+      console.log("failed reg.");
+      console.log(e);
+    });
 } else {
-
 }
