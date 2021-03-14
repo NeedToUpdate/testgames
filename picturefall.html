@@ -323,19 +323,7 @@
 
         function setStreakText(num) {
             let string = "x" + (num | 0);
-            let color = "grey";
-            if (num > 1) {
-                color = "green";
-            }
-            if (num > 3) {
-                color = "blue";
-            }
-            if (num > 7) {
-                color = "deeppink";
-            }
-            if (num > 15) {
-                color = "red";
-            }
+            let color = getValue('streakColor', num)
             if (checkObj(streakP)) {
                 streakP.string = string;
                 streakP.color = color;
@@ -641,7 +629,7 @@
                                 let d = new Div(width * 0.1, height * 0.1, width * 0.6, height * 0.6);
                                 d.color = "white";
                                 WORD_ARRAYS.forEach((x, i) => {
-                                    let p = new P(x.slice(0, 3).join(', '), 0, i * d.height * 0.1)
+                                    let p = new P(x.slice(0, 5).join(', '), 0, i * d.height * 0.07)
                                     p.color = 'black'
                                     d.attach(p)
                                     p.shape.addEventListener('click', ev => {
@@ -695,7 +683,7 @@
                 .filter((x) => x !== "")[0];
         }
 
-        let clickColumns = 10;
+        let clickColumns = 15;
         let doubleClickPrevention = Array(clickColumns).fill({
             time: new Date(),
         });
@@ -729,7 +717,7 @@
 
                 function handleClick() {
                     let time = doubleClickPrevention[(width / faller.x) | 0].time;
-                    if (new Date() - time < 500) {
+                    if (new Date() - time < 300) {
                         return;
                     }
                     doubleClickPrevention[(width / faller.x) | 0].time = new Date();
@@ -761,23 +749,56 @@
             });
         }
 
-        function getMultiplier(num) {
-            if (num >= 50) {
-                return 32;
+        //======= DICTIONARIES ==========
+
+        function getValue(dict, num) {
+            let dictionary = {};
+            switch (dict) {
+                case 'streakColor':
+                    dictionary = streakColorDict;
+                    break;
+                case 'multiplier':
+                    dictionary = multiplierDict;
+                    break;
+                case 'pointsColor':
+                    dictionary = pointsColorDict;
+                    break;
             }
-            if (num >= 25) {
-                return 16;
-            }
-            if (num >= 12) {
-                return 8;
-            }
-            if (num >= 5) {
-                return 4;
-            }
-            if (num >= 3) {
-                return 2;
-            }
-            return 1;
+            return dictionary[Object.keys(dictionary).reduce((a, b) => {
+                if (num >= a && num >= b) return Math.max(a, b);
+                if (num >= a && num < b) return a;
+                if (num >= b) return b;
+            })]
+        }
+
+        const multiplierDict = {
+            //if {key} and above, set multiplier to {value}
+            1000: 64,
+            50: 32,
+            25: 16,
+            12: 8,
+            5: 4,
+            3: 2,
+            0: 1,
+        };
+
+        const streakColorDict = {
+            //if {key} or above, return {value}
+            15: 'red',
+            7: 'deeppink',
+            3: 'blue',
+            1: 'green',
+            0: 'grey',
+        }
+
+        const pointsColorDict = {
+            //if {key} or above, return {value}
+            100: 'yellow',
+            80: 'purple',
+            30: 'lightblue',
+            10: 'lightgreen',
+            0: 'green',
+            '-1000': 'red'
         }
 
         function handleCorrectWord(word, data) {
@@ -790,7 +811,7 @@
             let numOfPoints = calculatePoints(true, CURRENT_STREAK, extraPoints);
             showPoints(data.x, data.y, numOfPoints);
             setPointsText(numOfPoints);
-            setStreakText(getMultiplier(CURRENT_STREAK));
+            setStreakText(getValue('multiplier', CURRENT_STREAK));
         }
 
         function handleIncorrectWord(word, data) {
@@ -805,7 +826,7 @@
 
         function calculatePoints(isCorrect, currentStreak, extras) {
             let extraPoints = extras || 0;
-            return isCorrect * 1 * getMultiplier(currentStreak) + extraPoints + currentStreak;
+            return isCorrect * 1 * getValue('multiplier', currentStreak) + extraPoints + currentStreak;
         }
 
         let THINGS_TO_UPDATE = [];
@@ -936,23 +957,7 @@
             stopDropping();
         };
 
-        function getPointsColor(num) {
-            if (num < 0) {
-                return "red";
-            } else if (num === 0) {
-                return "grey";
-            } else if (num <= 10) {
-                return "green";
-            } else if (num <= 30) {
-                return "lightgreen";
-            } else if (num <= 80) {
-                return "lightblue";
-            } else if (num <= 1000) {
-                return "yellow";
-            } else {
-                return "white";
-            }
-        }
+
 
         function getFallerConfig(multiplier) {
             if (multiplier === undefined) multiplier = 1;
@@ -1011,7 +1016,7 @@
                 return;
             }
             let pointDiv = new P(points, x, y, r(width / 20) + "px").fromCenter();
-            pointDiv.color = getPointsColor(points);
+            pointDiv.color = getValue('pointsColor', points);
             pointDiv.set("textShadow", "white 0 0 3px");
             pointDiv.set("fontStyle", "bolder");
             let pointLoop = setInterval(() => {
