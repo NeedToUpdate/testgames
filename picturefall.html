@@ -899,12 +899,23 @@
                 );
             }, 900);
             VARIOUS_LOOPS.push(interval);
+            //loop for dropping the correct words
+            let correctWordDelay = 2300; //no round values for fewer patterns
             let onlyCorrectDrop = setInterval(() => {
                 if (CURRENT_REQUIRED_WORDS.length == 0) return;
                 let config = getFallerConfig(2);
                 createFaller(getRandom(CURRENT_REQUIRED_WORDS), config.speed, config.spin, 10, "blue", config.angle, config.isBomb);
-            }, 3500);
+            }, correctWordDelay);
             VARIOUS_LOOPS.push(onlyCorrectDrop);
+            if (EXTRAS_MODE) {
+                //usually means that the random loop wont drop the correct word often, so another loop is needed
+                let secondCorrectDrop = setInterval(() => {
+                    if (CURRENT_REQUIRED_WORDS.length == 0) return;
+                    let config = getFallerConfig(3);
+                    createFaller(getRandom(CURRENT_REQUIRED_WORDS), config.speed, config.spin, 10, "blue", config.angle, config.isBomb);
+                }, (correctWordDelay * 1.33 | 0));
+                VARIOUS_LOOPS.push(secondCorrectDrop);
+            }
             let completelyWrong = setInterval(() => {
                 let config = getFallerConfig(0.8);
                 let wrongAlpha = alphabet.split("").filter((x) => !letters.includes(x));
