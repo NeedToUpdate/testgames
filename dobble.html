@@ -1,0 +1,395 @@
+<head>
+    <meta charset="UTF-8"
+        name="viewport"
+        content="width=device-width, user-scalable=no">
+    <script language="javascript"
+        src="./lib/vector.js"></script>
+    <script language="javascript"
+        src="./lib/matrix.js"></script>
+    <script language="javascript"
+        src="./lib/eventemitter.js"></script>
+    <script language="javascript"
+        src="./lib/drawbase.js"></script>
+    <script language="javascript"
+        src="./lib/collisioncontainer.js"></script>
+    <script language="javascript"
+        src="./lib/PhysicsObject.js"></script>
+    <script language="javascript"
+        src="./lib/DomObject.js"></script>
+    <script language="javascript"
+        src="./lib/Character.js"></script>
+    <script language="javascript"
+        src="./image_config.js"></script>
+    <script language="javascript"
+        src="./lib/words.js"></script>
+    <script language="javascript"
+        type="text/javascript"
+        src="./Letters/keywords_config.js"></script>
+    <title>Artem's Testing</title>
+    <link rel="stylesheet"
+        href="global_styles.css">
+</head>
+
+<body>
+    <div id="MAIN_WRAPPER">
+        <div id="MAIN_SCREEN">
+            <label for="word_select">Choose Wordlist: </label>
+            <select name="words"
+                id="word_select">
+                <option value="0,0">None</option>
+            </select>
+        </div>
+    </div>
+    <script>
+        let SELECTED_WORDS = [];
+        let PICTURES_ALLOWED = false;
+
+        function setupBackground() {
+            return new Promise(res => {
+                DOMObjectGlobals.body.style.backgroundColor = '#094219';
+                DOMObjectGlobals.body.style.backgroundSize = width + 'px auto';
+                DOMObjectGlobals.body.style.backgroundRepeat = 'no-repeat';
+                MAIN_SELECT = id('word_select')
+                ALL_WORDS.forEach((wordlist, i) => {
+                    let optgroup = document.createElement('optgroup')
+                    switch (i) {
+                        case 0:
+                            optgroup.setAttribute('label', 'Super Reader')
+                            break;
+                        case 1:
+                            optgroup.setAttribute('label', 'Treasure Hunt 1')
+                            break;
+                        case 2:
+                            optgroup.setAttribute('label', 'Treasure Hunt 2')
+                            break;
+                        case 3:
+                            optgroup.setAttribute('label', 'Treasure Hunt 3')
+                            break;
+                        case 4:
+                            optgroup.setAttribute('label', 'Treasure Hunt 4')
+                            break;
+                        case 5:
+                            optgroup.setAttribute('label', 'MEB')
+                            break;
+                        case 6:
+                            optgroup.setAttribute('label', 'Extras')
+                            break;
+                    }
+                    MAIN_SELECT.append(optgroup)
+                    wordlist.forEach((list, j) => {
+                        let value = [i, j];
+                        let text = list.join(', ').slice(0, 20) + '...'
+                        let option = document.createElement('option')
+                        option.setAttribute('value', value)
+                        option.innerText = text;
+                        optgroup.append(option)
+                    })
+                })
+                let pictures = document.createElement('optgroup')
+                pictures.setAttribute('label', 'Gino')
+                Object.keys(KEYWORDS_CONFIG).forEach(key => {
+                    if (key.length === 1) {
+                        let value = ['🖼️', key];
+                        let text = KEYWORDS_CONFIG[key].join(',')
+                        let option = document.createElement('option')
+                        option.setAttribute('value', value)
+                        option.innerText = '🖼️ ' + text;
+                        pictures.append(option)
+                    }
+                })
+                MAIN_SELECT.append(pictures)
+                MAIN_SELECT.addEventListener('input', () => {
+                    let value = MAIN_SELECT.value.split(',');
+                    let wordlist = []
+                    console.log(value)
+                    if (value[0] === "777") {
+                        wordlist = override[value[1]]
+                    } else if (value[0] === '🖼️') {
+                        wordlist = KEYWORDS_CONFIG[value[1]]
+                        PICTURES_ALLOWED = true;
+                    } else {
+                        wordlist = ALL_WORDS[value[0]][value[1]]
+                    }
+                    SELECTED_WORDS = wordlist
+                    console.log(wordlist)
+                })
+                res()
+            })
+        }
+        let primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97] //after this its like 10k cards. no way thats needed
+        let specialFourthOrderDobble = [
+            [0, 1, 2, 3, 4],
+            [0, 5, 6, 7, 8],
+            [0, 9, 10, 11, 12],
+            [0, 13, 14, 15, 16],
+            [0, 17, 18, 19, 20],
+            [1, 5, 9, 13, 17],
+            [1, 6, 10, 15, 19],
+            [1, 7, 11, 14, 20],
+            [1, 8, 12, 16, 18],
+            [2, 5, 10, 16, 20],
+            [2, 6, 9, 14, 18],
+            [2, 7, 12, 15, 17],
+            [2, 8, 11, 13, 19],
+            [3, 5, 12, 14, 19],
+            [3, 6, 11, 16, 17],
+            [3, 7, 10, 13, 18],
+            [3, 8, 9, 15, 20],
+            [4, 5, 11, 15, 18],
+            [4, 6, 12, 13, 20],
+            [4, 7, 9, 16, 19],
+            [4, 8, 10, 14, 17]
+        ]
+
+        function createDobble(p) {
+            if (p === 4) {
+                return specialFourthOrderDobble;
+            }
+            let cards = Array((p * p) + p + 1).fill(0)
+            cards.forEach((x, i) => {
+                cards[i] = []
+            })
+            cards[0].push(0)
+            for (let i = 0; i < (p + 1); i++) {
+                for (let j = 0; j < p; j++) {
+                    cards[1 + i * p + j].push(i)
+                    cards[i].push(1 + i * p + j)
+                }
+            }
+            for (let i = 0; i < p; i++) {
+                for (let j = 0; j < p; j++) {
+                    for (let k = 0; k < p; k++) {
+                        let rem = (i * j - k)
+                        cards[1 + p + i * p + k].push(1 + p + j * p + (((rem % p) + p) % p))
+                    }
+                }
+            }
+            if (!primes.includes(p) && !dobbleTest(cards, false)) {
+                console.error('invalid p for dobble size. please use a prime')
+                return []
+            }
+            console.log(`created dobble set of length ${cards.length}`)
+            return cards
+        }
+
+        function calcDobblePrime(n) {
+            if (n <= 21 && n > 13) return 4;
+            let count = 0;
+            while (primes[count] ** 2 + primes[count] + 1 < n) {
+                count++;
+            }
+            return primes[count]
+        }
+
+        function calcDobbleLength(p) {
+            return p ** 2 + p + 1;
+        }
+
+        function dobbleTest(array, doLog) {
+            let results = [];
+            for (let i = 0; i < 100; i++) {
+                let a = getRandom(array)
+                let b = getRandom(array.filter(x => x != a))
+                let common = a.filter(x => b.includes(x))
+                if (doLog && i % 20 == 0) {
+                    console.log(a, b)
+                    console.log(common)
+                }
+                results.push(common.length == 1)
+            }
+            return results.filter(x => !x).length === 0;
+        }
+
+        function wordsToDobbleDeck(arrayOfWords) {
+            let dictionary = {} //random easy words
+            let prime = calcDobblePrime(arrayOfWords.length)
+            let deckSize = calcDobbleLength(prime)
+            for (let i = 0; i < deckSize; i++) {
+                if (i < arrayOfWords.length) {
+                    dictionary[i] = arrayOfWords[i]
+                } else {
+                    dictionary[i] = i;
+                }
+            }
+            let deck = createDobble(prime)
+            deck.forEach((card, i) => {
+                card.forEach((symbol, j) => {
+                    deck[i][j] = dictionary[symbol];
+                })
+            })
+            return deck
+        }
+
+        function pickTwo(deck) {
+            function prettyPrint(array) {
+                console.log('=======\n' + array.join('\n') + '\n========');
+            }
+            let shuffledDeck = shuffle(deck)
+            let a = shuffledDeck[0]
+            let b = shuffledDeck[1]
+            new Card(100, 100, 220, 300, a)
+            new Card(440, 100, 220, 300, b)
+        }
+
+        function test() {
+            let shuffledDeck = shuffle(deck)
+            let a = shuffledDeck[0]
+            let b = shuffledDeck[1]
+            deckk.addCard(new Card(100, 100, 220, 300, a))
+        }
+
+        let deck = wordsToDobbleDeck(['cat', 'dog', 'monkey', 'panda', 'pig', 'horse', 'tiger'])
+
+        class Card extends Rectangle {
+            constructor(x, y, w, h, words) {
+                super(x, y, w, h, 0)
+                this.wordDivs = [];
+                words.forEach((word, i) => {
+                    let wordP = new P(word)
+                    wordP.color = getRandom(['red', 'blue', 'green', 'orange', 'deeppink'])
+                    wordP.x = getRandom(5, w - wordP.width * 2)
+                    wordP.y = getRandom((h / words.length) * i, (h / words.length) * (i + 1) - wordP.height * 2)
+                    wordP.size = w / 8 | 0
+                    wordP.set('textShadow', '0px 0px 5px #cecdc6')
+                    this.attach(wordP)
+                    this.wordDivs.push(wordP)
+                })
+                this.color = '#f4f3ed'
+                this.set('borderRadius', r(h / 20))
+                this.set('boxShadow')
+                this.setFaceDown()
+                this.isFaceUp = false
+                this.shape.addEventListener('click', () => {
+                    if (this.isFaceUp) {
+                        this.setFaceDown()
+                    } else {
+                        this.setFaceUp()
+                    }
+                })
+            }
+            setFaceUp() {
+                this.wordDivs.forEach(x => {
+                    x.set('display', '')
+                })
+                this.color = '#f4f3ed'
+                this.isFaceUp = true
+                this.border = 'darkred solid 2px'
+            }
+            setFaceDown() {
+                this.wordDivs.forEach(x => {
+                    x.set('display', 'none')
+                })
+                this.color = 'darkred'
+                this.isFaceUp = false
+                this.border = 'lightgrey solid 1px'
+            }
+        }
+        class Deck {
+            constructor(x, y, width, height) {
+                this.x = x
+                this.y = y
+                this.cards = [];
+                this.offset = new Vector(width / 200, height / 200);
+                this.zIndex = 1
+            }
+            addCard(card) {
+                if (!(card instanceof Card)) console.error(card, ' must be a card')
+                this.cards.push(card)
+                card.x = this.x - this.offset.copy().mult(this.cards.length / 2).x + getRandom(-0.3, 0.3)
+                card.y = this.y - this.offset.copy().mult(this.cards.length).y + getRandom(-0.3, 0.3)
+                console.log(this.offset.copy().mult(this.cards.length))
+                console.log(card)
+                card.zIndex = this.zIndex + this.cards.length + 1
+            }
+            takeCard(card) {
+                return this.cards.pop()
+            }
+            _shuffleAnim() {
+                return new Promise(resolve => {
+                    this.cards.forEach((card, i) => {
+                        if (i % 2 === this.cards.length % 2 && i !== 0) return;
+                        let rand = getRandom(-1);
+                        let mult = getRandom(4.5, 10)
+                        let orig_x = card.x;
+                        card.x += r(rand * 5 * mult)
+                        setTimeout(() => {
+                            card.x += r(5 * rand * mult)
+                            setTimeout(() => {
+                                card.x += r(5 * rand * mult)
+                                setTimeout(() => {
+                                    card.x -= r(5 * rand * mult)
+                                    setTimeout(() => {
+                                        card.x -= r(5 * rand * mult)
+                                        setTimeout(() => {
+                                            card.x -= r(5 * rand * mult)
+                                            setTimeout(() => {
+                                                card.x = orig_x;
+                                                setTimeout(() => {
+                                                    if (i === 0) resolve();
+                                                }, 50)
+                                            }, 25)
+                                        }, 25)
+                                    }, 25)
+                                }, 25)
+                            }, 25)
+                        }, 25)
+                    })
+                })
+            }
+            _shuffle_full_anim() {
+                return new Promise(resolve => {
+                    this._shuffleAnim().then(() => {
+                        this._shuffleAnim().then(() => {
+                            this._shuffleAnim().then(() => {
+                                this._shuffleAnim().then(() => {
+                                    return resolve()
+                                })
+                            })
+                        })
+                    })
+                })
+            }
+            shuffle() {
+                if (this.isShuffling) return
+                this.isShuffling = true;
+                return new Promise(resolve => {
+                    this._shuffle_full_anim().then(() => {
+                        setTimeout(() => {
+                            for (let i = this.cards.length - 1; i >= 0; i--) {
+                                let cardA = this.cards[i]
+                                let cardB = this.cards[getRandom(i)]
+                                let cardAxy = cardA.p.copy();
+                                let z = cardA.zIndex
+                                cardA.x = cardB.x
+                                cardA.y = cardB.y
+                                cardB.x = cardAxy.x
+                                cardB.y = cardAxy.y
+                                cardA.zIndex = cardB.zIndex
+                                cardB.zIndex = z;
+                            }
+
+                            this._shuffle_full_anim().then(() => {
+                                this.isShuffling = false;
+                                resolve()
+
+                            })
+                        }, 200)
+                    })
+                })
+            }
+        }
+
+        setupBody(id('MAIN_SCREEN')).then(() => {
+            setupBackground().then(() => {
+                for (let i = 0; i < 10; i++) {
+                    test()
+                }
+                setInterval(() => {
+                    deckk.shuffle()
+                }, 2000)
+            })
+        })
+        let deckk = new Deck(100, 100, 220, 300)
+
+    </script>
+</body>

@@ -1,0 +1,48 @@
+<head>
+    <meta charset="UTF-8"
+        name="viewport"
+        content="width=device-width, user-scalable=no">
+    <script language="javascript"
+        src="./lib/vector.js"></script>
+    <script language="javascript"
+        src="./lib/matrix.js"></script>
+    <script language="javascript"
+        src="./lib/eventemitter.js"></script>
+    <script language="javascript"
+        src="./lib/drawbase.js"></script>
+    <script language="javascript"
+        src="./lib/collisioncontainer.js"></script>
+    <script language="javascript"
+        src="./lib/PhysicsObject.js"></script>
+    <script language="javascript"
+        src="./lib/DomObject.js"></script>
+    <script language="javascript"
+        src="./lib/Character.js"></script>
+    <script language="javascript"
+        src="./image_config.js"></script>
+    <script language="javascript"
+        src="./lib/PlayerImages.js"></script>
+    <title>Artem's Testing</title>
+    <link rel="stylesheet"
+        href="global_styles.css">
+</head>
+
+<body>
+    <div id="MAIN_WRAPPER">
+        <div id="MAIN_SCREEN">
+        </div>
+    </div>
+    <script>
+        function setupBackground() {
+            return new Promise(resolve => {
+                resolve()
+            })
+        }
+        setupBody(id('MAIN_SCREEN')).then(() => {
+            setupBackground().then(() => {
+                //nothing
+            })
+        })
+
+    </script>
+</body>
