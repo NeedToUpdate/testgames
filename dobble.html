@@ -44,6 +44,11 @@
         let SELECTED_WORDS = [];
         let PICTURES_ALLOWED = false;
 
+        let MAIN_DECK = {}
+
+        let CARD_HEIGHT = 200
+        let CARD_WIDTH = 150
+
         function setupBackground() {
             return new Promise(res => {
                 DOMObjectGlobals.body.style.backgroundColor = '#094219';
@@ -112,6 +117,7 @@
                     }
                     SELECTED_WORDS = wordlist
                     console.log(wordlist)
+                    startGame()
                 })
                 res()
             })
@@ -220,27 +226,15 @@
             return deck
         }
 
-        function pickTwo(deck) {
-            function prettyPrint(array) {
-                console.log('=======\n' + array.join('\n') + '\n========');
-            }
-            let shuffledDeck = shuffle(deck)
-            let a = shuffledDeck[0]
-            let b = shuffledDeck[1]
-            new Card(100, 100, 220, 300, a)
-            new Card(440, 100, 220, 300, b)
+        function findClosestSquare(num) {
+            let sqrt = Math.sqrt(num);
+            let h = Math.floor(sqrt);
+            let w = Math.ceil(sqrt);
+            if (Math.abs(w * h - num) > Math.abs((h ** 2) - num)) return [h, h];
+            if (Math.abs(w * h - num) < Math.abs((w ** 2) - num)) return [w, w];
+            return [w, h];
         }
 
-        function test() {
-            let shuffledDeck = shuffle(deck)
-            let a = shuffledDeck[0]
-            let b = shuffledDeck[1]
-            deckk.addCard(new Card(100, 100, CARD_WIDTH, CARD_HEIGHT, a))
-        }
-
-        let deck = wordsToDobbleDeck(['cat', 'dog', 'monkey', 'panda', 'pig', 'horse', 'tiger'])
-        let CARD_HEIGHT = 200
-        let CARD_WIDTH = 150
 
         class Card extends Rectangle {
             constructor(x, y, w, h, words) {
@@ -293,14 +287,13 @@
                 this.cards = [];
                 this.offset = new Vector(width / 400, height / 400);
                 this.zIndex = 1
+                this.loop = {};
             }
             addCard(card) {
                 if (!(card instanceof Card)) console.error(card, ' must be a card')
                 this.cards.push(card)
                 card.x = this.x - this.offset.copy().mult(this.cards.length / 2).x + getRandom(-0.3, 0.3)
                 card.y = this.y - this.offset.copy().mult(this.cards.length).y + getRandom(-0.3, 0.3)
-                console.log(this.offset.copy().mult(this.cards.length))
-                console.log(card)
                 card.zIndex = this.zIndex + this.cards.length + 1
             }
             takeCard(card) {
@@ -312,7 +305,6 @@
                         if (i % r(this.cards.length / 5) !== this.cards.length % r(this.cards.length / 5) && i !== 0 && i !== this.cards.length - 1) {
                             return;
                         }
-                        console.log(i, i % r(this.cards.length / 5))
                         let rand = getRandom(-1);
                         let mult = getRandom(4.5, 10)
                         let orig_x = card.x;
@@ -381,19 +373,46 @@
                     })
                 })
             }
+            arrange(x1, y1, x2, y2, animate) {
+                let frames = 200;
+                let currentFrame = animate ? 200 : 0;
+
+                function loop() {
+
+                }
+            }
+            remove() {
+                this.cards.forEach(card => {
+                    card.remove();
+                })
+            }
         }
 
-        setupBody(id('MAIN_SCREEN')).then(() => {
-            setupBackground().then(() => {
-                for (let i = 0; i < 26; i++) {
-                    test();
-                }
-                setInterval(() => {
-                    deckk.shuffle()
-                }, 2000)
+
+        function startGame() {
+            if (checkObj(MAIN_DECK)) MAIN_DECK.remove();
+            let prime = calcDobblePrime(SELECTED_WORDS.length)
+            let neededLength = calcDobbleLength(prime)
+            let wordsToAdd = neededLength - SELECTED_WORDS.length;
+            for (let i = 0; i < wordsToAdd; i++) {
+                //go through the abc easy words and add them starting from a to z
+                let newWord = KEYWORDS_CONFIG[alphabet.split('')[r(i / 4)]][i % 4]
+                SELECTED_WORDS.push(newWord)
+            }
+            let dobbleDeck = wordsToDobbleDeck(SELECTED_WORDS);
+            MAIN_DECK = new Deck(100, 100, CARD_WIDTH, CARD_HEIGHT);
+            dobbleDeck.forEach(words => {
+                let card = new Card(0, 0, CARD_WIDTH, CARD_HEIGHT, words);
+                MAIN_DECK.addCard(card);
             })
+        }
+
+
+
+
+        setupBody(id('MAIN_SCREEN')).then(() => {
+            setupBackground().then(() => {})
         })
-        let deckk = new Deck(100, 100, CARD_WIDTH, CARD_HEIGHT);
 
     </script>
 </body>
