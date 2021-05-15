@@ -235,10 +235,12 @@
             let shuffledDeck = shuffle(deck)
             let a = shuffledDeck[0]
             let b = shuffledDeck[1]
-            deckk.addCard(new Card(100, 100, 220, 300, a))
+            deckk.addCard(new Card(100, 100, CARD_WIDTH, CARD_HEIGHT, a))
         }
 
         let deck = wordsToDobbleDeck(['cat', 'dog', 'monkey', 'panda', 'pig', 'horse', 'tiger'])
+        let CARD_HEIGHT = 200
+        let CARD_WIDTH = 150
 
         class Card extends Rectangle {
             constructor(x, y, w, h, words) {
@@ -289,7 +291,7 @@
                 this.x = x
                 this.y = y
                 this.cards = [];
-                this.offset = new Vector(width / 200, height / 200);
+                this.offset = new Vector(width / 400, height / 400);
                 this.zIndex = 1
             }
             addCard(card) {
@@ -307,7 +309,10 @@
             _shuffleAnim() {
                 return new Promise(resolve => {
                     this.cards.forEach((card, i) => {
-                        if (i % 2 === this.cards.length % 2 && i !== 0) return;
+                        if (i % r(this.cards.length / 5) !== this.cards.length % r(this.cards.length / 5) && i !== 0 && i !== this.cards.length - 1) {
+                            return;
+                        }
+                        console.log(i, i % r(this.cards.length / 5))
                         let rand = getRandom(-1);
                         let mult = getRandom(4.5, 10)
                         let orig_x = card.x;
@@ -370,8 +375,7 @@
 
                             this._shuffle_full_anim().then(() => {
                                 this.isShuffling = false;
-                                resolve()
-
+                                resolve();
                             })
                         }, 200)
                     })
@@ -381,15 +385,15 @@
 
         setupBody(id('MAIN_SCREEN')).then(() => {
             setupBackground().then(() => {
-                for (let i = 0; i < 10; i++) {
-                    test()
+                for (let i = 0; i < 26; i++) {
+                    test();
                 }
                 setInterval(() => {
                     deckk.shuffle()
                 }, 2000)
             })
         })
-        let deckk = new Deck(100, 100, 220, 300)
+        let deckk = new Deck(100, 100, CARD_WIDTH, CARD_HEIGHT);
 
     </script>
 </body>
