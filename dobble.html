@@ -46,8 +46,8 @@
 
         let MAIN_DECK = {}
 
-        let CARD_HEIGHT = 200
-        let CARD_WIDTH = 150
+        let CARD_HEIGHT = 280
+        let CARD_WIDTH = 200
 
         function setupBackground() {
             return new Promise(res => {
@@ -117,6 +117,7 @@
                     }
                     SELECTED_WORDS = wordlist
                     console.log(wordlist)
+                    createDeckFromSelectedWords()
                     startGame()
                 })
                 res()
@@ -219,6 +220,7 @@
             }
             let deck = createDobble(prime)
             deck.forEach((card, i) => {
+                card = shuffle(card)
                 card.forEach((symbol, j) => {
                     deck[i][j] = dictionary[symbol];
                 })
@@ -239,13 +241,18 @@
         class Card extends Rectangle {
             constructor(x, y, w, h, words) {
                 super(x, y, w, h, 0)
+                this.isShrunk = false;
                 this.wordDivs = [];
+                this.oldSize = {}
                 words.forEach((word, i) => {
                     let wordP = new P(word)
-                    wordP.color = getRandom(['red', 'blue', 'green', 'orange', 'deeppink'])
-                    wordP.x = getRandom(5, w - wordP.width * 2)
-                    wordP.y = getRandom((h / words.length) * i, (h / words.length) * (i + 1) - wordP.height * 2)
+                    wordP.color = getRandom(['red', 'blue', 'green', 'orange', 'deeppink', 'orange', 'blueviolet', 'chocolate', 'purple', 'black', 'brown', 'coral', 'cornflowerblue', 'darkgreen', 'darkslateblue',
+                        'darkturquiose', 'deepskyblue', 'olive'
+                    ])
+                    console.log(wordP.width)
                     wordP.size = w / 8 | 0
+                    wordP.x = getRandom(5, w - (wordP.width) - 5)
+                    wordP.y = getRandom((h / words.length) * i + 5, (h / words.length) * (i + 1) - wordP.height)
                     wordP.set('textShadow', '0px 0px 5px #cecdc6')
                     this.attach(wordP)
                     this.wordDivs.push(wordP)
@@ -255,13 +262,6 @@
                 this.set('boxShadow')
                 this.setFaceDown()
                 this.isFaceUp = false
-                this.shape.addEventListener('click', () => {
-                    if (this.isFaceUp) {
-                        this.setFaceDown()
-                    } else {
-                        this.setFaceUp()
-                    }
-                })
             }
             setFaceUp() {
                 this.wordDivs.forEach(x => {
@@ -279,11 +279,48 @@
                 this.isFaceUp = false
                 this.border = 'lightgrey solid 1px'
             }
+            shrink() {
+                if (this.isShrunk) return;
+                this.isShrunk = true;
+                this.oldSize = {
+                    w: this.width,
+                    h: this.height,
+                    words: this.wordDivs.map(word => {
+                        return {
+                            x: word.x,
+                            y: word.y,
+                            size: word.size
+                        }
+                    })
+                }
+                this.width /= 5
+                this.height /= 5
+                this.set('borderRadius', r(this.oldSize.h / 100))
+                this.wordDivs.forEach(x => {
+                    x.size = parseInt(x.size) / 5 | 0
+                    x.x /= 4.9
+                    x.y /= 4.9
+                })
+            }
+            enlarge() {
+                if (!this.isShrunk) return;
+                this.isShrunk = false;
+                this.width = this.oldSize.w - (this.isFaceUp ? 3 : 1)
+                this.height = this.oldSize.h - (this.isFaceUp ? 3 : 1)
+                this.set('borderRadius', r(this.oldSize.h / 20))
+                this.wordDivs.forEach((word, i) => {
+                    word.x = this.oldSize.words[i].x
+                    word.y = this.oldSize.words[i].y
+                    word.size = this.oldSize.words[i].size
+                })
+            }
         }
         class Deck {
             constructor(x, y, width, height) {
                 this.x = x
                 this.y = y
+                this.width = width;
+                this.height = height;
                 this.cards = [];
                 this.offset = new Vector(width / 400, height / 400);
                 this.zIndex = 1
@@ -374,12 +411,33 @@
                 })
             }
             arrange(x1, y1, x2, y2, animate) {
-                let frames = 200;
-                let currentFrame = animate ? 200 : 0;
+                let frames = 50;
+                let currentFrame = animate ? 0 : frames;
+                let square = findClosestSquare(this.cards.length)
+                let widthInc = Math.min(this.width * 1.1, (x2 - x1) / square[0]);
+                let heightInc = Math.min(this.height * 1.1, (y2 - y1) / square[1]);
 
-                function loop() {
-
+                loop = () => {
+                    this.cards.forEach((card, i) => {
+                        let cardx = r(i % square[1]) * widthInc + x1
+                        let cardy = r(i / square[0]) * heightInc + y1
+                        let target = new Vector(cardx, cardy)
+                        target.sub(card.p).div(frames).mult(currentFrame)
+                        // console.log(cardx, cardy)
+                        card.x += target.x;
+                        card.y += target.y;
+                    })
+                    currentFrame++
+                    if (currentFrame < frames) {
+                        requestAnimationFrame(loop)
+                    }
                 }
+                loop()
+            }
+            shrink() {
+                this.cards.forEach(x => {
+                    x.shrink()
+                })
             }
             remove() {
                 this.cards.forEach(card => {
@@ -389,7 +447,7 @@
         }
 
 
-        function startGame() {
+        function createDeckFromSelectedWords() {
             if (checkObj(MAIN_DECK)) MAIN_DECK.remove();
             let prime = calcDobblePrime(SELECTED_WORDS.length)
             let neededLength = calcDobbleLength(prime)
@@ -407,12 +465,76 @@
             })
         }
 
+        function startGame() {
+            setTimeout(() => {
+                MAIN_DECK.shuffle().then(() => {
+                    MAIN_DECK.shrink();
+                    setTimeout(() => {
+                        MAIN_DECK.arrange(50, 50, 300, 400, true)
+                        MAIN_DECK.cards.forEach(card => {
+                            card.shape.addEventListener('click', () => {
+                                if (CARDS_SELECTED > 1) {
+                                    return;
+                                }
+                                let frames = 10
+                                let current_frame = 0;
+                                let target = CARDS_SELECTED === 0 ? new Vector(width / 2, height / 4) : new Vector(width * 3 / 4, height / 4)
+                                CARDS_SELECTED++
+                                let loop = () => {
+                                    card.x += target.copy().sub(card.p).div(frames).mult(current_frame).x
+                                    card.y += target.copy().sub(card.p).div(frames).mult(current_frame).y
+                                    current_frame++
+                                    if (current_frame < frames) {
+                                        requestAnimationFrame(loop)
+                                    }
+                                }
+                                loop()
+                                card.enlarge()
+                                SELECTED_CARDS.push(card)
+                                if (CARDS_SELECTED === 2) {
+                                    playCountdown();
+                                }
+                            })
+                        })
+                    }, 300)
+                })
+            }, 200)
+        }
 
+        let CARDS_SELECTED = 0;
+        let SELECTED_CARDS = [];
 
+        function playCountdown() {
+            let timer = new P('3', width / 2, height / 8, '3em')
+            timer.color = 'limegreen'
+            setTimeout(() => {
+                timer.string = '2'
+                setTimeout(() => {
+                    timer.string = '1'
+                    setTimeout(() => {
+                        timer.string = 'GO'
+                        setTimeout(() => {
+                            timer.remove()
+                            SELECTED_CARDS.forEach(card => {
+                                card.setFaceUp()
+                                card.shape.addEventListener('click', () => {
+                                    SELECTED_CARDS.forEach(card => {
+                                        card.remove()
+                                    })
+                                    CARDS_SELECTED = 0;
+                                })
+                            })
+                        }, 100)
+                    }, 1000)
+                }, 1000)
+            }, 1000)
+        }
 
         setupBody(id('MAIN_SCREEN')).then(() => {
-            setupBackground().then(() => {})
-        })
+            setupBackground().then(() => {
+                SELECTED_WORDS = ALL_WORDS[1][11]
+            })
+        });
 
     </script>
 </body>

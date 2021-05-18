@@ -425,6 +425,8 @@
             CURRENT_REQUIRED_WORDS = [];
             let stuffToDelete = [];
             stuffToDelete.push(yourGoal);
+            SESSION_WORDS = shuffle(SESSION_WORDS)
+            console.log(SESSION_WORDS)
             SESSION_WORDS.forEach((x, i) => {
                 let letter = x[0];
                 let url = "";
