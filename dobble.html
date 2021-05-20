@@ -246,9 +246,7 @@
                 this.oldSize = {}
                 words.forEach((word, i) => {
                     let wordP = new P(word)
-                    wordP.color = getRandom(['red', 'blue', 'green', 'orange', 'deeppink', 'orange', 'blueviolet', 'chocolate', 'purple', 'black', 'brown', 'coral', 'cornflowerblue', 'darkgreen', 'darkslateblue',
-                        'darkturquiose', 'deepskyblue', 'olive'
-                    ])
+                    wordP.color = "hsl(" + getRandom(361) + ',50%,50%)'
                     console.log(wordP.width)
                     wordP.size = w / 8 | 0
                     wordP.x = getRandom(5, w - (wordP.width) - 5)
@@ -473,12 +471,15 @@
                         MAIN_DECK.arrange(50, 50, 300, 400, true)
                         MAIN_DECK.cards.forEach(card => {
                             card.shape.addEventListener('click', () => {
+                                if (card.isSelected) return;
+                                card.isSelected = true;
                                 if (CARDS_SELECTED > 1) {
                                     return;
                                 }
                                 let frames = 10
                                 let current_frame = 0;
-                                let target = CARDS_SELECTED === 0 ? new Vector(width / 2, height / 4) : new Vector(width * 3 / 4, height / 4)
+                                card.enlarge()
+                                let target = CARDS_SELECTED === 0 ? new Vector(width / 2 - card.width * 1.1, height / 4) : new Vector((width / 2) + card.width * .1, height / 4)
                                 CARDS_SELECTED++
                                 let loop = () => {
                                     card.x += target.copy().sub(card.p).div(frames).mult(current_frame).x
@@ -489,7 +490,6 @@
                                     }
                                 }
                                 loop()
-                                card.enlarge()
                                 SELECTED_CARDS.push(card)
                                 if (CARDS_SELECTED === 2) {
                                     playCountdown();
@@ -505,7 +505,7 @@
         let SELECTED_CARDS = [];
 
         function playCountdown() {
-            let timer = new P('3', width / 2, height / 8, '3em')
+            let timer = new P('3', width / 2, height / 8, '3em').fromCenter()
             timer.color = 'limegreen'
             setTimeout(() => {
                 timer.string = '2'
