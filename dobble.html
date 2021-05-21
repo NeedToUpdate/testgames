@@ -48,6 +48,9 @@
 
         let CARD_HEIGHT = 280
         let CARD_WIDTH = 200
+        let DECK_POSITION = new Vector(100, 100)
+
+        let GAME_HAS_STARTED = false;
 
         function setupBackground() {
             return new Promise(res => {
@@ -415,22 +418,26 @@
                 let widthInc = Math.min(this.width * 1.1, (x2 - x1) / square[0]);
                 let heightInc = Math.min(this.height * 1.1, (y2 - y1) / square[1]);
 
-                loop = () => {
-                    this.cards.forEach((card, i) => {
-                        let cardx = r(i % square[1]) * widthInc + x1
-                        let cardy = r(i / square[0]) * heightInc + y1
-                        let target = new Vector(cardx, cardy)
-                        target.sub(card.p).div(frames).mult(currentFrame)
-                        // console.log(cardx, cardy)
-                        card.x += target.x;
-                        card.y += target.y;
-                    })
-                    currentFrame++
-                    if (currentFrame < frames) {
-                        requestAnimationFrame(loop)
+                return new Promise(resolve => {
+                    loop = () => {
+                        this.cards.forEach((card, i) => {
+                            let cardx = r(i % square[1]) * widthInc + x1
+                            let cardy = r(i / square[0]) * heightInc + y1
+                            let target = new Vector(cardx, cardy)
+                            target.sub(card.p).div(frames).mult(currentFrame)
+                            // console.log(cardx, cardy)
+                            card.x += target.x;
+                            card.y += target.y;
+                        })
+                        currentFrame++
+                        if (currentFrame < frames) {
+                            requestAnimationFrame(loop)
+                        } else {
+                            resolve()
+                        }
                     }
-                }
-                loop()
+                    loop()
+                })
             }
             shrink() {
                 this.cards.forEach(x => {
@@ -456,7 +463,7 @@
                 SELECTED_WORDS.push(newWord)
             }
             let dobbleDeck = wordsToDobbleDeck(SELECTED_WORDS);
-            MAIN_DECK = new Deck(100, 100, CARD_WIDTH, CARD_HEIGHT);
+            MAIN_DECK = new Deck(DECK_POSITION.x, DECK_POSITION.y, CARD_WIDTH, CARD_HEIGHT);
             dobbleDeck.forEach(words => {
                 let card = new Card(0, 0, CARD_WIDTH, CARD_HEIGHT, words);
                 MAIN_DECK.addCard(card);
@@ -468,10 +475,15 @@
                 MAIN_DECK.shuffle().then(() => {
                     MAIN_DECK.shrink();
                     setTimeout(() => {
-                        MAIN_DECK.arrange(50, 50, 300, 400, true)
+                        MAIN_DECK.arrange(50, 50, 300, 400, true).then(() => {
+                            requestAnimationFrame(() => {
+                                GAME_HAS_STARTED = true;
+                                createRedealBtn()
+                            })
+                        })
                         MAIN_DECK.cards.forEach(card => {
                             card.shape.addEventListener('click', () => {
-                                if (card.isSelected) return;
+                                if (card.isSelected || !GAME_HAS_STARTED) return;
                                 card.isSelected = true;
                                 if (CARDS_SELECTED > 1) {
                                     return;
@@ -496,6 +508,7 @@
                                 }
                             })
                         })
+
                     }, 300)
                 })
             }, 200)
@@ -528,6 +541,47 @@
                     }, 1000)
                 }, 1000)
             }, 1000)
+        }
+        let redealBtn = {}
+
+        function createRedealBtn() {
+            if (checkObj(redealBtn)) {
+                redealBtn.remove();
+            }
+            redealBtn = new Rectangle(0, 0, 100, 40)
+            redealBtn.color = 'lightblue'
+            redealBtn.shape.innerText = 'Redeal'
+            redealBtn.set('borderRadius', 10)
+            redealBtn.set('textAlign', 'center')
+            redealBtn.set('lineHeight', '40px')
+            let go = () => {
+                GAME_HAS_STARTED = false;
+                createDeckFromSelectedWords()
+                startGame()
+            }
+            redealBtn.shape.addEventListener('click', () => {
+                if (checkObj(MAIN_DECK)) {
+                    let frames = 50
+                    let currentFrame = 0;
+                    let loop = () => {
+                        MAIN_DECK.cards.forEach(card => {
+                            card.x += DECK_POSITION.copy().sub(card.p).div(frames).mult(currentFrame).x
+                            card.y += DECK_POSITION.copy().sub(card.p).div(frames).mult(currentFrame).y
+                            if (card.p.dist(DECK_POSITION) < 2) card.enlarge()
+                        })
+                        currentFrame++
+                        if (currentFrame < frames) {
+                            requestAnimationFrame(loop)
+                        } else {
+                            go()
+                        }
+                    }
+                    loop()
+                } else {
+                    go()
+                }
+
+            })
         }
 
         setupBody(id('MAIN_SCREEN')).then(() => {
