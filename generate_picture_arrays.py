@@ -31,7 +31,9 @@ dirs = {
 	"monsters": '/',
 	"old_ghosts": '/',
 	"weapons": '/weapons/',
-	"cityscapes": '/cityscapes/'
+	"cityscapes": '/cityscapes/',
+	"cardbacks": '/cardbacks/',
+	"characters":'/chars/',
 }
 syntax = {
 	"buildings": 'skyscraper{num}.png',
@@ -44,7 +46,9 @@ syntax = {
 	"monsters": 'monster{num}.png',
 	"old_ghosts": 'ghost{num}.png',
 	"weapons": '{valid_name}.png',
-	"cityscapes":'city{num}.jpg'
+	"cityscapes":'city{num}.jpg',
+	"cardbacks":'back{num}.jpg',
+	"characters": '{validname}.png'
 }
 
 lines = []

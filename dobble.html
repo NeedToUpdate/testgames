@@ -46,11 +46,14 @@
 
         let MAIN_DECK = {}
 
-        let CARD_HEIGHT = 280
-        let CARD_WIDTH = 200
-        let DECK_POSITION = new Vector(100, 100)
+        let CARD_HEIGHT = width / 3.44
+        let CARD_WIDTH = width / 5
+        let DECK_POSITION = new Vector(width / 10, width / 10)
 
         let GAME_HAS_STARTED = false;
+
+        let CARDBACK_DESIGN = getRandom(IMAGE_CONFIG.cardbacks.num)
+        let IMAGE_PATH = './images/'
 
         function setupBackground() {
             return new Promise(res => {
@@ -259,6 +262,8 @@
                     this.wordDivs.push(wordP)
                 })
                 this.color = '#f4f3ed'
+                this.set('backgroundImage', 'url(' + IMAGE_PATH + IMAGE_CONFIG.cardbacks.path + 'back' + CARDBACK_DESIGN + '.jpg)')
+                this.set('backgroundSize', 'cover')
                 this.set('borderRadius', r(h / 20))
                 this.set('boxShadow')
                 this.setFaceDown()
@@ -269,6 +274,7 @@
                     x.set('display', '')
                 })
                 this.color = '#f4f3ed'
+                this.set('backgroundImage', '');
                 this.isFaceUp = true
                 this.border = 'darkred solid 2px'
             }
@@ -276,6 +282,8 @@
                 this.wordDivs.forEach(x => {
                     x.set('display', 'none')
                 })
+                this.set('backgroundImage', 'url(' + IMAGE_PATH + IMAGE_CONFIG.cardbacks.path + 'back' + CARDBACK_DESIGN + '.jpg)')
+                this.set('backgroundSize', 'cover')
                 this.color = 'darkred'
                 this.isFaceUp = false
                 this.border = 'lightgrey solid 1px'
@@ -317,11 +325,11 @@
             }
         }
         class Deck {
-            constructor(x, y, width, height) {
+            constructor(x, y, w, h) {
                 this.x = x
                 this.y = y
-                this.width = width;
-                this.height = height;
+                this.width = w;
+                this.height = h;
                 this.cards = [];
                 this.offset = new Vector(width / 400, height / 400);
                 this.zIndex = 1
@@ -415,8 +423,9 @@
                 let frames = 50;
                 let currentFrame = animate ? 0 : frames;
                 let square = findClosestSquare(this.cards.length)
-                let widthInc = Math.min(this.width * 1.1, (x2 - x1) / square[0]);
-                let heightInc = Math.min(this.height * 1.1, (y2 - y1) / square[1]);
+                let isShrunk = this.cards.filter(x => !x.isShrunk).length == 0;
+                let widthInc = Math.min(isShrunk ? this.width / 4.9 * 1.1 : this.width * 1.1, (x2 - x1) / square[0]);
+                let heightInc = Math.min(isShrunk ? this.height / 4.9 * 1.1 : this.height * 1.1, (y2 - y1) / square[1]);
 
                 return new Promise(resolve => {
                     loop = () => {
@@ -485,14 +494,14 @@
                             card.shape.addEventListener('click', () => {
                                 if (card.isSelected || !GAME_HAS_STARTED) return;
                                 card.isSelected = true;
-                                if (CARDS_SELECTED > 1) {
+                                if (NUM_CARDS_SELECTED > 1) {
                                     return;
                                 }
                                 let frames = 10
                                 let current_frame = 0;
                                 card.enlarge()
-                                let target = CARDS_SELECTED === 0 ? new Vector(width / 2 - card.width * 1.1, height / 4) : new Vector((width / 2) + card.width * .1, height / 4)
-                                CARDS_SELECTED++
+                                let target = NUM_CARDS_SELECTED === 0 ? new Vector(width / 2 - card.width * 1.1, height / 4) : new Vector((width / 2) + card.width * .1, height / 4)
+                                NUM_CARDS_SELECTED++
                                 let loop = () => {
                                     card.x += target.copy().sub(card.p).div(frames).mult(current_frame).x
                                     card.y += target.copy().sub(card.p).div(frames).mult(current_frame).y
@@ -503,7 +512,7 @@
                                 }
                                 loop()
                                 SELECTED_CARDS.push(card)
-                                if (CARDS_SELECTED === 2) {
+                                if (NUM_CARDS_SELECTED === 2) {
                                     playCountdown();
                                 }
                             })
@@ -514,7 +523,7 @@
             }, 200)
         }
 
-        let CARDS_SELECTED = 0;
+        let NUM_CARDS_SELECTED = 0;
         let SELECTED_CARDS = [];
 
         function playCountdown() {
@@ -531,10 +540,27 @@
                             SELECTED_CARDS.forEach(card => {
                                 card.setFaceUp()
                                 card.shape.addEventListener('click', () => {
-                                    SELECTED_CARDS.forEach(card => {
-                                        card.remove()
-                                    })
-                                    CARDS_SELECTED = 0;
+                                    if (card.isThrownOut) return
+                                    card.isThrownOut = true
+                                    let frames = 30;
+                                    let currentFrame = 0;
+                                    let target = new Vector(width * 0.9, width * 0.1).add(Vector.random().mult(getRandom(1, 5)))
+                                    let loop = () => {
+                                        SELECTED_CARDS.forEach(card => {
+                                            card.setFaceDown()
+                                            card.shrink()
+                                            card.x += target.copy().sub(card.p).div(frames).mult(currentFrame).x
+                                            card.y += target.copy().sub(card.p).div(frames).mult(currentFrame).y
+                                        })
+                                        currentFrame++
+                                        if (currentFrame < frames) {
+                                            requestAnimationFrame(loop)
+                                        } else {
+                                            SELECTED_CARDS = [];
+                                        }
+                                    }
+                                    loop()
+                                    NUM_CARDS_SELECTED = 0;
                                 })
                             })
                         }, 100)
@@ -556,6 +582,9 @@
             redealBtn.set('lineHeight', '40px')
             let go = () => {
                 GAME_HAS_STARTED = false;
+                NUM_CARDS_SELECTED = 0
+                SELECTED_CARDS = []
+                CARDBACK_DESIGN = getRandom(IMAGE_CONFIG.cardbacks.num)
                 createDeckFromSelectedWords()
                 startGame()
             }
