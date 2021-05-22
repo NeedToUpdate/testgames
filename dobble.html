@@ -615,7 +615,10 @@
 
         setupBody(id('MAIN_SCREEN')).then(() => {
             setupBackground().then(() => {
-                SELECTED_WORDS = ALL_WORDS[1][11]
+                CARD_HEIGHT = width / 3.44
+                CARD_WIDTH = width / 5
+                DECK_POSITION = new Vector(width / 10, width / 10)
+
             })
         });
 
