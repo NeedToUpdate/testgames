@@ -38,6 +38,9 @@
                 id="word_select">
                 <option value="0,0">None</option>
             </select>
+            <label for="fastmode">Disable Images</label>
+            <input type="checkbox"
+                id="fastmode" />
         </div>
     </div>
     <script>
@@ -54,6 +57,9 @@
 
         let CARDBACK_DESIGN = getRandom(IMAGE_CONFIG.cardbacks.num)
         let IMAGE_PATH = './images/'
+
+        //used for removing the background images.  slows down the school computers
+        let FASTMODE = false;
 
         function setupBackground() {
             return new Promise(res => {
@@ -261,8 +267,9 @@
                     this.attach(wordP)
                     this.wordDivs.push(wordP)
                 })
-                this.color = '#f4f3ed'
-                this.set('backgroundImage', 'url(' + IMAGE_PATH + IMAGE_CONFIG.cardbacks.path + 'back' + CARDBACK_DESIGN + '.jpg)')
+                this.color = '#f4f3ed';
+                this.savedColor = "hsl(" + getRandom(361) + ',50%,50%)'
+                if (!FASTMODE) this.set('backgroundImage', 'url(' + IMAGE_PATH + IMAGE_CONFIG.cardbacks.path + 'back' + CARDBACK_DESIGN + '.jpg)')
                 this.set('backgroundSize', 'cover')
                 this.set('borderRadius', r(h / 20))
                 this.set('boxShadow')
@@ -274,7 +281,7 @@
                     x.set('display', '')
                 })
                 this.color = '#f4f3ed'
-                this.set('backgroundImage', '');
+                if (!FASTMODE) this.set('backgroundImage', '');
                 this.isFaceUp = true
                 this.border = 'darkred solid 2px'
             }
@@ -282,9 +289,8 @@
                 this.wordDivs.forEach(x => {
                     x.set('display', 'none')
                 })
-                this.set('backgroundImage', 'url(' + IMAGE_PATH + IMAGE_CONFIG.cardbacks.path + 'back' + CARDBACK_DESIGN + '.jpg)')
-                this.set('backgroundSize', 'cover')
-                this.color = 'darkred'
+                if (!FASTMODE) this.set('backgroundImage', 'url(' + IMAGE_PATH + IMAGE_CONFIG.cardbacks.path + 'back' + CARDBACK_DESIGN + '.jpg)')
+                this.color = this.savedColor
                 this.isFaceUp = false
                 this.border = 'lightgrey solid 1px'
             }
@@ -612,6 +618,10 @@
 
             })
         }
+        id('fastmode').checked = FASTMODE
+        id('fastmode').addEventListener('click', () => {
+            FASTMODE = id('fastmode').checked
+        })
 
         setupBody(id('MAIN_SCREEN')).then(() => {
             setupBackground().then(() => {
