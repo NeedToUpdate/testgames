@@ -41,6 +41,9 @@
             <label for="fastmode">Disable Images</label>
             <input type="checkbox"
                 id="fastmode" />
+            <label for="fastmode">Enable Real Dobble</label>
+            <input type="checkbox"
+                id="fastmode" />
         </div>
     </div>
     <script>
@@ -60,6 +63,10 @@
 
         //used for removing the background images.  slows down the school computers
         let FASTMODE = false;
+        //used for implementing real dobble, but the variety is less
+        let FAKEMODE = true;
+        let NUM_OF_FAKE_CARDS = 20;
+        let FAKEMODE_WORDS_PER_CARD = 4;
 
         function setupBackground() {
             return new Promise(res => {
@@ -161,6 +168,9 @@
         ]
 
         function createDobble(p) {
+            if (FAKEMODE) {
+                return Array(NUM_OF_FAKE_CARDS).fill('').map(x => []);
+            }
             if (p === 4) {
                 return specialFourthOrderDobble;
             }
@@ -201,6 +211,7 @@
         }
 
         function calcDobbleLength(p) {
+            if (FAKEMODE) return NUM_OF_FAKE_CARDS;
             return p ** 2 + p + 1;
         }
 
@@ -256,17 +267,7 @@
                 this.isShrunk = false;
                 this.wordDivs = [];
                 this.oldSize = {}
-                words.forEach((word, i) => {
-                    let wordP = new P(word)
-                    wordP.color = "hsl(" + getRandom(361) + ',50%,50%)'
-                    console.log(wordP.width)
-                    wordP.size = w / 8 | 0
-                    wordP.x = getRandom(5, w - (wordP.width) - 5)
-                    wordP.y = getRandom((h / words.length) * i + 5, (h / words.length) * (i + 1) - wordP.height)
-                    wordP.set('textShadow', '0px 0px 5px #cecdc6')
-                    this.attach(wordP)
-                    this.wordDivs.push(wordP)
-                })
+                this.createWords(words)
                 this.color = '#f4f3ed';
                 this.savedColor = "hsl(" + getRandom(361) + ',50%,50%)'
                 if (!FASTMODE) this.set('backgroundImage', 'url(' + IMAGE_PATH + IMAGE_CONFIG.cardbacks.path + 'back' + CARDBACK_DESIGN + '.jpg)')
@@ -328,6 +329,25 @@
                     word.y = this.oldSize.words[i].y
                     word.size = this.oldSize.words[i].size
                 })
+            }
+            createWords(words) {
+                words.forEach((word, i) => {
+                    let wordP = new P(word)
+                    wordP.color = "hsl(" + getRandom(361) + ',50%,50%)'
+                    console.log(wordP.width)
+                    wordP.size = this.width / 8 | 0
+                    wordP.x = getRandom(5, this.width - (wordP.width) - 5)
+                    wordP.y = getRandom((this.height / words.length) * i + 5, (this.height / words.length) * (i + 1) - wordP.height)
+                    wordP.set('textShadow', '0px 0px 5px #cecdc6')
+                    this.attach(wordP)
+                    this.wordDivs.push(wordP)
+                })
+            }
+            removeWords() {
+                this.wordDivs.forEach(word => {
+                    word.remove()
+                })
+                this.wordDivs = []
             }
         }
         class Deck {
@@ -471,7 +491,7 @@
             if (checkObj(MAIN_DECK)) MAIN_DECK.remove();
             let prime = calcDobblePrime(SELECTED_WORDS.length)
             let neededLength = calcDobbleLength(prime)
-            let wordsToAdd = neededLength - SELECTED_WORDS.length;
+            let wordsToAdd = FAKEMODE ? 0 : neededLength - SELECTED_WORDS.length;
             for (let i = 0; i < wordsToAdd; i++) {
                 //go through the abc easy words and add them starting from a to z
                 let newWord = KEYWORDS_CONFIG[alphabet.split('')[r(i / 4)]][i % 4]
@@ -499,10 +519,10 @@
                         MAIN_DECK.cards.forEach(card => {
                             card.shape.addEventListener('click', () => {
                                 if (card.isSelected || !GAME_HAS_STARTED) return;
-                                card.isSelected = true;
                                 if (NUM_CARDS_SELECTED > 1) {
                                     return;
                                 }
+                                card.isSelected = true;
                                 let frames = 10
                                 let current_frame = 0;
                                 card.enlarge()
@@ -543,7 +563,34 @@
                         timer.string = 'GO'
                         setTimeout(() => {
                             timer.remove()
-                            SELECTED_CARDS.forEach(card => {
+                            let wordChoice = '';
+                            let chosenWord = '';
+                            let remainingWords1 = '';
+                            let remainingWords2 = '';
+                            if (FAKEMODE) {
+                                wordChoice = shuffle(SELECTED_WORDS)
+                                chosenWord = wordChoice.splice(0, 1)
+                                if (wordChoice.length < (FAKEMODE_WORDS_PER_CARD - 1) * 2) {
+                                    let wordsToAdd = (FAKEMODE_WORDS_PER_CARD - 1) * 2 - wordChoice.length;
+                                    for (let i = 0; i < wordsToAdd; i++) {
+                                        //go through the abc easy words and add them starting from a to z
+                                        let newWord = KEYWORDS_CONFIG[alphabet.split('')[r(i / 4)]][i % 4]
+                                        wordChoice.push(newWord)
+                                    }
+                                    wordChoice = shuffle(wordChoice)
+                                }
+                                remainingWords1 = wordChoice.splice(0, FAKEMODE_WORDS_PER_CARD - 1)
+                                remainingWords2 = wordChoice.splice(0, FAKEMODE_WORDS_PER_CARD - 1)
+                            }
+
+                            SELECTED_CARDS.forEach((card, index) => {
+                                if (FAKEMODE) {
+                                    if (index == 0) {
+                                        card.createWords(shuffle(remainingWords1.concat(chosenWord)))
+                                    } else {
+                                        card.createWords(shuffle(remainingWords2.concat(chosenWord)))
+                                    }
+                                }
                                 card.setFaceUp()
                                 card.shape.addEventListener('click', () => {
                                     if (card.isThrownOut) return

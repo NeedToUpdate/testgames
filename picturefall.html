@@ -110,6 +110,7 @@
         let WORD_ARRAYS = [
             ["banana", "cabbage", "potato", "cucumber", "strawberry", "carrot", "pepper", "grape", "orange", "pear"],
             ["tennis", 'gymnastics', 'volleyball', 'judo', 'pingpong', 'basketball'],
+            ["dishwasher", "lamp", "candle", "microwave", "broom", "kettle", "washing_machine", "vacuum_cleaner"],
         ];
 
         let CHOSEN_WORD_ARRAY = null;
@@ -491,6 +492,8 @@
                 let found = EXTRA_KEYWORDS_CONFIG[letter].filter((x) => x.name == word);
                 if (found.length) {
                     objs.push(found[0]);
+                } else {
+                    console.error('didnt find ' + word)
                 }
             });
             return objs;
@@ -506,6 +509,7 @@
                     let arrayToProcess = [];
                     let ONLY_EXTRAS = false;
                     let pDiv = {};
+                    console.log(letter)
                     if (alphabet.split("").includes(letter)) {
                         pDiv = new P(letter.toUpperCase() + ": ", width / 2 - LETTER_WIDTH * 3, TOP_PADDING + LETTER_WIDTH * i, LETTER_WIDTH).fromCenter();
                         arrayToProcess = KEYWORDS_CONFIG[letter];
@@ -521,9 +525,10 @@
                             arrayToProcess = arrayToProcess.concat(array);
                         });
                         arrayToProcess = shuffle(arrayToProcess).splice(0, 50);
-                    } else if ((letter = "#")) {
+                    } else if ((letter == "#")) {
                         ONLY_EXTRAS = true;
                         arrayToProcess = createPathObjects(CHOSEN_WORD_ARRAY);
+                        console.log(arrayToProcess)
                     }
                     let IMAGE_WIDTH = (width * 0.6) / (arrayToProcess.length + 1);
                     if (ONLY_EXTRAS) {

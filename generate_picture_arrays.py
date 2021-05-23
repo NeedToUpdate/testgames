@@ -48,7 +48,7 @@ syntax = {
 	"weapons": '{valid_name}.png',
 	"cityscapes":'city{num}.jpg',
 	"cardbacks":'back{num}.jpg',
-	"characters": '{validname}.png'
+	"characters": '{valid_name}.png'
 }
 
 lines = []

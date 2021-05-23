@@ -534,6 +534,21 @@
                 LOADED_IMAGES.add([newInfo.power + '_projectile'], IMAGE_PATH + '/projectiles/');
                 player.powerType = newInfo.power;
             }
+            if (player.name == 'steve') {
+                let rand = getRandom(10)
+                let newPower = 'grassblock'
+                if (rand > 3 && rand < 6) {
+                    newPower = 'cobblestoneblock'
+                } else if (rand >= 6 && rand < 9) {
+                    newPower = 'woodblock'
+                } else if (rand == 9) {
+                    newPower = 'diamondblock'
+                }
+                if (!LOADED_IMAGES[newPower + '_projectile']) {
+                    LOADED_IMAGES.add([newPower + '_projectile'], IMAGE_PATH + '/projectiles/');
+                }
+                player.powerType = newPower;
+            }
         }
         id('btn_bot_mid').addEventListener('click', function () {
             if (player.dead) return;
