@@ -666,6 +666,7 @@
                                 let frames = 10
                                 let current_frame = 0;
                                 card.enlarge()
+                                card.zIndex = 100;
                                 let target = NUM_CARDS_SELECTED === 0 ? new Vector(width / 2 - card.width * 1.1, height / 4) : new Vector((width / 2) + card.width * .1, height / 4)
                                 NUM_CARDS_SELECTED++
                                 let loop = () => {
