@@ -59,6 +59,13 @@
 
 [DONE] - remove blacksquare
 
+//DOBBLE
+
+hook up button
+add images
+
+//FIGHTING GAME
+
 //==== NEW GAMES ===
 
 //CROSSWORD GAME

@@ -25,6 +25,9 @@
     <script language="javascript"
         type="text/javascript"
         src="./Letters/keywords_config.js"></script>
+    <script language="javascript"
+        type="text/javascript"
+        src="../Classes/Extra Letters/keywords_config.js"></script>
     <title>Artem's Testing</title>
     <link rel="stylesheet"
         href="global_styles.css">
@@ -41,13 +44,17 @@
             <label for="fastmode">Disable Images</label>
             <input type="checkbox"
                 id="fastmode" />
-            <label for="fastmode">Enable Real Dobble</label>
+            <label for="realmode">Enable Real Dobble</label>
             <input type="checkbox"
-                id="fastmode" />
+                id="realmode" />
+            <div id="image_blocker"
+                style="position: absolute;top: 0; left: 0; z-index: 1; background-color:#26445e">
+            </div>
         </div>
     </div>
     <script>
         let SELECTED_WORDS = [];
+
         let PICTURES_ALLOWED = false;
 
         let MAIN_DECK = {}
@@ -67,6 +74,54 @@
         let FAKEMODE = true;
         let NUM_OF_FAKE_CARDS = 20;
         let FAKEMODE_WORDS_PER_CARD = 4;
+        let EXTRA_KEYWORDS_CONFIG = {}
+
+        function getEveryWord() {
+            alphabet.split("").forEach((letter) => {
+                let url = "../Classes/Extra Letters/";
+                EXTRA_KEYWORDS_CONFIG[letter] = [];
+                EXTRA_KEYWORDS_CONFIG[letter].push(
+                    ...EXTRA_LETTERS_CONFIG[letter].map((x) => {
+                        return {
+                            name: x,
+                            path: url + x[0] + "/",
+                        };
+                    })
+                );
+                EXTRA_KEYWORDS_CONFIG[letter].push(
+                    ...KEYWORDS_CONFIG[letter].map(x => {
+                        return {
+                            name: x,
+                            path: "/letters/" + x[0] + '/'
+                        }
+                    })
+                )
+            });
+            IMAGE_CONFIG.animals.valid_names.forEach((animal) => {
+                let letter = animal[0];
+                let url = IMAGE_CONFIG.animals.path;
+                EXTRA_KEYWORDS_CONFIG[letter].push({
+                    name: animal,
+                    path: url + animal + ".png",
+                });
+            });
+            IMAGE_CONFIG.characters.valid_names.forEach((character) => {
+                let letter = character[0];
+                let url = IMAGE_CONFIG.characters.path;
+                EXTRA_KEYWORDS_CONFIG[letter].push({
+                    name: character,
+                    path: url + character + ".png",
+                });
+            });
+            IMAGE_CONFIG.animals.valid_names.forEach((animal) => {
+                let letter = animal[0];
+                let url = IMAGE_CONFIG.animals.path;
+                EXTRA_KEYWORDS_CONFIG[letter].push({
+                    name: animal,
+                    path: url + animal + ".png",
+                });
+            });
+        }
 
         function setupBackground() {
             return new Promise(res => {
@@ -131,6 +186,7 @@
                     } else if (value[0] === '🖼️') {
                         wordlist = KEYWORDS_CONFIG[value[1]]
                         PICTURES_ALLOWED = true;
+                        if (wordlist.length < 6) FAKEMODE_WORDS_PER_CARD = 6
                     } else {
                         wordlist = ALL_WORDS[value[0]][value[1]]
                     }
@@ -139,6 +195,8 @@
                     createDeckFromSelectedWords()
                     startGame()
                 })
+
+                getEveryWord()
                 res()
             })
         }
@@ -260,6 +318,29 @@
             return [w, h];
         }
 
+        function findLetter(name) {
+            return alphabet
+                .split("")
+                .map((letter) => {
+                    return KEYWORDS_CONFIG[letter].includes(name) ? letter : "";
+                })
+                .filter((x) => x !== "")[0] || name[0];
+        }
+
+        function createPathObjects(arrayOfWords) {
+            let objs = [];
+            arrayOfWords.forEach((word) => {
+                let letter = word[0];
+                let found = EXTRA_KEYWORDS_CONFIG[findLetter(letter)].filter((x) => x.name == word);
+                if (found.length) {
+                    objs.push(found[0]);
+                } else {
+                    console.error('didnt find ' + word)
+
+                }
+            });
+            return objs;
+        }
 
         class Card extends Rectangle {
             constructor(x, y, w, h, words) {
@@ -331,16 +412,63 @@
                 })
             }
             createWords(words) {
+                if (PICTURES_ALLOWED) words = createPathObjects(words)
+                let picturewidth = this.width / (FAKEMODE ? FAKEMODE_WORDS_PER_CARD - 2 : 3)
                 words.forEach((word, i) => {
-                    let wordP = new P(word)
-                    wordP.color = "hsl(" + getRandom(361) + ',50%,50%)'
-                    console.log(wordP.width)
-                    wordP.size = this.width / 8 | 0
-                    wordP.x = getRandom(5, this.width - (wordP.width) - 5)
-                    wordP.y = getRandom((this.height / words.length) * i + 5, (this.height / words.length) * (i + 1) - wordP.height)
-                    wordP.set('textShadow', '0px 0px 5px #cecdc6')
-                    this.attach(wordP)
-                    this.wordDivs.push(wordP)
+                    if (PICTURES_ALLOWED) {
+                        let wordPictureDiv = new Img(LOADED_IMAGES[word.name].cloneNode(), 0, 0, picturewidth).asSquare()
+
+                        wordPictureDiv.x = getRandom(5, this.width - wordPictureDiv.width - 5)
+                        wordPictureDiv.y = getRandom(5, this.height - wordPictureDiv.height - 5)
+
+                        let otherPos = this.wordDivs.map(x => {
+                            return {
+                                x: x.x,
+                                y: x.y
+                            }
+                        })
+                        if (otherPos.length) {
+                            function nearOther(x, y) {
+                                let overlapping = false;
+                                otherPos.forEach(pos => {
+                                    if (Math.abs(x - pos.x) < (picturewidth + 10) && Math.abs(y - pos.y) < (picturewidth + 10)) {
+                                        overlapping = true;
+                                    }
+                                })
+                                return overlapping
+                            }
+                            let breakCounter = 0;
+                            while (nearOther(wordPictureDiv.x, wordPictureDiv.y)) {
+                                wordPictureDiv.x += wordPictureDiv.width * 1.1
+                                if (wordPictureDiv.x > this.width - wordPictureDiv.width - 5) {
+                                    wordPictureDiv.x = 5
+                                    wordPictureDiv.y += wordPictureDiv.height * 1.1
+                                    if (wordPictureDiv.y > this.height - wordPictureDiv.height - 5) {
+                                        wordPictureDiv.y = 5;
+                                    }
+                                }
+                                breakCounter++
+                                if (breakCounter > 1000) {
+                                    console.error('couldnt find a good spot for ' + word.name)
+                                    wordPictureDiv.remove()
+                                    break
+                                }
+                            }
+                        }
+
+                        this.attach(wordPictureDiv)
+                        this.wordDivs.push(wordPictureDiv)
+                    } else {
+                        let wordP = new P(word)
+                        wordP.color = "hsl(" + getRandom(361) + ',50%,50%)'
+                        console.log(wordP.width)
+                        wordP.size = this.width / 8 | 0
+                        wordP.x = getRandom(5, this.width - (wordP.width) - 5)
+                        wordP.y = getRandom((this.height / words.length) * i + 5, (this.height / words.length) * (i + 1) - wordP.height)
+                        wordP.set('textShadow', '0px 0px 5px #cecdc6')
+                        this.attach(wordP)
+                        this.wordDivs.push(wordP)
+                    }
                 })
             }
             removeWords() {
@@ -505,7 +633,19 @@
             })
         }
 
+        let LOADED_IMAGES = {}
+
         function startGame() {
+            if (PICTURES_ALLOWED) {
+                id('image_blocker').style.backgroundColor = '#094219'
+                id('image_blocker').style.height = width / 12 + 'px'
+                id('image_blocker').style.width = width / 12 + 'px'
+                LOADED_IMAGES = new ImageLoader(IMAGE_PATH, []);
+                let paths = createPathObjects(SELECTED_WORDS)
+                paths.forEach(word => {
+                    LOADED_IMAGES.add([word.name], word.path)
+                })
+            }
             setTimeout(() => {
                 MAIN_DECK.shuffle().then(() => {
                     MAIN_DECK.shrink();
@@ -567,6 +707,7 @@
                             let chosenWord = '';
                             let remainingWords1 = '';
                             let remainingWords2 = '';
+                            GAME_HAS_STARTED = false;
                             if (FAKEMODE) {
                                 wordChoice = shuffle(SELECTED_WORDS)
                                 chosenWord = wordChoice.splice(0, 1)
@@ -575,6 +716,8 @@
                                     for (let i = 0; i < wordsToAdd; i++) {
                                         //go through the abc easy words and add them starting from a to z
                                         let newWord = KEYWORDS_CONFIG[alphabet.split('')[r(i / 4)]][i % 4]
+                                        let path = createPathObjects([newWord])[0]
+                                        LOADED_IMAGES.add(path.name, path.path)
                                         wordChoice.push(newWord)
                                     }
                                     wordChoice = shuffle(wordChoice)
@@ -594,7 +737,9 @@
                                 card.setFaceUp()
                                 card.shape.addEventListener('click', () => {
                                     if (card.isThrownOut) return
-                                    card.isThrownOut = true
+                                    SELECTED_CARDS.forEach(card => {
+                                        card.isThrownOut = true
+                                    })
                                     let frames = 30;
                                     let currentFrame = 0;
                                     let target = new Vector(width * 0.9, width * 0.1).add(Vector.random().mult(getRandom(1, 5)))
@@ -610,6 +755,7 @@
                                             requestAnimationFrame(loop)
                                         } else {
                                             SELECTED_CARDS = [];
+                                            GAME_HAS_STARTED = true;
                                         }
                                     }
                                     loop()
@@ -633,6 +779,7 @@
             redealBtn.set('borderRadius', 10)
             redealBtn.set('textAlign', 'center')
             redealBtn.set('lineHeight', '40px')
+            redealBtn.zIndex = 10;
             let go = () => {
                 GAME_HAS_STARTED = false;
                 NUM_CARDS_SELECTED = 0
@@ -668,6 +815,10 @@
         id('fastmode').checked = FASTMODE
         id('fastmode').addEventListener('click', () => {
             FASTMODE = id('fastmode').checked
+        })
+        id('realmode').checked = !FAKEMODE
+        id('realmode').addEventListener('click', () => {
+            FAKEMODE = !id('realmode').checked
         })
 
         setupBody(id('MAIN_SCREEN')).then(() => {
