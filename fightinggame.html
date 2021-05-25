@@ -205,6 +205,8 @@
         let scaleMultiplier = 1;
 
 
+        let PLAYER_SPRITE_WIDTH = width / 6.4;
+
         class MonsterController extends Array {
             constructor(...args) {
                 super(...args)
@@ -231,27 +233,35 @@
                 DOMObjectGlobals.body.style.backgroundColor = 'grey';
                 DOMObjectGlobals.body.style.backgroundImage = 'url(' + IMAGE_PATH + BACKGROUND_CONFIG.path +
                     background.toString() + ')';
-                DOMObjectGlobals.body.style.backgroundSize = r(width * 1.2) + 'px auto';
-                DOMObjectGlobals.body.style.backgroundPosition = "-" + r(width * .1) + 'px -' + r(height / 10) + 'px';
+                DOMObjectGlobals.body.style.backgroundSize = width + 'px auto';
                 DOMObjectGlobals.body.style.backgroundRepeat = 'no-repeat';
                 id('image_blocker').style.backgroundColor = 'grey';
                 id('image_blocker').style.backgroundImage = 'url(' + IMAGE_PATH + BACKGROUND_CONFIG.path +
                     background.toString() + ')';
-                id('image_blocker').style.backgroundSize = r(width * 1.2) + 'px auto';
-                id('image_blocker').style.backgroundPosition = "-" + r(width * .1) + 'px -' + r(height / 10) + 'px';
+                id('image_blocker').style.backgroundSize = width + 'px auto';
                 id('image_blocker').style.backgroundRepeat = 'no-repeat';
                 id('image_blocker').style.width = width / 12 + 'px'
                 id('image_blocker').style.height = width / 12 + 'px';
                 VECTORS.gravity.y *= scaleMultiplier;
+                zoomBackground(5)
+                requestAnimationFrame(() => {
+                    DOMObjectGlobals.body.style.transition = '1s'
+                    id('image_blocker').style.transition = '1s'
+
+                })
                 resolve()
             })
         }
 
-        function zoomInBackground(level) {
-            DOMObjectGlobals.body.style.backgroundSize = r(width * (1 + level / 10)) + 'px auto';
-            DOMObjectGlobals.body.style.backgroundPosition = r(width * (level / -20)) + 'px ' + r(height * (level / -13)) + 'px';
-            id('image_blocker').style.backgroundSize = r(width * (1 + level / 10)) + 'px auto';
-            id('image_blocker').style.backgroundPosition = r(width * (level / -20)) + 'px ' + r(height * (level / -13)) + 'px';
+        function zoomBackground(level) {
+            DOMObjectGlobals.body.style.backgroundSize = r(width * (1 + (level / 10))) + 'px auto';
+            DOMObjectGlobals.body.style.backgroundPosition = r(width * (level / -20)) + 'px ' + r(height * (level / -12)) + 'px';
+            id('image_blocker').style.backgroundSize = r(width * (1 + (level / 10))) + 'px auto';
+            id('image_blocker').style.backgroundPosition = r(width * (level / -20)) + 'px ' + r(height * (level / -12)) + 'px';
+        }
+
+        function zoomPlayer(level) {
+            player.width
         }
 
         function create_monster(num) {
