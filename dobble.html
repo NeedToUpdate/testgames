@@ -77,26 +77,6 @@
         let EXTRA_KEYWORDS_CONFIG = {}
 
         function getEveryWord() {
-            alphabet.split("").forEach((letter) => {
-                let url = "../Classes/Extra Letters/";
-                EXTRA_KEYWORDS_CONFIG[letter] = [];
-                EXTRA_KEYWORDS_CONFIG[letter].push(
-                    ...EXTRA_LETTERS_CONFIG[letter].map((x) => {
-                        return {
-                            name: x,
-                            path: url + x[0] + "/",
-                        };
-                    })
-                );
-                EXTRA_KEYWORDS_CONFIG[letter].push(
-                    ...KEYWORDS_CONFIG[letter].map(x => {
-                        return {
-                            name: x,
-                            path: "./Letters/" + x[0] + '/'
-                        }
-                    })
-                )
-            });
             IMAGE_CONFIG.animals.valid_names.forEach((animal) => {
                 let letter = animal[0];
                 let url = IMAGE_CONFIG.animals.path;
@@ -121,6 +101,31 @@
                     path: url + animal + ".png",
                 });
             });
+            try {
+
+                alphabet.split("").forEach((letter) => {
+                    let url = "../Classes/Extra Letters/";
+                    EXTRA_KEYWORDS_CONFIG[letter] = [];
+                    EXTRA_KEYWORDS_CONFIG[letter].push(
+                        ...EXTRA_LETTERS_CONFIG[letter].map((x) => {
+                            return {
+                                name: x,
+                                path: url + x[0] + "/",
+                            };
+                        })
+                    );
+                    EXTRA_KEYWORDS_CONFIG[letter].push(
+                        ...KEYWORDS_CONFIG[letter].map(x => {
+                            return {
+                                name: x,
+                                path: "./Letters/" + x[0] + '/'
+                            }
+                        })
+                    )
+                });
+            } catch (e) {
+                //todo lol
+            }
         }
 
         function setupBackground() {
