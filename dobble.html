@@ -129,6 +129,19 @@
                 DOMObjectGlobals.body.style.backgroundSize = width + 'px auto';
                 DOMObjectGlobals.body.style.backgroundRepeat = 'no-repeat';
                 MAIN_SELECT = id('word_select')
+                let pictures = document.createElement('optgroup')
+                pictures.setAttribute('label', 'Gino')
+                Object.keys(KEYWORDS_CONFIG).forEach(key => {
+                    if (key.length === 1) {
+                        let value = ['$', key];
+                        let text = KEYWORDS_CONFIG[key].join(',')
+                        let option = document.createElement('option')
+                        option.setAttribute('value', value)
+                        option.innerText = '[P] ' + text;
+                        pictures.append(option)
+                    }
+                })
+                MAIN_SELECT.append(pictures)
                 ALL_WORDS.forEach((wordlist, i) => {
                     let optgroup = document.createElement('optgroup')
                     switch (i) {
@@ -164,26 +177,13 @@
                         optgroup.append(option)
                     })
                 })
-                let pictures = document.createElement('optgroup')
-                pictures.setAttribute('label', 'Gino')
-                Object.keys(KEYWORDS_CONFIG).forEach(key => {
-                    if (key.length === 1) {
-                        let value = ['🖼️', key];
-                        let text = KEYWORDS_CONFIG[key].join(',')
-                        let option = document.createElement('option')
-                        option.setAttribute('value', value)
-                        option.innerText = '🖼️ ' + text;
-                        pictures.append(option)
-                    }
-                })
-                MAIN_SELECT.append(pictures)
                 MAIN_SELECT.addEventListener('input', () => {
                     let value = MAIN_SELECT.value.split(',');
                     let wordlist = []
                     console.log(value)
                     if (value[0] === "777") {
                         wordlist = override[value[1]]
-                    } else if (value[0] === '🖼️') {
+                    } else if (value[0] === '$') {
                         wordlist = KEYWORDS_CONFIG[value[1]]
                         PICTURES_ALLOWED = true;
                         if (wordlist.length < 6) FAKEMODE_WORDS_PER_CARD = 6
