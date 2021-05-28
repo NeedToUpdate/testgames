@@ -36,6 +36,8 @@
 <body>
     <div id="MAIN_WRAPPER">
         <div id="MAIN_SCREEN">
+            <div id="debugdiv"
+                style="position: absolute; color: white; text-shadow: black 0 0 1px 1px; z-index: 100000; left: 100px; top: 50px;"></div>
             <label for="word_select">Choose Wordlist: </label>
             <select name="words"
                 id="word_select">
@@ -53,6 +55,27 @@
         </div>
     </div>
     <script>
+        //=============  DEBUG WITHOUT CONSOLE STUFF =====================
+        if (typeof console !== 'undefined') {
+            if (typeof console.log !== 'undefined') {
+                console.olog = console.log;
+            } else {
+                console.olog = function () {};
+            }
+            console.log = function (message) {
+                console.olog(message);
+                id('debugdiv').append(`\n` + message)
+            }
+            console.error = console.exception = console.debug = console.info = console.log;
+        }
+        window.addEventListener('error', e => {
+            id('debugdiv').append(`\n` + e.message)
+        });
+        id('debugdiv').addEventListener('click', () => {
+            id('debugdiv').innerText = ''
+        })
+        //=============  END DEBUG WITHOUT CONSOLE STUFF ==================
+
         let SELECTED_WORDS = [];
 
         let PICTURES_ALLOWED = false;
@@ -77,32 +100,7 @@
         let EXTRA_KEYWORDS_CONFIG = {}
 
         function getEveryWord() {
-            IMAGE_CONFIG.animals.valid_names.forEach((animal) => {
-                let letter = animal[0];
-                let url = IMAGE_CONFIG.animals.path;
-                EXTRA_KEYWORDS_CONFIG[letter].push({
-                    name: animal,
-                    path: url + animal + ".png",
-                });
-            });
-            IMAGE_CONFIG.characters.valid_names.forEach((character) => {
-                let letter = character[0];
-                let url = IMAGE_CONFIG.characters.path;
-                EXTRA_KEYWORDS_CONFIG[letter].push({
-                    name: character,
-                    path: url + character + ".png",
-                });
-            });
-            IMAGE_CONFIG.animals.valid_names.forEach((animal) => {
-                let letter = animal[0];
-                let url = IMAGE_CONFIG.animals.path;
-                EXTRA_KEYWORDS_CONFIG[letter].push({
-                    name: animal,
-                    path: url + animal + ".png",
-                });
-            });
             try {
-
                 alphabet.split("").forEach((letter) => {
                     let url = "../Classes/Extra Letters/";
                     EXTRA_KEYWORDS_CONFIG[letter] = [];
@@ -122,6 +120,30 @@
                             }
                         })
                     )
+                });
+                IMAGE_CONFIG.animals.valid_names.forEach((animal) => {
+                    let letter = animal[0];
+                    let url = IMAGE_CONFIG.animals.path;
+                    EXTRA_KEYWORDS_CONFIG[letter].push({
+                        name: animal,
+                        path: url + animal + ".png",
+                    });
+                });
+                IMAGE_CONFIG.characters.valid_names.forEach((character) => {
+                    let letter = character[0];
+                    let url = IMAGE_CONFIG.characters.path;
+                    EXTRA_KEYWORDS_CONFIG[letter].push({
+                        name: character,
+                        path: url + character + ".png",
+                    });
+                });
+                IMAGE_CONFIG.animals.valid_names.forEach((animal) => {
+                    let letter = animal[0];
+                    let url = IMAGE_CONFIG.animals.path;
+                    EXTRA_KEYWORDS_CONFIG[letter].push({
+                        name: animal,
+                        path: url + animal + ".png",
+                    });
                 });
             } catch (e) {
                 //todo lol
