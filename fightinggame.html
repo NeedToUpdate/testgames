@@ -197,6 +197,8 @@
         let MONSTER_CONFIG = IMAGE_CONFIG.monsters
         let NUM_OF_MONSTERS = MONSTER_CONFIG.num;
 
+        let DEFAULT_BG_ZOOM_LEVEL = 5;
+
         let ZOOM_LEVEL = 2;
 
         let valid_colors = ['red', 'yellow', 'blue', 'teal', 'lightblue', 'purple', 'pink', 'orange', 'white', 'black']
@@ -243,11 +245,10 @@
                 id('image_blocker').style.width = width / 12 + 'px'
                 id('image_blocker').style.height = width / 12 + 'px';
                 VECTORS.gravity.y *= scaleMultiplier;
-                zoomBackground(5)
+                zoomBackground(DEFAULT_BG_ZOOM_LEVEL)
                 requestAnimationFrame(() => {
                     DOMObjectGlobals.body.style.transition = '1s'
                     id('image_blocker').style.transition = '1s'
-
                 })
                 resolve()
             })
@@ -261,7 +262,53 @@
         }
 
         function zoomPlayer(level) {
-            player.width
+            player.sprite.shape.style.transition = '1s';
+            player.sprite.shape.style.transitionProperty = 'transform';
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    player.sprite.shape.style.transform.match(/scale\(-?\d+\.?\d*\)/g) !== null ? (player.sprite.shape.style.transform = player.sprite.shape.style.transform.replace(/scale\(-?\d+\.?\d*\)/g, 'scale(' + (1 +
+                        level / 10) + ')')) : (player
+                        .sprite.shape
+                        .style
+                        .transform += 'scale(' + (1 + level / 10) + ')');
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            player.sprite.shape.style.transition = '';
+                            player.sprite.shape.style.transitionProperty = '';
+                        })
+                    })
+                })
+            })
+        }
+
+        function zoomMonsters(level) {
+            monsters.forEach(monster => {
+                monster.character.sprite.shape.style.transition = '1s';
+                monster.character.sprite.shape.style.transitionProperty = 'transform';
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        monster.character.sprite.shape.style.transform.match(/scale\(-?\d+\.?\d*\)/g) !== null ? (monster.character.sprite.shape.style.transform = monster.character.sprite.shape.style.transform
+                            .replace(/scale\(-?\d+\.?\d*\)/g,
+                                'scale(' + (1 +
+                                    level / 10) + ')')) : (monster.character
+                            .sprite.shape
+                            .style
+                            .transform += 'scale(' + (1 + level / 10) + ')');
+                        requestAnimationFrame(() => {
+                            requestAnimationFrame(() => {
+                                monster.character.sprite.shape.style.transition = '';
+                                monster.character.sprite.shape.style.transitionProperty = '';
+                            })
+                        })
+                    })
+                })
+            })
+        }
+
+        function zoomEverything(level) {
+            zoomBackground(Math.max(0, DEFAULT_BG_ZOOM_LEVEL + level))
+            zoomPlayer(level)
+            zoomMonsters(level)
         }
 
         function create_monster(num) {
@@ -778,6 +825,7 @@
                 if (SUPER_HARDMODE) {
                     if (!monster.dead && monster.health <= 50 && !currentlySpawning) {
                         let newIndex = !index + 0; //will be 1 if index is 0 and vice versa
+                        zoomEverything(-3)
                         let spawnOnLeftSide = monster.x >= width / 2;
                         spawnNewMonster(newIndex, spawnOnLeftSide ? width * 0.2 : width * 0.8, !spawnOnLeftSide,
                             false);
