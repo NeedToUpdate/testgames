@@ -719,6 +719,7 @@
 
         let NUM_CARDS_SELECTED = 0;
         let SELECTED_CARDS = [];
+        let LAST_WORD_CHOSEN
 
         function playCountdown() {
             let timer = new P('3', width / 2, height / 8, '3em').fromCenter()
@@ -738,7 +739,10 @@
                             GAME_HAS_STARTED = false;
                             if (FAKEMODE) {
                                 wordChoice = shuffle(SELECTED_WORDS)
-                                chosenWord = wordChoice.splice(0, 1)
+                                let randNum = getRandom(SELECTED_WORDS.length)
+                                if (LAST_WORD_CHOSEN == wordChoice[randNum]) randNum = (randNum + 1) % SELECTED_WORDS.length
+                                chosenWord = wordChoice.splice(randNum, 1)
+                                LAST_WORD_CHOSEN = chosenWord
                                 if (wordChoice.length < (FAKEMODE_WORDS_PER_CARD - 1) * 2) {
                                     let wordsToAdd = (FAKEMODE_WORDS_PER_CARD - 1) * 2 - wordChoice.length;
                                     for (let i = 0; i < wordsToAdd; i++) {
@@ -757,9 +761,9 @@
                             SELECTED_CARDS.forEach((card, index) => {
                                 if (FAKEMODE) {
                                     if (index == 0) {
-                                        card.createWords(shuffle(remainingWords1.concat(chosenWord)))
+                                        card.createWords([chosenWord].concat(shuffle(remainingWords1)))
                                     } else {
-                                        card.createWords(shuffle(remainingWords2.concat(chosenWord)))
+                                        card.createWords([chosenWord].concat(shuffle(remainingWords2)))
                                     }
                                 }
                                 card.setFaceUp()
