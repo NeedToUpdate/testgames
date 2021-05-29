@@ -287,6 +287,13 @@
                 monster.character.sprite.shape.style.transition = '1s';
                 monster.character.sprite.shape.style.transitionProperty = 'transform';
                 monster.scale = (1 + level / 10)
+                let xPos = monster.character.x;
+                let xOffset = xPos >= width / 2 ? xPos / width - 0.5 : 0.5 - xPos / width;
+                let xDiff = (0.5 - xOffset) / 2 * (1 + level / -10);
+                let newX = xPos >= width / 2 ? (0.5 + xOffset + xDiff) * width : (0.5 - xOffset - xDiff) * width
+                console.log(newX)
+                monster.character.doMoveTo(new Vector(newX, monster.character
+                    .y));
                 requestAnimationFrame(() => {
                     requestAnimationFrame(() => {
                         monster.character.sprite.shape.style.transform.match(/scale\(-?\d+\.?\d*\)/g) !== null ? (monster.character.sprite.shape.style.transform = monster.character.sprite.shape.style.transform
