@@ -826,8 +826,9 @@
                     let currentFrame = 0;
                     let loop = () => {
                         MAIN_DECK.cards.forEach(card => {
-                            card.x += DECK_POSITION.copy().sub(card.p).div(frames).mult(currentFrame).x
-                            card.y += DECK_POSITION.copy().sub(card.p).div(frames).mult(currentFrame).y
+                            let calculatedTarget = DECK_POSITION.copy().sub(card.p).div(frames).mult(currentFrame)
+                            card.x += calculatedTarget.x
+                            card.y += calculatedTarget.y
                             if (card.p.dist(DECK_POSITION) < 2) card.enlarge()
                         })
                         currentFrame++
