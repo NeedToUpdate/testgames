@@ -264,6 +264,7 @@
         function zoomPlayer(level) {
             player.sprite.shape.style.transition = '1s';
             player.sprite.shape.style.transitionProperty = 'transform';
+            player.scale = (1 + level / 10)
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
                     player.sprite.shape.style.transform.match(/scale\(-?\d+\.?\d*\)/g) !== null ? (player.sprite.shape.style.transform = player.sprite.shape.style.transform.replace(/scale\(-?\d+\.?\d*\)/g, 'scale(' + (1 +
@@ -285,6 +286,7 @@
             monsters.forEach(monster => {
                 monster.character.sprite.shape.style.transition = '1s';
                 monster.character.sprite.shape.style.transitionProperty = 'transform';
+                monster.scale = (1 + level / 10)
                 requestAnimationFrame(() => {
                     requestAnimationFrame(() => {
                         monster.character.sprite.shape.style.transform.match(/scale\(-?\d+\.?\d*\)/g) !== null ? (monster.character.sprite.shape.style.transform = monster.character.sprite.shape.style.transform
