@@ -290,10 +290,11 @@
                 let xPos = monster.character.x;
                 let xOffset = xPos >= width / 2 ? xPos / width - 0.5 : 0.5 - xPos / width;
                 let xDiff = (0.5 - xOffset) / 2 * (1 + level / -10);
-                let newX = xPos >= width / 2 ? (0.5 + xOffset + xDiff) * width : (0.5 - xOffset - xDiff) * width
+                let newX = xPos
+                // >= width / 2 ? (0.5 + xOffset + xDiff) * width : (0.5 - xOffset - xDiff) * width
+                // monster.character.doMoveTo(new Vector(newX, monster.character
+                //     .y));
                 console.log(newX)
-                monster.character.doMoveTo(new Vector(newX, monster.character
-                    .y));
                 requestAnimationFrame(() => {
                     requestAnimationFrame(() => {
                         monster.character.sprite.shape.style.transform.match(/scale\(-?\d+\.?\d*\)/g) !== null ? (monster.character.sprite.shape.style.transform = monster.character.sprite.shape.style.transform
@@ -313,11 +314,13 @@
                 })
             })
         }
+        let ZOOM_SCALE = 1;
 
         function zoomEverything(level) {
             zoomBackground(Math.max(0, DEFAULT_BG_ZOOM_LEVEL + level))
             zoomPlayer(level)
             zoomMonsters(level)
+            ZOOM_SCALE = 1 + level / 10;
         }
 
         function create_monster(num) {
@@ -557,11 +560,11 @@
 
         id('btn_top_right').addEventListener('click', function () {
             if (player.dead) return;
-            player.jumpRight(1.2);
+            player.jumpRight(1.2 * ZOOM_SCALE);
         });
         id('btn_top_mid').addEventListener('click', function () {
             if (player.dead) return;
-            player.jumpLeft(1.2);
+            player.jumpLeft(1.2 * ZOOM_SCALE);
         });
         id('btn_bot_left').addEventListener('click', function () {
             if (player.dead) return;
@@ -631,7 +634,7 @@
         function createFallingMonster(x, name, power, imagePath, index, facingLeft) {
             let monster = {}
             let monsterHP = {}
-            let warning = new Img(LOADED_IMAGES.warning.cloneNode(), x, width / 12, width / 5).fromCenter().onLoad(
+            let warning = new Img(LOADED_IMAGES.warning.cloneNode(), x, width / 12, width * ZOOM_SCALE / 5).fromCenter().onLoad(
                 () => {
                     let ticking = setInterval(() => {
                         warning.set('display', 'none')
@@ -646,7 +649,7 @@
                     }, Math.abs(player.x - x) < width / 4 ? 13000 : 5000)
                     setTimeout(() => {
                         let sprite = new Img(imagePath, 0, 0,
-                                width / 3).fromCenter()
+                                width * ZOOM_SCALE / 3).fromCenter()
                             .usingNewTransform().onLoad(() => {
                                 if (checkObj(monsters[index])) {
                                     monsters[index].loadingBar.circle.remove()
@@ -772,17 +775,57 @@
         let MONSTER_IS_CURRENTLY_SHOOTING = false;
         let MONSTER_RAPID_FIRE = false;
         let ALL_MONSTERS_ARE_DEAD = false
+        let SUPER_HARDMODE_MODE = 'twomonsters'
+        let validSuperHardmodeModes = ['twomonsters', 'angryfast', 'deadgiant', 'fourtiny', 'splitter'];
+
+
 
         function monsterShoot(index) {
             index = index || 0;
-            let atk = monsters[index].character.shoot();
-            if (atk) {
-                atk.owner = 'monster';
-                projectiles.push(atk)
+            if (!monsters[index].character.dead) {
+                let atk = monsters[index].character.shoot();
+                if (atk) {
+                    atk.owner = 'monster';
+                    projectiles.push(atk)
+                }
             }
         }
         let PLAYERJUMP = false;
         let currentTime = window.performance.now()
+
+        function startSuperHardMode() {
+            SUPER_HARDMODE_MODE = getRandom(['angrygiant', 'twomonsters'])
+            switch (SUPER_HARDMODE_MODE) {
+                case 'twomonsters':
+                    let newIndex = monsters[1] ? 0 : 1;
+                    zoomEverything(-3)
+                    let spawnOnLeftSide = monsters[!newIndex + 0].character.x >= width / 2;
+                    spawnNewMonster(newIndex, spawnOnLeftSide ? width * 0.1 : width * 0.9, !spawnOnLeftSide,
+                        false);
+                    SUPER_HARDMODE = false;
+                    HARDMODE_HAS_BEEN_ENABLED = false;
+                case 'angrygiant':
+                    monsters[0].character.health += 10;
+                    monsters[0].character.maxbounds.x = width * 2
+
+                    function heal() {
+                        monsters[0].character.health += 10;
+                        monsters[0].loadingBar.value += 10;
+                        if (monsters[0].character.health >= 100) {
+                            monsters[0].character.health = 100
+                            monsters[0].loadingBar.value = 100;
+                            zoomMonsters(30)
+                        } else {
+                            setTimeout(() => {
+                                requestAnimationFrame(heal);
+                            }, 100)
+                        }
+                    }
+                    heal()
+
+            }
+
+        }
 
         function loop(time) {
             let deltaT = time - currentTime;
@@ -833,13 +876,7 @@
                 }
                 if (SUPER_HARDMODE) {
                     if (!monster.dead && monster.health <= 50 && !currentlySpawning) {
-                        let newIndex = !index + 0; //will be 1 if index is 0 and vice versa
-                        zoomEverything(-3)
-                        let spawnOnLeftSide = monster.x >= width / 2;
-                        spawnNewMonster(newIndex, spawnOnLeftSide ? width * 0.2 : width * 0.8, !spawnOnLeftSide,
-                            false);
-                        SUPER_HARDMODE = false;
-                        HARDMODE_HAS_BEEN_ENABLED = false;
+                        startSuperHardMode();
                     }
                 }
                 monster.update(deltaT);
