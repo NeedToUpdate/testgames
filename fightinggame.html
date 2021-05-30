@@ -804,6 +804,7 @@
                         false);
                     SUPER_HARDMODE = false;
                     HARDMODE_HAS_BEEN_ENABLED = false;
+                    break;
                 case 'angrygiant':
                     monsters[0].character.health += 10;
                     monsters[0].character.maxbounds.x = width * 2
@@ -822,7 +823,7 @@
                         }
                     }
                     heal()
-
+                    break;
             }
 
         }
