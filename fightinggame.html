@@ -317,10 +317,10 @@
         let ZOOM_SCALE = 1;
 
         function zoomEverything(level) {
+            ZOOM_SCALE = 1 + level / 10;
             zoomBackground(Math.max(0, DEFAULT_BG_ZOOM_LEVEL + level))
             zoomPlayer(level)
             zoomMonsters(level)
-            ZOOM_SCALE = 1 + level / 10;
         }
 
         function create_monster(num) {
@@ -544,7 +544,8 @@
             if (secret) {
                 if (monsters[0].character.dead && !currentlySpawning) {
                     let spawnOnLeftSide = !getRandom(4)
-                    spawnNewMonster(0, spawnOnLeftSide ? width * 0.2 : width * 0.8, !spawnOnLeftSide, false);
+                    let offset = SUPER_HARDMODE_MODE === 'inactive' ? 0.2 : 0.1
+                    spawnNewMonster(0, spawnOnLeftSide ? width * offset : width * (1 - offset), !spawnOnLeftSide, false);
                 } else if (!currentlySpawning) {
                     id('play_PauseText').innerText = 'Playing';
                     PLAYING = true;
@@ -579,7 +580,19 @@
         });
         id('btn_top_left').addEventListener('click', function () {
             if (player.dead) return;
-            player.powerUp(4)
+            player.powerUp(2)
+            monsters.forEach(monster => {
+                if (PLAYING && !monster.character.dead) {
+                    let n = Math.random() * 70;
+                    if (n > 5 && n < 10) {
+                        if (monster.character.health > 90) {
+                            monster.character.jumpUp(5);
+                        }
+                    } else if (n <= 4) {
+                        monster.character.shield();
+                    }
+                }
+            })
         });
 
         function playerShoot() {
@@ -587,16 +600,18 @@
             if (projectile) {
                 projectile.owner = 'player';
                 projectiles.push(projectile);
-                if (PLAYING && !monsters[0].character.dead) {
-                    let n = Math.random() * 10;
-                    if (n > 9) {
-                        if (monsters[0].character.health > 90) {
-                            monsters[0].character.jumpUp(1.7);
+                monsters.forEach(monster => {
+                    if (PLAYING && !monster.character.dead) {
+                        let n = Math.random() * 10;
+                        if (n > 9) {
+                            if (monster.character.health > 90) {
+                                monster.character.jumpUp(5);
+                            }
+                        } else if (n > 8) {
+                            monster.character.shield();
                         }
-                    } else if (n > 8) {
-                        monsters[0].character.shield();
                     }
-                }
+                })
             }
             if (player.name == 'arceus') {
                 let newInfo = create_player(67);
@@ -775,7 +790,7 @@
         let MONSTER_IS_CURRENTLY_SHOOTING = false;
         let MONSTER_RAPID_FIRE = false;
         let ALL_MONSTERS_ARE_DEAD = false
-        let SUPER_HARDMODE_MODE = 'twomonsters'
+        let SUPER_HARDMODE_MODE = 'inactive'
         let validSuperHardmodeModes = ['twomonsters', 'angryfast', 'deadgiant', 'fourtiny', 'splitter'];
 
 
@@ -799,33 +814,41 @@
                 case 'twomonsters':
                     let newIndex = monsters[1] ? 0 : 1;
                     zoomEverything(-3)
+                    monsters[!newIndex + 0].character.health = 50;
+                    monsters[!newIndex + 0].loadingBar.value = 50;
                     let spawnOnLeftSide = monsters[!newIndex + 0].character.x >= width / 2;
+                    monsters[!newIndex + 0].character.x = spawnOnLeftSide ? width * 0.9 : width * 0.1;
                     spawnNewMonster(newIndex, spawnOnLeftSide ? width * 0.1 : width * 0.9, !spawnOnLeftSide,
                         false);
-                    SUPER_HARDMODE = false;
-                    HARDMODE_HAS_BEEN_ENABLED = false;
                     break;
                 case 'angrygiant':
-                    monsters[0].character.health += 10;
+                    monsters[0].character.health = 10;
+                    monsters[0].loadingBar.value = 10;
                     monsters[0].character.maxbounds.x = width * 2
+                    let zoom = 0;
 
                     function heal() {
-                        monsters[0].character.health += 10;
-                        monsters[0].loadingBar.value += 10;
+                        monsters[0].character.health += 1;
+                        monsters[0].character.x += 1;
+                        monsters[0].loadingBar.value += 1;
+
+                        zoom++
+                        if (zoom > 10) zoomMonsters(r(zoom / 5))
                         if (monsters[0].character.health >= 100) {
                             monsters[0].character.health = 100
                             monsters[0].loadingBar.value = 100;
-                            zoomMonsters(30)
+                            monsters[0].character.scale = 2
                         } else {
                             setTimeout(() => {
                                 requestAnimationFrame(heal);
-                            }, 100)
+                            }, 20)
                         }
                     }
                     heal()
                     break;
             }
-
+            SUPER_HARDMODE = false;
+            HARDMODE_HAS_BEEN_ENABLED = false;
         }
 
         function loop(time) {
@@ -862,7 +885,8 @@
                         if (monsters.length > 1) {
                             spawnOnLeftSide = monsters[!index + 0].character.x > width / 2;
                         }
-                        spawnNewMonster(index, spawnOnLeftSide ? width * 0.2 : width * 0.8, !spawnOnLeftSide,
+                        let offset = SUPER_HARDMODE_MODE === 'inactive' ? 0.2 : 0.1
+                        spawnNewMonster(index, spawnOnLeftSide ? width * offset : width * (1 - offset), !spawnOnLeftSide,
                             false);
                         HARDMODE = false;
 
@@ -921,7 +945,7 @@
                 if (PLAYING && !player.dead) {
                     if (Math.random() * 1000 < (HARDMODE ? 30 : 10)) {
                         if (!MONSTER_IS_CURRENTLY_SHOOTING && !monster.isCurrentlyJumping) {
-                            monster.powerUp(2);
+                            monster.powerUp(SUPER_HARDMODE_MODE === 'inactive' ? 2 : 4);
                         }
                     }
                     if (getRandom(10000) < (HARDMODE ? 2 : 1)) {
