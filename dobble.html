@@ -56,7 +56,7 @@
     </div>
     <script>
         //=============  DEBUG WITHOUT CONSOLE STUFF =====================
-        if (typeof console !== 'undefined') {
+        /*if (typeof console !== 'undefined') {
             if (typeof console.log !== 'undefined') {
                 console.olog = console.log;
             } else {
@@ -73,7 +73,7 @@
         });
         id('debugdiv').addEventListener('click', () => {
             id('debugdiv').innerText = ''
-        })
+        })//*/
         //=============  END DEBUG WITHOUT CONSOLE STUFF ==================
 
         let SELECTED_WORDS = [];
@@ -466,10 +466,10 @@
                             }
                             let breakCounter = 0;
                             while (nearOther(wordPictureDiv.x, wordPictureDiv.y)) {
-                                wordPictureDiv.x += wordPictureDiv.width * 1.1
+                                wordPictureDiv.x += wordPictureDiv.width * 0.1
                                 if (wordPictureDiv.x > this.width - wordPictureDiv.width - 5) {
                                     wordPictureDiv.x = 5
-                                    wordPictureDiv.y += wordPictureDiv.height * 1.1
+                                    wordPictureDiv.y += wordPictureDiv.height * 0.1
                                     if (wordPictureDiv.y > this.height - wordPictureDiv.height - 5) {
                                         wordPictureDiv.y = 5;
                                     }
