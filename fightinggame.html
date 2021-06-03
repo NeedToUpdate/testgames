@@ -589,7 +589,7 @@
                             monster.character.jumpUp(5);
                         }
                     } else if (n <= 4) {
-                        monster.character.shield();
+                        monster.character.shield(getRandom(1, 5));
                     }
                 }
             })
@@ -608,7 +608,7 @@
                                 monster.character.jumpUp(5);
                             }
                         } else if (n > 8) {
-                            monster.character.shield();
+                            monster.character.shield(getRandom(1, 5));
                         }
                     }
                 })
@@ -829,7 +829,7 @@
 
                     function heal() {
                         monsters[0].character.health += 1;
-                        monsters[0].character.x += 1;
+                        monsters[0].character.x += monsters[0].character.x >= width / 2 ? 1 : -1;
                         monsters[0].loadingBar.value += 1;
 
                         zoom++
@@ -889,7 +889,9 @@
                         spawnNewMonster(index, spawnOnLeftSide ? width * offset : width * (1 - offset), !spawnOnLeftSide,
                             false);
                         HARDMODE = false;
-
+                        player.health += 20
+                        if (player.health >= 100) player.health = 100;
+                        playerHP.value = player.health
                         if (HARDMODE_HAS_BEEN_ENABLED) {
                             //hardmode was beaten
                             SUPER_HARDMODE = true;
@@ -901,6 +903,10 @@
                 }
                 if (SUPER_HARDMODE) {
                     if (!monster.dead && monster.health <= 50 && !currentlySpawning) {
+
+                        player.health += 40
+                        if (player.health >= 100) player.health = 100;
+                        playerHP.value = player.health
                         startSuperHardMode();
                     }
                 }
@@ -949,7 +955,7 @@
                         }
                     }
                     if (getRandom(10000) < (HARDMODE ? 2 : 1)) {
-                        monster.shield();
+                        monster.shield(getRandom(1, 4));
                     }
                     if (Math.random() * 1000 < (HARDMODE ? 2 : 1)) {
                         if (monster.isPoweringUp) {
