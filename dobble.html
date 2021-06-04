@@ -210,12 +210,14 @@
                     console.log(value)
                     if (value[0] === "777") {
                         wordlist = override[value[1]]
+                        PICTURES_ALLOWED = false
                     } else if (value[0] === '$') {
                         wordlist = KEYWORDS_CONFIG[value[1]]
                         PICTURES_ALLOWED = true;
                         if (wordlist.length < 6) FAKEMODE_WORDS_PER_CARD = 6
                     } else {
                         wordlist = ALL_WORDS[value[0]][value[1]]
+                        PICTURES_ALLOWED = false
                     }
                     SELECTED_WORDS = wordlist
                     console.log(wordlist)
@@ -760,11 +762,9 @@
 
                             SELECTED_CARDS.forEach((card, index) => {
                                 if (FAKEMODE) {
-                                    if (index == 0) {
-                                        card.createWords([chosenWord].concat(shuffle(remainingWords1)))
-                                    } else {
-                                        card.createWords([chosenWord].concat(shuffle(remainingWords2)))
-                                    }
+                                    let wordsToAdd = [chosenWord].concat(shuffle(index == 0 ? remainingWords1 : remainingWords2))
+                                    if (!PICTURES_ALLOWED) wordsToAdd = shuffle(wordsToAdd)
+                                    card.createWords(wordsToAdd)
                                 }
                                 card.setFaceUp()
                                 card.shape.addEventListener('click', () => {

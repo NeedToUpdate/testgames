@@ -580,7 +580,7 @@
         });
         id('btn_top_left').addEventListener('click', function () {
             if (player.dead) return;
-            player.powerUp(2)
+            player.powerUp(2 * PLAYER_DMG_MULTIPLIER)
             monsters.forEach(monster => {
                 if (PLAYING && !monster.character.dead) {
                     let n = Math.random() * 70;
@@ -791,9 +791,10 @@
         let MONSTER_RAPID_FIRE = false;
         let ALL_MONSTERS_ARE_DEAD = false
         let SUPER_HARDMODE_MODE = 'inactive'
-        let validSuperHardmodeModes = ['twomonsters', 'angryfast', 'deadgiant', 'fourtiny', 'splitter'];
+        let validSuperHardmodeModes = ['twomonsters', 'angryfast', 'agnrygiant', 'fourtiny', 'splitter'];
 
-
+        let MONSTER_DMG_MULTIPLIER = 1;
+        let PLAYER_DMG_MULTIPLIER = 1;
 
         function monsterShoot(index) {
             index = index || 0;
@@ -809,7 +810,7 @@
         let currentTime = window.performance.now()
 
         function startSuperHardMode() {
-            SUPER_HARDMODE_MODE = getRandom(['angrygiant', 'twomonsters'])
+            SUPER_HARDMODE_MODE = getRandom(['fourtiny', 'angrygiant', 'twomonsters'])
             switch (SUPER_HARDMODE_MODE) {
                 case 'twomonsters':
                     let newIndex = monsters[1] ? 0 : 1;
@@ -838,6 +839,7 @@
                             monsters[0].character.health = 100
                             monsters[0].loadingBar.value = 100;
                             monsters[0].character.scale = 2
+                            MONSTER_DMG_MULTIPLIER = 1.5
                         } else {
                             setTimeout(() => {
                                 requestAnimationFrame(heal);
@@ -845,6 +847,35 @@
                         }
                     }
                     heal()
+                    break;
+                case 'fourtiny':
+                    zoomEverything(-4)
+                    monsters[0].character.health = 10000;
+                    let brightness = 1
+                    let loop = () => {
+                        monsters[0].character.sprite.shape.style.filter = 'brightness(' + brightness + ')'
+                        brightness += 0.1
+                        if (brightness < 10) {
+                            requestAnimationFrame(loop)
+                        } else {
+                            monsters[0].character.kill();
+                            monsters[0].loadingBar.value = 0;
+                            ZOOM_SCALE = 0.2
+                            spawnNewMonster(1, width * 0.75, true, false)
+                            spawnNewMonster(2, width * 0.8, true, false)
+                            spawnNewMonster(3, width * 0.85, true, false)
+                            spawnNewMonster(4, width * 0.9, true, false)
+                            MONSTER_DMG_MULTIPLIER = 0.1
+                            PLAYER_DMG_MULTIPLIER = 4
+                            setTimeout(() => {
+                                monsters.forEach((mons, i) => {
+                                    if (i == 0) return
+                                    mons.character.scale = 0.2
+                                })
+                            }, 3500)
+                        }
+                    }
+                    loop()
                     break;
             }
             SUPER_HARDMODE = false;
@@ -903,7 +934,6 @@
                 }
                 if (SUPER_HARDMODE) {
                     if (!monster.dead && monster.health <= 50 && !currentlySpawning) {
-
                         player.health += 40
                         if (player.health >= 100) player.health = 100;
                         playerHP.value = player.health
@@ -936,6 +966,9 @@
                                 if (projectile.power > 40) {
                                     shakeScreen();
                                 }
+                                if (player.health - projectile.power <= 0) {
+                                    playerHP.value = 0
+                                }
                                 player.health -= projectile.power;
                                 playerHP.value = player.health;
                             }
@@ -951,7 +984,7 @@
                 if (PLAYING && !player.dead) {
                     if (Math.random() * 1000 < (HARDMODE ? 30 : 10)) {
                         if (!MONSTER_IS_CURRENTLY_SHOOTING && !monster.isCurrentlyJumping) {
-                            monster.powerUp(SUPER_HARDMODE_MODE === 'inactive' ? 2 : 4);
+                            monster.powerUp(SUPER_HARDMODE_MODE === 'inactive' ? 2 * MONSTER_DMG_MULTIPLIER : 4 * MONSTER_DMG_MULTIPLIER);
                         }
                     }
                     if (getRandom(10000) < (HARDMODE ? 2 : 1)) {
