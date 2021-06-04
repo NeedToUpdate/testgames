@@ -811,13 +811,14 @@
 
         function startSuperHardMode() {
             SUPER_HARDMODE_MODE = getRandom(['fourtiny', 'angrygiant', 'twomonsters'])
+            let spawnOnLeftSide = monsters[0].character.x >= width / 2;
             switch (SUPER_HARDMODE_MODE) {
                 case 'twomonsters':
                     let newIndex = monsters[1] ? 0 : 1;
                     zoomEverything(-3)
                     monsters[!newIndex + 0].character.health = 50;
                     monsters[!newIndex + 0].loadingBar.value = 50;
-                    let spawnOnLeftSide = monsters[!newIndex + 0].character.x >= width / 2;
+                    spawnOnLeftSide = monsters[!newIndex + 0].character.x >= width / 2;
                     monsters[!newIndex + 0].character.x = spawnOnLeftSide ? width * 0.9 : width * 0.1;
                     spawnNewMonster(newIndex, spawnOnLeftSide ? width * 0.1 : width * 0.9, !spawnOnLeftSide,
                         false);
@@ -830,7 +831,7 @@
 
                     function heal() {
                         monsters[0].character.health += 1;
-                        monsters[0].character.x += monsters[0].character.x >= width / 2 ? 1 : -1;
+                        monsters[0].character.x += spawnOnLeftSide ? 1 : -1;
                         monsters[0].loadingBar.value += 1;
 
                         zoom++
@@ -861,16 +862,16 @@
                             monsters[0].character.kill();
                             monsters[0].loadingBar.value = 0;
                             ZOOM_SCALE = 0.2
-                            spawnNewMonster(1, width * 0.75, true, false)
-                            spawnNewMonster(2, width * 0.8, true, false)
-                            spawnNewMonster(3, width * 0.85, true, false)
-                            spawnNewMonster(4, width * 0.9, true, false)
+                            spawnNewMonster(1, !spawnOnLeftSide ? width * 0.25 : width * 0.75, spawnOnLeftSide, false)
+                            spawnNewMonster(2, !spawnOnLeftSide ? width * 0.2 : width * 0.8, spawnOnLeftSide, false)
+                            spawnNewMonster(3, !spawnOnLeftSide ? width * 0.15 : width * 0.85, spawnOnLeftSide, false)
+                            spawnNewMonster(4, !spawnOnLeftSide ? width * 0.1 : width * 0.9, spawnOnLeftSide, false)
                             MONSTER_DMG_MULTIPLIER = 0.1
                             PLAYER_DMG_MULTIPLIER = 4
                             setTimeout(() => {
                                 monsters.forEach((mons, i) => {
                                     if (i == 0) return
-                                    mons.character.scale = 0.2
+                                    mons.character.attackScale = 0.2
                                 })
                             }, 3500)
                         }
