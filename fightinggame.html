@@ -199,8 +199,6 @@
 
         let DEFAULT_BG_ZOOM_LEVEL = 5;
 
-        let ZOOM_LEVEL = 2;
-
         let valid_colors = ['red', 'yellow', 'blue', 'teal', 'lightblue', 'purple', 'pink', 'orange', 'white', 'black']
 
 
@@ -249,6 +247,9 @@
                 requestAnimationFrame(() => {
                     DOMObjectGlobals.body.style.transition = '1s'
                     id('image_blocker').style.transition = '1s'
+                })
+                Array.from(document.getElementsByClassName('controlBtn')).forEach(x => {
+                    x.style.borderWidth = r(width / 300) + 'px'
                 })
                 resolve()
             })
@@ -401,7 +402,7 @@
             }
 
             chosen_nums.forEach((num, i) => {
-                let img = new Img(IMAGE_PATH + characters[num] + '.png', ((screenw / chosen_nums.length)) * i +
+                let img = new Img(IMAGE_PATH + IMAGE_CONFIG.characters.path + characters[num] + '.png', ((screenw / chosen_nums.length)) * i +
                     10, 0, (screenw / chosen_nums.length) - width / 50);
                 crop.attach(img);
                 if (i !== 0) {
@@ -497,7 +498,7 @@
             player.powerType = player_char.power;
             player.hasNoSkyBox = true;
             loadingBar.value += 10;
-            let player_sprite = new Img(IMAGE_PATH + player_char.name + ".png", 0, 0, width / 6.4).fromCenter()
+            let player_sprite = new Img(IMAGE_PATH + IMAGE_CONFIG.characters.path + player_char.name + ".png", 0, 0, width / 6.4).fromCenter()
                 .usingNewTransform().onLoad(() => {
                     player.addSprite(player_sprite);
                     player_sprite.zIndex = 5000
@@ -646,10 +647,12 @@
         });
         let currentlySpawning = false;
 
+        let MONSTER_SCALE_OVERRIDE = 1;
+
         function createFallingMonster(x, name, power, imagePath, index, facingLeft) {
             let monster = {}
             let monsterHP = {}
-            let warning = new Img(LOADED_IMAGES.warning.cloneNode(), x, width / 12, width * ZOOM_SCALE / 5).fromCenter().onLoad(
+            let warning = new Img(LOADED_IMAGES.warning.cloneNode(), x, width / 12, width * (MONSTER_SCALE_OVERRIDE == 1 ? ZOOM_SCALE : MONSTER_SCALE_OVERRIDE) / 5).fromCenter().onLoad(
                 () => {
                     let ticking = setInterval(() => {
                         warning.set('display', 'none')
@@ -664,7 +667,7 @@
                     }, Math.abs(player.x - x) < width / 4 ? 13000 : 5000)
                     setTimeout(() => {
                         let sprite = new Img(imagePath, 0, 0,
-                                width * ZOOM_SCALE / 3).fromCenter()
+                                width * (MONSTER_SCALE_OVERRIDE == 1 ? ZOOM_SCALE : MONSTER_SCALE_OVERRIDE) / 3).fromCenter()
                             .usingNewTransform().onLoad(() => {
                                 if (checkObj(monsters[index])) {
                                     monsters[index].loadingBar.circle.remove()
@@ -861,7 +864,7 @@
                         } else {
                             monsters[0].character.kill();
                             monsters[0].loadingBar.value = 0;
-                            ZOOM_SCALE = 0.2
+                            MONSTER_SCALE_OVERRIDE = 0.2
                             spawnNewMonster(1, !spawnOnLeftSide ? width * 0.25 : width * 0.75, spawnOnLeftSide, false)
                             spawnNewMonster(2, !spawnOnLeftSide ? width * 0.2 : width * 0.8, spawnOnLeftSide, false)
                             spawnNewMonster(3, !spawnOnLeftSide ? width * 0.15 : width * 0.85, spawnOnLeftSide, false)
@@ -873,6 +876,7 @@
                                     if (i == 0) return
                                     mons.character.attackScale = 0.2
                                 })
+                                MONSTER_SCALE_OVERRIDE = 1;
                             }, 3500)
                         }
                     }
