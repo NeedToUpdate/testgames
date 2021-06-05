@@ -1,25 +1,39 @@
 <html>
 
 <head>
-    <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
-    <script language="javascript" src="./lib/vector.js"></script>
-    <script language="javascript" src="./lib/matrix.js"></script>
-    <script language="javascript" src="./lib/eventemitter.js"></script>
-    <script language="javascript" src="./lib/drawbase.js"></script>
-    <script language="javascript" src="./lib/collisioncontainer.js"></script>
-    <script language="javascript" src="./lib/PhysicsObject.js"></script>
-    <script language="javascript" src="./lib/DomObject.js"></script>
-    <script language="javascript" src="./image_config.js"></script>
-    <script language="javascript" src="./lib/Character.js"></script>
-    <script language="javascript" src="./lib/PlayerImages.js"></script>
+    <meta charset="UTF-8"
+        name="viewport"
+        content="width=device-width, user-scalable=no">
+    <script language="javascript"
+        src="./lib/vector.js"></script>
+    <script language="javascript"
+        src="./lib/matrix.js"></script>
+    <script language="javascript"
+        src="./lib/eventemitter.js"></script>
+    <script language="javascript"
+        src="./lib/drawbase.js"></script>
+    <script language="javascript"
+        src="./lib/collisioncontainer.js"></script>
+    <script language="javascript"
+        src="./lib/PhysicsObject.js"></script>
+    <script language="javascript"
+        src="./lib/DomObject.js"></script>
+    <script language="javascript"
+        src="./image_config.js"></script>
+    <script language="javascript"
+        src="./lib/Character.js"></script>
+    <script language="javascript"
+        src="./lib/PlayerImages.js"></script>
     <title>Artem's Over Under</title>
-    <link rel="stylesheet" href="global_styles.css">
+    <link rel="stylesheet"
+        href="global_styles.css">
 </head>
 
 <body>
     <div id="MAIN_WRAPPER">
         <div id="MAIN_SCREEN">
-            <button class="bluebtn" id="jmpleft">random</button>
+            <button class="bluebtn"
+                id="jmpleft">random</button>
         </div>
     </div>
     <script>
@@ -44,7 +58,7 @@
                 yy = bp.y + bw / 2 - iw / 2;
 
                 character = new Flyer(50, 50, 'div');
-                let div = new Img('./images/' + getRandom(characters) + '.png', width / 20, width / 20, iw)
+                let div = new Img('./images/' + IMAGE_CONFIG.characters.path + getRandom(ALL_CHARACTER_CONFIG).name + '.png', width / 20, width / 20, iw)
                     .onLoad(() => {
                         character.addSprite(div);
                         character.MAX_V = 10
@@ -74,7 +88,7 @@
             pos = {
                 on: {
                     x: xx,
-                    y: bp.y - hh * 1.2,
+                    y: bp.y - hh * 0.9,
                     extra: ['zIndex 5']
                 },
                 under: {
@@ -199,6 +213,7 @@
                 requestAnimationFrame(loop);
             })
         })
+
     </script>
 
 </body>

@@ -1,100 +1,117 @@
 <html>
 
 <head>
-    <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
-    <script language="javascript" src="./lib/vector.js"></script>
-    <script language="javascript" src="./lib/matrix.js"></script>
-    <script language="javascript" src="./lib/eventemitter.js"></script>
-    <script language="javascript" src="./lib/drawbase.js"></script>
-    <script language="javascript" src="./lib/collisioncontainer.js"></script>
-    <script language="javascript" src="./lib/PhysicsObject.js"></script>
-    <script language="javascript" src="./lib/DomObject.js"></script>
-    <script language="javascript" src="./lib/Character.js"></script>
-    <script language="javascript" src="./image_config.js"></script>
-    <script language="javascript" src="./lib/PlayerImages.js"></script> 
+    <meta charset="UTF-8"
+        name="viewport"
+        content="width=device-width, user-scalable=no">
+    <script language="javascript"
+        src="./lib/vector.js"></script>
+    <script language="javascript"
+        src="./lib/matrix.js"></script>
+    <script language="javascript"
+        src="./lib/eventemitter.js"></script>
+    <script language="javascript"
+        src="./lib/drawbase.js"></script>
+    <script language="javascript"
+        src="./lib/collisioncontainer.js"></script>
+    <script language="javascript"
+        src="./lib/PhysicsObject.js"></script>
+    <script language="javascript"
+        src="./lib/DomObject.js"></script>
+    <script language="javascript"
+        src="./lib/Character.js"></script>
+    <script language="javascript"
+        src="./image_config.js"></script>
+    <script language="javascript"
+        src="./lib/PlayerImages.js"></script>
     <title>Artem's Testing</title>
-    <link rel="stylesheet" href="global_styles.css">
+    <link rel="stylesheet"
+        href="global_styles.css">
 </head>
 
 <body>
     <div id="MAIN_WRAPPER">
         <div id="MAIN_SCREEN">
-            <button class="bluebtn" id="jmpleft">line up</button>
-            <button class="bluebtn" id="jump">numbers</button>
+            <button class="bluebtn"
+                id="jmpleft">line up</button>
+            <button class="bluebtn"
+                id="jump">numbers</button>
         </div>
     </div>
-<script>
+    <script>
+        let chars = []
+        let num = 20;
 
-    let chars =[]
-    let num = 20;
-    function setupBackground(){
-        return new Promise(resolve=>{
-            let background = 'background' + getRandom(IMAGE_CONFIG.backgrounds.num) + '.jpg'
-            document.body.style.backgroundColor = 'grey';
-            document.body.style.backgroundImage = 'url(./images/' + background.toString() + ')';
-            document.body.style.backgroundSize = width + 'px auto';
-            document.body.style.backgroundRepeat = 'no-repeat';
-            allnames = shuffle(characters).slice(0, num);
-            chars = allnames.map(name => {
-                let char = new Flyer(width/2, 0, name);
-                let charimg = new Img('./images/' + char.name + '.png', 0, 0, width/num).fromCenter().onLoad(() => {
-                    char.addSprite(charimg);
-                    char.MAX_V = 5;
-                    char.hasNoBounds = true;
+        function setupBackground() {
+            return new Promise(resolve => {
+                let background = 'background' + getRandom(IMAGE_CONFIG.backgrounds.num) + '.jpg'
+                DOMObjectGlobals.body.style.backgroundColor = 'grey';
+                DOMObjectGlobals.body.style.backgroundImage = 'url(./images/' + background.toString() + ')';
+                DOMObjectGlobals.body.style.backgroundSize = width + 'px auto';
+                DOMObjectGlobals.body.style.backgroundRepeat = 'no-repeat';
+                allnames = shuffle(ALL_CHARACTER_CONFIG.map(x => x.name)).slice(0, num);
+                chars = allnames.map(name => {
+                    let char = new Flyer(width / 2, 0, name);
+                    let charimg = new Img('./images/' + IMAGE_CONFIG.characters.path + char.name + '.png', 0, 0, width / num).fromCenter().onLoad(() => {
+                        char.addSprite(charimg);
+                        char.MAX_V = 5;
+                        char.hasNoBounds = true;
+                    });
+                    return char;
                 });
-                return char;
-            });
-            resolve()
-        })
-    }
-
-
-
-
-    id('jmpleft').addEventListener('click', () => {
-        chars.forEach((char, i) => {
-            char.doFlyTo(new Vector(10 + ((width)/num) * i, 200));
-        })
-    });
-    let ps = [];
-    let shownumbers = false;
-    function postfix(i){
-        if(i>3)  return 'th';
-        if(i == 3) return 'rd';
-        if(i == 2) return 'nd';
-        if(i == 1) return 'st';
-    }
-    id('jump').addEventListener('click', () => {
-        shownumbers = !shownumbers;
-        if (shownumbers) {
-            chars.forEach((char, i) => {
-                let p = new P(i + 1 + postfix(i+1), 10 + ((width)/num) * i, 100, (width/(num*2))).fromCenter();
-                p.color = 'white'
-                p.set('textShadow','black 0 0 2px')
-                p.x = 20 + ((width)/num) * i;
-                ps.push(p);
+                resolve()
             })
-        } else {
-            ps.forEach(x => {
-                x.remove()
-            });
-            ps = [];
         }
 
-    });
 
-    loop = function () {
-        chars.forEach(char => {
-            char.update();
+
+
+        id('jmpleft').addEventListener('click', () => {
+            chars.forEach((char, i) => {
+                char.doFlyTo(new Vector(10 + ((width) / num) * i, 200));
+            })
         });
-        requestAnimationFrame(loop)
-    };
-    setupBody(id('MAIN_SCREEN')).then(()=>{
-        setupBackground().then(()=>{
-            loop()
-        })
-    })
+        let ps = [];
+        let shownumbers = false;
 
-</script>
+        function postfix(i) {
+            if (i > 3) return 'th';
+            if (i == 3) return 'rd';
+            if (i == 2) return 'nd';
+            if (i == 1) return 'st';
+        }
+        id('jump').addEventListener('click', () => {
+            shownumbers = !shownumbers;
+            if (shownumbers) {
+                chars.forEach((char, i) => {
+                    let p = new P(i + 1 + postfix(i + 1), 10 + ((width) / num) * i, 100, (width / (num * 2))).fromCenter();
+                    p.color = 'white'
+                    p.set('textShadow', 'black 0 0 2px')
+                    p.x = 20 + ((width) / num) * i;
+                    ps.push(p);
+                })
+            } else {
+                ps.forEach(x => {
+                    x.remove()
+                });
+                ps = [];
+            }
+
+        });
+
+        loop = function () {
+            chars.forEach(char => {
+                char.update();
+            });
+            requestAnimationFrame(loop)
+        };
+        setupBody(id('MAIN_SCREEN')).then(() => {
+            setupBackground().then(() => {
+                loop()
+            })
+        })
+
+    </script>
 </body>
+
 </html>

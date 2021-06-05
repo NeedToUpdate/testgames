@@ -327,7 +327,7 @@
         function create_monster(num) {
             let mons_num = num || getRandom(NUM_OF_MONSTERS + 2);
             let mons_name = '';
-            let monster_powr_name = powers[Math.random() * powers.length | 0];
+            let monster_powr_name = ALL_CHARACTER_CONFIG[Math.random() * ALL_CHARACTER_CONFIG.length | 0].power;
             if (mons_num > NUM_OF_MONSTERS) {
                 let exception = mons_num - NUM_OF_MONSTERS;
                 if (exception == 2) {
@@ -357,9 +357,9 @@
             let num_of_choices = 4;
             let chosen_nums = [];
             for (let i = 0; i < num_of_choices; i++) {
-                let num = getRandom(characters.length);
+                let num = getRandom(ALL_CHARACTER_CONFIG.length);
                 while (chosen_nums.includes(num)) {
-                    num = getRandom(characters.length);
+                    num = getRandom(ALL_CHARACTER_CONFIG.length);
                 }
                 chosen_nums.push(num);
             }
@@ -402,7 +402,7 @@
             }
 
             chosen_nums.forEach((num, i) => {
-                let img = new Img(IMAGE_PATH + IMAGE_CONFIG.characters.path + characters[num] + '.png', ((screenw / chosen_nums.length)) * i +
+                let img = new Img(IMAGE_PATH + IMAGE_CONFIG.characters.path + ALL_CHARACTER_CONFIG[num].name + '.png', ((screenw / chosen_nums.length)) * i +
                     10, 0, (screenw / chosen_nums.length) - width / 50);
                 crop.attach(img);
                 if (i !== 0) {
@@ -417,7 +417,7 @@
                 img.shape.addEventListener('click', () => {
                     start_the_game(num);
                 });
-                let actual_name = characters[num].split('_').map(x => x[0].toUpperCase() + x.slice(1, x.length))
+                let actual_name = ALL_CHARACTER_CONFIG[num].name.split('_').map(x => x[0].toUpperCase() + x.slice(1, x.length))
                     .join(' ');
                 if (!isNaN(actual_name[actual_name.length - 1])) {
                     actual_name = actual_name.slice(0, actual_name.length - 1)
