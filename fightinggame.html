@@ -800,13 +800,29 @@
         let PLAYER_DMG_MULTIPLIER = 1;
 
         function monsterShoot(index) {
+            if (MONSTER_IS_CURRENTLY_SHOOTING) return
+            MONSTER_IS_CURRENTLY_SHOOTING = true;
             index = index || 0;
             if (!monsters[index].character.dead) {
-                let atk = monsters[index].character.shoot();
-                if (atk) {
-                    atk.owner = 'monster';
-                    projectiles.push(atk)
-                }
+                monsters[index].character.sprite.shape.style.filter = "brightness(0.95)"
+                setTimeout(() => {
+                    monsters[index].character.sprite.shape.style.filter = "brightness(0.9)"
+                    setTimeout(() => {
+                        monsters[index].character.sprite.shape.style.filter = "brightness(0.85)"
+                        setTimeout(() => {
+                            monsters[index].character.sprite.shape.style.filter = "brightness(0.8)"
+                            setTimeout(() => {
+                                let atk = monsters[index].character.shoot();
+                                monsters[index].character.sprite.shape.style.filter = ''
+                                if (atk) {
+                                    atk.owner = 'monster';
+                                    projectiles.push(atk)
+                                }
+                                MONSTER_IS_CURRENTLY_SHOOTING = false;
+                            }, 500)
+                        }, 500)
+                    }, 500)
+                }, 500)
             }
         }
         let PLAYERJUMP = false;
@@ -1020,10 +1036,8 @@
                     }
                     if (MONSTER_RAPID_FIRE && !MONSTER_IS_CURRENTLY_SHOOTING) {
                         monster.powerUp(1);
-                        MONSTER_IS_CURRENTLY_SHOOTING = true;
                         setTimeout(() => {
                             monsterShoot(index);
-                            MONSTER_IS_CURRENTLY_SHOOTING = false;
                         }, 700);
                         if (Math.random() < 0.2) {
                             monster.jumpUp(5);
