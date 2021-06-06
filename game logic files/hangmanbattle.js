@@ -21,7 +21,11 @@ function setupBackground() {
     MAINARENA.set("backgroundSize", "cover");
     MAINARENA.set("backgroundRepeat", "no-repeat");
     MAINARENA.set("backgroundPosition", "center");
-    DOMObjectGlobals.body.style.backgroundColor = "lightgrey";
+    MAINARENA.zIndex = 2;
+    DOMObjectGlobals.body.style.backgroundImage = "url(../images/index/hangmanbattlebackground.jpg)";
+    DOMObjectGlobals.body.style.backgroundSize = width + "px auto";
+    let switchImage = new Img("../images/index/nintendoswitch.png", width * 0.0511, height / 6, width * 0.9);
+    switchImage.zIndex = 1;
     goBtn = new Circle(width * 0.03, height * 0.37, width / 68.5).asOutline("green", r(width / 191));
     goBtn.shape.addEventListener("click", submitLetters);
     resetBtn = new Circle(width * 0.03, height * 0.456, width / 68.5).asOutline("red", r(width / 191));
@@ -71,11 +75,11 @@ let circles = [];
 function setUpCircles() {
   let bigR = width / 45;
   let smallR = width / 60;
-  let rc = new Circle(width / 2 + bigR * 2 - r(width / 160), height * 0.18 + bigR / 2, bigR).asOutline("black", r(width / 320)).fromCenter();
+  let rc = new Circle(width / 2 + bigR * 2 - r(width / 160), height * 0.18 + bigR / 2, bigR).asOutline("white", r(width / 320)).fromCenter();
   circles = [rc];
   for (let i = 0; i < ROUNDS - 1; i += 2) {
-    circles.unshift(new Circle(width / 2 + bigR * 2 - smallR * (3 + i * 1.3) - smallR, height * 0.18, smallR).asOutline("black", r(width / 320)).fromCenter());
-    circles.push(new Circle(width / 2 + bigR * 2 + smallR * (3 + i * 1.3) - smallR, height * 0.18, smallR).asOutline("black", r(width / 320)).fromCenter());
+    circles.unshift(new Circle(width / 2 + bigR * 2 - smallR * (3 + i * 1.3) - smallR, height * 0.18, smallR).asOutline("white", r(width / 320)).fromCenter());
+    circles.push(new Circle(width / 2 + bigR * 2 + smallR * (3 + i * 1.3) - smallR, height * 0.18, smallR).asOutline("white", r(width / 320)).fromCenter());
   }
 }
 
@@ -168,6 +172,12 @@ function handleWin(isTeamA) {
                 let background = "background" + getRandom(BACKGROUND_CONFIG.num).toString() + ".jpg";
                 MAINARENA.set("backgroundImage", "url(" + IMAGE_PATH + BACKGROUND_CONFIG.path + background + ")");
                 resetAll();
+                playerAState = "fighting";
+                playerBState = "fighting";
+                showRoundText((winsA = winsB + 1)).then(() => {
+                  playerAState = "idle";
+                  playerBState = "idle";
+                });
               });
             });
           });
@@ -190,6 +200,12 @@ function handleWin(isTeamA) {
           let background = "background" + getRandom(BACKGROUND_CONFIG.num).toString() + ".jpg";
           MAINARENA.set("backgroundImage", "url(" + IMAGE_PATH + BACKGROUND_CONFIG.path + background + ")");
           resetAll();
+          playerAState = "fighting";
+          playerBState = "fighting";
+          showRoundText((winsA = winsB + 1)).then(() => {
+            playerAState = "idle";
+            playerBState = "idle";
+          });
         });
       });
       INTERRUPT_DAMAGE = false;
@@ -278,6 +294,8 @@ function setup() {
           setUpCharacters(numA, numB).then(() => {
             teamA.hpDiv = new LoadingBar(width * 0.21, height * 0.35, width / 5, height / 12, 0, 100, 100);
             teamB.hpDiv = new LoadingBar(width * 0.59, height * 0.35, width / 5, height / 12, 0, 100, 100);
+            teamA.hpDiv.zIndex = 3;
+            teamB.hpDiv.zIndex = 3;
             teamA.hpDiv.shape.addEventListener("click", () => {
               HELP_A_TEAM = "A";
               console.log("helping team A");
@@ -289,6 +307,8 @@ function setup() {
             teamA.puzzleDiv.set("zIndex", "10");
             teamA.input = createInputBox("A");
             teamB.input = createInputBox("B");
+            teamA.input.getDiv().zIndex = 2;
+            teamB.input.getDiv().zIndex = 2;
             setUpCircles();
             toggleBlackout();
             showRoundText().then(() => {
@@ -304,11 +324,26 @@ function setup() {
 function showRoundText(round) {
   round = round || 1;
   return new Promise((resolve) => {
-    return resolve();
     setTimeout(() => {
-      let p = new P("ROUND " + round, width / 2, height / 3).fromCenter();
-      p.set("fontFamily", "mk1");
-      setTimeout(() => {}, 7000);
+      let roundText = new P("ROUND " + round, width / 2, height / 3, r(width / 30)).fromCenter();
+      roundText.color = "yellow";
+      roundText.zIndex = 5;
+      roundText.set("textShadow", "0px 0px 2px black");
+      roundText.set("fontFamily", "mk1");
+      roundText.x += roundText.width / 10;
+      setTimeout(() => {
+        let fightText = new P("FIGHT", width / 2, (height * 2) / 3, r(width / 10)).fromCenter();
+        fightText.set("fontFamily", "mk1");
+        fightText.x += fightText.width / 10;
+        fightText.color = "yellow";
+        fightText.zIndex = 5;
+        fightText.set("textShadow", "0px 0px 2px black");
+        setTimeout(() => {
+          roundText.remove();
+          fightText.remove();
+          return resolve();
+        }, 2000);
+      }, 1000);
     }, 1000);
   });
 }
@@ -395,6 +430,9 @@ function createSpinner(word1, word2, winner) {
     arrow.shape.style.transformOrigin = "100% 50%";
     arrow.color = "blue";
 
+    circleBG.zIndex = 3;
+    circle.zIndex = 4;
+    arrow.zIndex = 4;
     function eq(val) {
       return -1 * (0.05 * val - 7.7) ** 2 + 60;
     }
@@ -421,6 +459,8 @@ function createSpinner(word1, word2, winner) {
         );
         l.color = "blue";
         p.color = index < wordA.length ? "royalblue" : "indianred";
+        l.zIndex = 4;
+        p.zIndex = 4;
         p.size = r(width / 20) + "px";
         p.set("fontWeight", "bolder");
         p.y -= r(width / 40);
