@@ -169,12 +169,14 @@ function handleWin(isTeamA) {
                 teamA.hpDiv.value = 100;
                 teamB.hp = 100;
                 teamB.hpDiv.value = 100;
+                makeNameplate(true);
+                makeNameplate(false);
                 let background = "background" + getRandom(BACKGROUND_CONFIG.num).toString() + ".jpg";
                 MAINARENA.set("backgroundImage", "url(" + IMAGE_PATH + BACKGROUND_CONFIG.path + background + ")");
                 resetAll();
                 playerAState = "fighting";
                 playerBState = "fighting";
-                showRoundText((winsA = winsB + 1)).then(() => {
+                showRoundText(winsA + winsB + 1).then(() => {
                   playerAState = "idle";
                   playerBState = "idle";
                 });
@@ -197,12 +199,15 @@ function handleWin(isTeamA) {
           teamA.hpDiv.value = 100;
           teamB.hp = 100;
           teamB.hpDiv.value = 100;
+
+          makeNameplate(true);
+          makeNameplate(false);
           let background = "background" + getRandom(BACKGROUND_CONFIG.num).toString() + ".jpg";
           MAINARENA.set("backgroundImage", "url(" + IMAGE_PATH + BACKGROUND_CONFIG.path + background + ")");
           resetAll();
           playerAState = "fighting";
           playerBState = "fighting";
-          showRoundText((winsA = winsB + 1)).then(() => {
+          showRoundText(winsA + winsB + 1).then(() => {
             playerAState = "idle";
             playerBState = "idle";
           });
@@ -293,8 +298,13 @@ function setup() {
         choose_your_fighter_2Team(false).then((num) => {
           numB = num;
           setUpCharacters(numA, numB).then(() => {
-            teamA.hpDiv = new LoadingBar(width * 0.21, height * 0.35, width / 5, height / 12, 0, 100, 100);
-            teamB.hpDiv = new LoadingBar(width * 0.59, height * 0.35, width / 5, height / 12, 0, 100, 100);
+            teamA.hpDiv = new LoadingBar(width * 0.21, height * 0.35, width / 4.5, height / 13, 0, 100, 100);
+            teamB.hpDiv = new LoadingBar(width * 0.57, height * 0.35, width / 4.5, height / 13, 0, 100, 100);
+            teamB.hpDiv.angle = 180;
+            teamA.hpDiv.set("borderRadius", r(width / 45) + "px");
+            teamB.hpDiv.set("borderRadius", r(width / 45) + "px");
+            teamA.hpDiv.set("overflow", "clip");
+            teamB.hpDiv.set("overflow", "clip");
             teamA.hpDiv.zIndex = 3;
             teamB.hpDiv.zIndex = 3;
             teamA.hpDiv.shape.addEventListener("click", () => {
@@ -310,6 +320,8 @@ function setup() {
             teamB.input = createInputBox("B");
             teamA.input.getDiv().zIndex = 2;
             teamB.input.getDiv().zIndex = 2;
+            makeNameplate(true);
+            makeNameplate(false);
             setUpCircles();
             toggleBlackout();
             showRoundText().then(() => {
@@ -320,6 +332,27 @@ function setup() {
       });
     });
   });
+}
+
+function makeNameplate(isTeamA) {
+  let team = isTeamA ? teamA : teamB;
+  if (checkObj(team.namePlate)) {
+    team.namePlate.remove();
+  }
+  team.namePlate = new P(convertToReadableName(isTeamA ? playerA.name : playerB.name).toUpperCase(), width * 0.21, height * 0.33, r(width / 60));
+  if (!isTeamA) {
+    requestAnimationFrame(() => {
+      teamB.namePlate.x = teamB.hpDiv.x + teamB.hpDiv.width - teamB.namePlate.width;
+    });
+  }
+
+  team.namePlate.color = "black";
+  team.namePlate.set("backgroundColor", "white");
+  team.namePlate.set("border", "solid black " + r(width / 300) + "px");
+  team.namePlate.set("borderRadius", r(width / 100) + "px");
+  team.namePlate.zIndex = 4;
+  team.namePlate.set("fontFamily", "mk1");
+  team.namePlate.set("padding", "0 5px 0 5px");
 }
 
 function showRoundText(round) {
