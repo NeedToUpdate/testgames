@@ -1,231 +1,230 @@
-body{
-    overflow: hidden;
-    padding: 0;
-    margin: 0;
-    background-color: black;
+body {
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+  background-color: black;
 }
-#MAIN_SCREEN{
-    position: relative;
-    overflow: hidden;
-    height: calc(44.9vw + 1px);
-    width: calc(100vw + 1px);
-    border: black solid 1px;
-    margin:0;
-    padding: 0;
-    top: -1px;
-    left: -1px;
-    max-width: 222vh;
-    max-height: 100vh;
+#MAIN_SCREEN {
+  position: relative;
+  overflow: hidden;
+  height: calc(44.9vw + 1px);
+  width: calc(100vw + 1px);
+  border: black solid 1px;
+  margin: 0;
+  padding: 0;
+  top: -1px;
+  left: -1px;
+  max-width: 222vh;
+  max-height: 100vh;
 }
-#MAIN_WRAPPER{
-    display: flex;
-    align-content: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
+#MAIN_WRAPPER {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
 }
 .bluebtn {
-    z-index: 100000;
-    position: absolute;
-    left: 0%;
-    top: 82%;
-    max-height: 40px;
-    max-width: 70px;
-    border-radius: 20px;
-    background-color: #00B7FF;
-    border: blue solid 4px;
-    color: darkblue;
-    font-size: 1em;
-    font-family: "Minion Pro";
+  z-index: 100000;
+  position: absolute;
+  left: 0%;
+  top: 82%;
+  max-height: 40px;
+  max-width: 70px;
+  border-radius: 20px;
+  background-color: #00b7ff;
+  border: blue solid 4px;
+  color: darkblue;
+  font-size: 1em;
+  font-family: "Minion Pro";
 }
-.colourpoint{
-    display: inline;
-    top: 50px;
-    position: absolute;
-    font-size: 3em;
-    font-weight: bolder;
-    z-index: 1000;
+.colourpoint {
+  display: inline;
+  top: 50px;
+  position: absolute;
+  font-size: 3em;
+  font-weight: bolder;
+  z-index: 1000;
 }
-.colourblock{
-    position: absolute;
-    height: 50px;
-    width: 50px;
-    border-radius: 10px;
-    top: 100px;
+.colourblock {
+  position: absolute;
+  height: 50px;
+  width: 50px;
+  border-radius: 10px;
+  top: 100px;
 }
-#block1{
-    background-color: red;
+#block1 {
+  background-color: red;
 }
-#block2{
-    background-color: mediumseagreen;
-    left: 150px;
+#block2 {
+  background-color: mediumseagreen;
+  left: 150px;
 }
-#block3{
-    background-color: yellow;
-    left: 310px;
+#block3 {
+  background-color: yellow;
+  left: 310px;
 }
-#point1{
-    top: 100px;
-    left: 19px;
+#point1 {
+  top: 100px;
+  left: 19px;
 }
-#point2{
-    left: 164px;
+#point2 {
+  left: 164px;
 }
-#point3{
-    left: 324px;
-}#point21{
-    top: 200px;
-    left: 19px;
+#point3 {
+  left: 324px;
 }
-#point22{
-    top: 200px;
-    left: 164px;
+#point21 {
+  top: 200px;
+  left: 19px;
 }
-#point23{
-    top: 200px;
-    left: 324px;
+#point22 {
+  top: 200px;
+  left: 164px;
+}
+#point23 {
+  top: 200px;
+  left: 324px;
 }
 
-#jmpleft{
-
+#jmpleft {
 }
-#jmpright{
-    left: 143px;
+#jmpright {
+  left: 143px;
 }
-#jump{
-    left: 71px;
+#jump {
+  left: 71px;
 }
-#hover{
-    left: 75px;
-    top: 76%;
+#hover {
+  left: 75px;
+  top: 76%;
 }
 #powerup {
-    background-color: orange;
-    top: 90%;
+  background-color: orange;
+  top: 90%;
 }
-#shootright{
-    background-color: red;
-    top:90%;
-    left: 71px;
+#shootright {
+  background-color: red;
+  top: 90%;
+  left: 71px;
 }
-#shield{
-    top:90%;
-    left: 143px;
-    background-color: green;
+#shield {
+  top: 90%;
+  left: 143px;
+  background-color: green;
 }
-#playpause{
-    top: 0%;
-    max-height: 25px;
+#playpause {
+  top: 0%;
+  max-height: 25px;
 }
 
-.at_top{
-    top: 0px;
+.at_top {
+  top: 0px;
 }
-.locked{
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
+.locked {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
 }
-*{
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+* {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 @keyframes grow {
-    to{
-        left: -50vw;
-        top: -30vw;
-        width: 100vw;
-    }
+  to {
+    left: -50vw;
+    top: -30vw;
+    width: 100vw;
+  }
 }
 @keyframes grow2 {
-    to {
-        left: 10vw;
-        top: 0px;
-        width: 33vw;
-    }
+  to {
+    left: 10vw;
+    top: 0px;
+    width: 33vw;
+  }
 }
 @keyframes grow3 {
-    to{
-        left: -100vw;
-        top: -50vw;
-        width: 200vw;
-    }
+  to {
+    left: -100vw;
+    top: -50vw;
+    width: 200vw;
+  }
 }
 @keyframes zoombg {
-    from{
-        background-position: 0 0;
-        background-size: 100% 100%;
-    }
-   to{
-       background-position: -50vw 100%;
-       background-size: 200% 200%;
-   }
+  from {
+    background-position: 0 0;
+    background-size: 100% 100%;
+  }
+  to {
+    background-position: -50vw 100%;
+    background-size: 200% 200%;
+  }
 }
 @keyframes fadeOut {
-    to{
-        opacity: 0;
-    }
+  to {
+    opacity: 0;
+  }
 }
 @keyframes fadeIn {
-    from{
-        opacity: 0;
-    }
+  from {
+    opacity: 0;
+  }
 }
 
-
-
 @keyframes fadeInOut {
-    0%{
-        opacity: 0;
-    }
-    50%{
-        opacity: 1;
-    }
-    100%{
-        opacity: 0;
-    }
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 @keyframes growIn {
-    from{
-        width: 0;
-    }
-
+  from {
+    width: 0;
+  }
 }
 
 @keyframes growOut {
-    to{
-        width: 0;
-    }
-
+  to {
+    width: 0;
+  }
 }
-
 
 @font-face {
-     font-family: 'quikhand';
-     src: url("./quikhand.ttf") format("truetype");
- }
-
-
-#nextbtn{
-    border-radius: 50%;
-    color: blue;
-    border: darkblue 4px solid;
-    background-color: lightblue;
-    width: 75px;
+  font-family: "quikhand";
+  src: url("./fonts/quikhand.ttf") format("truetype");
 }
 
-.smoothed{
-    transition: 1s
+@font-face {
+  font-family: "mk1";
+  src: url("./fonts/mk1.ttf") format("truetype");
 }
-.slowsmoothed{
-    transition: 2s
+
+#nextbtn {
+  border-radius: 50%;
+  color: blue;
+  border: darkblue 4px solid;
+  background-color: lightblue;
+  width: 75px;
 }
-.fastsmoothed{
-    transition: 0.2s
+
+.smoothed {
+  transition: 1s;
+}
+.slowsmoothed {
+  transition: 2s;
+}
+.fastsmoothed {
+  transition: 0.2s;
 }
