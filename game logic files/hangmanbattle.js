@@ -279,10 +279,11 @@ function setup() {
     nextWord(true);
     nextWord(false);
     let go = new Rectangle(width / 2 - width / 20, height / 2 - height / 20, width / 10, height / 10);
-    let p = new P("GO!", width / 20, height / 20, r(width / 30) + "px").fromCenter();
+    let p = new P("GO!", width / 17, height / 20, r(width / 30) + "px").fromCenter();
     go.attach(p);
     go.set("borderRadius", r(width / 25) + "px");
     go.set("zIndex", "2200");
+    go.set("fontFamily", "mk1");
     go.color = "limegreen";
     go.border = "solid green " + r(width / 300) + "px";
     go.shape.addEventListener("click", () => {
