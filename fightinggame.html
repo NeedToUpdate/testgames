@@ -685,6 +685,7 @@
                                 if (monster.height > height * 0.8) monster.width *= (height * 0.8) / monster.height;
                                 monster.maxbounds.y = (height * 1.1) / 2 + monster.height / 2;
                                 monster.addDeathImage(LOADED_IMAGES.fire.cloneNode());
+                                monster.deathImage.style.filter = 'hue-rotate(' + getRandom(360) + 'deg)'
                                 let shield_name = 'shield_' + getRandom(valid_colors)
                                 LOADED_IMAGES.add([shield_name], IMAGE_PATH + '/projectiles/');
                                 monster.addShieldImage(LOADED_IMAGES[shield_name].cloneNode())
