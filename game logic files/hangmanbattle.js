@@ -569,8 +569,8 @@ function submitLetters() {
   let finishedA = A.confirmLetter(letterA);
   let finishedB = B.confirmLetter(letterB);
 
-  let divA = teamA.input.getDiv();
-  let divB = teamB.input.getDiv();
+  let divA = teamA.input.getLetterDiv();
+  let divB = teamB.input.getLetterDiv();
   let charA = new Character(divA.x + divA.shape.parentElement.offsetLeft + divA.width / 2, divA.y + divA.shape.parentElement.offsetTop + divA.height / 2, letterA);
   let charB = new Character(divB.x + divB.shape.parentElement.offsetLeft + divB.width / 2, divB.y + divB.shape.parentElement.offsetTop + divB.height / 2, letterB);
 
@@ -1741,6 +1741,9 @@ function resetSome() {
   playerB.faceLeft();
   playerA.angle = 0;
   playerB.angle = 0;
+
+  playerAState = "idle";
+  playerBState = "idle";
 }
 
 function resetAll() {
