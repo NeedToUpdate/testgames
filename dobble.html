@@ -56,7 +56,7 @@
     </div>
     <script>
         //=============  DEBUG WITHOUT CONSOLE STUFF =====================
-        /*if (typeof console !== 'undefined') {
+        if (typeof console !== 'undefined') {
             if (typeof console.log !== 'undefined') {
                 console.olog = console.log;
             } else {
@@ -73,7 +73,7 @@
         });
         id('debugdiv').addEventListener('click', () => {
             id('debugdiv').innerText = ''
-        })//*/
+        })
         //=============  END DEBUG WITHOUT CONSOLE STUFF ==================
 
         let SELECTED_WORDS = [];
@@ -749,7 +749,7 @@
                                     let wordsToAdd = (FAKEMODE_WORDS_PER_CARD - 1) * 2 - wordChoice.length;
                                     for (let i = 0; i < wordsToAdd; i++) {
                                         //go through the abc easy words and add them starting from a to z
-                                        let newWord = KEYWORDS_CONFIG[alphabet.split('')[r(i / 4)]][i % 4]
+                                        let newWord = KEYWORDS_CONFIG[alphabet.split('').filter(x => x !== chosenWord[0][0])[r(i / 4)]][i % 4]
                                         let path = createPathObjects([newWord])[0]
                                         LOADED_IMAGES.add(path.name, path.path)
                                         wordChoice.push(newWord)
