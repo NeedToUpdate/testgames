@@ -57,6 +57,7 @@
             <div id="image_blocker"
                 style="position: absolute;top: 0; left: 0; z-index: 9; background-color:#26445e">
             </div>
+            <button id="switchControls"></button>
         </div>
     </div>
     <style>
@@ -79,6 +80,17 @@
             background-image: linear-gradient(to bottom right, #eee 0%, #e1e1e1 10%, #ddd 14%, #fff 30%, #ddd 60%, #eee 85%, #ccc 100%);
             font-weight: bolder;
             padding: 0;
+        }
+
+        #switchControls {
+            height: 1.5vw;
+            width: 1.5vw;
+            background-color: transparent;
+            left: 95%;
+            top: 90%;
+            border-radius: 50%;
+            border: rgba(100, 100, 100, 0.5) solid 0.2vw;
+            position: absolute;
         }
 
         .controlBtn:active {
@@ -250,6 +262,9 @@
                 })
                 Array.from(document.getElementsByClassName('controlBtn')).forEach(x => {
                     x.style.borderWidth = r(width / 300) + 'px'
+                })
+                id('switchControls').addEventListener('click', () => {
+                    console.log('hi')
                 })
                 resolve()
             })
@@ -792,7 +807,7 @@
 
         let hopstop = false;
         let MONSTER_IS_CURRENTLY_SHOOTING = false;
-        let MONSTER_RAPID_FIRE = false;
+        let MONSTER_RAPID_FIRE_ACTIVE = false;
         let ALL_MONSTERS_ARE_DEAD = false
         let SUPER_HARDMODE_MODE = 'inactive'
         let validSuperHardmodeModes = ['twomonsters', 'angryfast', 'agnrygiant', 'fourtiny', 'splitter'];
@@ -800,30 +815,46 @@
         let MONSTER_DMG_MULTIPLIER = 1;
         let PLAYER_DMG_MULTIPLIER = 1;
 
+        let MONSTER_SHOOTING_RAPID_FIRE = false
+
         function monsterShoot(index) {
             if (MONSTER_IS_CURRENTLY_SHOOTING) return
             MONSTER_IS_CURRENTLY_SHOOTING = true;
             index = index || 0;
             if (!monsters[index].character.dead) {
-                monsters[index].character.sprite.shape.style.filter = "brightness(0.95)"
-                setTimeout(() => {
-                    monsters[index].character.sprite.shape.style.filter = "brightness(0.9)"
+                if (MONSTER_SHOOTING_RAPID_FIRE) {
+                    let atk = monsters[index].character.shoot();
+                    monsters[index].character.sprite.shape.style.filter = 'brightness(0.8)'
+                    if (atk) {
+                        atk.owner = 'monster';
+                        projectiles.push(atk)
+                    }
+                    MONSTER_IS_CURRENTLY_SHOOTING = false;
+                } else {
+                    monsters[index].character.sprite.shape.style.filter = "brightness(0.95)"
                     setTimeout(() => {
-                        monsters[index].character.sprite.shape.style.filter = "brightness(0.85)"
+                        monsters[index].character.sprite.shape.style.filter = "brightness(0.9)"
                         setTimeout(() => {
-                            monsters[index].character.sprite.shape.style.filter = "brightness(0.8)"
+                            monsters[index].character.sprite.shape.style.filter = "brightness(0.85)"
                             setTimeout(() => {
-                                let atk = monsters[index].character.shoot();
-                                monsters[index].character.sprite.shape.style.filter = ''
-                                if (atk) {
-                                    atk.owner = 'monster';
-                                    projectiles.push(atk)
-                                }
-                                MONSTER_IS_CURRENTLY_SHOOTING = false;
+                                monsters[index].character.sprite.shape.style.filter = "brightness(0.8)"
+                                setTimeout(() => {
+                                    let atk = monsters[index].character.shoot();
+                                    if (atk) {
+                                        atk.owner = 'monster';
+                                        projectiles.push(atk)
+                                    }
+                                    MONSTER_IS_CURRENTLY_SHOOTING = false;
+                                    if (MONSTER_RAPID_FIRE_ACTIVE) {
+                                        MONSTER_SHOOTING_RAPID_FIRE = true;
+                                    } else {
+                                        monsters[index].character.sprite.shape.style.filter = ''
+                                    }
+                                }, 500)
                             }, 500)
                         }, 500)
                     }, 500)
-                }, 500)
+                }
             }
         }
         let PLAYERJUMP = false;
@@ -876,7 +907,7 @@
                     let loop = () => {
                         monsters[0].character.sprite.shape.style.filter = 'brightness(' + brightness + ')'
                         brightness += 0.1
-                        if (brightness < 10) {
+                        if (brightness < 5) {
                             requestAnimationFrame(loop)
                         } else {
                             monsters[0].character.kill();
@@ -903,6 +934,7 @@
             SUPER_HARDMODE = false;
             HARDMODE_HAS_BEEN_ENABLED = false;
         }
+        let RAPID_FIRE_TIMEOUT = false;
 
         function loop(time) {
             let deltaT = time - currentTime;
@@ -1004,7 +1036,24 @@
 
                 //monster's movements
                 if (PLAYING && !player.dead) {
-                    if (Math.random() * 1000 < (HARDMODE ? 30 : 10)) {
+                    if (MONSTER_RAPID_FIRE_ACTIVE && MONSTER_SHOOTING_RAPID_FIRE && !MONSTER_IS_CURRENTLY_SHOOTING && !RAPID_FIRE_TIMEOUT) {
+                        monster.powerUp(1);
+                        monsterShoot(index);
+                        RAPID_FIRE_TIMEOUT = true;
+                        setTimeout(() => {
+                            RAPID_FIRE_TIMEOUT = false
+                        }, 100)
+                        if (Math.random() < 0.2) {
+                            monster.jumpUp(15);
+                        }
+                        if (Math.random() < 0.05) {
+                            MONSTER_RAPID_FIRE_ACTIVE = false;
+                            MONSTER_SHOOTING_RAPID_FIRE = false;
+                        }
+
+
+                    }
+                    if (!MONSTER_RAPID_FIRE_ACTIVE && Math.random() * 1000 < (HARDMODE ? 30 : 10)) {
                         if (!MONSTER_IS_CURRENTLY_SHOOTING && !monster.isCurrentlyJumping) {
                             monster.powerUp(SUPER_HARDMODE_MODE === 'inactive' ? 2 * MONSTER_DMG_MULTIPLIER : 4 * MONSTER_DMG_MULTIPLIER);
                         }
@@ -1012,12 +1061,12 @@
                     if (getRandom(10000) < (HARDMODE ? 2 : 1)) {
                         monster.shield(getRandom(1, 4));
                     }
-                    if (Math.random() * 1000 < (HARDMODE ? 2 : 1)) {
+                    if (!MONSTER_RAPID_FIRE_ACTIVE && Math.random() * 1000 < (HARDMODE ? 2 : 1)) {
                         if (monster.isPoweringUp) {
                             monsterShoot(index);
                         }
                     }
-                    if (Math.random() * 2000 < (HARDMODE ? (monster.health > 30 ? 30 : 10) : (monster.health >
+                    if (!MONSTER_RAPID_FIRE_ACTIVE && Math.random() * 2000 < (HARDMODE ? (monster.health > 30 ? 30 : 10) : (monster.health >
                             30 ? 20 :
                             5))) {
                         monster.hop();
@@ -1026,7 +1075,9 @@
                         monster.jumpUp(15);
                     }
                     if (Math.random() * 10000 < (HARDMODE ? 3 : 2)) {
-                        MONSTER_RAPID_FIRE = true;
+                        MONSTER_RAPID_FIRE_ACTIVE = true;
+                        monster.powerUp(1)
+                        monsterShoot(index)
                         console.log('rapid fire!')
                     }
                     if (monster.health > 80 && Math.random() * 1000 < 5 && !hopstop) {
@@ -1034,20 +1085,6 @@
                             hopstop = false
                         });
                         hopstop = true;
-                    }
-                    if (MONSTER_RAPID_FIRE && !MONSTER_IS_CURRENTLY_SHOOTING) {
-                        monster.powerUp(1);
-                        setTimeout(() => {
-                            monsterShoot(index);
-                        }, 700);
-                        if (Math.random() < 0.2) {
-                            monster.jumpUp(5);
-                        }
-                        if (Math.random() < 0.1) {
-                            MONSTER_RAPID_FIRE = false;
-                        }
-
-
                     }
                 } else if (PLAYING && player.dead) {
                     if (monster.isPoweringUp) {
