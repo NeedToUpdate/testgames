@@ -775,6 +775,19 @@ function unIdlePlayers() {
 //===============FIGHTING FUNCTIONS============
 //===============FIGHTING FUNCTIONS============
 
+//exceptions for teh few heroes
+function shotException(player) {
+  switch (player.name) {
+    case "arceus":
+      let newInfo = create_player(67);
+      LOADED_IMAGES.add([newInfo.power + "_projectile"], IMAGE_PATH + "/projectiles/");
+      player.powerType = newInfo.power;
+      break;
+    default:
+      break;
+  }
+}
+
 function doShot(player, target) {
   return new Promise((resolve) => {
     let p = player.shoot();
@@ -796,6 +809,7 @@ function doShot(player, target) {
           PROJECTILES.push(p);
           THINGS_TO_KILL.push(p);
           setTimeout(() => {
+            shotException(player);
             return resolve();
           }, 1000);
         }
@@ -808,6 +822,7 @@ function doShot(player, target) {
       PROJECTILES.push(p);
       THINGS_TO_KILL.push(p);
       setTimeout(() => {
+        shotException(player);
         return resolve();
       }, 1000);
     }
