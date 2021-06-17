@@ -624,7 +624,9 @@
                                 monster.character.jumpUp(5);
                             }
                         } else if (n > 8) {
-                            monster.character.shield(getRandom(1, 5));
+                            setTimeout(() => {
+                                monster.character.shield(getRandom(1, 5));
+                            }, getRandom(200, 300))
                         }
                     }
                 })
