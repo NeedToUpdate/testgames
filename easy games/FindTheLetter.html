@@ -1,277 +1,338 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8" name="viewport" content="width=device-width, user-scalable=no">
-    <script language="javascript" type="text/javascript" src="../lib/vector.js"></script>
-    <script language="javascript" type="text/javascript" src="../lib/matrix.js"></script>
-    <script language="javascript" type="text/javascript" src="../lib/DomObject.js"></script>
-    <script language="javascript" type="text/javascript" src="../lib/PhysicsObject.js"></script>
-    <script language="javascript" type="text/javascript" src="../lib/collisioncontainer.js"></script>
-    <script language="javascript" type="text/javascript" src="../lib/Character.js"></script>
-    <script language="javascript" type="text/javascript" src="../lib/GameButton.js"></script>
-    <script language="javascript" type="text/javascript" src="../lib/eventemitter.js"></script>
-    <script language="javascript" type="text/javascript" src="../lib/drawbase.js"></script>
+    <meta charset="UTF-8"
+        name="viewport"
+        content="width=device-width, user-scalable=no">
+    <script language="javascript"
+        type="text/javascript"
+        src="../lib/vector.js"></script>
+    <script language="javascript"
+        type="text/javascript"
+        src="../lib/matrix.js"></script>
+    <script language="javascript"
+        type="text/javascript"
+        src="../lib/DomObject.js"></script>
+    <script language="javascript"
+        type="text/javascript"
+        src="../lib/PhysicsObject.js"></script>
+    <script language="javascript"
+        type="text/javascript"
+        src="../lib/collisioncontainer.js"></script>
+    <script language="javascript"
+        type="text/javascript"
+        src="../lib/Character.js"></script>
+    <script language="javascript"
+        type="text/javascript"
+        src="../lib/GameButton.js"></script>
+    <script language="javascript"
+        type="text/javascript"
+        src="../lib/eventemitter.js"></script>
+    <script language="javascript"
+        type="text/javascript"
+        src="../lib/drawbase.js"></script>
+    <script language="javascript"
+        type="text/javascript"
+        src="../image_config.js"></script>
     <title>Artem's Find The Letter</title>
-    <link rel="stylesheet" type="text/css" href="../global_styles.css">
+    <link rel="stylesheet"
+        type="text/css"
+        href="../global_styles.css">
 </head>
+
 <body>
     <div id="MAIN_WRAPPER">
         <div id="MAIN_SCREEN">
-            <button id="playpause" class="bluebtn">again</button>
+            <button id="playpause"
+                class="bluebtn">again</button>
+            <div id="image_blocker"
+                style="position: absolute;top: 0; left: 0; z-index: 9; background-color:#26445e">
+            </div>
         </div>
     </div>
-<script>
-    let LEFT_PADDING = width * 0.1;
-    let TOP_PADDING = height * 0.05;
-    let LETTER_WIDTH = width/12;
-    let RUNNING_LETTERS = true;
-    let PLAYABLE_CHARS = ['peppapig','ultraman','spiderman','shark','cat','rabbit','sofia','elsa','superman'];
+    <script>
+        let LEFT_PADDING = width * 0.1;
+        let TOP_PADDING = height * 0.05;
+        let LETTER_WIDTH = width / 12;
+        let RUNNING_LETTERS = true;
+        let PLAYABLE_CHARS = ['george', 'peppa_pig', 'ultraman', 'spiderman', 'shark', 'cat', 'rabbit', 'sofia', 'elsa', 'superman', 'snow_white', 'cinderella', 'ultraman2', 'ultraman3'];
 
-    let LOADED_IMAGES = {};
-    function calcColNum() {
-        return ((width - LEFT_PADDING * 2) / LETTER_WIDTH | 0) + 1;
-    }
+        const IMAGE_PATH = '../images/'
+        const BACKGROUND_IMAGES = IMAGE_CONFIG.backgounds
 
-    let COL_NUM = calcColNum();
+        let LOADED_IMAGES = {};
 
-    function makeLetter(letter, x, y) {
-        let div = new Square(x, y, LETTER_WIDTH - 10);
-        div.set('border', 'solid white 3px');
-        div.set('borderRadius', '10px');
-        div.set('display', 'grid');
-        div.set('justify-items', 'center');
-        div.set('backgroundColor', 'rgba(255,255,255,0.2)');
-        let l = new P(letter, 0, 0);
-        l.set('position', '');
-        l.set('color', 'white');
-        l.set('font-family', 'sans');
-        l.set('font-size', '2em');
-        l.set('padding', '0');
-        l.set('margin', 'auto 0');
-        div.letter = letter;
-        div.attach(l);
-        return div;
-    }
+        function calcColNum() {
+            return ((width - LEFT_PADDING * 2) / LETTER_WIDTH | 0) + 1;
+        }
 
-    function setupKeyboard() {
-        let alphabet_divs = [];
-        let backgroundimage = 'bg' + (Math.random() * 8 | 0).toString() + '.jpg';
-        document.body.style.backgroundColor = 'grey';
-        document.body.style.backgroundImage = 'url(../images/' + backgroundimage.toString() + ')';
-        document.body.style.backgroundRepeat = 'no-repeat';
-        document.body.style.backgroundSize =  width + 'px auto';
-        return new Promise(resolve => {
-            let selectedletters = '';
-            let selectednumber =  0;
-            (alphabet.toUpperCase() + '357✔').split('').forEach((letter, i) => {
-                let div = makeLetter(letter, LEFT_PADDING + LETTER_WIDTH * (i % COL_NUM), TOP_PADDING + LETTER_WIDTH * (i / COL_NUM | 0));
-                div.shape.addEventListener('click', () => {
-                    div.set('border', 'green solid 4px');
-                    if (parseInt(letter)) {
-                        selectednumber = letter;
-                        //fancy way of setting the other numbers to white
-                        alphabet_divs.filter(x => ('357'.replace(letter, '').includes(x.letter))).forEach(x => {
-                            x.set('border', 'white solid 4px')
-                        })
-                    } else if (alphabet.toUpperCase().includes(letter)) {
-                        if (selectedletters.includes(letter)) {
-                            selectedletters = selectedletters.replace(letter, '');
-                            div.set('border', 'white solid 4px')
-                        } else {
-                            selectedletters += letter;
-                        }
+        let COL_NUM = calcColNum();
 
-                    } else {
-                        resolve({
-                            letters: selectedletters, num: parseInt(selectednumber),
-                            removeFn: function () {
-                                alphabet_divs.forEach(div => {
-                                    div.remove();
-                                })
+        function makeLetter(letter, x, y) {
+            let div = new Square(x, y, LETTER_WIDTH - 10);
+            div.set('border', 'solid white 3px');
+            div.set('borderRadius', '10px');
+            div.set('display', 'grid');
+            div.set('justify-items', 'center');
+            div.set('backgroundColor', 'rgba(255,255,255,0.2)');
+            let l = new P(letter, 0, 0);
+            l.set('position', '');
+            l.set('color', 'white');
+            l.set('font-family', 'sans');
+            l.set('font-size', '2em');
+            l.set('padding', '0');
+            l.set('margin', 'auto 0');
+            div.letter = letter;
+            div.attach(l);
+            return div;
+        }
+
+        function setupKeyboard() {
+            let alphabet_divs = [];
+            let background = 'bg' + (Math.random() * 8 | 0).toString() + '.jpg';
+            DOMObjectGlobals.body.style.backgroundColor = 'grey';
+            DOMObjectGlobals.body.style.backgroundImage = 'url(' + IMAGE_PATH +
+                background.toString() + ')';
+            DOMObjectGlobals.body.style.backgroundRepeat = 'no-repeat';
+            DOMObjectGlobals.body.style.backgroundSize = width + 'px auto';
+            LEFT_PADDING = width * 0.1;
+            TOP_PADDING = height * 0.05;
+            LETTER_WIDTH = width / 12;
+            id('image_blocker').style.backgroundColor = 'grey';
+            id('image_blocker').style.backgroundImage = 'url(' + IMAGE_PATH +
+                background.toString() + ')';
+            id('image_blocker').style.backgroundSize = width + 'px auto';
+            id('image_blocker').style.backgroundRepeat = 'no-repeat';
+            id('image_blocker').style.width = width / 12 + 'px'
+            id('image_blocker').style.height = width / 12 + 'px';
+            return new Promise(resolve => {
+                let selectedletters = '';
+                let selectednumber = 0;
+                (alphabet.toUpperCase() + '357✔').split('').forEach((letter, i) => {
+                    let div = makeLetter(letter, LEFT_PADDING + LETTER_WIDTH * (i % COL_NUM), TOP_PADDING + LETTER_WIDTH * (i / COL_NUM | 0));
+                    div.shape.addEventListener('click', () => {
+                        div.set('border', 'green solid 4px');
+                        if (parseInt(letter)) {
+                            selectednumber = letter;
+                            //fancy way of setting the other numbers to white
+                            alphabet_divs.filter(x => ('357'.replace(letter, '').includes(x.letter))).forEach(x => {
+                                x.set('border', 'white solid 4px')
+                            })
+                        } else if (alphabet.toUpperCase().includes(letter)) {
+                            if (selectedletters.includes(letter)) {
+                                selectedletters = selectedletters.replace(letter, '');
+                                div.set('border', 'white solid 4px')
+                            } else {
+                                selectedletters += letter;
                             }
-                        })
-                    }
-                });
-                alphabet_divs.push(div)
+
+                        } else {
+                            resolve({
+                                letters: selectedletters,
+                                num: parseInt(selectednumber),
+                                removeFn: function () {
+                                    alphabet_divs.forEach(div => {
+                                        div.remove();
+                                    })
+                                }
+                            })
+                        }
+                    });
+                    alphabet_divs.push(div)
+                })
             })
-        })
 
-    }
-
-    function selectLetter(letter,num_of_letters) {
-        THINGS_TO_UPDATE.forEach(x => {
-            x.kill();
-        });
-
-        let char_w = width/(1.3*num_of_letters);
-        let dudes = [];
-        function showLetters(){
-            let chosen = Array(dudes.length).fill(0);
-            chosen[getRandom(dudes.length)] = 1;
-            dudes.forEach((dude,i)=>{
-                dude.sprite.zIndex = 0;
-                let holding_letter_sprite = new P(chosen[i]?letter:getRandom(Array.from(alphabet.toUpperCase()).filter(x=>x!==letter)),0,0);
-                holding_letter_sprite.color = 'white';
-                holding_letter_sprite.size = 7-(dudes.length/2) + 'em';
-                holding_letter_sprite.set('textShadow','0px 0px 5px green');
-                let holding_letter = new Character(0,0,'letter');
-                holding_letter.addSprite(holding_letter_sprite);
-                holding_letter.x = dude.x;
-                holding_letter.y = dude.y;
-                THINGS_TO_UPDATE.push(holding_letter);
-                holding_letter.maxbounds.y = holding_letter.y - holding_letter.height/2;
-                holding_letter.addForce(VECTORS.gravity);
-                holding_letter.hasNoSkyBox = true;
-                dude.sprite.shape.addEventListener('click',()=>{
-                    dude.sprite.zIndex = 0;
-                    holding_letter.doSpin(360, 10);
-                    holding_letter.sprite.size = 11-(dudes.length/2) +'em';
-                   if(chosen[i]){
-                       holding_letter.sprite.color = 'green';
-                   }else{
-                       holding_letter.sprite.color = 'red';
-                       setTimeout(()=>{
-                           dude.sprite.zIndex = 1000;
-                           holding_letter.sprite.color = 'white';
-                           holding_letter.sprite.size = '2em'
-                       },2000)
-                   }
-                });
-                setTimeout(()=>{
-                   holding_letter.jumpUp(0.7);
-                   holding_letter.doSpin(360,10);
-                   holding_letter.sprite.size = '2em';
-                   dude.sprite.zIndex = 100;
-                },5000)
-            })
         }
-        let count = num_of_letters;
-        let chars = shuffle(PLAYABLE_CHARS);
-        for(let i = 0; i<num_of_letters; i++){
-            let char = new Character(-width/10, 0, chars.pop());
-            char.maxbounds = {x: width*1.1, y: height};
-            char.hasNoSkyBox = true;
-            char.minbounds = {x: -300, y: height};
-            char.addForce(VECTORS.gravity);
-            let sprite = new Img(LOADED_IMAGES[char.name], 50,50, char_w).fromCenter().usingNewTransform().usingDumbPermanance().onLoad(()=>{
-                char.addSprite(sprite);
+
+        function selectLetter(letter, num_of_letters) {
+            THINGS_TO_UPDATE.forEach(x => {
+                x.kill();
             });
 
-            dudes.push(char);
-            THINGS_TO_UPDATE.push(char);
-            setTimeout(() => {
-                char.doJump(0.5);
-            }, 1000);
-            let unsub = char.landing_emitter.subscribe('land', () => {
-                setTimeout(()=>{
-                    if (char.p.x > ((width-char_w)*i/num_of_letters)  + char_w/2) {
-                        unsub();
-                        count--;
-                        if(count<=0){
-                            showLetters()
+            let char_w = width / (1.3 * num_of_letters);
+            let dudes = [];
+
+            function showLetters() {
+                let chosen = Array(dudes.length).fill(0);
+                chosen[getRandom(dudes.length)] = 1;
+                dudes.forEach((dude, i) => {
+                    dude.sprite.zIndex = 10;
+                    let holding_letter_sprite = new P(chosen[i] ? letter : getRandom(Array.from(alphabet.toUpperCase()).filter(x => x !== letter)), 0, 0);
+                    holding_letter_sprite.color = 'white';
+                    holding_letter_sprite.size = 12 - (dudes.length / 2) + 'em';
+                    holding_letter_sprite.set('textShadow', '0px 0px 5px green');
+                    holding_letter_sprite.zIndex = 11
+                    let holding_letter = new Character(0, 0, 'letter');
+                    holding_letter.addSprite(holding_letter_sprite);
+                    holding_letter.x = dude.x;
+                    holding_letter.y = dude.y;
+                    THINGS_TO_UPDATE.push(holding_letter);
+                    holding_letter.maxbounds.y = holding_letter.y - holding_letter.height / 2;
+                    holding_letter.addForce(VECTORS.gravity);
+                    holding_letter.hasNoSkyBox = true;
+                    dude.sprite.shape.addEventListener('click', () => {
+                        dude.sprite.zIndex = 0;
+                        holding_letter.doSpin(360, 10);
+                        holding_letter.sprite.size = 12 - (dudes.length / 2) + 'em';
+                        if (chosen[i]) {
+                            holding_letter.sprite.color = 'green';
+                        } else {
+                            holding_letter.sprite.color = 'red';
+                            setTimeout(() => {
+                                dude.sprite.zIndex = 1000;
+                                holding_letter.sprite.color = 'white';
+                                holding_letter.sprite.size = '1em'
+                            }, 2000)
+                        }
+                    });
+                    setTimeout(() => {
+                        holding_letter.jumpUp(2);
+                        holding_letter.doSpin(360, 10);
+                        holding_letter.sprite.size = '1em';
+                        dude.sprite.zIndex = 100;
+                    }, 5000)
+                })
+            }
+            let count = num_of_letters;
+            let chars = shuffle(PLAYABLE_CHARS);
+            for (let i = 0; i < num_of_letters; i++) {
+                let char = new Character(-width / 10, 0, chars.pop());
+                char.maxbounds = {
+                    x: width * 1.1,
+                    y: height
+                };
+                char.hasNoSkyBox = true;
+                char.minbounds = {
+                    x: -300,
+                    y: height
+                };
+                char.addForce(VECTORS.gravity);
+                let sprite = new Img(LOADED_IMAGES[char.name], 50, 50, char_w).fromCenter().usingNewTransform().usingDumbPermanance().onLoad(() => {
+                    char.addSprite(sprite);
+                });
+
+                dudes.push(char);
+                THINGS_TO_UPDATE.push(char);
+                setTimeout(() => {
+                    char.doJump(0.5);
+                }, 1000);
+                let unsub = char.landing_emitter.subscribe('land', () => {
+                    setTimeout(() => {
+                        if (char.p.x > ((width - char_w) * i / num_of_letters) + char_w / 2) {
+                            unsub();
+                            count--;
+                            if (count <= 0) {
+                                showLetters()
+                            }
+                        } else {
+                            char.doJump(0.6);
+                        }
+                    }, getRandom(30, 60))
+                })
+            }
+        }
+
+        async function createKeyboard() {
+            let info = await setupKeyboard();
+            return new Promise(resolve => {
+                resolve(info)
+            })
+        }
+
+        function createFewButtons(letters, num) {
+            let letterDivs = [];
+            LETTER_WIDTH = 120;
+            let BUTTON_WIDTH = width / (1.5 * num);
+            TOP_PADDING = height - BUTTON_WIDTH;
+            LEFT_PADDING = width - (BUTTON_WIDTH + 25) * num;
+            COL_NUM = calcColNum();
+            let highestIndex = alphabet.toUpperCase().indexOf(letters.reduce((a, b) => alphabet.toUpperCase().indexOf(a) > alphabet.toUpperCase().indexOf(b) ? a : b));
+            for (let i = letters.length; i < num; i++) {
+                let rand = getRandom(alphabet.toUpperCase().split('').splice(0, highestIndex));
+                while (letters.includes(rand) || !rand) {
+                    rand = getRandom(alphabet.toUpperCase().split(''));
+                }
+                letters.push(rand)
+            }
+            letters = shuffle(letters);
+            letters.forEach((letter, i) => {
+                let letterChar = new GameButton(letter, 0, 'white');
+                letterDivs.push(letterChar);
+                letterChar.div.shape.addEventListener('click', () => {
+                    if (RUNNING_LETTERS) {
+                        if (!letterChar.div.runcount) {
+                            letterChar.div.runcount = getRandom(0, 3);
+                        }
+                        if (letterChar.div.runcount < 2) {
+                            letterChar.addForce(Vector.random(getRandom(10, 15)));
+                            letterChar.div.runcount += Math.random() * 2 + 0.7;
+                        } else {
+                            selectLetter(letter, num)
                         }
                     } else {
-                        char.doJump(0.6);
+                        selectLetter(letter, num)
                     }
-                },getRandom(30,60))
+                });
+                letterChar.p = new Vector(LEFT_PADDING + (BUTTON_WIDTH * 1.1) * (i % COL_NUM), TOP_PADDING - (BUTTON_WIDTH * 1.1) * (i / COL_NUM | 0));
+                letterChar.width = BUTTON_WIDTH;
+                letterChar.height = BUTTON_WIDTH;
+                letterChar.maxbounds = {
+                    x: width,
+                    y: height
+                };
+                letterChar.hasFriction = true;
+                letterChar.friction_coeff = 0.01;
+                letterChar.hasBounce = true;
+                letterChar.pDiv.size = BUTTON_WIDTH / 1.5 + 'px';
+                letterChar.update();
+                THINGS_TO_UPDATE.push(letterChar);
             })
-        }
-    }
 
-    async function createKeyboard() {
-        let info = await setupKeyboard();
-        return new Promise(resolve => {
-            resolve(info)
-        })
-    }
-
-    function createFewButtons(letters,num){
-        let letterDivs = [];
-        LETTER_WIDTH = 120;
-        let BUTTON_WIDTH = width/(1.5*num);
-        TOP_PADDING =   height - BUTTON_WIDTH;
-        LEFT_PADDING = width - (BUTTON_WIDTH+25)*num;
-        COL_NUM = calcColNum();
-        let highestIndex = alphabet.toUpperCase().indexOf(letters.reduce((a, b) => alphabet.toUpperCase().indexOf(a) > alphabet.toUpperCase().indexOf(b) ? a : b));
-        for (let i = letters.length; i < num; i++) {
-            let rand = getRandom(alphabet.toUpperCase().split('').splice(0, highestIndex));
-            while (letters.includes(rand) || !rand) {
-                rand = getRandom(alphabet.toUpperCase().split(''));
-            }
-            letters.push(rand)
         }
-        letters = shuffle(letters);
-        letters.forEach((letter, i) => {
-            let letterChar = new GameButton(letter,0,'white');
-            letterDivs.push(letterChar);
-            letterChar.div.shape.addEventListener('click', () => {
-                if (RUNNING_LETTERS) {
-                    if (!letterChar.div.runcount) {
-                        letterChar.div.runcount = getRandom(0,3);
-                    }
-                    if (letterChar.div.runcount < 2) {
-                        letterChar.addForce(Vector.random(getRandom(10,15)));
-                        letterChar.div.runcount += Math.random() * 2 + 0.7;
-                    } else {
-                        selectLetter(letter,num)
-                    }
-                } else {
-                    selectLetter(letter,num)
-                }
+
+
+        let saved_num_and_letters = {};
+
+
+        let THINGS_TO_UPDATE = [];
+
+        function playAgain() {
+            THINGS_TO_UPDATE.forEach(x => {
+                x.sprite.zIndex = 0;
+                x.kill();
             });
-            letterChar.p = new Vector(LEFT_PADDING + (BUTTON_WIDTH*1.1) * (i % COL_NUM), TOP_PADDING - (BUTTON_WIDTH*1.1) * (i / COL_NUM | 0));
-            letterChar.width = BUTTON_WIDTH;
-            letterChar.height = BUTTON_WIDTH;
-            letterChar.maxbounds = {x: width, y: height};
-            letterChar.hasFriction = true;
-            letterChar.friction_coeff = 0.01;
-            letterChar.hasBounce = true;
-            letterChar.pDiv.size = BUTTON_WIDTH/1.5 + 'px';
-            letterChar.update();
-            THINGS_TO_UPDATE.push(letterChar);
+            createFewButtons(saved_num_and_letters.letters.split(''), saved_num_and_letters.num);
+        }
+
+
+        id('playpause').addEventListener('click', playAgain);
+
+        function loop() {
+            for (let i = THINGS_TO_UPDATE.length - 1; i >= 0; i--) {
+                THINGS_TO_UPDATE[i].update();
+                if (THINGS_TO_UPDATE[i].dead) {
+                    THINGS_TO_UPDATE.splice(i, 1);
+                }
+            }
+        };
+
+        function start() {
+            createFallbackLoopFunction(loop).start();
+        }
+        setupBody(id('MAIN_SCREEN')).then(() => {
+            LOADED_IMAGES = new ImageLoader('../images' + IMAGE_CONFIG.characters.path, PLAYABLE_CHARS);
+            start();
+            createKeyboard().then(x => {
+                x.removeFn();
+                saved_num_and_letters = x;
+                createFewButtons(x.letters.split(''), x.num)
+            });
         })
 
-    }
-
-
-    let saved_num_and_letters = {};
-  
-
-    let THINGS_TO_UPDATE = [];
-    function playAgain(){
-        THINGS_TO_UPDATE.forEach(x=>{
-            x.kill();
-        });
-        createFewButtons(saved_num_and_letters.letters.split(''),saved_num_and_letters.num);
-    }
-
-
-    id('playpause').addEventListener('click',playAgain);
-
-    function loop() {
-        for (let i = THINGS_TO_UPDATE.length - 1; i >= 0; i--) {
-            THINGS_TO_UPDATE[i].update();
-            if (THINGS_TO_UPDATE[i].dead) {
-                THINGS_TO_UPDATE.splice(i, 1);
-            }
-        }
-    };
-
-    function start() {
-        createFallbackLoopFunction(loop).start();
-    }
-    setupBody(id('MAIN_SCREEN')).then(()=>{
-        LOADED_IMAGES = new ImageLoader('../images/',PLAYABLE_CHARS);
-        start();
-    createKeyboard().then(x => {
-        x.removeFn();
-        saved_num_and_letters = x;
-        createFewButtons(x.letters.split(''),x.num)
-    });
-    })
-
-</script>
+    </script>
 
 
 </body>
+
 </html>
