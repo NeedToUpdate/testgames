@@ -235,6 +235,8 @@
         }
 
 
+        let switchControlsOnLeft = true;
+
         function setupBackground() {
             return new Promise(resolve => {
                 scaleMultiplier = width / 960;
@@ -264,7 +266,25 @@
                     x.style.borderWidth = r(width / 300) + 'px'
                 })
                 id('switchControls').addEventListener('click', () => {
-                    console.log('hi')
+                    if (switchControlsOnLeft) {
+                        switchControlsOnLeft = false;
+                        id('btn_top_left').style.left = '79%';
+                        id('btn_top_mid').style.left = '86%';
+                        id('btn_top_right').style.left = '93%';
+                        id('btn_bot_left').style.left = '79%';
+                        id('btn_bot_mid').style.left = '86%';
+                        id('btn_bot_right').style.left = '93%';
+                        id('switchControls').style.left = '5%';
+                    } else {
+                        switchControlsOnLeft = true;
+                        id('btn_top_left').style.left = '';
+                        id('btn_top_mid').style.left = '';
+                        id('btn_top_right').style.left = '';
+                        id('btn_bot_left').style.left = '';
+                        id('btn_bot_mid').style.left = '';
+                        id('btn_bot_right').style.left = '';
+                        id('switchControls').style.left = '';
+                    }
                 })
                 resolve()
             })
@@ -283,7 +303,8 @@
             player.scale = (1 + level / 10)
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
-                    player.sprite.shape.style.transform.match(/scale\(-?\d+\.?\d*\)/g) !== null ? (player.sprite.shape.style.transform = player.sprite.shape.style.transform.replace(/scale\(-?\d+\.?\d*\)/g, 'scale(' + (1 +
+                    player.sprite.shape.style.transform.match(/scale\(-?\d+\.?\d*\)/g) !== null ? (player.sprite.shape.style.transform = player.sprite.shape.style.transform.replace(/scale\(-?\d+\.?\d*\)/g, 'scale(' + (
+                        1 +
                         level / 10) + ')')) : (player
                         .sprite.shape
                         .style
