@@ -40,6 +40,8 @@
                 id="enemyhp"></p>
             <button id="btn_top_left"
                 class="controlBtn"><span class="powerText innerText">Power</span> </button>
+            <button id="btn_hidden"
+                class="controlBtn"><span class="powerText innerText">Hidden</span> </button>
             <button id="btn_top_mid"
                 class="controlBtn"><span class="innerText">Jump &nbsp; ← left</span></button>
             <button id="btn_top_right"
@@ -47,9 +49,9 @@
             <button id="btn_bot_left"
                 class="controlBtn"><span class="shieldText innerText">Block</span></button>
             <button id="btn_bot_mid"
-                class="controlBtn"><span class="shootText innerText">shoot &nbsp; ← left</span></button>
+                class="controlBtn"><span class="shootText innerText">Shoot &nbsp; ← left</span></button>
             <button id="btn_bot_right"
-                class="controlBtn"><span class="shootText innerText">shoot
+                class="controlBtn"><span class="shootText innerText">Shoot
                     right →</span></button>
             <button id="play_pause"
                 class="controlBtn"><span id="play_PauseText"
@@ -134,6 +136,13 @@
 
         #btn_top_left {
             border-radius: 2.5vw 0.3vw 0.3vw 0.3vw;
+        }
+
+        #btn_hidden {
+            border-radius: 0.3vw 0.3vw 0.3vw 0.3vw;
+            left: 0%;
+            bottom: 20%;
+            opacity: 0;
         }
 
         #btn_top_mid {
@@ -274,6 +283,7 @@
                         id('btn_bot_left').style.left = '79%';
                         id('btn_bot_mid').style.left = '86%';
                         id('btn_bot_right').style.left = '93%';
+                        id('btn_hidden').style.left = '79%';
                         id('switchControls').style.left = '5%';
                     } else {
                         switchControlsOnLeft = true;
@@ -283,6 +293,7 @@
                         id('btn_bot_left').style.left = '';
                         id('btn_bot_mid').style.left = '';
                         id('btn_bot_right').style.left = '';
+                        id('btn_hidden').style.left = '';
                         id('switchControls').style.left = '';
                     }
                 })
@@ -578,6 +589,8 @@
             } else {
                 id('play_PauseText').innerText = 'paused';
             }
+        });
+        id('btn_hidden').addEventListener('click', function () {
             if (secret) {
                 if (monsters[0].character.dead && !currentlySpawning) {
                     let spawnOnLeftSide = !getRandom(4)
@@ -587,14 +600,13 @@
                     id('play_PauseText').innerText = 'Playing';
                     PLAYING = true;
                     HARDMODE = true;
-
                 }
             }
             secret = true;
             secretTO = setTimeout(() => {
                 secret = false;
             }, 1000);
-        });
+        })
 
         id('btn_top_right').addEventListener('click', function () {
             if (player.dead) return;
